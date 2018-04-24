@@ -37,7 +37,7 @@ public class FunctionControl extends RO{
     @Autowired
     private AppConstants appConstant;
 	@RequestMapping(value = "/getFunctionClass", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getFunctionClass() {
+	public String getFunctionClass() {
 		String usersqlPath = appConstant.getUserFunctionPath();
 		File file = new File(usersqlPath);
 		File[] fileList = file.listFiles(new FilenameFilter() {
@@ -98,7 +98,7 @@ public class FunctionControl extends RO{
 
 	// 取所有报表基本信息
 	@RequestMapping(value = "/getFunctionName/{FunctionClass}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getFunctionName(@PathVariable("FunctionClass") String selectClassName) {
+	public String getFunctionName(@PathVariable("FunctionClass") String selectClassName) {
 		String result = "";
 		// 根据名称查找对应的模板文件
 		String usersqlPath = appConstant.getUserFunctionPath() + File.separator + selectClassName + ".xml";
@@ -156,7 +156,7 @@ public class FunctionControl extends RO{
 
 	// 根据SQLID 取入参 出参信息
 	@RequestMapping(value = "/getFunctionParam/{FunctionClassId}/{FunctionID}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getFunctionParam(@PathVariable("FunctionClassId") String FunctionClassId,
+	public String getFunctionParam(@PathVariable("FunctionClassId") String FunctionClassId,
 			@PathVariable("FunctionID") String FunctionID) {
 		String result = "";
 		try {
@@ -175,7 +175,7 @@ public class FunctionControl extends RO{
 	}
 	
 	@RequestMapping(value = "/saveUserSql", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String saveUserSql(@RequestBody String pJson)
+    public String saveUserSql(@RequestBody String pJson)
     {
         JSONObject retObj = null;
         try
@@ -327,7 +327,7 @@ public class FunctionControl extends RO{
         return JSONObject.toJSONString(obj, features);
     }
 	@RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String modifyUserSql(@RequestBody String pJson)
+    public String modifyUserSql(@RequestBody String pJson)
     {
         JSONObject retObj = null;
         try 
@@ -452,7 +452,7 @@ public class FunctionControl extends RO{
     }
 
 	@RequestMapping(value = "/execFunction/{FunctionClassName}/{FunctionID}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String execFunction(@PathVariable("FunctionClassName") String FunctionClassName,
+	public String execFunction(@PathVariable("FunctionClassName") String FunctionClassName,
 			@PathVariable("FunctionID") String FunctionID, @RequestBody String pJson) {
 
 		System.out.println("开始执行查询:" + "selectClassName:" + FunctionClassName + "," + "selectID:" + FunctionID + ","
@@ -574,7 +574,7 @@ public class FunctionControl extends RO{
 			SerializerFeature.WriteDateUseDateFormat, SerializerFeature.WriteNullListAsEmpty };
 
 	@RequestMapping(value = "/qryFunctionDetail", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String qryFunctionDetail(@RequestBody String pJson) {
+	public String qryFunctionDetail(@RequestBody String pJson) {
 		JSONObject obj = new JSONObject();
 		try {
 			JSONObject pObj = (JSONObject) JSON.parse(pJson);
@@ -617,7 +617,7 @@ public class FunctionControl extends RO{
 	}
 	
 	@RequestMapping(value = "/getAllFunctionClass", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getAllFunctionClass()
+	public String getAllFunctionClass()
     {
         String usersqlPath = appConstant.getUserFunctionPath();
         File file = new File(usersqlPath);
@@ -646,7 +646,7 @@ public class FunctionControl extends RO{
 
     }
 	@RequestMapping(value = "/getFunctionAuthList/{userName}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getFunctionAuthList(@PathVariable("userName") String userName) {
+    public String getFunctionAuthList(@PathVariable("userName") String userName) {
         try{
             Map<String,String> map = new HashMap<String,String>();
             map.put("userName",userName);
@@ -667,7 +667,7 @@ public class FunctionControl extends RO{
         
     }
     @RequestMapping(value = "/getFunctionAuthListByClass/{userName}/{className}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getFunctionAuthListByClass(@PathVariable("userName") String userName,@PathVariable("className") String className) {
+    public String getFunctionAuthListByClass(@PathVariable("userName") String userName,@PathVariable("className") String className) {
         
         String result = "";
          try {

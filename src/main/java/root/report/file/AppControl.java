@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -82,7 +81,7 @@ public class AppControl {
 	 * request需要传递 userCode：用户名 返回值filePath：文件路径树json格式
 	 */
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getDirectory(){
+	public String getDirectory(){
 	    
 		String serverPath = appConstant.getStaticReportPath();
 
@@ -95,7 +94,7 @@ public class AppControl {
 	}
 	
 	@RequestMapping(value = "/getTemplateDirectory", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getTemplateDirectory(){
+    public String getTemplateDirectory(){
         
         String serverPath = appConstant.getDynamicReportPath();
 
@@ -112,7 +111,7 @@ public class AppControl {
 	 */
 
 	@RequestMapping(value="/upload", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String upload(HttpServletRequest request) throws IllegalStateException, IOException {
+	public String upload(HttpServletRequest request) throws IllegalStateException, IOException {
 
 		// 创建一个通用的多部分解析器
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
@@ -319,7 +318,7 @@ public class AppControl {
 	}
 	
 	@RequestMapping(value="/uploadZip", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String uploadZip(HttpServletRequest request) throws Exception {
+	public String uploadZip(HttpServletRequest request) throws Exception {
 		// 创建一个通用的多部分解析器
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
 				request.getSession().getServletContext());
@@ -373,7 +372,7 @@ public class AppControl {
 	}
 
 	@RequestMapping(value="/AppReportUrl", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String GetAppReportUrl()
+	public String GetAppReportUrl()
 	{
 		JSONObject obj = new JSONObject();
 	    obj.put("appPath", appConstant.getAppFilePath().replaceAll("\\\\", "/"));
@@ -381,7 +380,7 @@ public class AppControl {
 	}
 	
 	@RequestMapping(value="/MyTemplateUrl", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String GetMyTemplateUrl()
+    public String GetMyTemplateUrl()
     {
         JSONObject obj = new JSONObject();
         obj.put("webPath", appConstant.getDynamicReportPath().replaceAll("\\\\", "/"));
@@ -420,7 +419,7 @@ public class AppControl {
     }
     
     @RequestMapping(value = "/getAppFile", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getAppFile()
+    public String getAppFile()
     {
         String usersqlPath = appConstant.getAppFilePath();
         File file = new File(usersqlPath);

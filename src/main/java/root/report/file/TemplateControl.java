@@ -71,7 +71,7 @@ public class TemplateControl extends RO {
 	 */
 
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getDirectory() {
+	public String getDirectory() {
 
 		String serverPath = appConstant.getTemplatePath();
 
@@ -116,7 +116,7 @@ public class TemplateControl extends RO {
 
     }
 	@RequestMapping(value = "/getTemplateAuthList/{userName}", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getTemplateAuthList(@PathVariable("userName") String userName) {
+    public String getTemplateAuthList(@PathVariable("userName") String userName) {
 
         try{
         	String serverPath = appConstant.getTemplatePath();
@@ -149,14 +149,14 @@ public class TemplateControl extends RO {
     }
 	
 	@RequestMapping(value = "/getTemplateByUserName/{userName}", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getDirectoryByUserName(@PathVariable("userName") String userName) {
+    public String getDirectoryByUserName(@PathVariable("userName") String userName) {
 	    Map<String,String> map = new HashMap<String,String>();
         map.put("userName",userName);
         List<Map> templateAuthList = DbFactory.Open(DbFactory.FORM).selectList("rule.getTemplateAuthList",map);
         return JSON.toJSONString(templateAuthList);
     }
 	@RequestMapping(value = "/getListByTemplateName/{userName}/{templateName}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getListByTemplateName(@PathVariable("userName") String userName,@PathVariable("templateName") String templateName) {
+    public String getListByTemplateName(@PathVariable("userName") String userName,@PathVariable("templateName") String templateName) {
         String result = "";
         Map<String,String> cmap = new HashMap<String,String>();
         cmap.put("userName",userName);
@@ -177,7 +177,7 @@ public class TemplateControl extends RO {
 	 * @throws FileNotFoundException 
 	 */
 	@RequestMapping(value = "/getTemplateParam", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getTemplateParam(@RequestBody String pJson) throws IOException
+    public String getTemplateParam(@RequestBody String pJson) throws IOException
 	{
         // 模板文件
 	    JSONObject pObj = JSONObject.parseObject(pJson);

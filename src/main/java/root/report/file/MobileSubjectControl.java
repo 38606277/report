@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -146,7 +145,7 @@ public class MobileSubjectControl {
 	 * request需要传递 userCode：用户名 返回值filePath：文件路径树json格式
 	 */
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getDirectory(){
+	public String getDirectory(){
 	    
 		String serverPath = appConstant.getMobileSubjectPath();
 
@@ -159,7 +158,7 @@ public class MobileSubjectControl {
 	}
 	
 	@RequestMapping(value = "/setParam", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String setParam(@RequestBody String pJson){
+	public String setParam(@RequestBody String pJson){
 		JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
 		String value = jsonObject.getString("value");
 	    String key = UUID.randomUUID().toString();
@@ -168,7 +167,7 @@ public class MobileSubjectControl {
 	}
 	
 	@RequestMapping(value = "/getParam", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getParam(String key){
+	public String getParam(String key){
 		String value = "";
 		if(mapJson.containsKey(key)){
 			value = mapJson.get(key);
@@ -177,7 +176,7 @@ public class MobileSubjectControl {
 	}
 	
 	@RequestMapping(value = "/getMobileDirectory", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getMobileDirectory(@RequestBody String pJson){
+    public String getMobileDirectory(@RequestBody String pJson){
 	    JSONObject page = JSON.parseObject(pJson);
 	    
         String serverPath = appConstant.getMobileSubjectPath();
@@ -191,7 +190,7 @@ public class MobileSubjectControl {
     }
 	
 	@RequestMapping(value = "/getTemplateDirectory", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getTemplateDirectory(){
+    public String getTemplateDirectory(){
         
         String serverPath =appConstant.getDynamicReportPath();
 
@@ -208,7 +207,7 @@ public class MobileSubjectControl {
 	 */
 
 	@RequestMapping(value="/upload", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String upload(HttpServletRequest request) throws IllegalStateException, IOException {
+	public String upload(HttpServletRequest request) throws IllegalStateException, IOException {
 
 		// 创建一个通用的多部分解析器
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
@@ -415,7 +414,7 @@ public class MobileSubjectControl {
 	}
 	
 	@RequestMapping(value="/uploadZip", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String uploadZip(HttpServletRequest request) throws Exception {
+	public String uploadZip(HttpServletRequest request) throws Exception {
 		// 创建一个通用的多部分解析器
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
 				request.getSession().getServletContext());
@@ -469,7 +468,7 @@ public class MobileSubjectControl {
 	}
 
 	@RequestMapping(value="/MyReportUrl", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String GetMyReportUrl()
+	public String GetMyReportUrl()
 	{
 		JSONObject obj = new JSONObject();
 	    obj.put("webPath", appConstant.getStaticReportPath().replaceAll("\\\\", "/"));
@@ -477,7 +476,7 @@ public class MobileSubjectControl {
 	}
 	
 	@RequestMapping(value="/MyTemplateUrl", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String GetMyTemplateUrl()
+    public String GetMyTemplateUrl()
     {
         JSONObject obj = new JSONObject();
         obj.put("webPath", appConstant.getDynamicReportPath().replaceAll("\\\\", "/"));

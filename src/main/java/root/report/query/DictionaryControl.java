@@ -45,7 +45,7 @@ public class DictionaryControl extends RO {
 	@Autowired
 	private AppConstants appConstant;
 	@RequestMapping(value = "/h2", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String h2() throws ClassNotFoundException, SQLException {
+	public String h2() throws ClassNotFoundException, SQLException {
             // 加载H2数据库驱动
             Class.forName(DRIVER_CLASS);
             // 根据连接URL，用户名，密码获取数据库连接
@@ -83,7 +83,7 @@ public class DictionaryControl extends RO {
 	
 	
 	@RequestMapping(value = "/getDictionaryClass", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getDictionaryClass() {
+	public String getDictionaryClass() {
 		log.info("调用getDictionaryClass.");
 		String usersqlPath = appConstant.getUserDictionaryPath();
 		File file = new File(usersqlPath);
@@ -113,7 +113,7 @@ public class DictionaryControl extends RO {
 	}
 
 	@RequestMapping(value = "/getDictionaryName/{DictionaryClass}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getDictionaryName(@PathVariable("DictionaryClass") String selectClassName) {
+	public String getDictionaryName(@PathVariable("DictionaryClass") String selectClassName) {
 		String result = "";
 		String usersqlPath = appConstant.getUserDictionaryPath() + File.separator + selectClassName + ".xml";
 		;
@@ -163,7 +163,7 @@ public class DictionaryControl extends RO {
 	}
 
 	@RequestMapping(value = "/getDictionaryParam/{DictionaryClassId}/{DictionaryID}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getDictionaryParam(@PathVariable("DictionaryClassId") String DictionaryClassId,
+	public String getDictionaryParam(@PathVariable("DictionaryClassId") String DictionaryClassId,
 			@PathVariable("DictionaryID") String DictionaryID) {
 		String result = "";
 		String usersqlPath =appConstant.getUserDictionaryPath() + File.separator + DictionaryID + ".xml";
@@ -197,7 +197,7 @@ public class DictionaryControl extends RO {
 	}
 	
 	@RequestMapping(value = "/execlDictionary/{DictionaryClassName}/{DictionaryID}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String execlDictionary(@PathVariable("DictionaryClassName") String DictionaryClassName,
+    public String execlDictionary(@PathVariable("DictionaryClassName") String DictionaryClassName,
             @PathVariable("DictionaryID") String DictionaryID) {
 
         System.out.println("调用:" + "selectClassName:" + DictionaryClassName + "," + "selectID:" + DictionaryID);
@@ -242,7 +242,7 @@ public class DictionaryControl extends RO {
     }
 	
 	@RequestMapping(value = "/execlAppDictionary/{DictionaryClassName}/{DictionaryID}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String execlAppDictionary(@PathVariable("DictionaryClassName") String DictionaryClassName,
+    public String execlAppDictionary(@PathVariable("DictionaryClassName") String DictionaryClassName,
             @PathVariable("DictionaryID") String DictionaryID) {
 
         System.out.println("开始执行查询:" + "selectClassName:" + DictionaryClassName + "," + "selectID:" + DictionaryID);
@@ -299,7 +299,7 @@ public class DictionaryControl extends RO {
 	
 
 	@RequestMapping(value = "/qryDictionaryDetail", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String qryDictionaryDetail(@RequestBody String pJson) {
+	public String qryDictionaryDetail(@RequestBody String pJson) {
 		JSONObject obj = new JSONObject();
 		try {
 			JSONObject pObj = (JSONObject) JSON.parse(pJson);
@@ -331,7 +331,7 @@ public class DictionaryControl extends RO {
 	}
 	
 	@RequestMapping(value = "/execDictionarySql", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String execDictionarySql(@RequestBody String pJson) throws SAXException, DocumentException {
+	public String execDictionarySql(@RequestBody String pJson) throws SAXException, DocumentException {
 		JSONObject pObj = (JSONObject) JSON.parse(pJson);
 		JSONObject obj = new JSONObject();
 		String namespace = pObj.getString("namespace");

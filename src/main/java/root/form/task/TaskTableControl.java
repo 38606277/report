@@ -40,7 +40,7 @@ public class TaskTableControl {
 	 * }
 	 */
 	@RequestMapping(value = "/TaskTable/saveFillTask", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String saveFillTask(@RequestBody String dtInfo) throws Exception {
+	public String saveFillTask(@RequestBody String dtInfo) throws Exception {
 		//获取新增保存参数
 		String retCode = "true";
 		String retMsg = "保存填报任务成功";
@@ -109,7 +109,7 @@ public class TaskTableControl {
 	}
 	
 	@RequestMapping(value = "/TaskTable/getFillTaskByTaskId/{taskId}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getFillTaskByTaskId(@PathVariable("taskId") String taskId) throws Exception {
+	public String getFillTaskByTaskId(@PathVariable("taskId") String taskId) throws Exception {
 		List<Map> taskList =DbFactory.Open(DbFactory.FORM).selectList("task.getTaskById",taskId);
 		for (Map map : taskList) {
 			List<Map> taskLineList  = DbFactory.Open(DbFactory.FORM).selectList("task.getTaskLineByTaskId",taskId);
@@ -173,7 +173,7 @@ public class TaskTableControl {
 	}
 	
 	@RequestMapping(value = "/TaskTable/getCurrentTask", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getCurrentTask() throws Exception {
+	public String getCurrentTask() throws Exception {
 	    JSONArray jsonArray = new JSONArray();
 		List<Map> templateList =DbFactory.Open(DbFactory.FORM).selectList("task.getCurrentTemplateList");
 		for (Map templateMap : templateList) {
@@ -217,7 +217,7 @@ public class TaskTableControl {
 		return JSON.toJSONString(jsonArray);
 	}
 	@RequestMapping(value = "/TaskTable/getCurrentTaskByTemplate", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getCurrentTaskByTemplate(@RequestBody String templateInfo) throws Exception {
+	public String getCurrentTaskByTemplate(@RequestBody String templateInfo) throws Exception {
 	    JSONObject jsonObject = (JSONObject) JSON.parseObject(templateInfo);
         String template = (String)jsonObject.get("template");
 	    String serverPath = appConstant.getFillTemplatePath();
@@ -235,7 +235,7 @@ public class TaskTableControl {
 	    return JSON.toJSONString(rootNode);
 	}
 	@RequestMapping(value = "/TaskTable/getCurrentTask/{userCode}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getCurrentTask(@PathVariable("userCode") String userCode) throws Exception {
+	public String getCurrentTask(@PathVariable("userCode") String userCode) throws Exception {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 		String now = df.format(new Date()).toString();// new Date()为获取当前系统时间
 		Map condition = new HashMap<>();
@@ -255,7 +255,7 @@ public class TaskTableControl {
 		return JSON.toJSONString(msg);
 	}
 	@RequestMapping(value = "/TaskTable/getHistoricalTask/{userCode}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getHistoricalTask(@PathVariable("userCode") String userCode) throws Exception {
+	public String getHistoricalTask(@PathVariable("userCode") String userCode) throws Exception {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 		String now = df.format(new Date()).toString();// new Date()为获取当前系统时间
 		Map condition = new HashMap<>();
@@ -276,7 +276,7 @@ public class TaskTableControl {
 	}
 	
 	@RequestMapping(value = "/TaskTable/getTaskList/{userCode}/{state}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getTaskList(@PathVariable("userCode") String userCode,@PathVariable("state") String state) throws Exception {
+	public String getTaskList(@PathVariable("userCode") String userCode,@PathVariable("state") String state) throws Exception {
 		String userId = DbFactory.Open(DbFactory.FORM).selectOne("user.getUserByCode",userCode);
 		Map condition = new HashMap<>();
 		condition.put("state", state);
@@ -286,7 +286,7 @@ public class TaskTableControl {
 	}
 	
 	@RequestMapping(value = "/TaskTable/getFillTaskByTempTask", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getFillTaskByTempTask(@RequestBody String dtInfo) throws Exception {
+	public String getFillTaskByTempTask(@RequestBody String dtInfo) throws Exception {
 	    JSONObject jsonObject = (JSONObject) JSON.parseObject(dtInfo);
 	    String tempName = (String)jsonObject.get("TempName");
 	    String taskName = (String)jsonObject.get("TaskName");
@@ -303,7 +303,7 @@ public class TaskTableControl {
 	}
 	
 	@RequestMapping(value = "/TaskTable/receiveReceipt/{taskLinesId}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String receiveReceipt(@PathVariable("taskLinesId") String taskLinesId,HttpServletRequest req) throws Exception {
+	public String receiveReceipt(@PathVariable("taskLinesId") String taskLinesId,HttpServletRequest req) throws Exception {
 		Map condition = new HashMap<>();
 		condition.put("id", taskLinesId);
 		String receiveDate = DbFactory.Open(DbFactory.FORM).selectOne("task.getReceiveDateByTaskLinesId",taskLinesId);
@@ -342,7 +342,7 @@ public class TaskTableControl {
 	}
 	
 	@RequestMapping(value = "/TaskTable/submitTask", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String submitTask(@RequestBody String dtInfo,HttpServletRequest request) throws Exception {
+	public String submitTask(@RequestBody String dtInfo,HttpServletRequest request) throws Exception {
 		String retCode = "true";
 		String retMsg = "提交任务成功";
 		JSONObject jsonObject = (JSONObject) JSON.parseObject(dtInfo);
@@ -376,7 +376,7 @@ public class TaskTableControl {
 		return JSON.toJSONString(result);
 	}
 	@RequestMapping("/TaskTable/upload")
-	public @ResponseBody String upload(HttpServletRequest request) {
+	public String upload(HttpServletRequest request) {
 		Map result = new HashMap<>();
 		try {
 			String path = null;

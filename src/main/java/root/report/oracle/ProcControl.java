@@ -7,7 +7,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import oracle.jdbc.OracleCallableStatement;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import root.report.db.DbFactory;
 import root.report.util.JsonUtil;
@@ -22,7 +21,7 @@ public class ProcControl {
 
 	// 得到存储过程的名称
 	@RequestMapping(value = "/GetProcName", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String GetProcName() {
+	public String GetProcName() {
 
 		List<Map> segments;
 		try {
@@ -39,7 +38,7 @@ public class ProcControl {
 
 	// 得到存储过程的参数
 	@RequestMapping(value = "/GetProcParam", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String GetProcParam(@RequestBody String pJson) {
+	public String GetProcParam(@RequestBody String pJson) {
 
 		Map<String, String> pMap = (Map<String, String>) JSON.parse(pJson);
 
@@ -58,7 +57,7 @@ public class ProcControl {
 	// }
 	// 执行存储过程返回游标
 	@RequestMapping(value = "/ExecProc", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String ExecProc(@RequestBody String pJson) {
+	public String ExecProc(@RequestBody String pJson) {
 
 		String  ajson="";
 		JSONObject jsonObject = (JSONObject) JSON.parse(pJson);

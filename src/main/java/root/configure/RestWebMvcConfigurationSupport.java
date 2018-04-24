@@ -26,7 +26,6 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        System.out.println(appConstants);
         registry.addResourceHandler("/report/static/**").addResourceLocations("file:"+appConstants.getStaticReportPath()+ File.separator);
         registry.addResourceHandler("/report/dynamic/**").addResourceLocations("file:"+appConstants.getDynamicReportPath()+File.separator);
         registry.addResourceHandler("/ibas2/**").addResourceLocations("file:"+appConstants.getClientInstallFile()+File.separator);

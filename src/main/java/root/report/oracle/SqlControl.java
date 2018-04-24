@@ -20,7 +20,6 @@ import org.dom4j.tree.DefaultText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import root.configure.AppConstants;
 import root.report.common.RO;
@@ -64,7 +63,7 @@ public class SqlControl extends RO{
 //	 * @return
 //	 */
 	@RequestMapping(value = "/execIntroductionSQL", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String execIntroductionSQL(@RequestBody JSONObject pJson){
+	public String execIntroductionSQL(@RequestBody JSONObject pJson){
 		List<Map<String, Object>> list = new ArrayList<>();
 		try{
 			String sql = pJson.getString("sql").toLowerCase();
@@ -256,7 +255,7 @@ public class SqlControl extends RO{
      * @return String
      */
     @RequestMapping(value = "/saveUserSql", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String saveUserSql(@RequestBody String pJson)
+    public String saveUserSql(@RequestBody String pJson)
     {
         JSONObject retObj = null;
         try
@@ -417,7 +416,7 @@ public class SqlControl extends RO{
      * @throws 
      */
     @RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String modifyUserSql(@RequestBody String pJson)
+    public String modifyUserSql(@RequestBody String pJson)
     {
         JSONObject retObj = null;
         try 
@@ -607,7 +606,7 @@ public class SqlControl extends RO{
    
     //删除报表
     @RequestMapping(value = "/moveUserSql", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String moveUserSql(@RequestBody String pJson)
+    public String moveUserSql(@RequestBody String pJson)
     {
         JSONObject retObj = null;
         try 
@@ -662,7 +661,7 @@ public class SqlControl extends RO{
 	
 	// 根据SQL取参数 并转换为XML格式
 	@RequestMapping(value = "/getInputOutputParas", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getInputOutputParas(@RequestBody String pJson) throws DocumentException 
+	public String getInputOutputParas(@RequestBody String pJson) throws DocumentException
 	{
 		JSONArray list = new JSONArray();
 		try{

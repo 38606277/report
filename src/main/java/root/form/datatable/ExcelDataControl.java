@@ -7,7 +7,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
@@ -34,7 +33,7 @@ public class ExcelDataControl {
 	 * }
 	 */
 	@RequestMapping(value = "/ExcelData/getAll", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getAll() {
+	public String getAll() {
 		List<Map> allTable;
 		try {
 			String userName = SysContext.getRequestUser().getUserName();
@@ -48,7 +47,7 @@ public class ExcelDataControl {
 	}
 	
 	@RequestMapping(value = "/ExcelData/getTableSchema", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getTableSchema(String tableName) {
+	public String getTableSchema(String tableName) {
 		List<Map> allTableColumn;
 		try {
 			Map<String,Object> map = new HashMap<String,Object>();
@@ -63,7 +62,7 @@ public class ExcelDataControl {
 	
 	
 	@RequestMapping(value = "/ExcelData/getDataFromFormTableName", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getDataFromFormTableName(String tableName) {
+	public String getDataFromFormTableName(String tableName) {
 		List<Map> allDatas;
 		try {
 			Map<String,Object> map = new HashMap<String,Object>();
@@ -124,7 +123,7 @@ public class ExcelDataControl {
 
 	@Transactional
 	@RequestMapping(value = "/ExcelData/setDataFromFormTableName", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String setDataFromFormTableName(@RequestBody String dtInfo) {
+	public String setDataFromFormTableName(@RequestBody String dtInfo) {
 		
 		JSONObject jsonObject = (JSONObject) JSON.parseObject(dtInfo);
 		String tableName = (String)jsonObject.get("tableName");

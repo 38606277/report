@@ -1,10 +1,9 @@
 package root.report.common;
 
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 public interface IControl {
-	@ResponseBody String getInputOutputParas(@RequestBody String pJson);
+	String getInputOutputParas(@RequestBody String pJson);
 	
-	@ResponseBody String saveMetaData(@RequestBody String pJson);
+	String saveMetaData(@RequestBody String pJson);
 }

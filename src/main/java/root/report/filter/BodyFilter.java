@@ -1,5 +1,7 @@
 package root.report.filter;
 
+import org.springframework.context.annotation.Configuration;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
@@ -8,7 +10,8 @@ import java.io.IOException;
 /**
  * Servlet Filter implementation class RestFilter
  */
-@WebFilter("/reportServer/*")
+@Configuration
+@WebFilter("/*")
 public class BodyFilter implements Filter {
 
     public BodyFilter() {}

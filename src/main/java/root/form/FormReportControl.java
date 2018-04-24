@@ -31,10 +31,10 @@ public class FormReportControl extends BaseControl {
 	private AppConstants appConstant;
 	/**
 	 * 上传报表
-	 * @return11111111111 return222222
+	 * @return
 	 */
 	@RequestMapping(value = "/uploadReport")
-	public @ResponseBody String uploadReport(@RequestPart(value="file", required=true) MultipartFile  file) {
+	public String uploadReport(@RequestPart(value="file", required=true) MultipartFile  file) {
 		return this.doExecuteWithROReturn(()->{
 			//保存文件
 			if(file == null) throw new RuntimeException("请上传模板文件");
@@ -59,7 +59,7 @@ public class FormReportControl extends BaseControl {
 	 * @return
 	 */
 	@RequestMapping(value = "/listReport", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String listReport() {
+	public String listReport() {
 		return this.doExecuteWithROReturn(()->{
 			String currentUser =  SysContext.getRequestUser().getUserName();
 			List<?> result =  DbFactory.Open(DbFactory.FORM).selectList("frmReport.listReportByCreater", currentUser);
@@ -90,7 +90,7 @@ public class FormReportControl extends BaseControl {
 	 * @return
 	 */
 	@RequestMapping(value = "/rmReport", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String rmReport(@RequestBody String pJson) {
+	public String rmReport(@RequestBody String pJson) {
 		return this.doExecuteWithROReturn(()->{
 			JSONObject json = (JSONObject) JSON.parse(pJson);
 			DbFactory.Open(DbFactory.FORM).delete("frmReport.rmReport", json.get("reportId"));
@@ -104,7 +104,7 @@ public class FormReportControl extends BaseControl {
 	 * @return
 	 */
 	@RequestMapping(value = "/assignTask", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String assignTask(@RequestBody String pJson) {
+	public String assignTask(@RequestBody String pJson) {
 		return this.doExecuteWithROReturn(()->{
 			JSONObject json = (JSONObject) JSON.parse(pJson);
 			final int reportId = json.getIntValue("reportId");
@@ -152,7 +152,7 @@ public class FormReportControl extends BaseControl {
 	 * @return
 	 */
 	@RequestMapping(value = "/viewTask", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String viewTask(@RequestBody String pJson) {
+	public String viewTask(@RequestBody String pJson) {
 		return this.doExecuteWithROReturn(()->{
 			JSONObject json = (JSONObject) JSON.parse(pJson);
 			int reportId = json.getIntValue("reportId");
@@ -194,7 +194,7 @@ public class FormReportControl extends BaseControl {
 	 * @return
 	 */
 	@RequestMapping(value = "/myTask", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String myTask(@RequestBody String pJson) {
+	public String myTask(@RequestBody String pJson) {
 		return this.doExecuteWithROReturn(()->{
 			JSONObject json = (JSONObject) JSON.parse(pJson);
 			String userId = SysContext.getRequestUser().getUserName();
@@ -214,7 +214,7 @@ public class FormReportControl extends BaseControl {
 	 * @return
 	 */
 	@RequestMapping(value = "/updateReportData", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String updateReportData(@RequestBody JSONObject pJson) {
+	public String updateReportData(@RequestBody JSONObject pJson) {
 		return this.doExecuteWithROReturn(()->{
 			SqlSession session = DbFactory.Open(DbFactory.FORM);
 			JSONArray array = pJson.getJSONArray("task_cells");

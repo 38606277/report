@@ -11,7 +11,6 @@ import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import root.configure.AppConstants;
 import root.report.common.BaseControl;
@@ -31,8 +30,7 @@ public class MongoControl extends BaseControl{
 	private AppConstants appConstant;
 	//校验并返回输入内容
 	@RequestMapping(value = "/getInputOutputParas", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody
-    String getInputOutputParas(@RequestBody String pJson) {
+	public String getInputOutputParas(@RequestBody String pJson) {
 		JSONObject retJson = this.doExecute(()->this.validate(pJson));
 		retJson.put("content", JSON.parse(pJson));
 		return retJson.toJSONString();
@@ -41,13 +39,13 @@ public class MongoControl extends BaseControl{
 
 	//保存数据查询描述元数据
 	@RequestMapping(value = "/saveMetaData", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String saveMetaData(@RequestBody String pJson) {
+	public String saveMetaData(@RequestBody String pJson) {
 		return this.doExecute(()->this.saveJson(pJson)).toJSONString();
 	}
 
 	//解析元数据，执行查询
 	@RequestMapping(value = "/run", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String run(@RequestBody String pJson) {
+	public String run(@RequestBody String pJson) {
 		return this.doExecuteWithInnerReturn(()->this.runSql(pJson)).toJSONString();
 	}
 

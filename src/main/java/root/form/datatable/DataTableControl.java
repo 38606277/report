@@ -30,7 +30,7 @@ public class DataTableControl {
 	 * }
 	 */
 	@RequestMapping(value = "/DataTable/getAll", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getAll() {
+	public String getAll() {
 		List<Map> allTable;
 		try {
 			allTable = DbFactory.Open(DbFactory.FORM).selectList("table.getAll");
@@ -45,7 +45,7 @@ public class DataTableControl {
 	 * @return
 	 */
 	@RequestMapping(value = "/DataTable/getAllTable", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getAllTable() {
+    public String getAllTable() {
         List<Map> allTable;
         List<Map> dataList = new ArrayList<Map>();
         try {
@@ -72,7 +72,7 @@ public class DataTableControl {
 	 * }
 	 */
 	@RequestMapping(value = "/DataTable/getCols/{pTableId}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getCols(@PathVariable("pTableId") String pTableId) {
+	public String getCols(@PathVariable("pTableId") String pTableId) {
 		List<Map> columns;
 		try {
 			columns = DbFactory.Open(DbFactory.FORM).selectList("table.getCols",pTableId);
@@ -95,7 +95,7 @@ public class DataTableControl {
 	 * }
 	 */
 	@RequestMapping(value = "/DataTable/getDataTableByTable/{tableId}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getDataTable(@PathVariable("tableId") String tableId) {
+	public String getDataTable(@PathVariable("tableId") String tableId) {
 		Map tableinfo;
 		List<Map> tableColumns;
 		try {
@@ -114,7 +114,7 @@ public class DataTableControl {
 	}
 	
 	@RequestMapping(value = "/DataTable/addDataTable", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String addDataTable(@RequestBody String dtInfo){
+	public String addDataTable(@RequestBody String dtInfo){
 		//获取新增保存参数
 		String retCode = "true";
 		String retMsg = "新增数据表成功";
@@ -165,7 +165,7 @@ public class DataTableControl {
 		return JSON.toJSONString(result);
 	}
 	@RequestMapping(value = "/DataTable/modifyDataTable", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String modifyDataTable(@RequestBody String dtInfo) throws Exception {
+	public String modifyDataTable(@RequestBody String dtInfo) throws Exception {
 		//获取新增保存参数
 		String retCode = "true";
 		String retMsg = "修改数据表成功";
@@ -206,7 +206,7 @@ public class DataTableControl {
 		return JSON.toJSONString(result);
 	}
 	@RequestMapping(value = "/DataTable/deleteByTable/{tableId}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String deleteByTable(@PathVariable("tableId") String tableId) throws Exception {
+	public String deleteByTable(@PathVariable("tableId") String tableId) throws Exception {
 		//获取新增保存参数
 		String retCode = "true";
 		String retMsg = "删除数据表成功";

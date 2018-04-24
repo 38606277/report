@@ -19,7 +19,7 @@ import java.util.Map;
 public class RuleController {
 
     @RequestMapping(value="/getAuthByConditions",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getAuthByConditions(@RequestBody String pJson) throws UnsupportedEncodingException{
+    public String getAuthByConditions(@RequestBody String pJson) throws UnsupportedEncodingException{
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         Map<String,String> map = new HashMap<String,String>();
         map.put("userName", (String) obj.get(0));
@@ -28,7 +28,7 @@ public class RuleController {
         return JSON.toJSONString(authList);
     }
     @RequestMapping(value="/getAuthListByConditions",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getAuthListByConditions(@RequestBody String pJson) throws UnsupportedEncodingException{
+    public String getAuthListByConditions(@RequestBody String pJson) throws UnsupportedEncodingException{
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         Map<String,String> map = new HashMap<String,String>();
         map.put("userName", (String) obj.get(0));
@@ -37,7 +37,7 @@ public class RuleController {
         return JSON.toJSONString(authList);
     }
     @RequestMapping(value="/getAuthByFuncType",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getAuthByFuncType(@RequestBody String pJson) throws UnsupportedEncodingException{
+    public String getAuthByFuncType(@RequestBody String pJson) throws UnsupportedEncodingException{
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         Map<String,String> map = new HashMap<String,String>();
         map.put("userName", (String) obj.get(0));
@@ -46,7 +46,7 @@ public class RuleController {
         return JSON.toJSONString(authList);
     }
     @RequestMapping(value="/getFunRuleList",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getExcelRuleList(@RequestBody JSONObject pJson) throws UnsupportedEncodingException{
+    public String getExcelRuleList(@RequestBody JSONObject pJson) throws UnsupportedEncodingException{
         Map<String,String> map = new HashMap<String,String>();
         map.put("type", pJson.getString("type"));
         //默认查询pid为0的数据
@@ -77,7 +77,7 @@ public class RuleController {
         
     }
     @RequestMapping(value="/getFuncRuleList",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getFuncRuleList(@RequestBody String pJson) throws UnsupportedEncodingException{
+    public String getFuncRuleList(@RequestBody String pJson) throws UnsupportedEncodingException{
         Map<String,String> map = new HashMap<String,String>();
         map.put("userName", "AUTOINSTALL");
         map.put("type", "excel");
@@ -111,7 +111,7 @@ public class RuleController {
 
     }
     @RequestMapping(value="/getDataList",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getDataList() throws UnsupportedEncodingException{
+    public String getDataList() throws UnsupportedEncodingException{
         List<Map> dataRuleList = DbFactory.Open(DbFactory.SYSTEM).selectList("dataRule.getDataList");
         DbFactory.close(DbFactory.SYSTEM);
         List<Map> dataList = new ArrayList<Map>();
@@ -124,7 +124,7 @@ public class RuleController {
         return JSON.toJSONString(dataList);
     }
     @RequestMapping(value="/getDepartmentList",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getDepartmentList() throws UnsupportedEncodingException{
+    public String getDepartmentList() throws UnsupportedEncodingException{
         Map<String,String> map = new HashMap<String,String>();
         //默认查询parentId为0的数据
         map.put("parentId", "0");
@@ -151,7 +151,7 @@ public class RuleController {
 
     }
     @RequestMapping(value="/getDepartmentListByCid",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getDepartmentListByCid(@RequestBody JSONObject pJson) throws UnsupportedEncodingException{
+    public String getDepartmentListByCid(@RequestBody JSONObject pJson) throws UnsupportedEncodingException{
         Map<String,String> map = new HashMap<String,String>();
         //默认查询parentId为0的数据
         map.put("companyCode",  pJson.getString("companyCode"));
@@ -181,14 +181,14 @@ public class RuleController {
         }
     }
     @RequestMapping(value="/getDataAuthList/{userName}",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getDataAuthList(@PathVariable("userName") String userName) throws UnsupportedEncodingException{
+    public String getDataAuthList(@PathVariable("userName") String userName) throws UnsupportedEncodingException{
         Map<String,String> map = new HashMap<String,String>();
         map.put("userName",userName);
         List<Map> dataList = DbFactory.Open(DbFactory.FORM).selectList("rule.getDataAuthList",map);
         return JSON.toJSONString(dataList);
     }
     @RequestMapping(value="/saveRules",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String saveRules(@RequestBody String pJson) throws UnsupportedEncodingException{
+    public String saveRules(@RequestBody String pJson) throws UnsupportedEncodingException{
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         JSONArray ruleArray = (JSONArray) obj.get(2);
         JSONObject rule = new JSONObject();
@@ -206,7 +206,7 @@ public class RuleController {
     }
     
     @RequestMapping(value="/saveAuthRules" ,produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String saveAuthRules(@RequestBody String pJson) throws UnsupportedEncodingException{
+    public String saveAuthRules(@RequestBody String pJson) throws UnsupportedEncodingException{
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         JSONArray ruleArray = (JSONArray) obj.get(2);
         JSONObject rule = new JSONObject();

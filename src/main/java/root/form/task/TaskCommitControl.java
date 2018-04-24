@@ -14,7 +14,7 @@ public class TaskCommitControl {
 		//******************以下为填报人的任务API***********************
 		//得到当前用户的填报任务
 		@RequestMapping(value = "/getMyTask", produces = "text/plain;charset=UTF-8")
-		public @ResponseBody String getMyTask() {
+		public String getMyTask() {
 		
 			//根据用户名，查找当前需要填报的任务
 			//select * from fnd_user fu,form_task_lines ftl where fu.user_id=ftl.user_id and stata=0;
@@ -24,7 +24,7 @@ public class TaskCommitControl {
 		
 		//得到当前用户已经完成的填报任务
 		@RequestMapping(value = "/getComlateTask", produces = "text/plain;charset=UTF-8")
-		public @ResponseBody String getComlateTask() {
+		public String getComlateTask() {
 		
 			//根据用户名，查找已经填报完成的任务需要填报任务
 			return "";
@@ -33,7 +33,7 @@ public class TaskCommitControl {
 		
 		//接收任务
 		@RequestMapping(value = "/ReceiveTask", produces = "text/plain;charset=UTF-8")
-		public @ResponseBody String ReceiveTask() {
+		public String ReceiveTask() {
 		
 			//修改当前任务状态为已经接收
 			return "";
