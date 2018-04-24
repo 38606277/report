@@ -1,7 +1,6 @@
 package root.report.sys;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.MessageDigest;
@@ -14,7 +13,7 @@ public class Test {
 	
 	// 计算余额
 		@RequestMapping(value = "/test", produces = "text/plain;charset=UTF-8")
-		public  @ResponseBody String test() {
+		public String test() {
 		   return "service is ok";
 		}
 		
@@ -50,7 +49,7 @@ public class Test {
 		
 		public static void main(String[] args) {  
 			Test nMd5 = new Test();  
-	        String value = nMd5.getMd5("report");
+	        String value = nMd5.getMd5("wj");  
 	        System.out.println(value);  
 	    }  
 

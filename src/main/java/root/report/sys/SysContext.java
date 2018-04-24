@@ -2,7 +2,6 @@ package root.report.sys;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import root.configure.AppConstants;
 import root.form.user.UserModel;
@@ -27,7 +26,7 @@ public class SysContext {
     private AppConstants appConstant;
 
 	@RequestMapping(value = "/getLambdaUrl", produces = "text/plain;charset=UTF-8")
-	public   @ResponseBody String getLambdaUrl() {
+	public String getLambdaUrl() {
 		return appConstant.getLambdaUrl();
 	}
 	

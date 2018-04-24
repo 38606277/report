@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -63,7 +62,7 @@ public class HtmlFileControl {
 	 */
 
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getHtmlDirectory() {
+	public String getHtmlDirectory() {
 
 		String serverPath = appConstant.getStaticReportPath();
 
@@ -80,7 +79,7 @@ public class HtmlFileControl {
 	 */
 
 	@RequestMapping(value="/uploadHtml", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String uploadHtml(HttpServletRequest request) throws IllegalStateException, IOException {
+	public String uploadHtml(HttpServletRequest request) throws IllegalStateException, IOException {
 
 		// 创建一个通用的多部分解析器
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
@@ -264,7 +263,7 @@ public class HtmlFileControl {
 	
 	
 	@RequestMapping(value="/uploadZip", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String uploadZip(HttpServletRequest request) throws Exception {
+	public String uploadZip(HttpServletRequest request) throws Exception {
 
 		// 创建一个通用的多部分解析器
 		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(

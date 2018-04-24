@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import root.report.db.DbFactory;
 import root.report.util.ErpUtil;
@@ -22,7 +21,7 @@ public class FormUserService
     private static final Logger log = Logger.getLogger(FormUserService.class);
     
     @RequestMapping(value = "/getUserListTotalRows", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getUserListTotalRows(@RequestBody String pJson) 
+    public String getUserListTotalRows(@RequestBody String pJson)
     {
         UserModel userModel = JSONObject.parseObject(pJson, UserModel.class);
         int totalRows = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserListTotalRows", userModel);
@@ -30,7 +29,7 @@ public class FormUserService
     }
      
     @RequestMapping(value = "/getUserList", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getUserList(@RequestBody String pJson) 
+    public String getUserList(@RequestBody String pJson)
     {
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
@@ -42,7 +41,7 @@ public class FormUserService
     }
     
     @RequestMapping(value = "/getErpUserList", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getErpUserList(@RequestBody String pJson) 
+    public String getErpUserList(@RequestBody String pJson)
     {
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
@@ -54,7 +53,7 @@ public class FormUserService
     }
     
     @RequestMapping(value = "/getErpUserListTotalRows", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getErpUserListTotalRows(@RequestBody String pJson) 
+    public String getErpUserListTotalRows(@RequestBody String pJson)
     {
         JSONObject obj = JSONObject.parseObject(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
@@ -63,14 +62,14 @@ public class FormUserService
         return JSON.toJSONString(totalRows);
     }
     @RequestMapping(value = "/getUserInfoById", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getUserInfoById(@RequestBody int id) 
+    public String getUserInfoById(@RequestBody int id)
     {
         UserModel usermodel = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserInfoById",id);
         return JSON.toJSONString(usermodel);
     }
     
     @RequestMapping(value = "/addUser", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String addUser(@RequestBody String pJson) 
+    public String addUser(@RequestBody String pJson)
     {
         JSONObject obj = new JSONObject();
         try{
@@ -94,7 +93,7 @@ public class FormUserService
     }
     
     @RequestMapping(value = "/updateUser", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String updateUser(@RequestBody String pJson) 
+    public String updateUser(@RequestBody String pJson)
     {
         String result = "false";
         try{
@@ -119,7 +118,7 @@ public class FormUserService
     }
     
     @RequestMapping(value = "/deleteUser", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String deleteUser(@RequestBody int id) 
+    public String deleteUser(@RequestBody int id)
     {
         String result = "false";
         try{
@@ -133,14 +132,14 @@ public class FormUserService
     }
     
     @RequestMapping(value = "/getCountByUserId", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getUserInfoById(@RequestBody String userId) 
+    public String getUserInfoById(@RequestBody String userId)
     {
         int count = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getCountByUserId",userId);
         return JSON.toJSONString(count);
     }
     
     @RequestMapping(value = "/getCountByUserName", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getCountByUserName(@RequestBody String userName) 
+    public String getCountByUserName(@RequestBody String userName)
     {
         int count = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getCountByUserName",userName);
         return JSON.toJSONString(count);

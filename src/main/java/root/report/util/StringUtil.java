@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 public class StringUtil {
 	
 	/**
-	 * @param args
 	 * 把字符串转成数字:例如A是1, C是3， AA是27
 	 */
 	public static Integer getLetterIntValue(String str) {

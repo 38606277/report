@@ -9,7 +9,6 @@ import org.dom4j.tree.DefaultComment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import root.configure.AppConstants;
 import root.report.util.XmlUtil;
@@ -29,7 +28,7 @@ public class WebServiceControl {
     @Autowired
     private AppConstants appConstant;
 	@RequestMapping(value = "/getWebServiceClass", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getSelectClass() 
+    public String getSelectClass()
 	{
         String usersqlPath = appConstant.getWebServicePath();
         File file = new File(usersqlPath);
@@ -60,7 +59,7 @@ public class WebServiceControl {
 	//获取所有webService方法
 	@SuppressWarnings("unchecked")
     @RequestMapping(value = "/getServiceListByClass/{webServiceClass}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getWebService(@PathVariable("webServiceClass") String webServiceClass)
+    public String getWebService(@PathVariable("webServiceClass") String webServiceClass)
     {
         String fileName = webServiceClass + ".xml";
         Document dom = getWebServiceDocument(fileName);
@@ -76,7 +75,7 @@ public class WebServiceControl {
     
 	//取指定WebService方法详情
 	@RequestMapping(value = "/getWebServiceParam/{webServiceClass}/{webServiceID}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getWebServiceOperation(@PathVariable("webServiceClass") String webServiceClass,
+	public String getWebServiceOperation(@PathVariable("webServiceClass") String webServiceClass,
 	        @PathVariable("webServiceID") String webServiceID)
 	{
 	    String fileName = webServiceClass + ".xml";
@@ -86,7 +85,7 @@ public class WebServiceControl {
 	}
 	
 	@RequestMapping(value = "/execWebService/{webServiceClass}/{webServiceID}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String execWebService(@PathVariable("webServiceClass") String webServiceClass,
+	public String execWebService(@PathVariable("webServiceClass") String webServiceClass,
 			//@PathVariable("webServiceID") String webServiceID, @RequestBody String pJson) throws Exception
 	        @PathVariable("webServiceID") String webServiceID  ) throws Exception
 	{

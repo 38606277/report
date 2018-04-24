@@ -325,7 +325,7 @@ public class FileController {
 	// 得到目录树
 	@CrossOrigin
 	@RequestMapping(value="/GetDirectory",produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String GetDirectory(String dirPath) throws IOException {
+	public String GetDirectory(String dirPath) throws IOException {
 		// readfile("/Users/wangjian/Documents/test");
 		File file = new File("/Users/wangjian/Documents/iReport/file/wangjian");
 		rootNode = new JSONArray();

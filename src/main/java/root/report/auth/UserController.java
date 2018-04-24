@@ -26,12 +26,12 @@ import java.util.stream.Collectors;
 public class UserController extends RO{
 	
     private static final Logger log = Logger.getLogger(UserController.class);
-    
+
 	@RequestMapping(value="/showUser",method=RequestMethod.POST,produces = "text/plain;charset=UTF-8")
 	public String toIndex(HttpServletRequest request, Model model) {
 		int userId = Integer.parseInt(request.getParameter("id"));
 
-		model.addAttribute("user", "report");
+		model.addAttribute("user", "wj");
 		return "showUser";
 	}
 
@@ -42,7 +42,7 @@ public class UserController extends RO{
 	 * @return 成功返回Y 否则返回N
 	 */
 	@RequestMapping(value="/login",method=RequestMethod.POST,produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String login(@RequestBody String pJson) {
+	public String login(@RequestBody String pJson) {
 		log.debug("调用服务：/user/login");
 		Map<String, Object> map = new HashMap<String, Object>();
 		try{
@@ -96,7 +96,7 @@ public class UserController extends RO{
 	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value="/encodePwd",method=RequestMethod.POST,produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String encodePwd(@RequestBody String pwd) throws UnsupportedEncodingException
+	public String encodePwd(@RequestBody String pwd) throws UnsupportedEncodingException
 	{
 		String encodePwd = "";
 		JSONObject obj = new JSONObject();
@@ -115,7 +115,7 @@ public class UserController extends RO{
 	}
 	
     @RequestMapping(value = "/getUserListRows",method=RequestMethod.POST, produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getUserListRows(@RequestBody String pJson){
+    public String getUserListRows(@RequestBody String pJson){
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
         if(obj.get(0)==null){
@@ -128,7 +128,7 @@ public class UserController extends RO{
     }
     
     @RequestMapping(value="/getUserList",method=RequestMethod.POST,produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getUserList(@RequestBody String pJson) throws UnsupportedEncodingException{
+    public String getUserList(@RequestBody String pJson) throws UnsupportedEncodingException{
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("startIndex", ((JSONObject)obj.get(0)).get("startIndex"));
@@ -143,7 +143,7 @@ public class UserController extends RO{
     }
     
     @RequestMapping(value="/isAdmin/{credentials}",method=RequestMethod.POST,produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String isAdmin(@PathVariable("credentials") String credentials) throws UnsupportedEncodingException
+    public String isAdmin(@PathVariable("credentials") String credentials) throws UnsupportedEncodingException
     {
         JSONObject json = (JSONObject)JSONObject.parse(credentials);
         String userCode = (String)json.get("UserCode");
@@ -162,7 +162,7 @@ public class UserController extends RO{
     }
     
     @RequestMapping(value="/getBudgetReport",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getBudgetReport()
+    public String getBudgetReport()
     {
     	Map<String,String> map = new HashMap<String,String>();
     	map.put("userName", SysContext.getRequestUser().getUserName());
@@ -178,7 +178,7 @@ public class UserController extends RO{
     }
     
     @RequestMapping(value="/modifyPasswd",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String modifyPasswd(@RequestBody JSONObject pJson){
+    public String modifyPasswd(@RequestBody JSONObject pJson){
     	String user_name = pJson.getString("user_name");
     	String origin_pwd = pJson.getString("origin_pwd");
     	String modify_pwd = pJson.getString("modify_pwd");

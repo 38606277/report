@@ -1,7 +1,6 @@
 package root.form.template;
 
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,7 @@ public class FormTemplateControl {
 	
 	//返回所有的填报模板
 	@RequestMapping(value = "/getAll", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getAll() {
+	public String getAll() {
 	
 		//查询模板表中的模板，并返回
 		
@@ -37,7 +36,7 @@ public class FormTemplateControl {
 	
 	//删除模板
 	@RequestMapping(value = "/delete", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String delete() {
+	public String delete() {
 	
 		return "";
 		

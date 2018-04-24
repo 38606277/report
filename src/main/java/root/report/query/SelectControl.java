@@ -41,7 +41,7 @@ public class SelectControl extends RO {
     @Autowired
     private AppConstants appConstant;
 	@RequestMapping(value = "/getSelectClass", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getSelectClass()
+	public String getSelectClass()
 	{
 		String usersqlPath = appConstant.getUserSqlPath();
 		File file = new File(usersqlPath);
@@ -72,7 +72,7 @@ public class SelectControl extends RO {
 
 	// 取所有报表基本信息
 	@RequestMapping(value = "/getSelectName/{selectClassName}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getSelectName(@PathVariable("selectClassName") String selectClassName) {
+	public String getSelectName(@PathVariable("selectClassName") String selectClassName) {
 	    //String result = "";
 		// 根据名称查找对应的模板文件
 		String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassName + ".xml";
@@ -131,7 +131,7 @@ public class SelectControl extends RO {
 
 	// 根据SQLID 取入参 出参信息
 	@RequestMapping(value = "/getSelectParam/{selectClassId}/{selectID}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getSelectParam(@PathVariable("selectClassId") String selectClassId,
+	public String getSelectParam(@PathVariable("selectClassId") String selectClassId,
 			@PathVariable("selectID") String selectID) {
 		String result = "";
 		// 根据名称查找对应的模板文件
@@ -184,7 +184,7 @@ public class SelectControl extends RO {
 	}
 	
 	@RequestMapping(value = "/getSelectAuthList/{userName}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getSelectAuthList(@PathVariable("userName") String userName) {
+    public String getSelectAuthList(@PathVariable("userName") String userName) {
 	    try{
 	    	Map<String,String> map = new HashMap<String,String>();
 		    map.put("userName",userName);
@@ -205,7 +205,7 @@ public class SelectControl extends RO {
 		
     }
 	@RequestMapping(value = "/getSelectAuthListByClass/{userName}/{className}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String getSelectAuthListByClass(@PathVariable("userName") String userName,@PathVariable("className") String className) {
+	public String getSelectAuthListByClass(@PathVariable("userName") String userName,@PathVariable("className") String className) {
 	    
 		String result = "";
 		 try {
@@ -293,7 +293,7 @@ public class SelectControl extends RO {
 	}
         
     @RequestMapping(value = "/getSelectClassTree", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getSelectClassTree() {
+    public String getSelectClassTree() {
         String usersqlPath = appConstant.getUserSqlPath();
         File file = new File(usersqlPath);
         File[] fileList = file.listFiles(new FilenameFilter() {
@@ -357,7 +357,7 @@ public class SelectControl extends RO {
     }
 
 	@RequestMapping(value = "/execSelect/{selectClassName}/{selectID}", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String execSelect(@PathVariable("selectClassName") String selectClassName,
+	public String execSelect(@PathVariable("selectClassName") String selectClassName,
 			@PathVariable("selectID") String selectID, @RequestBody String pJson)
 	{
 		System.out.println("开始执行查询:" + "selectClassName:" + selectClassName + "," + "selectID:" + selectID + ","
@@ -485,7 +485,7 @@ public class SelectControl extends RO {
 	}
 	
 	@RequestMapping(value = "/execSelectAPP/{selectClassName}/{selectID}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String execSelectAPP(@PathVariable("selectClassName") String selectClassName,
+    public String execSelectAPP(@PathVariable("selectClassName") String selectClassName,
             @PathVariable("selectID") String selectID, @RequestBody String pJson) {
         System.out.println("开始执行查询:" + "selectClassName:" + selectClassName + "," + "selectID:" + selectID + ","
                 + "pJson:" + pJson + ",");
@@ -584,7 +584,7 @@ public class SelectControl extends RO {
     }
 	
 	@RequestMapping(value = "/getTemplateDefine/{selectClassName}/{selectName}", produces = "application/json;charset=utf-8")
-	public @ResponseBody String getTemplateDefine(@PathVariable("selectClassName") String selectClassName,
+	public String getTemplateDefine(@PathVariable("selectClassName") String selectClassName,
 			@PathVariable("selectName") String selectName) {
 		String aJson = null;
 		// 根据名称查找对应的模板文件
@@ -725,7 +725,7 @@ public class SelectControl extends RO {
 
 	// 根据名称返回json
 	@RequestMapping(value = "/execTemplate", produces = "application/json;charset=utf-8")
-	public @ResponseBody String execTemplate(@RequestBody String pJson) {
+	public String execTemplate(@RequestBody String pJson) {
 		// System.out.println(pJson.getCharacterEncoding());
 
 		List<Map> aResult = new ArrayList<>();
@@ -760,7 +760,7 @@ public class SelectControl extends RO {
 
 	// 执行SQL
 	@RequestMapping(value = "/execSelect", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String execSelect(@RequestBody String pJson) {
+	public String execSelect(@RequestBody String pJson) {
 
 		JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
 		String selectID = jsonObject.getString("select");
@@ -785,7 +785,7 @@ public class SelectControl extends RO {
 
 	// 创建一个SelectSQL
 	@RequestMapping(value = "/CreateSelect", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String CreateSelect(@RequestBody String pJson) {
+	public String CreateSelect(@RequestBody String pJson) {
 
 		JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
 		String selectID = jsonObject.getString("select");
@@ -810,7 +810,7 @@ public class SelectControl extends RO {
 	
 	
     @RequestMapping(value="/getSelectTree" , produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getSelectTree()
+    public String getSelectTree()
     {  
         String usersqlPath = appConstant.getUserSqlPath();
         File file = new File(usersqlPath);
@@ -887,7 +887,7 @@ public class SelectControl extends RO {
     }
 
 	@RequestMapping(value = "/qrySelectSqlDetail", produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String qrySelectSqlDetail(@RequestBody String pJson) {
+	public String qrySelectSqlDetail(@RequestBody String pJson) {
 		JSONObject obj = new JSONObject();
 		try {
 			JSONObject pObj = (JSONObject) JSON.parse(pJson);
@@ -918,7 +918,7 @@ public class SelectControl extends RO {
 		return obj.toJSONString();
 	}
 	@RequestMapping(value = "/getSelectItem/{searchValue}", produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getSelectItem(@PathVariable("searchValue") String searchValue)
+    public String getSelectItem(@PathVariable("searchValue") String searchValue)
     {
 	    String result = "";
 	    String usersqlPath = appConstant.getUserSqlPath();

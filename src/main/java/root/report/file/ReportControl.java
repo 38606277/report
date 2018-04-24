@@ -58,7 +58,7 @@ public class ReportControl {
 	 */
 	
 	@RequestMapping(value = "/getDirectory/{userCode}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getDirectory(@PathVariable("userCode") String userCode) {
+	public String getDirectory(@PathVariable("userCode") String userCode) {
 
 		String serverPath = appConstant.getReportPath();
 

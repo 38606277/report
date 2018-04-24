@@ -62,7 +62,7 @@ public class TemplateTableControl {
 	 */
 
 	@RequestMapping(value = "/TemplateTable/getDirectory", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getDirectory() {
+	public String getDirectory() {
 
 		String serverPath = appConstant.getFillTemplatePath();
 
@@ -79,7 +79,7 @@ public class TemplateTableControl {
 	 * @return
 	 */
 	@RequestMapping(value = "/TemplateTable/getFillTask", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getFillTask() {
+	public String getFillTask() {
 		List<Map> templateList = DbFactory.Open(DbFactory.FORM).selectList("template.getTemplateList");
 		
 		return JSON.toJSONString(templateList);
@@ -91,7 +91,7 @@ public class TemplateTableControl {
 	 */
 
 	@RequestMapping("/TemplateTable/upload/{userCode}")
-	public @ResponseBody String upload(@PathVariable("userCode") String userCode,HttpServletRequest request) {
+	public String upload(@PathVariable("userCode") String userCode,HttpServletRequest request) {
 
 		try {
 			// 创建一个通用的多部分解析器

@@ -19,7 +19,7 @@ public class AppConstants {
     private String webServicePath;
     private String mongoTemplate;//mongdb元数据保存路径
     private String appFilePath;
-    private String LambdaUrl;//LambdaAddress计算地址
+    private String lambdaUrl;//LambdaAddress计算地址
     private String clientInstallFile;
     private String report2;//前端路径
 
@@ -128,11 +128,11 @@ public class AppConstants {
     }
 
     public String getLambdaUrl() {
-        return LambdaUrl;
+        return lambdaUrl;
     }
 
     public void setLambdaUrl(String lambdaUrl) {
-        LambdaUrl = lambdaUrl;
+        lambdaUrl = lambdaUrl;
     }
 
     public String getClientInstallFile() {
@@ -167,7 +167,7 @@ public class AppConstants {
                 ", webServicePath='" + webServicePath + '\'' +
                 ", mongoTemplate='" + mongoTemplate + '\'' +
                 ", appFilePath='" + appFilePath + '\'' +
-                ", LambdaUrl='" + LambdaUrl + '\'' +
+                ", lambdaUrl='" + lambdaUrl + '\'' +
                 '}';
     }
 }

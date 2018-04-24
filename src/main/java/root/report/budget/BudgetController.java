@@ -28,7 +28,7 @@ public class BudgetController {
 	@Autowired
 	private AppConstants appConstant;
 	@RequestMapping(value = "/getBudgetDetail", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getBudgetClass(@RequestBody JSONObject pJson) {
+	public String getBudgetClass(@RequestBody JSONObject pJson) {
 		StringBuilder sb = new StringBuilder();
 		Map<String,Object> tableMap = new HashMap<String,Object>();
 		String tableName = "budget_account_temp_"+sp.format(new Date());
@@ -127,7 +127,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value = "/getNetWorkFee", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getNetWorFee(@RequestBody JSONObject pJson) {
+	public String getNetWorFee(@RequestBody JSONObject pJson) {
 		StringBuilder sb = new StringBuilder();
 		Map<String,Object> param = new HashMap<String,Object>();
 		param.put("budget_year", pJson.getIntValue("budget_year"));
@@ -194,7 +194,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value = "/exportBudgetDetail", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String exportBudgetDetail(@RequestBody JSONObject pJson) {
+	public String exportBudgetDetail(@RequestBody JSONObject pJson) {
 		Map<String,Object> tableMap = new HashMap<String,Object>();
 		String tableName = "budget_account_temp_"+sp.format(new Date());
 		tableMap.put("tableName", tableName);
@@ -232,7 +232,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value = "/exportNetWorkFee", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String exportNetWorFee(@RequestBody JSONObject pJson) {
+	public String exportNetWorFee(@RequestBody JSONObject pJson) {
 		Map<String,Object> param = new HashMap<String,Object>();
 		param.put("budget_year", pJson.getIntValue("budget_year"));
 		prepareCompanyIds(param,pJson);
@@ -368,7 +368,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value="/getCompanyAndDepartmentByPermission",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getCompanyAndDepartmentByPermission(){
+    public String getCompanyAndDepartmentByPermission(){
 		JSONObject result = new JSONObject();
         UserModel user = SysContext.getRequestUser();
         String userName = user.getUserName();
@@ -457,7 +457,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value="/getDepartmentByCompanyCode",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getDepartmentByCompanyCode(@RequestBody JSONObject pJson){
+    public String getDepartmentByCompanyCode(@RequestBody JSONObject pJson){
 		String companyCode = pJson.getString("companyCode");
 		List<Map> departmentList = new ArrayList<Map>();
 		List<Map> userDepartmentList = new ArrayList<Map>();
@@ -499,7 +499,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value="/getBudgetAccountCode",produces = "text/plain;charset=UTF-8")
-    public @ResponseBody String getBudgetAccountCode(){
+    public String getBudgetAccountCode(){
 		List<Map> authList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getBudgetAccountCode");
 		JSONArray result = new JSONArray();
 		JSONObject temp = null;
@@ -562,7 +562,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value = "/report/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
-	public @ResponseBody String getSingContractDetail(@PathVariable("namespace") String namespace,
+	public String getSingContractDetail(@PathVariable("namespace") String namespace,
 			@PathVariable("sqlid") String sqlid,@PathVariable("type") String type,@RequestBody JSONObject pJson) {
 		JSONObject obj = new JSONObject();
         obj.put("namespace", namespace);
@@ -597,7 +597,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value = "/getOrgList/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getOrgList(@PathVariable("namespace") String namespace,
+    public String getOrgList(@PathVariable("namespace") String namespace,
             @PathVariable("sqlid") String sqlid,@PathVariable("type") String type,@RequestBody JSONObject pJson) {
         JSONObject obj = new JSONObject();
         obj.put("namespace", namespace);
@@ -653,7 +653,7 @@ public class BudgetController {
 	
 	
 	@RequestMapping(value = "/getContractBudgetList/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getContractBudgetList(@PathVariable("namespace") String namespace,
+    public String getContractBudgetList(@PathVariable("namespace") String namespace,
             @PathVariable("sqlid") String sqlid,@PathVariable("type") String type,@RequestBody JSONObject pJson) {
         String userSqlPath = appConstant.getUserSqlPath() + File.separator
                 + namespace + ".xml";
@@ -699,7 +699,7 @@ public class BudgetController {
     }
 	
 	@RequestMapping(value = "/getContractPayment/{type}", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getContractPayment(@PathVariable("type") String type) {
+    public String getContractPayment(@PathVariable("type") String type) {
 		String userName = SysContext.getRequestUser().getUserName();
 		String oaDeptNo = "";//OA部门代码
 		String coSegCode = "";//公司代码
@@ -763,7 +763,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value = "/getCertified/{type}", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getCertified(@PathVariable("type") String type) {
+    public String getCertified(@PathVariable("type") String type) {
         String userName = SysContext.getRequestUser().getUserName();
         String permission="";  //当前用户人权限
         Map<String,Object> paramMap = new HashMap<String,Object>();
@@ -785,7 +785,7 @@ public class BudgetController {
     }
 	
 	@RequestMapping(value = "/getStockBudgetInfo", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String getStockBudgetInfo() throws Exception {
+    public String getStockBudgetInfo() throws Exception {
 		String userName = SysContext.getRequestUser().getUserName();//当前用户名
 		String authenticator = DESUtil.encrypt(userName.toLowerCase()+"$");//DES加密
 		String permission = "";//permission：当前用户人权限
@@ -871,7 +871,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value = "/isFinish", produces = "text/plain; charset=utf-8")
-    public @ResponseBody String isFinish(@RequestBody JSONObject pJson) {
+    public String isFinish(@RequestBody JSONObject pJson) {
 	    String falg = "false";
 	    int MONTH = pJson.getInteger("budget_month");//前台查询月份
 	    String period_name = DateUtil.getMonthAbbr(MONTH)+"-"+pJson.getString("budget_year").substring(2);
