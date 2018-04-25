@@ -2,7 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
 	<groupId>root</groupId>
 	<artifactId>reportServer</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -34,10 +33,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
@@ -52,15 +47,14 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<!-- 表示开发的时候引入，发布的时候不会加载此包 -->
-			<!--<scope>test</scope>-->
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+			<version>1.3.2</version>
 		</dependency>
-		<!-- springmvc核心包 -->
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper-spring-boot-starter</artifactId>
+			<version>1.2.5</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
 		<dependency>
@@ -74,16 +68,12 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-
-
-
 		<!-- https://mvnrepository.com/artifact/dom4j/dom4j -->
 		<dependency>
 			<groupId>dom4j</groupId>
@@ -94,19 +84,6 @@
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
 			<version>1.1.6</version>
-		</dependency>
-
-		<!-- mybatis核心包 -->
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-			<version>${mybatis.version}</version>
-		</dependency>
-		<!-- 导入dbcp的jar包，用来在applicationContext.xml中配置数据库 -->
-		<dependency>
-			<groupId>commons-dbcp</groupId>
-			<artifactId>commons-dbcp</artifactId>
-			<version>1.4</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
 		<dependency>
@@ -120,26 +97,16 @@
 			<artifactId>oracle-ojdbc</artifactId>
 			<version>11.1.0.7.0</version>
 		</dependency>
-
-		<!-- <dependency> <groupId>com.google.code.gson</groupId> <artifactId>gson</artifactId>
-			<version>2.7</version> </dependency> -->
-		<!-- https://mvnrepository.com/artifact/org.mongodb/bson -->
-		<!-- <dependency> <groupId>org.mongodb</groupId> <artifactId>mongo-java-driver</artifactId>
-			<version>3.0.3</version> </dependency> <dependency> <groupId>org.mongodb</groupId>
-			<artifactId>bson</artifactId> <version>2.3</version> </dependency> -->
-		<!--fastJson依赖 -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 			<version>1.2.16</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>7.0</version>
 		</dependency>
-
 		<!--表达式计算 -->
 		<dependency>
 			<groupId>com.googlecode.aviator</groupId>
@@ -168,19 +135,6 @@
 			<artifactId>poi-scratchpad</artifactId>
 			<version>3.16</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-		<!--<dependency>-->
-			<!--<groupId>org.slf4j</groupId>-->
-			<!--<artifactId>slf4j-api</artifactId>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>org.slf4j</groupId>-->
-			<!--<artifactId>slf4j-nop</artifactId>-->
-		<!--</dependency>-->
-
-		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
-		<!-- <dependency> <groupId>log4j</groupId> <artifactId>log4j</artifactId>
-			<version>${log4j.version}</version> </dependency> -->
 		<!-- 全局ehcache缓存 -->
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
@@ -217,44 +171,11 @@
 			<artifactId>mongo-java-driver</artifactId>
 			<version>3.0.3</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-api -->
-		<!--
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-api</artifactId>
-			<version>2.7.18</version>
-		</dependency>-->
-		<!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-frontend-jaxws -->
-		<!--<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxws</artifactId>
-			<version>3.1.10</version>
-		</dependency>-->
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-jdbc -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>4.3.10.RELEASE</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis-spring -->
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-spring</artifactId>
-			<version>1.3.1</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
-		<!--<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>4.2.2.RELEASE</version>
-			<scope>test</scope>
-		</dependency>   -->
-		<dependency>
-			<groupId>com.github.pagehelper</groupId>
-			<artifactId>pagehelper</artifactId>
-			<version>5.1.2</version>
-		</dependency>
-
 		<!-- hive jdbc
 		<dependency>
 			<groupId>org.apache.hive</groupId>

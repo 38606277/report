@@ -1,5 +1,11 @@
 package root.report.file;
 
+import org.apache.ibatis.session.SqlSession;
+import root.report.db.DbFactory;
+import root.report.util.ObjectUtil;
+import root.report.util.XxlsAbstract;
+import root.report.util.annotaion.DBColumn;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -8,14 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.session.SqlSession;
-import org.junit.Test;
-
-import root.report.db.DbFactory;
-import root.report.util.ObjectUtil;
-import root.report.util.XxlsAbstract;
-import root.report.util.annotaion.DBColumn;
 
 public class Excel2MysqlForTax extends XxlsAbstract {
 	public static class AssetTaxUploadParam{
@@ -132,7 +130,7 @@ public class Excel2MysqlForTax extends XxlsAbstract {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void test() {
 		new Thread(new Runnable(){
 			@Override

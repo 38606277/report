@@ -23,7 +23,7 @@ public class Test {
 			
 		}
 		
-		@org.junit.Test
+		//@org.junit.Test
 		public String getMd5(String str) {  
 	        String s = str;  
 	        if (s == null) {  

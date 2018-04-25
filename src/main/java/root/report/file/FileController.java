@@ -7,7 +7,6 @@ import org.apache.commons.io.FileUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -396,7 +395,7 @@ public class FileController {
 
 	// private Json JsonObject=Json.createObjectBuilder();
 
-	@Test
+	//@Test
 	public String GetFile(String filepath) throws FileNotFoundException,
 			IOException {
 		try {

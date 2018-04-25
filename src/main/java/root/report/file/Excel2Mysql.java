@@ -1,5 +1,9 @@
 package root.report.file;
 
+import org.apache.ibatis.session.SqlSession;
+import root.report.db.DbFactory;
+import root.report.util.XxlsAbstract;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -7,12 +11,6 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
-import org.apache.ibatis.session.SqlSession;
-import org.junit.Test;
-
-import root.report.db.DbFactory;
-import root.report.util.XxlsAbstract;
 
 public class Excel2Mysql extends XxlsAbstract {
 	private String dataType = "", company = "", createBy = "";
@@ -86,7 +84,7 @@ public class Excel2Mysql extends XxlsAbstract {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void test() {
 		String filePath = "D:\\文档\\201706报表开发\\导入数据库的\\CMCC_成本调整报表分列.xlsx";
 		try {
