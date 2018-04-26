@@ -19,8 +19,10 @@ public class TemplateController extends RO {
         return SuccessMsg("更新成功","");
     }
 
+
+    //查询所有模板
     @RequestMapping(value = "/List")
-    public String List(){
+    public String Get(){
         return SuccessMsg("成功","");
     }
 
