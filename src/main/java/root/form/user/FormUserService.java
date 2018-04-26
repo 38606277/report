@@ -3,10 +3,7 @@ package root.form.user;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,24 +19,25 @@ import java.util.Map;
 public class FormUserService
 {
     private static final Logger log = Logger.getLogger(FormUserService.class);
-    @Autowired
-    private UserMapper userMapper;
-
-    @RequestMapping(value = "/getUserList", produces = "text/plain; charset=utf-8")
-    public String getUserList(@RequestBody JSONArray pJson)
+    
+    @RequestMapping(value = "/getUserListTotalRows", produces = "text/plain; charset=utf-8")
+    public String getUserListTotalRows(@RequestBody String pJson)
     {
-        String userName = pJson.getJSONObject(0).getString("userName");
-        JSONObject page = null;
-        if(pJson.size()>1){
-            page = pJson.getJSONObject(1);  //分页对象
-            PageHelper.offsetPage(page.getIntValue("startIndex"), page.getIntValue("perPage"));
-        }
-        List<UserModel> userList = userMapper.getUserList(userName);
-        PageInfo<UserModel> pageInfo = new PageInfo<UserModel>(userList);
-        JSONObject result = new JSONObject();
-        result.put("totalSize",pageInfo.getTotal());
-        result.put("list",pageInfo.getList());
-        return JSON.toJSONString(result);
+        UserModel userModel = JSONObject.parseObject(pJson, UserModel.class);
+        int totalRows = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserListTotalRows", userModel);
+        return JSON.toJSONString(totalRows);
+    }
+     
+    @RequestMapping(value = "/getUserList", produces = "text/plain; charset=utf-8")
+    public String getUserList(@RequestBody String pJson)
+    {
+        JSONArray obj = (JSONArray)JSONObject.parse(pJson);
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("userName", ((JSONObject)obj.get(0)).get("userName"));
+        map.put("startIndex", ((JSONObject)obj.get(1)).get("startIndex"));
+        map.put("perPage", ((JSONObject)obj.get(1)).get("perPage"));
+        List<UserModel> userInfolist = DbFactory.Open(DbFactory.FORM).selectList("formUser.getUserList",map);
+        return JSON.toJSONString(userInfolist);
     }
     
     @RequestMapping(value = "/getErpUserList", produces = "text/plain; charset=utf-8")
@@ -63,10 +61,11 @@ public class FormUserService
         int totalRows = DbFactory.Open(DbFactory.SYSTEM).selectOne("formUser.getErpUserListTotalRows",map);
         return JSON.toJSONString(totalRows);
     }
-
     @RequestMapping(value = "/getUserInfoById", produces = "text/plain; charset=utf-8")
-    public String getUserInfoById(@RequestBody int id){
-        return JSON.toJSONString(userMapper.getUserInfoById(id));
+    public String getUserInfoById(@RequestBody int id)
+    {
+        UserModel usermodel = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserInfoById",id);
+        return JSON.toJSONString(usermodel);
     }
     
     @RequestMapping(value = "/addUser", produces = "text/plain; charset=utf-8")
