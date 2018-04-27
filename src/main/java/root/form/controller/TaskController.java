@@ -9,7 +9,6 @@ import root.report.common.RO;
 public class TaskController extends RO {
 
     //创建模板任务
-    @RequestMapping(value = "/getTask/{templateID}")
     public String CreateTask() {
 
         //写任务表
@@ -21,14 +20,12 @@ public class TaskController extends RO {
     }
 
     //修改模板任务
-    @RequestMapping(value = "/getTask/{templateID}")
     public String UpdateTask() {
 
         return SuccessMsg("", "");
     }
 
     //修改模板任务
-    @RequestMapping(value = "/getTask/{templateID}")
     public String DeleteTask() {
 
         return SuccessMsg("", "");
@@ -52,14 +49,12 @@ public class TaskController extends RO {
 
 
     //获取待办任务
-    @RequestMapping(value = "/getTask/{UserID}")
     public String GetUnTask() {
 
         return SuccessMsg("", "");
     }
 
     //提交任务
-    @RequestMapping(value = "/getTask/{UserID}")
     public String CommitTask() {
 
         return SuccessMsg("", "");
