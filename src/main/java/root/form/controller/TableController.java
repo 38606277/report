@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import root.report.common.RO;
 
 @RestController
+@RequestMapping(value = "/Table")
 public class TableController extends RO {
 
 
@@ -42,8 +43,7 @@ public class TableController extends RO {
     public String SaveData() {
 
 
-
-        return  SuccessMsg("","");
+        return SuccessMsg("", "");
     }
 
 
