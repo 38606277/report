@@ -53,7 +53,8 @@ public class SqlControl extends RO{
 	public static final String headModel = "-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd";
 	@Autowired
     private DbManager manager;
-	
+    @Autowired
+    private SelectControl selectControl;
 //	// 直接执行用户传入SQL
 //	/**
 //	 * id 唯一标识
@@ -630,7 +631,8 @@ public class SqlControl extends RO{
             JSONObject newObj = new JSONObject();
             newObj.put("namespace", namespace);
             newObj.put("sqlid", sqlId);
-            JSONObject selectObj = JSONObject.parseObject(new SelectControl().qrySelectSqlDetail(newObj.toJSONString()));
+
+            JSONObject selectObj = JSONObject.parseObject(selectControl.qrySelectSqlDetail(newObj.toJSONString()));
             DbFactory.init(selectObj.getJSONObject("comment").getString("db"));
             
             //删除该节点

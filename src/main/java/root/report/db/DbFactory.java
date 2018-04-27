@@ -185,7 +185,7 @@ public class DbFactory {
     	List<Resource> resources = new ArrayList<Resource>();
     	for (String location:locations){
     	    if(location.contains("jar!")){
-    	        location = location.substring(6);//去掉修饰符"file:/"
+    	        location = location.substring(5);//去掉修饰符"file:"
                 String jarPath = location.split("!")[0];
                 String jarInnerPath = location.substring(location.indexOf("!")+2).replaceAll("!","");
                 JarFile jarFile = new JarFile(new File(jarPath));
