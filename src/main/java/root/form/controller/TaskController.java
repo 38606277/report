@@ -9,21 +9,21 @@ import root.report.common.RO;
 public class TaskController extends RO {
 
     //创建模板任务
-    @RequestMapping(value = "/getTask/{templateID}")
+    @RequestMapping(value = "/createTask/{templateID}")
     public  String CreateTask(){
 
         return  SuccessMsg("","");
     }
 
     //修改模板任务
-    @RequestMapping(value = "/getTask/{templateID}")
+    @RequestMapping(value = "/updateTask/{templateID}")
     public  String UpdateTask(){
 
         return  SuccessMsg("","");
     }
 
     //修改模板任务
-    @RequestMapping(value = "/getTask/{templateID}")
+    @RequestMapping(value = "/deleteTask/{templateID}")
     public  String DeleteTask(){
 
         return  SuccessMsg("","");

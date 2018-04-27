@@ -9,14 +9,14 @@ public class TaskUserController  extends RO {
 
 
     //创建的用户
-    @RequestMapping(value = "getTaskUser/{teplateID}/{userID}")
+    @RequestMapping(value = "createTaskUser/{teplateID}/{userID}")
     public  String CreateTaskUser(){
 
         return  SuccessMsg("","");
     }
 
     //删除任务下的用户
-    @RequestMapping(value = "getTaskUser/{teplateID}/{userID}")
+    @RequestMapping(value = "deleteTaskUser/{teplateID}/{userID}")
     public  String DeleteTaskUser(){
 
         return  SuccessMsg("","");

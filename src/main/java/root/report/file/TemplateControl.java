@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import root.configure.AppConstants;
+import root.configure.WebApplicationContext;
 import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.query.SelectControl;
@@ -258,7 +259,8 @@ public class TemplateControl extends RO {
         JSONObject obj = new JSONObject();
         obj.put("namespace", arr[0]);
         obj.put("sqlid", arr[1]);
-        String qrySelectSqlDetail = new SelectControl().qrySelectSqlDetail(obj.toJSONString());
+		SelectControl selectControl = WebApplicationContext.getBean(SelectControl.class);
+        String qrySelectSqlDetail = selectControl.qrySelectSqlDetail(obj.toJSONString());
         JSONObject commentObj = JSON.parseObject(qrySelectSqlDetail).getJSONObject("comment");
         JSONArray param = null;
         if("in".equals(type))

@@ -27,6 +27,8 @@ public class BudgetController {
 	private SimpleDateFormat sp = new SimpleDateFormat("yyMMddHH24mmss");
 	@Autowired
 	private AppConstants appConstant;
+	@Autowired
+	private SelectControl selectControl;
 	@RequestMapping(value = "/getBudgetDetail", produces = "text/plain; charset=utf-8")
 	public String getBudgetClass(@RequestBody JSONObject pJson) {
 		StringBuilder sb = new StringBuilder();
@@ -568,7 +570,6 @@ public class BudgetController {
         obj.put("namespace", namespace);
         obj.put("sqlid", sqlid);
         //获取sql查询所需的数据库
-        SelectControl selectControl = new SelectControl();
         JSONObject sqlObj = JSON.parseObject(selectControl.qrySelectSqlDetail(obj.toJSONString()));
         JSONObject commentObj = sqlObj.getJSONObject("comment");
         String db = commentObj.getString("db");
@@ -603,7 +604,6 @@ public class BudgetController {
         obj.put("namespace", namespace);
         obj.put("sqlid", sqlid);
         //获取sql查询所需的数据库
-        SelectControl selectControl = new SelectControl();
         JSONObject sqlObj = JSON.parseObject(selectControl.qrySelectSqlDetail(obj.toJSONString()));
         JSONObject commentObj = sqlObj.getJSONObject("comment");
         String db = commentObj.getString("db");
@@ -661,7 +661,6 @@ public class BudgetController {
         obj.put("namespace", namespace);
         obj.put("sqlid", sqlid);
         //获取sql查询所需的数据库
-        SelectControl selectControl = new SelectControl();
         JSONObject sqlObj = JSON.parseObject(selectControl.qrySelectSqlDetail(obj.toJSONString()));
         JSONObject commentObj = sqlObj.getJSONObject("comment");
         String db = commentObj.getString("db");

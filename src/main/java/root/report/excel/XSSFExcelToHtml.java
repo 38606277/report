@@ -11,6 +11,7 @@ import org.apache.poi.xssf.usermodel.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import root.configure.WebApplicationContext;
 import root.report.excel.customize.XssfExcelToHtmlConverter;
 import root.report.excel.customize.XssfExcelToHtmlUtils;
 import root.report.file.ReportPackage;
@@ -406,7 +407,8 @@ public class XSSFExcelToHtml
         JSONObject obj = new JSONObject();
         obj.put("namespace", namespace);
         obj.put("sqlid", sqlid);
-        String qrySelectSqlDetail = new SelectControl().qrySelectSqlDetail(obj.toJSONString());
+        SelectControl selectControl = WebApplicationContext.getBean(SelectControl.class);
+        String qrySelectSqlDetail = selectControl.qrySelectSqlDetail(obj.toJSONString());
         JSONObject commentObj = JSON.parseObject(qrySelectSqlDetail).getJSONObject("comment");
         JSONArray inArr = commentObj.getJSONArray("in");
         for (int i = 0; i < inArr.size(); i++)
@@ -538,7 +540,8 @@ public class XSSFExcelToHtml
         JSONObject obj = new JSONObject();
         obj.put("namespace", arr[0]);
         obj.put("sqlid", arr[1]);
-        String qrySelectSqlDetail = new SelectControl().qrySelectSqlDetail(obj.toJSONString());
+        SelectControl selectControl = WebApplicationContext.getBean(SelectControl.class);
+        String qrySelectSqlDetail = selectControl.qrySelectSqlDetail(obj.toJSONString());
         JSONObject commentObj = JSON.parseObject(qrySelectSqlDetail).getJSONObject("comment");
         JSONArray param = null;
         if("in".equals(type))
@@ -577,7 +580,8 @@ public class XSSFExcelToHtml
         JSONObject obj = new JSONObject();
         obj.put("namespace", namespace);
         obj.put("sqlid", sqlid);
-        String qrySelectSqlDetail = new SelectControl().qrySelectSqlDetail(obj.toJSONString());
+        SelectControl selectControl = WebApplicationContext.getBean(SelectControl.class);
+        String qrySelectSqlDetail = selectControl.qrySelectSqlDetail(obj.toJSONString());
         JSONObject commentObj = JSON.parseObject(qrySelectSqlDetail).getJSONObject("comment");
         return commentObj.getString("db");
     }
