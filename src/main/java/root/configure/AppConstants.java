@@ -168,6 +168,8 @@ public class AppConstants {
                 ", mongoTemplate='" + mongoTemplate + '\'' +
                 ", appFilePath='" + appFilePath + '\'' +
                 ", lambdaUrl='" + lambdaUrl + '\'' +
+                ", clientInstallFile='" + clientInstallFile + '\'' +
+                ", report2='" + report2 + '\'' +
                 '}';
     }
 }

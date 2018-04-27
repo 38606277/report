@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import root.report.common.RO;
 
 @RestController
-@RequestMapping(value = "/Table")
+@RequestMapping(value = "/reportServer/Table")
 public class TableController extends RO {
 
 

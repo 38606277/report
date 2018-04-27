@@ -25,118 +25,121 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class DbFactory {
-	private static final Logger log = Logger.getLogger(DbManager.class);
+    private static final Logger log = Logger.getLogger(DbManager.class);
     public static final String SYSTEM = "system";
     public static final String FORM = "form";
     public static final String BUDGET = "budget";
-    private static Map<String,SqlSessionFactory> mapFactory = new HashMap<String,SqlSessionFactory>();
-    private static Map<String,ThreadLocal<SqlSession>> map = new HashMap<String,ThreadLocal<SqlSession>>();
+    private static Map<String, SqlSessionFactory> mapFactory = new HashMap<String, SqlSessionFactory>();
+    private static Map<String, ThreadLocal<SqlSession>> map = new HashMap<String, ThreadLocal<SqlSession>>();
     private static ErpUtil erpUtil = null;
     private static DbManager manager = new DbManager();
 
-    static{
+    static {
         erpUtil = new ErpUtil();
         JSONArray dbs = JSON.parseArray(manager.getAllDBConnections());
         JSONObject obj = null;
-        for (int i = 0; i < dbs.size(); i++){
+        for (int i = 0; i < dbs.size(); i++) {
             obj = dbs.getJSONObject(i);
             String dbtype = obj.getString("dbtype");
-            if(!"Mysql".equals(dbtype)&&!"Oracle".equals(dbtype)&&!"DB2".equals(dbtype)){
+            if (!"Mysql".equals(dbtype) && !"Oracle".equals(dbtype) && !"DB2".equals(dbtype)) {
                 continue;
             }
             DbFactory.initializeDB(obj.getString("name"));
         }
     }
+
+    private String jarPath;
+
     // 初始化
-    public static void init(String dbName){
-    	long t1 = System.nanoTime();
-    	try{
-	    	JSONObject dbJson = JSONObject.parseObject(manager.getDBConnectionByName(dbName));
-	    	if(dbJson.size()==0){
-	    		return;
-	    	}
-	    	String dbtype = dbJson.getString("dbtype");
-	    	if(!"Mysql".equals(dbtype)&&!"Oracle".equals(dbtype)&&!"DB2".equals(dbtype)){
-	            return;
-	        }
-	    	SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
-	    	DruidDataSource dataSource = new DruidDataSource();
-	    	dataSource.setUsername(dbJson.getString("username"));
-	        dataSource.setPassword(erpUtil.decode(dbJson.getString("password")));
-	    	dataSource.setDriverClassName(dbJson.getString("driver"));
-	    	if("Mysql".equals(dbtype)){
-	    		dataSource.setUrl(dbJson.getString("url")+"?serverTimezone=UTC&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");	
-	    	}
-	    	else{
-	    		dataSource.setUrl(dbJson.getString("url"));
-	    	}
-	    	dataSource.setMaxWait(10000);//设置连接超时时间10秒
-	        dataSource.setMaxActive(Integer.valueOf(dbJson.getString("maxPoolSize")));
-	        dataSource.setInitialSize(Integer.valueOf(dbJson.getString("minPoolSize")));
-	        dataSource.setTimeBetweenEvictionRunsMillis(60000);//检测数据源空连接间隔时间
-	        dataSource.setMinEvictableIdleTimeMillis(300000);//连接空闲时间
-	        dataSource.setTestWhileIdle(true);
-	        dataSource.setTestOnBorrow(true);
-	        if("Oracle".equals(dbtype)){
-	        	dataSource.setPoolPreparedStatements(true);
-	        }
-	        if("DB2".equals(dbtype)){
-	        	dataSource.setValidationQuery("select 'x' from sysibm.sysdummy1");
-            }else{
-            	dataSource.setValidationQuery("select 'x' from dual");
+    public static void init(String dbName) {
+        long t1 = System.nanoTime();
+        try {
+            JSONObject dbJson = JSONObject.parseObject(manager.getDBConnectionByName(dbName));
+            if (dbJson.size() == 0) {
+                return;
             }
-	        dataSource.setFilters("stat");
+            String dbtype = dbJson.getString("dbtype");
+            if (!"Mysql".equals(dbtype) && !"Oracle".equals(dbtype) && !"DB2".equals(dbtype)) {
+                return;
+            }
+            SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+            DruidDataSource dataSource = new DruidDataSource();
+            dataSource.setUsername(dbJson.getString("username"));
+            dataSource.setPassword(erpUtil.decode(dbJson.getString("password")));
+            dataSource.setDriverClassName(dbJson.getString("driver"));
+            if ("Mysql".equals(dbtype)) {
+                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=UTC&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
+            } else {
+                dataSource.setUrl(dbJson.getString("url"));
+            }
+            dataSource.setMaxWait(10000);//设置连接超时时间10秒
+            dataSource.setMaxActive(Integer.valueOf(dbJson.getString("maxPoolSize")));
+            dataSource.setInitialSize(Integer.valueOf(dbJson.getString("minPoolSize")));
+            dataSource.setTimeBetweenEvictionRunsMillis(60000);//检测数据源空连接间隔时间
+            dataSource.setMinEvictableIdleTimeMillis(300000);//连接空闲时间
+            dataSource.setTestWhileIdle(true);
+            dataSource.setTestOnBorrow(true);
+            if ("Oracle".equals(dbtype)) {
+                dataSource.setPoolPreparedStatements(true);
+            }
+            if ("DB2".equals(dbtype)) {
+                dataSource.setValidationQuery("select 'x' from sysibm.sysdummy1");
+            } else {
+                dataSource.setValidationQuery("select 'x' from dual");
+            }
+            dataSource.setFilters("stat");
 //	        List<Filter> filters = new ArrayList<Filter>();
 //	        filters.add(new SqlFilter());
 //	        dataSource.setProxyFilters(filters);
-	        dataSource.init();
-	        //填充数据源
-	        factoryBean.setDataSource(dataSource);
-	        //填充SQL文件
-	        factoryBean.setMapperLocations(getMapLocations(dbtype,dbName));
-	        Configuration configuration = new Configuration();
-	        configuration.setCallSettersOnNulls(true);
-	        //启动SQL日志
-	        configuration.setLogImpl(Log4jImpl.class);
-	        factoryBean.setConfiguration(configuration);
-	        factoryBean.setPlugins(getMybatisPlugins(dbtype));
-	        mapFactory.put(dbJson.getString("name"), factoryBean.getObject());
-	        long t2 = System.nanoTime();
-	        log.info("初始化数据库【"+dbName+"】耗时"+ String.format("%.4fs", (t2 - t1) * 1e-9));
-    	}catch(Exception e){
-    		log.error("初始化数据库【"+dbName+"】失败!");
-    		e.printStackTrace();
-    	}
+            dataSource.init();
+            //填充数据源
+            factoryBean.setDataSource(dataSource);
+            //填充SQL文件
+            factoryBean.setMapperLocations(getMapLocations(dbtype, dbName));
+            Configuration configuration = new Configuration();
+            configuration.setCallSettersOnNulls(true);
+            //启动SQL日志
+            configuration.setLogImpl(Log4jImpl.class);
+            factoryBean.setConfiguration(configuration);
+            factoryBean.setPlugins(getMybatisPlugins(dbtype));
+            mapFactory.put(dbJson.getString("name"), factoryBean.getObject());
+            long t2 = System.nanoTime();
+            log.info("初始化数据库【" + dbName + "】耗时" + String.format("%.4fs", (t2 - t1) * 1e-9));
+        } catch (Exception e) {
+            log.error("初始化数据库【" + dbName + "】失败!");
+            e.printStackTrace();
+        }
     }
+
     public static SqlSession Open(String dbName) {
         return Open(true, dbName);
     }
 
     // 获取一个session
-    public static SqlSession Open(boolean autoCommit, String dbName){
+    public static SqlSession Open(boolean autoCommit, String dbName) {
         ThreadLocal<SqlSession> mybatisTl = map.get(dbName);
-        if(mybatisTl==null){
+        if (mybatisTl == null) {
             SqlSessionFactory factory = mapFactory.get(dbName);
-            if(factory==null){
+            if (factory == null) {
                 init(dbName);
             }
             mybatisTl = new ThreadLocal<SqlSession>();
             mybatisTl.set(mapFactory.get(dbName).openSession(autoCommit));
             map.put(dbName, mybatisTl);
-        }else{
-            if(mybatisTl.get()==null){
+        } else {
+            if (mybatisTl.get() == null) {
                 mybatisTl.set(mapFactory.get(dbName).openSession(autoCommit));
             }
         }
-        
+
         return mybatisTl.get();
     }
 
     // 关闭session
     public static void close(String dbName) {
         ThreadLocal<SqlSession> mybatisTl = map.get(dbName);
-        if(mybatisTl!=null){
-            SqlSession session =  mybatisTl.get();
+        if (mybatisTl != null) {
+            SqlSession session = mybatisTl.get();
             if (session != null) {
                 session.close();
                 mybatisTl.set(null);
@@ -147,59 +150,57 @@ public class DbFactory {
     // 回滚
     public static void rollback(String dbName) {
         ThreadLocal<SqlSession> mybatisTl = map.get(dbName);
-        if(mybatisTl!=null){
+        if (mybatisTl != null) {
             SqlSession session = mybatisTl.get();
             if (session != null) {
                 session.rollback();
-            } 
+            }
         }
     }
 
     // 提交
     public static void commit(String dbName) {
         ThreadLocal<SqlSession> mybatisTl = map.get(dbName);
-        if(mybatisTl!=null){
+        if (mybatisTl != null) {
             SqlSession session = mybatisTl.get();
             if (session != null) {
                 session.commit();
             }
         }
     }
-    
-    private static Resource[] getMapLocations(String dbType,String dbName) throws Exception{
-    	String[] locations = new String[3];
-    	if(DbFactory.SYSTEM.equals(dbName)){
+
+    private static Resource[] getMapLocations(String dbType, String dbName) throws Exception {
+        String[] locations = new String[3];
+        if (DbFactory.SYSTEM.equals(dbName)) {
             locations = new String[4];
             locations[3] = DbFactory.class.getClassLoader().getResource("oracleSql").getPath();
-        }else if(DbFactory.FORM.equals(dbName)){
+        } else if (DbFactory.FORM.equals(dbName)) {
             locations = new String[4];
             locations[3] = DbFactory.class.getClassLoader().getResource("mySqlSql").getPath();
-        }else if(DbFactory.BUDGET.equals(dbName)){
-    		locations = new String[4];
-    		locations[3] = DbFactory.class.getClassLoader().getResource("db2Sql").getPath();
-    	}
+        } else if (DbFactory.BUDGET.equals(dbName)) {
+            locations = new String[4];
+            locations[3] = DbFactory.class.getClassLoader().getResource("db2Sql").getPath();
+        }
         AppConstants appConstants = WebApplicationContext.getBean(AppConstants.class);
         locations[0] = appConstants.getUserSqlPath();
         locations[1] = appConstants.getUserFunctionPath();
         locations[2] = appConstants.getUserDictionaryPath();
-    	List<Resource> resources = new ArrayList<Resource>();
-    	for (String location:locations){
-    	    if(location.contains("jar!")){
-                //System.out.println(location);
-    	        location = location.substring(5);//去掉修饰符"file:/"
-
+        List<Resource> resources = new ArrayList<Resource>();
+        for (String location : locations) {
+            if (location.contains("jar!")) {
+                location = location.substring(5);//去掉修饰符"file:"
                 String jarPath = location.split("!")[0];
-                String jarInnerPath = location.substring(location.indexOf("!")+2).replaceAll("!","");
+                String jarInnerPath = location.substring(location.indexOf("!") + 2).replaceAll("!", "");
                 JarFile jarFile = new JarFile(new File(jarPath));
                 Enumeration<JarEntry> entries = jarFile.entries();
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
                     String entryName = entry.getName();
-                    if (!entry.isDirectory()&&entryName.contains(jarInnerPath)&&entryName.endsWith(".xml")) {
-                        resources.add(new SqlResource(jarPath,entryName));
+                    if (!entry.isDirectory() && entryName.contains(jarInnerPath) && entryName.endsWith(".xml")) {
+                        resources.add(new SqlResource(jarPath, entryName));
                     }
                 }
-            }else {
+            } else {
                 File[] fileList = new File(location).listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
@@ -213,29 +214,29 @@ public class DbFactory {
                     resources.add(new FileSystemResource(fileList[i]));
                 }
             }
-		}
-    	Resource[] a = new Resource[resources.size()];
-    	return resources.toArray(a);
+        }
+        Resource[] a = new Resource[resources.size()];
+        return resources.toArray(a);
     }
-    
-    private static Interceptor[] getMybatisPlugins(String dbType){
-    	Interceptor[] ins = new Interceptor[1];
-    	PageInterceptor pageInceptor = new PageInterceptor();
-    	Properties pro = new Properties();
-    	if("Oracle".equals(dbType)){
-    		pro.setProperty("helperDialect", "oracle");
-    	}else if("Mysql".equals(dbType)){
-    		pro.setProperty("helperDialect", "mysql");
-    	}else if("DB2".equals(dbType)){
-    		pro.setProperty("helperDialect", "db2");
-    	}
-    	pro.setProperty("rowBoundsWithCount", "true");
-    	pageInceptor.setProperties(pro);
-    	ins[0] = pageInceptor;
-    	return ins;
+
+    private static Interceptor[] getMybatisPlugins(String dbType) {
+        Interceptor[] ins = new Interceptor[1];
+        PageInterceptor pageInceptor = new PageInterceptor();
+        Properties pro = new Properties();
+        if ("Oracle".equals(dbType)) {
+            pro.setProperty("helperDialect", "oracle");
+        } else if ("Mysql".equals(dbType)) {
+            pro.setProperty("helperDialect", "mysql");
+        } else if ("DB2".equals(dbType)) {
+            pro.setProperty("helperDialect", "db2");
+        }
+        pro.setProperty("rowBoundsWithCount", "true");
+        pageInceptor.setProperties(pro);
+        ins[0] = pageInceptor;
+        return ins;
     }
-    
-    public static void initializeDB(String dbName){
+
+    public static void initializeDB(String dbName) {
         map.remove(dbName);
         mapFactory.remove(dbName);
         init(dbName);

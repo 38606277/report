@@ -43,7 +43,7 @@ public class AuthTypecontroller extends RO {
                 Map<String, Object> retMap = new LinkedHashMap<String, Object>(cc);
                 list.add(retMap);
                 for (int i = 1; i <= cc; i++) {
-                    retMap.put(rsmd.getColumnLabel(i), set.getObject(i));
+                    retMap.put(rsmd.getColumnLabel(i).toLowerCase(), set.getObject(i));
                 }
             }
             return SuccessMsg("查询成功", list);
@@ -106,7 +106,7 @@ public class AuthTypecontroller extends RO {
             param.put("authName", obj.getString("auth_name"));
             param.put("authSql", obj.getString("auth_sql"));
             Map authType = DbFactory.Open(DbFactory.FORM).selectOne("authType.getAuthTypeByName",obj.getString("authtype_name"));
-            if(authType!=null&&authType.get("authtype_id")!=obj.getString("authtype_id")){
+            if(authType!=null&&!authType.get("authtype_id").toString().equals(obj.getString("authtype_id").toString())){
                 return ErrorMsg("3000", "权限类型名称重复");
             }
             int num = DbFactory.Open(DbFactory.FORM).update("authType.updateAuthType",param);
