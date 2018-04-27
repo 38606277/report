@@ -9,34 +9,55 @@ import root.report.common.RO;
 public class TaskController extends RO {
 
     //创建模板任务
-    @RequestMapping(value = "/createTask/{templateID}")
-    public  String CreateTask(){
+    public String CreateTask() {
 
-        return  SuccessMsg("","");
+        //写任务表
+
+        //写任务用户表，处理事务
+
+
+        return SuccessMsg("", "");
     }
 
     //修改模板任务
-    @RequestMapping(value = "/updateTask/{templateID}")
-    public  String UpdateTask(){
+    public String UpdateTask() {
 
-        return  SuccessMsg("","");
+        return SuccessMsg("", "");
     }
 
     //修改模板任务
-    @RequestMapping(value = "/deleteTask/{templateID}")
-    public  String DeleteTask(){
+    public String DeleteTask() {
 
-        return  SuccessMsg("","");
+        return SuccessMsg("", "");
     }
+
+
+    //修改模板任务
+    @RequestMapping(value = "/UpdateTaskState/{templateID}")
+    public String UpdateTaskState() {
+
+        return SuccessMsg("", "");
+    }
+
 
     //获取当前模板下的任务
     @RequestMapping(value = "/getTask/{templateID}")
-    public  String GetTask(){
+    public String GetTask() {
 
-        return  SuccessMsg("","");
+        return SuccessMsg("", "");
     }
 
 
+    //获取待办任务
+    public String GetUnTask() {
 
+        return SuccessMsg("", "");
+    }
+
+    //提交任务
+    public String CommitTask() {
+
+        return SuccessMsg("", "");
+    }
 
 }

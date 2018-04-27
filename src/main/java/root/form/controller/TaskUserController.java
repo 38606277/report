@@ -5,28 +5,25 @@ import org.springframework.web.bind.annotation.RestController;
 import root.report.common.RO;
 
 @RestController
-public class TaskUserController  extends RO {
+public class TaskUserController extends RO {
 
 
     //创建的用户
-    @RequestMapping(value = "createTaskUser/{teplateID}/{userID}")
-    public  String CreateTaskUser(){
+    public String CreateTaskUser() {
 
-        return  SuccessMsg("","");
+        return SuccessMsg("", "");
     }
 
     //删除任务下的用户
-    @RequestMapping(value = "deleteTaskUser/{teplateID}/{userID}")
-    public  String DeleteTaskUser(){
+    public String DeleteTaskUser() {
 
-        return  SuccessMsg("","");
+        return SuccessMsg("", "");
     }
 
     //获取当前任务下的用户
-    @RequestMapping(value = "getTaskUser/{teplateID}/{userID}")
-    public  String GetTaskUser(){
+    public String GetTaskUser() {
 
-        return  SuccessMsg("","");
+        return SuccessMsg("", "");
     }
 
 
