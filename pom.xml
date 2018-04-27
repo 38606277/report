@@ -176,6 +176,13 @@
 			<artifactId>spring-jdbc</artifactId>
 			<version>4.3.10.RELEASE</version>
 		</dependency>
+		<dependency>
+			<groupId>com.ibm</groupId>
+			<artifactId>db2jcc4</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/db2jcc4-1.0.0.jar</systemPath>
+		</dependency>
 		<!-- hive jdbc
 		<dependency>
 			<groupId>org.apache.hive</groupId>
@@ -208,7 +215,20 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/lib</directory>
+                <targetPath>BOOT-INF/lib/</targetPath>
+                <includes>
+                    <include>**/*.jar</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>BOOT-INF/classes/</targetPath>
+            </resource>
+        </resources>
+    </build>
 
 
 </project>

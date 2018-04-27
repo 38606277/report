@@ -12,6 +12,7 @@ import org.dom4j.DocumentHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import root.configure.WebApplicationContext;
 import root.report.excel.customize.XssfExcelToHtmlConverter;
 import root.report.excel.customize.XssfExcelToHtmlUtils;
 import root.report.file.ReportPackage;
@@ -461,7 +462,8 @@ public class XSSFExcelToHtml2
         JSONObject obj = new JSONObject();
         obj.put("namespace", namespace);
         obj.put("sqlid", sqlid);
-        String qrySelectSqlDetail = new SelectControl().qrySelectSqlDetail(obj.toJSONString());
+        SelectControl selectControl = WebApplicationContext.getBean(SelectControl.class);
+        String qrySelectSqlDetail = selectControl.qrySelectSqlDetail(obj.toJSONString());
         JSONObject commentObj = JSON.parseObject(qrySelectSqlDetail).getJSONObject("comment");
         JSONArray inArr = commentObj.getJSONArray("in");
         for (int i = 0; i < inArr.size(); i++){
@@ -575,7 +577,8 @@ public class XSSFExcelToHtml2
         obj.put("sqlid", arr[1]);
         String qrySelectSqlDetail = null;
 		if(sqlType.equals("query")){
-			qrySelectSqlDetail = new SelectControl().qrySelectSqlDetail(obj.toJSONString());
+            SelectControl selectControl = WebApplicationContext.getBean(SelectControl.class);
+			qrySelectSqlDetail = selectControl.qrySelectSqlDetail(obj.toJSONString());
 		}else if(sqlType.equals("dictionary")){
 			qrySelectSqlDetail = new DictionaryControl().qryDictionaryDetail(obj.toJSONString());
 		}
@@ -611,7 +614,8 @@ public class XSSFExcelToHtml2
         JSONObject obj = new JSONObject();
         obj.put("namespace", namespace);
         obj.put("sqlid", sqlid);
-        String qrySelectSqlDetail = new SelectControl().qrySelectSqlDetail(obj.toJSONString());
+        SelectControl selectControl = WebApplicationContext.getBean(SelectControl.class);
+        String qrySelectSqlDetail = selectControl.qrySelectSqlDetail(obj.toJSONString());
         JSONObject commentObj = JSON.parseObject(qrySelectSqlDetail).getJSONObject("comment");
         return commentObj.getString("db");
     }

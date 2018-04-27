@@ -21,6 +21,8 @@ import root.report.util.ErpUtil;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class DbFactory {
 	private static final Logger log = Logger.getLogger(DbManager.class);
@@ -164,7 +166,7 @@ public class DbFactory {
         }
     }
     
-    private static Resource[] getMapLocations(String dbType,String dbName){
+    private static Resource[] getMapLocations(String dbType,String dbName) throws Exception{
     	String[] locations = new String[3];
     	if(DbFactory.SYSTEM.equals(dbName)){
             locations = new String[4];
@@ -180,21 +182,37 @@ public class DbFactory {
         locations[0] = appConstants.getUserSqlPath();
         locations[1] = appConstants.getUserFunctionPath();
         locations[2] = appConstants.getUserDictionaryPath();
-    	List<FileSystemResource> resources = new ArrayList<FileSystemResource>();
+    	List<Resource> resources = new ArrayList<Resource>();
     	for (String location:locations){
-    		File[] fileList = new File(location).listFiles(new FilenameFilter(){
-				@Override
-				public boolean accept(File dir, String name) {
-					if (name.endsWith(".xml")) {
-						return true;
-					}
-					return false;
-				}});
-    		for(int i = 0;fileList!=null&&i<fileList.length;i++){
-    			resources.add(new FileSystemResource(fileList[i])); 
-    		}
+    	    if(location.contains("jar!")){
+    	        location = location.substring(6);//去掉修饰符"file:/"
+                String jarPath = location.split("!")[0];
+                String jarInnerPath = location.substring(location.indexOf("!")+2).replaceAll("!","");
+                JarFile jarFile = new JarFile(new File(jarPath));
+                Enumeration<JarEntry> entries = jarFile.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    String entryName = entry.getName();
+                    if (!entry.isDirectory()&&entryName.contains(jarInnerPath)&&entryName.endsWith(".xml")) {
+                        resources.add(new SqlResource(jarPath,entryName));
+                    }
+                }
+            }else {
+                File[] fileList = new File(location).listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        if (name.endsWith(".xml")) {
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+                for (int i = 0; fileList != null && i < fileList.length; i++) {
+                    resources.add(new FileSystemResource(fileList[i]));
+                }
+            }
 		}
-    	FileSystemResource[] a = new FileSystemResource[resources.size()];
+    	Resource[] a = new Resource[resources.size()];
     	return resources.toArray(a);
     }
     
