@@ -23,12 +23,19 @@
       <name>form</name>
       <dbtype>Mysql</dbtype>
       <driver>com.mysql.cj.jdbc.Driver</driver>
-      <!-- <url>jdbc:mysql://114.251.247.113:3306/report</url> -->
       <url>jdbc:mysql://127.0.0.1:3306/form</url>
-      <!-- <url>jdbc:mysql://10.19.110.170:3306/form</url> -->
-      <!-- <url>jdbc:mysql://172.25.105.113:3306/form</url> -->
       <username>root</username>
       <password>v600KuCLNBc=</password>
+      <maxPoolSize>50</maxPoolSize>
+      <minPoolSize>3</minPoolSize>
+   </DB>
+   <DB>
+      <name>form1</name>
+      <dbtype>sqlite</dbtype>
+      <driver>org.sqlite.JDBC</driver>
+      <url>jdbc:sqlite:/Users/wangjian/Documents/iReport/file/db/test.sqlite</url>
+      <username></username>
+      <password></password>
       <maxPoolSize>50</maxPoolSize>
       <minPoolSize>3</minPoolSize>
    </DB>
@@ -55,8 +62,5 @@
        <maxPoolSize></maxPoolSize>
        <minPoolSize></minPoolSize>
    </DB> -->
-   <!-- <DB> <name>预算服务器</name> <driver>com.ibm.db2.jcc.DB2Driver</driver>
-       <dbtype>DB2</dbtype> <url>jdbc:db2://139.129.30.106:50001/tbmdbeb</url> <username>tbmprd</username>
-       <password>PyLaXmDHgI8=</password> <maxPoolSize>50</maxPoolSize> <minPoolSize>3</minPoolSize>
-       </DB> -->
+
 </DBConnection>
