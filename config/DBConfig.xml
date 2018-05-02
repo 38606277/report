@@ -29,16 +29,16 @@
       <maxPoolSize>50</maxPoolSize>
       <minPoolSize>3</minPoolSize>
    </DB>
-   <DB>
-      <name>form1</name>
-      <dbtype>sqlite</dbtype>
-      <driver>org.sqlite.JDBC</driver>
-      <url>jdbc:sqlite:/Users/wangjian/Documents/iReport/file/db/test.sqlite</url>
-      <username></username>
-      <password></password>
-      <maxPoolSize>50</maxPoolSize>
-      <minPoolSize>3</minPoolSize>
-   </DB>
+   <!--<DB>-->
+      <!--<name>form</name>-->
+      <!--<dbtype>Mysql</dbtype>-->
+      <!--<driver>org.sqlite.JDBC</driver>-->
+      <!--<url>jdbc:sqlite:/Users/wangjian/Documents/iReport/file/db/test.sqlite;Version=3;</url>-->
+      <!--<username></username>-->
+      <!--<password></password>-->
+      <!--<maxPoolSize>50</maxPoolSize>-->
+      <!--<minPoolSize>3</minPoolSize>-->
+   <!--</DB>-->
    <DB>
       <name>jlerp</name>
       <dbtype>Mysql</dbtype>

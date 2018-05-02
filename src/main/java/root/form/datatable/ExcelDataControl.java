@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
 
-import javax.transaction.Transactional;
+//import javax.transaction.Transactional;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -121,7 +121,6 @@ public class ExcelDataControl {
 		return tableEntities;
 	}
 
-	@Transactional
 	@RequestMapping(value = "/ExcelData/setDataFromFormTableName", produces = "text/plain; charset=utf-8")
 	public String setDataFromFormTableName(@RequestBody String dtInfo) {
 		

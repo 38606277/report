@@ -31,22 +31,22 @@ public class DbFactory {
     public static final String BUDGET = "budget";
     private static Map<String, SqlSessionFactory> mapFactory = new HashMap<String, SqlSessionFactory>();
     private static Map<String, ThreadLocal<SqlSession>> map = new HashMap<String, ThreadLocal<SqlSession>>();
-    private static ErpUtil erpUtil = null;
+    private static ErpUtil erpUtil = new ErpUtil();
     private static DbManager manager = new DbManager();
 
-    static {
-        erpUtil = new ErpUtil();
-        JSONArray dbs = JSON.parseArray(manager.getAllDBConnections());
-        JSONObject obj = null;
-        for (int i = 0; i < dbs.size(); i++) {
-            obj = dbs.getJSONObject(i);
-            String dbtype = obj.getString("dbtype");
-            if (!"Mysql".equals(dbtype) && !"Oracle".equals(dbtype) && !"DB2".equals(dbtype)) {
-                continue;
-            }
-            DbFactory.initializeDB(obj.getString("name"));
-        }
-    }
+//    static {
+//        erpUtil = new ErpUtil();
+//        JSONArray dbs = JSON.parseArray(manager.getAllDBConnections());
+//        JSONObject obj = null;
+//        for (int i = 0; i < dbs.size(); i++) {
+//            obj = dbs.getJSONObject(i);
+//            String dbtype = obj.getString("dbtype");
+//            if (!"Mysql".equals(dbtype) && !"Oracle".equals(dbtype) && !"DB2".equals(dbtype)) {
+//                continue;
+//            }
+//            DbFactory.initializeDB(obj.getString("name"));
+//        }
+//    }
 
     private String jarPath;
 
@@ -63,6 +63,7 @@ public class DbFactory {
                 return;
             }
             SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
+
             DruidDataSource dataSource = new DruidDataSource();
             dataSource.setUsername(dbJson.getString("username"));
             dataSource.setPassword(erpUtil.decode(dbJson.getString("password")));
@@ -79,19 +80,20 @@ public class DbFactory {
             dataSource.setMinEvictableIdleTimeMillis(300000);//连接空闲时间
             dataSource.setTestWhileIdle(true);
             dataSource.setTestOnBorrow(true);
-            if ("Oracle".equals(dbtype)) {
-                dataSource.setPoolPreparedStatements(true);
-            }
-            if ("DB2".equals(dbtype)) {
-                dataSource.setValidationQuery("select 'x' from sysibm.sysdummy1");
-            } else {
-                dataSource.setValidationQuery("select 'x' from dual");
-            }
-            dataSource.setFilters("stat");
+//            if ("Oracle".equals(dbtype)) {
+//                dataSource.setPoolPreparedStatements(true);
+//            }
+//            if ("DB2".equals(dbtype)) {
+//                dataSource.setValidationQuery("select 'x' from sysibm.sysdummy1");
+//            } else {
+//                dataSource.setValidationQuery("select 'x' from dual");
+//            }
+//            dataSource.setFilters("stat");
 //	        List<Filter> filters = new ArrayList<Filter>();
 //	        filters.add(new SqlFilter());
 //	        dataSource.setProxyFilters(filters);
             dataSource.init();
+
             //填充数据源
             factoryBean.setDataSource(dataSource);
             //填充SQL文件

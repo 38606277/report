@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import root.report.db.DbFactory;
 
@@ -164,6 +165,7 @@ public class DataTableControl {
 		result.put("retMsg", retMsg);
 		return JSON.toJSONString(result);
 	}
+	@Transactional
 	@RequestMapping(value = "/DataTable/modifyDataTable", produces = "text/plain; charset=utf-8")
 	public String modifyDataTable(@RequestBody String dtInfo) throws Exception {
 		//获取新增保存参数

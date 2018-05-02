@@ -62,7 +62,7 @@
     <select id="getUserInfoByUserId" resultMap="userModel" parameterType="string">
         select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description,
                t.isAdmin,t.import,t.encrypted_user_password
-          from fnd_user t 
+          from fnd_user t
          where t.user_name=#{userCode} 
     </select>
 </mapper>
