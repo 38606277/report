@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>root</groupId>
     <artifactId>reportServer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>2</version>
     <packaging>jar</packaging>
 
     <name>reportServer</name>
-    <description>Demo project for Spring Boot</description>
+    <description>reportServer spring boot</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -237,35 +237,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <resources>
-            <resource>
-                <directory>${project.basedir}/lib</directory>
-                <targetPath>BOOT-INF/lib/</targetPath>
-                <includes>
-                    <include>**/*.jar</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <targetPath>BOOT-INF/classes/</targetPath>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/*.properties</exclude>
-                    <exclude>**/*.xml</exclude>
-                </excludes>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <filtering>false</filtering>
-            </resource>
-        </resources>
+
     </build>
 
 

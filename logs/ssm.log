@@ -1,0 +1,3 @@
+[INFO] [2018-05-03 14:42:01][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-03 14:42:01][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-03 14:42:02][root.report.db.DbManager]初始化数据库【form】耗时2.5426s
