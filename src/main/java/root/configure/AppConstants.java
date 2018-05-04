@@ -3,8 +3,11 @@ package root.configure;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
+import java.net.InetAddress;
+import java.net.URL;
+
 @Configuration
-@ConfigurationProperties(prefix = "file")
 public class AppConstants {
     private String reportPath;//文件服务路径
     private String staticReportPath;//静态报表路径
@@ -22,37 +25,34 @@ public class AppConstants {
     private String lambdaUrl;//LambdaAddress计算地址
     private String clientInstallFile;
     private String report2;//前端路径
+    private String workPath;
 
-    public String getReportPath() {
-        return reportPath;
+    public AppConstants(){
+        String path = AppConstants.class.getClassLoader().getResource("").getPath();
+        if(path.contains("jar!")){
+            workPath = path.substring(0,path.substring(0,path.indexOf("!")).lastIndexOf("/")).substring(5);
+        }else{
+            workPath = path.substring(0,path.substring(0,path.substring(0,path.lastIndexOf("/")).lastIndexOf("/")).lastIndexOf("/"));
+        }
+        if(workPath.contains(":")){
+            workPath = workPath.substring(1) + File.separator + "work";
+        }
     }
 
-    public void setReportPath(String reportPath) {
-        this.reportPath = reportPath;
+    public String getReportPath() {
+        return  workPath+"/report";
     }
 
     public String getStaticReportPath() {
-        return staticReportPath;
-    }
-
-    public void setStaticReportPath(String staticReportPath) {
-        this.staticReportPath = staticReportPath;
+        return workPath+"/webpage/staticReport";
     }
 
     public String getDynamicReportPath() {
-        return dynamicReportPath;
-    }
-
-    public void setDynamicReportPath(String dynamicReportPath) {
-        this.dynamicReportPath = dynamicReportPath;
+        return workPath+"/webpage/dynamicReport";
     }
 
     public String getExcelFilePath() {
-        return excelFilePath;
-    }
-
-    public void setExcelFilePath(String excelFilePath) {
-        this.excelFilePath = excelFilePath;
+        return workPath+"/webpage/excel";
     }
 
     public String getAppFilePath() {
@@ -64,91 +64,54 @@ public class AppConstants {
     }
 
     public String getMobileSubjectPath() {
-        return mobileSubjectPath;
-    }
-
-    public void setMobileSubjectPath(String mobileSubjectPath) {
-        this.mobileSubjectPath = mobileSubjectPath;
+        return workPath+"/webpage/mobile";
     }
 
     public String getTemplatePath() {
-        return templatePath;
-    }
-
-    public void setTemplatePath(String templatePath) {
-        this.templatePath = templatePath;
+        return workPath+"/template";
     }
 
     public String getFillTemplatePath() {
-        return fillTemplatePath;
-    }
-
-    public void setFillTemplatePath(String fillTemplatePath) {
-        this.fillTemplatePath = fillTemplatePath;
+        return workPath+"/filltemplate";
     }
 
     public String getUserSqlPath() {
-        return userSqlPath;
-    }
-
-    public void setUserSqlPath(String userSqlPath) {
-        this.userSqlPath = userSqlPath;
+        return workPath+"/dbtemplate/query";
     }
 
     public String getUserFunctionPath() {
-        return userFunctionPath;
-    }
-
-    public void setUserFunctionPath(String userFunctionPath) {
-        this.userFunctionPath = userFunctionPath;
+        return workPath+"/dbtemplate/dictionary";
     }
 
     public String getUserDictionaryPath() {
-        return userDictionaryPath;
-    }
-
-    public void setUserDictionaryPath(String userDictionaryPath) {
-        this.userDictionaryPath = userDictionaryPath;
+        return workPath+"/dbtemplate/dictionary";
     }
 
     public String getWebServicePath() {
-        return webServicePath;
-    }
-
-    public void setWebServicePath(String webServicePath) {
-        this.webServicePath = webServicePath;
+        return workPath+"/dbtemplate/webservice";
     }
 
     public String getMongoTemplate() {
-        return mongoTemplate;
+        return workPath+"/mongotemplate";
     }
 
-    public void setMongoTemplate(String mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
-
-    public String getLambdaUrl() {
-        return lambdaUrl;
-    }
-
-    public void setLambdaUrl(String lambdaUrl) {
-        lambdaUrl = lambdaUrl;
+    public String getLambdaUrl(){
+        String ip = "127.0.0.1";
+        try {
+            InetAddress addr = InetAddress.getLocalHost();
+            ip = addr.getHostAddress().toString();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return "http://"+ip+":8090/lambda";
     }
 
     public String getClientInstallFile() {
-        return clientInstallFile;
-    }
-
-    public void setClientInstallFile(String clientInstallFile) {
-        this.clientInstallFile = clientInstallFile;
+        return workPath+"/clientInstallFile";
     }
 
     public String getReport2() {
-        return report2;
-    }
-
-    public void setReport2(String report2) {
-        this.report2 = report2;
+        return workPath+"/report2/web";
     }
 
     @Override
