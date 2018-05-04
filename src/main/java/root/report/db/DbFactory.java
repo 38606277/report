@@ -34,22 +34,6 @@ public class DbFactory {
     private static ErpUtil erpUtil = new ErpUtil();
     private static DbManager manager = new DbManager();
 
-//    static {
-//        erpUtil = new ErpUtil();
-//        JSONArray dbs = JSON.parseArray(manager.getAllDBConnections());
-//        JSONObject obj = null;
-//        for (int i = 0; i < dbs.size(); i++) {
-//            obj = dbs.getJSONObject(i);
-//            String dbtype = obj.getString("dbtype");
-//            if (!"Mysql".equals(dbtype) && !"Oracle".equals(dbtype) && !"DB2".equals(dbtype)) {
-//                continue;
-//            }
-//            DbFactory.initializeDB(obj.getString("name"));
-//        }
-//    }
-
-    private String jarPath;
-
     // 初始化
     public static void init(String dbName) {
         long t1 = System.nanoTime();
