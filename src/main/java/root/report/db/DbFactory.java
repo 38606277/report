@@ -43,20 +43,21 @@ public class DbFactory {
                 return;
             }
             String dbtype = dbJson.getString("dbtype");
-            if (!"Mysql".equals(dbtype) && !"Oracle".equals(dbtype) && !"DB2".equals(dbtype)) {
-                return;
-            }
+//            if (!"Mysql".equals(dbtype) && !"Oracle".equals(dbtype) && !"DB2".equals(dbtype)) {
+//                return;
+//            }
             SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();
 
             DruidDataSource dataSource = new DruidDataSource();
             dataSource.setUsername(dbJson.getString("username"));
-            dataSource.setPassword(erpUtil.decode(dbJson.getString("password")));
+            dataSource.setPassword((erpUtil.decode(dbJson.getString("password"))));
             dataSource.setDriverClassName(dbJson.getString("driver"));
-            if ("Mysql".equals(dbtype)) {
-                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=UTC&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
-            } else {
-                dataSource.setUrl(dbJson.getString("url"));
-            }
+            dataSource.setUrl(dbJson.getString("url"));
+//            if ("Mysql".equals(dbtype)) {
+//                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=UTC&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
+//            } else {
+//                dataSource.setUrl(dbJson.getString("url"));
+//            }
             dataSource.setMaxWait(10000);//设置连接超时时间10秒
             dataSource.setMaxActive(Integer.valueOf(dbJson.getString("maxPoolSize")));
             dataSource.setInitialSize(Integer.valueOf(dbJson.getString("minPoolSize")));

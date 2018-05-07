@@ -28,15 +28,19 @@ public class AppConstants {
     private String workPath;
 
     public AppConstants(){
-        String path = AppConstants.class.getClassLoader().getResource("").getPath();
-        if(path.contains("jar!")){
-            workPath = path.substring(0,path.substring(0,path.indexOf("!")).lastIndexOf("/")).substring(5);
-        }else{
-            workPath = path.substring(0,path.substring(0,path.substring(0,path.lastIndexOf("/")).lastIndexOf("/")).lastIndexOf("/"));
-        }
-        if(workPath.contains(":")){
-            workPath = workPath.substring(1) + File.separator + "work";
-        }
+
+        File   file=new   File(System.getProperty("user.dir"));
+        workPath=file.getPath()+ File.separator + "work";
+        //path=file.getPath();
+//        String path = AppConstants.class.getClassLoader().getResource("").getPath();
+//        if(path.contains("jar!")){
+//            workPath = path.substring(0,path.substring(0,path.indexOf("!")).lastIndexOf("/")).substring(5);
+//        }else{
+//            workPath = path.substring(0,path.substring(0,path.substring(0,path.lastIndexOf("/")).lastIndexOf("/")).lastIndexOf("/"));
+//        }
+//        //if(workPath.contains(":")){
+//            workPath = workPath.substring(1) + File.separator + "work";
+//        //}
     }
 
     public String getReportPath() {
@@ -80,7 +84,7 @@ public class AppConstants {
     }
 
     public String getUserFunctionPath() {
-        return workPath+"/dbtemplate/dictionary";
+        return workPath+"/dbtemplate/function";
     }
 
     public String getUserDictionaryPath() {

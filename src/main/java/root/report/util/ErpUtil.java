@@ -1,7 +1,9 @@
 package root.report.util;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.util.Base64.Decoder;
+
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKeyFactory;
@@ -115,9 +117,11 @@ public class ErpUtil {
 
 		byte[] pasByte = enCipher.doFinal(data.getBytes("utf-8"));
 
-		BASE64Encoder base64Encoder = new BASE64Encoder();
+		Encoder encoder = Base64.getEncoder();
+		String encode = encoder.encodeToString(pasByte);
+		return encode;
 
-		return base64Encoder.encode(pasByte);
+
 
 	}
 
@@ -127,11 +131,12 @@ public class ErpUtil {
 
 		deCipher.init(Cipher.DECRYPT_MODE, key, iv);
 
-		BASE64Decoder base64Decoder = new BASE64Decoder();
+		Decoder decoder = Base64.getDecoder();
+		byte[] buffer = decoder.decode(data);
 
-		byte[] pasByte = deCipher.doFinal(base64Decoder.decodeBuffer(data));
+		return new String(deCipher.doFinal(buffer), "UTF-8");
 
-		return new String(pasByte, "UTF-8");
+
 
 	}
 
@@ -141,9 +146,9 @@ public class ErpUtil {
 
 		ErpUtil tools = new ErpUtil();
 
-		System.out.println("加密:" + tools.encode("apps".toUpperCase()));
+		System.out.println("加密:" + tools.encode("root"));
 
-		System.out.println("解密:" + tools.decode("FpzGCwACXWs="));
+		System.out.println("解密:" + tools.decode("v600KuCLNBc="));
 
 	}
 }
