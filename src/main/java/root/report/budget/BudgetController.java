@@ -776,9 +776,9 @@ public class BudgetController {
         }
         String url = "";
         if("certified".equals(type)){
-            url = DbFactory.Open(DbFactory.FORM).selectOne("budget.getKeyValue", type);
+            url = DbFactory.Open(DbFactory.FORM).selectOne("budget.getDicValueByKey", type);
         }else{
-            url = DbFactory.Open(DbFactory.FORM).selectOne("budget.getKeyValue", type);
+            url = DbFactory.Open(DbFactory.FORM).selectOne("budget.getDicValueByKey", type);
         }
         return url+"?username="+userName+"&permission="+permission;
     }

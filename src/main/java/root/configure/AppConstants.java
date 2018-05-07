@@ -28,19 +28,7 @@ public class AppConstants {
     private String workPath;
 
     public AppConstants(){
-
-        File   file=new   File(System.getProperty("user.dir"));
-        workPath=file.getPath()+ File.separator + "work";
-        //path=file.getPath();
-//        String path = AppConstants.class.getClassLoader().getResource("").getPath();
-//        if(path.contains("jar!")){
-//            workPath = path.substring(0,path.substring(0,path.indexOf("!")).lastIndexOf("/")).substring(5);
-//        }else{
-//            workPath = path.substring(0,path.substring(0,path.substring(0,path.lastIndexOf("/")).lastIndexOf("/")).lastIndexOf("/"));
-//        }
-//        //if(workPath.contains(":")){
-//            workPath = workPath.substring(1) + File.separator + "work";
-//        //}
+        workPath = System.getProperty("user.dir")+ File.separator + "work";
     }
 
     public String getReportPath() {
@@ -60,11 +48,7 @@ public class AppConstants {
     }
 
     public String getAppFilePath() {
-        return appFilePath;
-    }
-
-    public void setAppFilePath(String appFilePath) {
-        this.appFilePath = appFilePath;
+        return workPath+"/app";
     }
 
     public String getMobileSubjectPath() {

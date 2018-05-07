@@ -48,7 +48,7 @@ public class FormUserService
         map.put("userName", ((JSONObject)obj.get(0)).get("userName"));
         map.put("startIndex", ((JSONObject)obj.get(1)).getIntValue("startIndex")+1);//startIndex从0开始,rownum从1开始
         map.put("endIndex", ((JSONObject)obj.get(1)).getIntValue("startIndex")+((JSONObject)obj.get(1)).getIntValue("perPage"));
-        List<UserModel> userInfolist = DbFactory.Open(DbFactory.SYSTEM).selectList("formUser.getErpUserList",map);
+        List<UserModel> userInfolist = DbFactory.Open(DbFactory.SYSTEM).selectList("erpUser.getErpUserList",map);
         return JSON.toJSONString(userInfolist);
     }
     
@@ -58,7 +58,7 @@ public class FormUserService
         JSONObject obj = JSONObject.parseObject(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
         map.put("userName", obj.get("userName"));
-        int totalRows = DbFactory.Open(DbFactory.SYSTEM).selectOne("formUser.getErpUserListTotalRows",map);
+        int totalRows = DbFactory.Open(DbFactory.SYSTEM).selectOne("erpUser.getErpUserListTotalRows",map);
         return JSON.toJSONString(totalRows);
     }
     @RequestMapping(value = "/getUserInfoById", produces = "text/plain; charset=utf-8")
