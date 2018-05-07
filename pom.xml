@@ -241,7 +241,16 @@
                 </configuration>
             </plugin>
         </plugins>
-
+        <resources>
+            <resource>
+                <directory>${project.basedir}/config</directory>
+                <targetPath>${project.basedir}/target/config</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/work</directory>
+                <targetPath>${project.basedir}/target/work</targetPath>
+            </resource>
+        </resources>
     </build>
 
 
