@@ -1,14 +1,16 @@
 package root.configure;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.*;
 import root.report.interceptor.RestInterceptor;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.util.List;
 
 @Configuration
 public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
@@ -21,8 +23,26 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
 //        fastConverter.setFastJsonConfig(fastConfig);
 //        converters.add(fastConverter);
 //    }
+
     @Autowired
     private AppConstants appConstants;
+
+    @Bean
+    public HttpMessageConverter<String> responseBodyConverter() {
+        StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+        return converter;
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        super.configureMessageConverters(converters);
+        converters.add(responseBodyConverter());
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.favorPathExtension(false);
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
