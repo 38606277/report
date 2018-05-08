@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 北控水务数据填报功能 -->
+<mapper namespace="dataCollect">
+    <!--添加模板信息-->
+	<insert id="addTemplate" parameterType="map" useGeneratedKeys="true">
+	  	insert into frm_template(template_name, createby,create_date,template_path,template_type) values
+	  		(#{template_name,jdbcType=VARCHAR}, #{createby,jdbcType=VARCHAR}, #{create_date,jdbcType=VARCHAR},
+	  		#{template_path,jdbcType=VARCHAR},'0')
+	</insert>
+    <!--查询模板列表-->
+	<select id="getTemplateList" parameterType="string" resultType="map">
+        select * from frm_template t where 1=1 and t.template_type = '0' and t.createby = #{createBy}
+    </select>
+    <!--删除模板-->
+    <delete id="rmTemplate" parameterType="int">
+        delete from frm_template where template_id=#{template_id}
+    </delete>
+    <!--根据模板ID查询模板任务-->
+    <select id="getTemplateTaskList" parameterType="int" resultType="Map">
+        select * from frm_form_task t where t.template_id=#{template_id}
+    </select>
+    <!--根据建表sql动态建表-->
+    <update id="createNewTable" parameterType="string">
+        ${_parameter}
+    </update>
+    <!-- drop掉新添加的表 -->
+    <update id="dropNewTable" parameterType="string">
+    	drop table if EXISTS ${_parameter}
+    </update>
+    <!--添加表的描述信息-->
+    <insert id="addTableRecord" parameterType="Map" useGeneratedKeys="true" keyProperty="_id">
+        insert into frm_table (table_name, table_desc, template_id, create_by, create_Date)
+            values (#{table_name,jdbcType=VARCHAR},#{table_desc,jdbcType=VARCHAR},#{template_id,jdbcType=INTEGER},
+                    #{create_by,jdbcType=VARCHAR},#{create_date,jdbcType=TIMESTAMP})
+    </insert>
+    <!--添加字段信息-->
+    <insert id="addTableFields" parameterType="List">
+        insert into frm_table_field (table_id,field_id,field_name,field_desc,data_type,excel_col,data_dict,data_auth,data_length) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.table_id, jdbcType=INTEGER},#{item.field_id, jdbcType=VARCHAR},#{item.field_name, jdbcType=VARCHAR},
+            #{item.field_desc, jdbcType=VARCHAR},#{item.data_type, jdbcType=VARCHAR},#{item.field_name, jdbcType=VARCHAR},
+            #{item.data_dict, jdbcType=VARCHAR},#{item.data_auth, jdbcType=VARCHAR},#{item.data_length, jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <!--查询任务-->
+    <select id="getTaskInfo" parameterType="int" resultType="Map">
+        select * from frm_form_task t where t.task_id=#{task_d}
+    </select>
+    <!--查询任务用户-->
+    <select id="getTaskUserInfo" parameterType="int" resultType="Map">
+        select * from frm_form_task_user tu where 1=1 and tu.task_id=#{task_id}
+    </select>
+    <!--添加任务信息-->
+    <insert id="insertTaskInfo" parameterType="Map" useGeneratedKeys="true" keyProperty="task_id">
+        insert into frm_form_task (task_id, template_id, task_name, start_date, end_date, create_by, create_date,deploy_date,task_state) values(
+          #{task_id, jdbcType=INTEGER},#{template_id, jdbcType=INTEGER},#{task_name, jdbcType=VARCHAR},#{start_date, jdbcType=TIMESTAMP},#{end_date, jdbcType=TIMESTAMP},
+          #{create_by, jdbcType=VARCHAR},#{create_date, jdbcType=TIMESTAMP},#{deploy_date, jdbcType=TIMESTAMP},#{task_state, jdbcType=VARCHAR}
+        )
+    </insert>
+    <!--添加任务用户信息-->
+    <insert id="inserTaskUserInfo" parameterType="List">
+        insert into frm_form_task_user (task_id, user_id, create_date, receive_date, commit_date) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.task_id, jdbcType=INTEGER},#{item.user_id, jdbcType=VARCHAR},#{item.create_date, jdbcType=TIMESTAMP},
+             #{item.receive_date, jdbcType=TIMESTAMP},#{item.commit_date, jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    <!--删除任务信息-->
+    <delete id="deleteTaskInfo" parameterType="int">
+        delete from frm_form_task where task_id=#{task_id}
+    </delete>
+    <!--删除任务用户信息-->
+    <delete id="deleteTaskUserInfo" parameterType="int">
+        delete from frm_form_task_user where task_id=#{task_id}
+    </delete>
+</mapper>

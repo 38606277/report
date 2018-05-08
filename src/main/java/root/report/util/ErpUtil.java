@@ -120,9 +120,6 @@ public class ErpUtil {
 		Encoder encoder = Base64.getEncoder();
 		String encode = encoder.encodeToString(pasByte);
 		return encode;
-
-
-
 	}
 
 	public String decode(String data) throws Exception {
@@ -135,9 +132,6 @@ public class ErpUtil {
 		byte[] buffer = decoder.decode(data);
 
 		return new String(deCipher.doFinal(buffer), "UTF-8");
-
-
-
 	}
 
 	// 测试
