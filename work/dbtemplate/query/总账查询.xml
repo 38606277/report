@@ -4,9 +4,8 @@
 <!--总账查询-->
 <mapper namespace="总账查询">
  <select id="查询科目组合-公司段" resultType="Map" parameterType="Map">
- 
 <!--{
-	"db":"system",
+	"db":"jlerp",
 	"desc":"查询科目组合-公司段",
 	"in":[],
 	"out":[
@@ -384,6 +383,7 @@ and ffv.flex_value&lt;=#{end_value}
  order by ffv.flex_value
 </select>
  <select id="查询科目组合-备用段" resultType="Map" parameterType="Map">
+ 
 <!--{
 	"db":"system",
 	"desc":"查询科目组合-备用段",
