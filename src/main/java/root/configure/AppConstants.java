@@ -23,62 +23,62 @@ public class AppConstants {
     private String lambdaUrl;//LambdaAddress计算地址
     private String clientInstallFile;
     private String report2;//前端路径
-    private String appPath;
+    private String workPath;
 
     public AppConstants(){
-        appPath = System.getProperty("user.dir")+ File.separator + "app";
+        workPath = System.getProperty("user.dir")+ File.separator + "work";
     }
 
     public String getReportPath() {
-        return  appPath+ "/windowsapp/report";
+        return  workPath+ "/report";
     }
 
     public String getStaticReportPath() {
-        return appPath+"/webapp/staticReport";
+        return workPath+"/webpage/staticReport";
     }
 
     public String getDynamicReportPath() {
-        return appPath+"/webapp/dynamicReport";
+        return workPath+ "/webpage/dynamicReport";
     }
 
     public String getExcelFilePath() {
-        return appPath+"/windowsapp/excel";
+        return workPath+"/excel";
     }
 
     public String getAppFilePath() {
-        return appPath+"/app";
+        return workPath+"/webpage/mobile/app";
     }
 
     public String getMobileSubjectPath() {
-        return appPath+"/mobileapp";
+        return workPath+"/webpage/mobile";
     }
 
     public String getTemplatePath() {
-        return appPath+ "/mobileapp/template";
+        return workPath+ "/template";
     }
 
     public String getFillTemplatePath() {
-        return appPath+ "/windowsapp/filltemplate";
+        return workPath+ "/filltemplate";
     }
 
     public String getUserSqlPath() {
-        return appPath+"/windowsapp/dbtemplate/query";
+        return workPath+"/dbtemplate/query";
     }
 
     public String getUserFunctionPath() {
-        return appPath+"/windowsapp/dbtemplate/function";
+        return workPath+"/dbtemplate/function";
     }
 
     public String getUserDictionaryPath() {
-        return appPath+"/windowsapp/dbtemplate/dictionary";
+        return workPath+"/dbtemplate/dictionary";
     }
 
     public String getWebServicePath() {
-        return appPath+"/windowsapp/dbtemplate/webservice";
+        return workPath+"/dbtemplate/webservice";
     }
 
     public String getMongoTemplate() {
-        return appPath+ "/windowsapp/mongotemplate";
+        return workPath+ "/mongotemplate";
     }
 
     public String getLambdaUrl(){
@@ -93,11 +93,11 @@ public class AppConstants {
     }
 
     public String getClientInstallFile() {
-        return appPath+ "/webapp/clientInstallFile";
+        return workPath+ "/clientInstallFile";
     }
 
     public String getReport2() {
-        return appPath+"/webapp/web";
+        return workPath+"/webapp";
     }
 
     @Override
