@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +23,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import root.configure.AppConstants;
 import root.report.common.BaseControl;
 import root.report.db.DbFactory;
@@ -42,7 +44,7 @@ public class TemplateController extends BaseControl {
      * @param file
      * @return
      */
-    @RequestMapping(value = "/createTemplate", method=RequestMethod.POST)
+    @RequestMapping(value = "/createTemplate", method = RequestMethod.POST)
     public String create(@RequestPart(value="file", required=true) MultipartFile file) {
         return this.doExecuteWithROReturn(()->{
             //保存文件
@@ -131,10 +133,10 @@ public class TemplateController extends BaseControl {
         		JSONObject jsonCol = (JSONObject)col;
         		sb.append(jsonCol.getString("field_name") + " "+ jsonCol.getString("data_type"));
         		String length = jsonCol.getString("data_length");
-        		if(StringUtils.isNotBlank(length)) sb.append("("+length+")");
+        		if(null != length && !"".equals(length)) sb.append("("+length+")");
         		sb.append(",");
         	});
-        	String createSql = "create table "+ tableName + "(" + StringUtils.removeEnd(sb.toString(), ",") + ")";
+        	String createSql = "create table "+ tableName + "(" + sb.deleteCharAt(sb.length()-1) + ")";
             session.update("dataCollect.createNewTable", createSql);
             session.commit();
             return this.SuccessMsg("操作成功", null);
