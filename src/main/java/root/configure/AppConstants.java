@@ -1,11 +1,9 @@
 package root.configure;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 import java.net.InetAddress;
-import java.net.URL;
 
 @Configuration
 public class AppConstants {
@@ -32,55 +30,55 @@ public class AppConstants {
     }
 
     public String getReportPath() {
-        return  workPath+"/report";
+        return  workPath+ File.separator+"report";
     }
 
     public String getStaticReportPath() {
-        return workPath+"/webpage/staticReport";
+        return workPath+ File.separator+"webpage"+ File.separator+"staticReport";
     }
 
     public String getDynamicReportPath() {
-        return workPath+"/webpage/dynamicReport";
+        return workPath+ File.separator+"webpage"+ File.separator+"dynamicReport";
     }
 
     public String getExcelFilePath() {
-        return workPath+"/webpage/excel";
+        return workPath+ File.separator+"excel";
     }
 
     public String getAppFilePath() {
-        return workPath+"/app";
+        return workPath+ File.separator+"webpage"+ File.separator+"mobile"+ File.separator+"app";
     }
 
     public String getMobileSubjectPath() {
-        return workPath+"/webpage/mobile";
+        return workPath+ File.separator+"webpage"+ File.separator+"mobile";
     }
 
     public String getTemplatePath() {
-        return workPath+"/template";
+        return workPath+ File.separator+"template";
     }
 
     public String getFillTemplatePath() {
-        return workPath+"/filltemplate";
+        return workPath+ File.separator+"filltemplate";
     }
 
     public String getUserSqlPath() {
-        return workPath+"/dbtemplate/query";
+        return workPath+ File.separator+"dbtemplate"+ File.separator+"query";
     }
 
     public String getUserFunctionPath() {
-        return workPath+"/dbtemplate/function";
+        return workPath+ File.separator+"dbtemplate"+ File.separator+"function";
     }
 
     public String getUserDictionaryPath() {
-        return workPath+"/dbtemplate/dictionary";
+        return workPath+ File.separator+"dbtemplate"+ File.separator+"dictionary";
     }
 
     public String getWebServicePath() {
-        return workPath+"/dbtemplate/webservice";
+        return workPath+ File.separator+"dbtemplate"+ File.separator+"webservice";
     }
 
     public String getMongoTemplate() {
-        return workPath+"/mongotemplate";
+        return workPath+ File.separator+"mongotemplate";
     }
 
     public String getLambdaUrl(){
@@ -95,11 +93,11 @@ public class AppConstants {
     }
 
     public String getClientInstallFile() {
-        return workPath+"/clientInstallFile";
+        return workPath+ File.separator+"clientInstallFile";
     }
 
     public String getReport2() {
-        return workPath+"/report2/web";
+        return workPath+ File.separator+"webapp";
     }
 
     @Override

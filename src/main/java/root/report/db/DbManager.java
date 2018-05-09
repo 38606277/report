@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import root.report.util.ErpUtil;
 import root.report.util.XmlUtil;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,13 +31,13 @@ public class DbManager
 {
     private static final Logger log = Logger.getLogger(DbManager.class);
     private static ErpUtil erpUtil = new ErpUtil();
-
+    private static final String DB_CONFIG_PATH = System.getProperty("user.dir")+"/config/DBConfig.xml";
     @RequestMapping(value="/ListAll",produces = "text/plain;charset=UTF-8")
     public String getAllDBConnections(){
         JSONArray array = new JSONArray();
         Document dom = null;
         try{
-            dom = XmlUtil.parseXmlToDom(new FileInputStream("config/DBConfig.xml"));
+            dom = XmlUtil.parseXmlToDom(new FileInputStream(DB_CONFIG_PATH));
         }catch (Exception e){
             log.error("解析DBConfig.xml异常!");
             e.printStackTrace();
@@ -67,7 +68,7 @@ public class DbManager
         Document dom = null;
         try
         {
-            dom = XmlUtil.parseXmlToDom(new FileInputStream("config/DBConfig.xml"));
+            dom = XmlUtil.parseXmlToDom(new FileInputStream(DB_CONFIG_PATH));
         }
         catch(Exception e)
         {
@@ -120,7 +121,7 @@ public class DbManager
             XMLWriter writer = null;
             try
             { 
-                writer = new XMLWriter(new FileOutputStream("config/DBConfig.xml"), format);
+                writer = new XMLWriter(new FileOutputStream(DB_CONFIG_PATH), format);
                 log.debug("新增db连接:"+db.asXML());
                 writer.write(dom);
                 writer.flush();
@@ -153,7 +154,7 @@ public class DbManager
         Document dom = null;
         try
         {
-            dom = XmlUtil.parseXmlToDom(new FileInputStream("config/DBConfig.xml"));
+            dom = XmlUtil.parseXmlToDom(new FileInputStream(DB_CONFIG_PATH));
         }
         catch(Exception e)
         {
@@ -211,7 +212,7 @@ public class DbManager
             XMLWriter writer = null;
             try
             { 
-                writer = new XMLWriter(new FileOutputStream("config/DBConfig.xml"), format);
+                writer = new XMLWriter(new FileOutputStream(DB_CONFIG_PATH), format);
                 log.debug("修改db连接:"+node.asXML());
                 writer.write(dom);
                 writer.flush();
@@ -243,7 +244,7 @@ public class DbManager
         Document dom = null;
         try
         {
-            dom = XmlUtil.parseXmlToDom(new FileInputStream("config/DBConfig.xml"));
+            dom = XmlUtil.parseXmlToDom(new FileInputStream(DB_CONFIG_PATH));
         } 
         catch (Exception e)
         {
@@ -273,7 +274,7 @@ public class DbManager
         Document dom = null;
         try
         {
-            dom = XmlUtil.parseXmlToDom(new FileInputStream("config/DBConfig.xml"));
+            dom = XmlUtil.parseXmlToDom(new FileInputStream(DB_CONFIG_PATH));
         } 
         catch (Exception e)
         {
@@ -303,7 +304,7 @@ public class DbManager
             XMLWriter writer = null;
             try
             { 
-                writer = new XMLWriter(new FileOutputStream("config/DBConfig.xml"), format);
+                writer = new XMLWriter(new FileOutputStream(DB_CONFIG_PATH), format);
                 log.debug("删除db连接:"+node.asXML());
                 writer.write(dom);
                 writer.flush();
