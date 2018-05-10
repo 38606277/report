@@ -4,3 +4,957 @@
 [INFO] [2018-05-07 09:03:23][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
 [DEBUG] [2018-05-07 09:03:23][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
 [INFO] [2018-05-07 09:03:24][root.report.db.DbManager]初始化数据库【form】耗时1.3067s
+[INFO] [2018-05-08 21:32:07][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-08 21:32:08][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 21:32:09][root.report.db.DbManager]初始化数据库【form】耗时3.5145s
+[DEBUG] [2018-05-08 21:33:08][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-08 21:33:09][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:33:09][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-08 21:33:09][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-08 21:33:09][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-08 21:33:11][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:33:11][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:33:11][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213311(String), 20180508213311(String), (String)
+[DEBUG] [2018-05-08 21:33:11][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:33:35][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:33:35][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-08 21:33:35][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-08 21:33:35][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-08 21:33:35][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:33:35][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213335(String), 20180508213335(String), (String)
+[DEBUG] [2018-05-08 21:33:36][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:33:39][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:33:39][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-08 21:33:39][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-08 21:33:39][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-08 21:33:39][rule.getSelectAuthListByClass]==>  Preparing: select a.func_id as name from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID where u.USER_NAME = ? and locate('总账查询/',a.func_id)>0 and a.auth_type = 'select' 
+[DEBUG] [2018-05-08 21:33:39][rule.getSelectAuthListByClass]==> Parameters: system(String)
+[DEBUG] [2018-05-08 21:33:39][rule.getSelectAuthListByClass]<==      Total: 0
+[DEBUG] [2018-05-08 21:33:39][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:33:39][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthListByClass/system/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213338(String), 20180508213338(String), (String)
+[DEBUG] [2018-05-08 21:33:39][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:33:41][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:33:41][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:33:41][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectParam/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E6%88%90%E6%9C%AC%E4%B8%AD%E5%BF%83%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213341(String), 20180508213341(String), (String)
+[DEBUG] [2018-05-08 21:33:41][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:33:43][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:33:43][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:33:43][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectParam/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213343(String), 20180508213343(String), (String)
+[DEBUG] [2018-05-08 21:33:43][system.insertSysApiLog]<==    Updates: 1
+[ERROR] [2018-05-08 21:33:44][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} init error
+java.sql.SQLException: com.mysql.cj.jdbc.Driver
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:560)
+	at com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:642)
+	at root.report.db.DbFactory.init(DbFactory.java:74)
+	at root.report.db.DbFactory.Open(DbFactory.java:105)
+	at root.report.db.DbFactory.Open(DbFactory.java:96)
+	at root.report.query.SelectControl.execSelect(SelectControl.java:398)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:209)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:136)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:102)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:870)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:776)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:991)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:925)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:978)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:881)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:661)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:855)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:742)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at root.report.filter.BodyFilter.doFilter(BodyFilter.java:32)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:199)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:496)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:803)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:790)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1459)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:558)
+	... 50 more
+[ERROR] [2018-05-08 21:33:44][root.report.db.DbManager]初始化数据库【jlerp】失败!
+[ERROR] [2018-05-08 21:33:51][com.alibaba.druid.pool.DruidDataSource]{dataSource-3} init error
+java.sql.SQLException: com.mysql.cj.jdbc.Driver
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:560)
+	at com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:642)
+	at root.report.db.DbFactory.init(DbFactory.java:74)
+	at root.report.db.DbFactory.Open(DbFactory.java:105)
+	at root.report.db.DbFactory.Open(DbFactory.java:96)
+	at root.report.query.SelectControl.execSelect(SelectControl.java:398)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:209)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:136)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:102)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:870)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:776)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:991)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:925)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:978)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:881)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:661)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:855)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:742)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at root.report.filter.BodyFilter.doFilter(BodyFilter.java:32)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:199)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:496)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:803)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:790)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1459)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:558)
+	... 50 more
+[ERROR] [2018-05-08 21:33:51][root.report.db.DbManager]初始化数据库【jlerp】失败!
+[DEBUG] [2018-05-08 21:34:17][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:34:17][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:34:17][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectClass(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213417(String), 20180508213417(String), (String)
+[DEBUG] [2018-05-08 21:34:17][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:34:20][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:34:20][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:34:20][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectName/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213420(String), 20180508213420(String), (String)
+[DEBUG] [2018-05-08 21:34:20][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:34:24][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]==> Parameters: /reportServer//DBConnection/ListAll(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213424(String), 20180508213424(String), (String)
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:34:24][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]==> Parameters: /reportServer//select/qrySelectSqlDetail(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213424(String), 20180508213424(String), {"namespace":"总账查询","sqlid":"查询科目组合-公司段"}(String)
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-08 21:34:24][root.report.query.SelectControl]调用getDictionaryClass.
+[DEBUG] [2018-05-08 21:34:24][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]==> Parameters: /reportServer//dictionary/getDictionaryClass(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213424(String), 20180508213424(String), (String)
+[DEBUG] [2018-05-08 21:34:24][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:34:25][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:34:25][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:34:25][system.insertSysApiLog]==> Parameters: /reportServer//dictionary/getDictionaryName/%E6%95%B0%E6%8D%AE%E5%AD%97%E5%85%B8(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213425(String), 20180508213425(String), (String)
+[DEBUG] [2018-05-08 21:34:25][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 21:34:25][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@6f594ba] will not be managed by Spring
+[DEBUG] [2018-05-08 21:34:25][authType.getAllAuthTypeList]==>  Preparing: select authtype_name as value,authtype_desc as name from fnd_authtype where authtype_class = 'data' 
+[DEBUG] [2018-05-08 21:34:25][authType.getAllAuthTypeList]==> Parameters: 
+[DEBUG] [2018-05-08 21:34:25][authType.getAllAuthTypeList]<==      Total: 2
+[DEBUG] [2018-05-08 21:34:25][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:34:25][system.insertSysApiLog]==> Parameters: /reportServer//authType/getAllAuthTypeList(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508213425(String), 20180508213425(String), (String)
+[DEBUG] [2018-05-08 21:34:25][system.insertSysApiLog]<==    Updates: 1
+[ERROR] [2018-05-08 21:35:00][com.alibaba.druid.pool.DruidDataSource]{dataSource-4} init error
+java.sql.SQLException: com.mysql.cj.jdbc.Driver
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:560)
+	at com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:642)
+	at root.report.db.DbFactory.init(DbFactory.java:74)
+	at root.report.db.DbFactory.Open(DbFactory.java:105)
+	at root.report.db.DbFactory.Open(DbFactory.java:96)
+	at root.report.query.SelectControl.execSelect(SelectControl.java:398)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:209)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:136)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:102)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:870)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:776)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:991)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:925)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:978)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:881)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:661)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:855)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:742)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at root.report.filter.BodyFilter.doFilter(BodyFilter.java:32)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:199)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:496)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:803)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:790)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1459)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:558)
+	... 50 more
+[ERROR] [2018-05-08 21:35:00][root.report.db.DbManager]初始化数据库【jlerp】失败!
+[ERROR] [2018-05-08 21:37:08][com.alibaba.druid.pool.DruidDataSource]{dataSource-5} init error
+java.sql.SQLException: com.mysql.cj.jdbc.Driver
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:560)
+	at com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:642)
+	at root.report.db.DbFactory.init(DbFactory.java:74)
+	at root.report.db.DbFactory.Open(DbFactory.java:105)
+	at root.report.db.DbFactory.Open(DbFactory.java:96)
+	at root.report.query.SelectControl.execSelect(SelectControl.java:398)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:209)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:136)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:102)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:870)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:776)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:991)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:925)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:978)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:881)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:661)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:855)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:742)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at root.report.filter.BodyFilter.doFilter(BodyFilter.java:32)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:200)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:199)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:496)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:803)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:790)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1459)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:558)
+	... 50 more
+[ERROR] [2018-05-08 21:54:32][root.report.db.DbManager]初始化数据库【jlerp】失败!
+[INFO] [2018-05-08 21:55:17][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-08 21:55:19][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 21:55:25][root.report.db.DbManager]初始化数据库【form】耗时20.0913s
+[INFO] [2018-05-08 21:55:31][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
+[DEBUG] [2018-05-08 21:55:31][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 21:55:32][root.report.db.DbManager]初始化数据库【jlerp】耗时0.8875s
+[DEBUG] [2018-05-08 21:55:32][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@17ef99ed] will not be managed by Spring
+[DEBUG] [2018-05-08 21:55:32][总账查询.查询科目组合-公司段]==>  Preparing: select ffv.flex_value, ffvt.description from fnd_id_flex_segments fifs, gl_sets_of_books gsob, fnd_flex_values ffv, fnd_flex_values_tl ffvt where gsob.chart_of_accounts_id = fifs.id_flex_num and id_flex_code = 'GL#' and ffv.flex_value_id = ffvt.flex_value_id and ffvt.language = 'ZHS' and ffv.flex_value_set_id = fifs.flex_value_set_id and ffv.enabled_flag = 'Y' and ffv.end_date_active is null and gsob.set_of_books_id = 2 and fifs.application_column_name = 'SEGMENT1' order by ffv.flex_value 
+[DEBUG] [2018-05-08 21:55:32][总账查询.查询科目组合-公司段]==> Parameters: 
+[DEBUG] [2018-05-08 21:55:33][总账查询.查询科目组合-公司段]<==      Total: 19
+[DEBUG] [2018-05-08 21:55:33][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.jdbc.JDBC4Connection@3c347098] will not be managed by Spring
+[DEBUG] [2018-05-08 21:55:33][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:55:33][system.insertSysApiLog]==> Parameters: /reportServer//select/execSelect/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508215531(String), 20180508215531(String), [{"id":"查询科目组合-公司段","type":"sql","db":"jlerp","in":[]}](String)
+[DEBUG] [2018-05-08 21:55:34][system.insertSysApiLog]<==    Updates: 1
+[ERROR] [2018-05-08 21:58:14][com.alibaba.druid.pool.DruidDataSource]{dataSource-3} init error
+java.sql.SQLException: com.mysql.cj.jdbc.Driver
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:560)
+	at com.alibaba.druid.pool.DruidDataSource.init(DruidDataSource.java:642)
+	at root.report.db.DbFactory.init(DbFactory.java:74)
+	at root.report.db.DbFactory.initializeDB(DbFactory.java:218)
+	at root.MyApplicationRunner.run(MyApplicationRunner.java:20)
+	at org.springframework.boot.SpringApplication.callRunner(SpringApplication.java:781)
+	at org.springframework.boot.SpringApplication.callRunners(SpringApplication.java:771)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1246)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1234)
+	at root.ReportServerApplication.main(ReportServerApplication.java:15)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:497)
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:49)
+Caused by: java.lang.ClassNotFoundException: com.mysql.cj.jdbc.Driver
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:264)
+	at com.alibaba.druid.util.JdbcUtils.createDriver(JdbcUtils.java:558)
+	... 15 more
+[ERROR] [2018-05-08 21:58:14][root.report.db.DbManager]初始化数据库【form】失败!
+[INFO] [2018-05-08 21:59:40][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-08 21:59:41][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 21:59:44][root.report.db.DbManager]初始化数据库【form】耗时5.6450s
+[INFO] [2018-05-08 21:59:54][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
+[DEBUG] [2018-05-08 21:59:54][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 21:59:55][root.report.db.DbManager]初始化数据库【jlerp】耗时1.5917s
+[DEBUG] [2018-05-08 21:59:56][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@35073d18] will not be managed by Spring
+[DEBUG] [2018-05-08 21:59:56][总账查询.查询科目组合-公司段]==>  Preparing: select ffv.flex_value, ffvt.description from fnd_id_flex_segments fifs, gl_sets_of_books gsob, fnd_flex_values ffv, fnd_flex_values_tl ffvt where gsob.chart_of_accounts_id = fifs.id_flex_num and id_flex_code = 'GL#' and ffv.flex_value_id = ffvt.flex_value_id and ffvt.language = 'ZHS' and ffv.flex_value_set_id = fifs.flex_value_set_id and ffv.enabled_flag = 'Y' and ffv.end_date_active is null and gsob.set_of_books_id = 2 and fifs.application_column_name = 'SEGMENT1' order by ffv.flex_value 
+[DEBUG] [2018-05-08 21:59:56][总账查询.查询科目组合-公司段]==> Parameters: 
+[DEBUG] [2018-05-08 21:59:59][总账查询.查询科目组合-公司段]<==      Total: 19
+[DEBUG] [2018-05-08 21:59:59][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@5020c08e] will not be managed by Spring
+[DEBUG] [2018-05-08 21:59:59][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 21:59:59][system.insertSysApiLog]==> Parameters: /reportServer//select/execSelect/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508215953(String), 20180508215953(String), [{"id":"查询科目组合-公司段","type":"sql","db":"jlerp","in":[]}](String)
+[DEBUG] [2018-05-08 21:59:59][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 22:00:03][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@35073d18] will not be managed by Spring
+[DEBUG] [2018-05-08 22:00:03][总账查询.查询科目组合-公司段]==>  Preparing: select ffv.flex_value, ffvt.description from fnd_id_flex_segments fifs, gl_sets_of_books gsob, fnd_flex_values ffv, fnd_flex_values_tl ffvt where gsob.chart_of_accounts_id = fifs.id_flex_num and id_flex_code = 'GL#' and ffv.flex_value_id = ffvt.flex_value_id and ffvt.language = 'ZHS' and ffv.flex_value_set_id = fifs.flex_value_set_id and ffv.enabled_flag = 'Y' and ffv.end_date_active is null and gsob.set_of_books_id = 2 and fifs.application_column_name = 'SEGMENT1' order by ffv.flex_value 
+[DEBUG] [2018-05-08 22:00:03][总账查询.查询科目组合-公司段]==> Parameters: 
+[DEBUG] [2018-05-08 22:00:04][总账查询.查询科目组合-公司段]<==      Total: 19
+[DEBUG] [2018-05-08 22:00:04][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@5020c08e] will not be managed by Spring
+[DEBUG] [2018-05-08 22:00:04][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 22:00:04][system.insertSysApiLog]==> Parameters: /reportServer//select/execSelect/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508220003(String), 20180508220003(String), [{"id":"查询科目组合-公司段","type":"sql","db":"jlerp","in":[]}](String)
+[DEBUG] [2018-05-08 22:00:04][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 22:00:13][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-08 22:00:13][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@5020c08e] will not be managed by Spring
+[DEBUG] [2018-05-08 22:00:13][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-08 22:00:13][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-08 22:00:13][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-08 22:00:13][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@5020c08e] will not be managed by Spring
+[DEBUG] [2018-05-08 22:00:13][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 22:00:13][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508220013(String), 20180508220013(String), (String)
+[DEBUG] [2018-05-08 22:00:13][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 22:00:20][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@5020c08e] will not be managed by Spring
+[DEBUG] [2018-05-08 22:00:20][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 22:00:20][system.insertSysApiLog]==> Parameters: /reportServer//DBConnection/ListAll(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508220020(String), 20180508220020(String), (String)
+[DEBUG] [2018-05-08 22:00:20][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 22:01:29][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@5020c08e] will not be managed by Spring
+[DEBUG] [2018-05-08 22:01:29][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-08 22:01:29][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-08 22:01:29][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-08 22:01:29][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 22:01:29][system.insertSysApiLog]==> Parameters: /reportServer//function/getFunctionAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508220129(String), 20180508220129(String), (String)
+[DEBUG] [2018-05-08 22:01:29][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 22:01:32][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@5020c08e] will not be managed by Spring
+[DEBUG] [2018-05-08 22:01:32][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-08 22:01:32][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-08 22:01:32][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-08 22:01:32][rule.getFunctionAuthListByClass]==>  Preparing: select a.func_id as name from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID where u.USER_NAME = ? and locate('函数/',a.func_id)>0 and a.auth_type = 'function' 
+[DEBUG] [2018-05-08 22:01:32][rule.getFunctionAuthListByClass]==> Parameters: system(String)
+[DEBUG] [2018-05-08 22:01:32][rule.getFunctionAuthListByClass]<==      Total: 0
+[DEBUG] [2018-05-08 22:01:32][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 22:01:32][system.insertSysApiLog]==> Parameters: /reportServer//function/getFunctionAuthListByClass/system/%E5%87%BD%E6%95%B0(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508220132(String), 20180508220132(String), (String)
+[DEBUG] [2018-05-08 22:01:32][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-08 22:01:40][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@5020c08e] will not be managed by Spring
+[DEBUG] [2018-05-08 22:01:40][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-08 22:01:40][system.insertSysApiLog]==> Parameters: /reportServer//function/getFunctionParam/%E5%87%BD%E6%95%B0/%E9%A1%B9%E7%9B%AE%E8%AE%A2%E5%8D%95%E6%8E%A5%E6%94%B6%E9%87%91%E9%A2%9D(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180508220140(String), 20180508220140(String), (String)
+[DEBUG] [2018-05-08 22:01:41][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-08 22:35:51][com.alibaba.druid.pool.DruidDataSource]{dataSource-3} inited
+[DEBUG] [2018-05-08 22:35:52][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 22:36:01][root.report.db.DbManager]初始化数据库【form】耗时11.4757s
+[INFO] [2018-05-08 22:45:15][com.alibaba.druid.pool.DruidDataSource]{dataSource-4} inited
+[ERROR] [2018-05-08 22:45:15][root.report.db.DbManager]初始化数据库【form】失败!
+[INFO] [2018-05-08 22:45:20][com.alibaba.druid.pool.DruidDataSource]{dataSource-5} inited
+[DEBUG] [2018-05-08 22:45:20][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 22:45:23][root.report.db.DbManager]初始化数据库【form】耗时2.8751s
+[INFO] [2018-05-08 22:47:54][com.alibaba.druid.pool.DruidDataSource]{dataSource-6} inited
+[DEBUG] [2018-05-08 22:47:54][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 22:47:55][root.report.db.DbManager]初始化数据库【form】耗时1.2054s
+[ERROR] [2018-05-08 22:50:28][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 22:50:28][root.report.db.DbManager]初始化数据库【form】失败!
+[ERROR] [2018-05-08 22:53:15][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 22:53:15][root.report.db.DbManager]初始化数据库【form】失败!
+[ERROR] [2018-05-08 22:54:11][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 22:54:11][root.report.db.DbManager]初始化数据库【form】失败!
+[ERROR] [2018-05-08 22:55:30][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 22:55:30][root.report.db.DbManager]初始化数据库【form】失败!
+[ERROR] [2018-05-08 22:56:28][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 22:56:28][root.report.db.DbManager]初始化数据库【form】失败!
+[ERROR] [2018-05-08 22:58:57][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 22:58:57][root.report.db.DbManager]初始化数据库【form】失败!
+[ERROR] [2018-05-08 23:03:20][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 23:03:20][root.report.db.DbManager]初始化数据库【form】失败!
+[ERROR] [2018-05-08 23:06:16][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 23:06:16][root.report.db.DbManager]初始化数据库【form】失败!
+[ERROR] [2018-05-08 23:15:27][root.report.db.DbManager]解析DBConfig.xml异常!
+[ERROR] [2018-05-08 23:15:27][root.report.db.DbManager]初始化数据库【form】失败!
+[INFO] [2018-05-08 23:19:51][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-08 23:19:52][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 23:19:54][root.report.db.DbManager]初始化数据库【form】耗时3.9285s
+[INFO] [2018-05-08 23:20:32][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
+[DEBUG] [2018-05-08 23:20:32][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-08 23:20:35][root.report.db.DbManager]初始化数据库【form】耗时2.8875s
+[INFO] [2018-05-09 07:18:56][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 07:18:56][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 07:18:57][root.report.db.DbManager]初始化数据库【form】耗时2.5983s
+[INFO] [2018-05-09 07:21:12][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 07:21:12][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 07:21:14][root.report.db.DbManager]初始化数据库【form】耗时2.7637s
+[INFO] [2018-05-09 07:24:52][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 07:24:53][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 07:24:54][root.report.db.DbManager]初始化数据库【form】耗时3.7435s
+[DEBUG] [2018-05-09 07:26:51][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-09 07:26:51][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@7e2b1485] will not be managed by Spring
+[DEBUG] [2018-05-09 07:26:51][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-09 07:26:51][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-09 07:26:52][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-09 07:26:52][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@7e2b1485] will not be managed by Spring
+[DEBUG] [2018-05-09 07:26:52][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 07:26:52][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509072652(String), 20180509072652(String), (String)
+[DEBUG] [2018-05-09 07:26:52][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 07:27:04][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@7e2b1485] will not be managed by Spring
+[DEBUG] [2018-05-09 07:27:04][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 07:27:04][system.insertSysApiLog]==> Parameters: /reportServer/DBConnection/ListAll(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509072704(String), 20180509072704(String), (String)
+[DEBUG] [2018-05-09 07:27:04][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 07:27:08][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@7e2b1485] will not be managed by Spring
+[DEBUG] [2018-05-09 07:27:08][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 07:27:08][system.insertSysApiLog]==> Parameters: /reportServer//function/getFunctionClass(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509072708(String), 20180509072708(String), (String)
+[DEBUG] [2018-05-09 07:27:08][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 07:27:15][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@7e2b1485] will not be managed by Spring
+[DEBUG] [2018-05-09 07:27:15][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 07:27:16][system.insertSysApiLog]==> Parameters: /reportServer/DBConnection/ListAll(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509072715(String), 20180509072715(String), (String)
+[DEBUG] [2018-05-09 07:27:16][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 13:05:19][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 13:05:19][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 13:05:21][root.report.db.DbManager]初始化数据库【form】耗时3.9878s
+[INFO] [2018-05-09 22:38:06][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 22:38:16][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 22:38:18][root.report.db.DbManager]初始化数据库【form】耗时13.0327s
+[INFO] [2018-05-09 22:40:28][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 22:40:28][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 22:40:30][root.report.db.DbManager]初始化数据库【form】耗时2.9896s
+[DEBUG] [2018-05-09 22:43:06][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-09 22:43:07][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@67a5b7ef] will not be managed by Spring
+[DEBUG] [2018-05-09 22:43:07][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-09 22:43:07][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:43:08][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-09 22:43:08][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@67a5b7ef] will not be managed by Spring
+[DEBUG] [2018-05-09 22:43:08][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:43:08][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224308(String), 20180509224308(String), (String)
+[DEBUG] [2018-05-09 22:43:08][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:43:22][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@67a5b7ef] will not be managed by Spring
+[DEBUG] [2018-05-09 22:43:22][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:43:23][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:43:23][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:43:23][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:43:23][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224322(String), 20180509224322(String), (String)
+[DEBUG] [2018-05-09 22:43:23][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:43:25][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@67a5b7ef] will not be managed by Spring
+[DEBUG] [2018-05-09 22:43:25][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:43:25][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:43:25][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:43:25][rule.getSelectAuthListByClass]==>  Preparing: select a.func_id as name from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID where u.USER_NAME = ? and locate('总账查询/',a.func_id)>0 and a.auth_type = 'select' 
+[DEBUG] [2018-05-09 22:43:25][rule.getSelectAuthListByClass]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:43:25][rule.getSelectAuthListByClass]<==      Total: 0
+[DEBUG] [2018-05-09 22:43:25][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:43:25][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthListByClass/system/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224325(String), 20180509224325(String), (String)
+[DEBUG] [2018-05-09 22:43:25][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:43:27][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@67a5b7ef] will not be managed by Spring
+[DEBUG] [2018-05-09 22:43:27][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:43:27][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectParam/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224327(String), 20180509224327(String), (String)
+[DEBUG] [2018-05-09 22:43:27][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 22:46:00][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 22:46:39][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[DEBUG] [2018-05-09 22:46:39][root.report.auth.UserController]调用服务：/user/login
+[INFO] [2018-05-09 22:46:40][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
+[DEBUG] [2018-05-09 22:46:40][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 22:46:41][root.report.db.DbManager]初始化数据库【form】耗时1.5985s
+[INFO] [2018-05-09 22:46:41][root.report.db.DbManager]初始化数据库【form】耗时42.3210s
+[DEBUG] [2018-05-09 22:46:41][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:46:41][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-09 22:46:41][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:46:41][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-09 22:46:42][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:46:42][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:46:42][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224642(String), 20180509224642(String), (String)
+[DEBUG] [2018-05-09 22:46:42][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:46:51][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:46:51][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:46:51][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:46:51][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:46:51][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:46:51][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224651(String), 20180509224651(String), (String)
+[DEBUG] [2018-05-09 22:46:51][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:46:56][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:46:56][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:46:56][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:46:56][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:46:56][rule.getSelectAuthListByClass]==>  Preparing: select a.func_id as name from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID where u.USER_NAME = ? and locate('总账查询/',a.func_id)>0 and a.auth_type = 'select' 
+[DEBUG] [2018-05-09 22:46:56][rule.getSelectAuthListByClass]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:46:56][rule.getSelectAuthListByClass]<==      Total: 0
+[DEBUG] [2018-05-09 22:46:56][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:46:56][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthListByClass/system/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224656(String), 20180509224656(String), (String)
+[DEBUG] [2018-05-09 22:46:56][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:46:58][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:46:58][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:46:58][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectParam/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224658(String), 20180509224658(String), (String)
+[DEBUG] [2018-05-09 22:46:58][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:47:02][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:47:02][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:47:02][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectClass(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224702(String), 20180509224702(String), (String)
+[DEBUG] [2018-05-09 22:47:02][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:47:03][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:47:03][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:47:03][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectName/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224703(String), 20180509224703(String), (String)
+[DEBUG] [2018-05-09 22:47:03][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:47:06][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]==> Parameters: /reportServer//DBConnection/ListAll(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224706(String), 20180509224706(String), (String)
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:47:06][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]==> Parameters: /reportServer//select/qrySelectSqlDetail(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224706(String), 20180509224706(String), {"namespace":"总账查询","sqlid":"查询科目组合-公司段"}(String)
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 22:47:06][root.report.query.SelectControl]调用getDictionaryClass.
+[DEBUG] [2018-05-09 22:47:06][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]==> Parameters: /reportServer//dictionary/getDictionaryClass(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224706(String), 20180509224706(String), (String)
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:47:06][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:47:06][system.insertSysApiLog]==> Parameters: /reportServer//dictionary/getDictionaryName/%E6%95%B0%E6%8D%AE%E5%AD%97%E5%85%B8(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224706(String), 20180509224706(String), (String)
+[DEBUG] [2018-05-09 22:47:07][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:47:07][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:47:07][authType.getAllAuthTypeList]==>  Preparing: select authtype_name as value,authtype_desc as name from fnd_authtype where authtype_class = 'data' 
+[DEBUG] [2018-05-09 22:47:07][authType.getAllAuthTypeList]==> Parameters: 
+[DEBUG] [2018-05-09 22:47:07][authType.getAllAuthTypeList]<==      Total: 2
+[DEBUG] [2018-05-09 22:47:07][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:47:07][system.insertSysApiLog]==> Parameters: /reportServer//authType/getAllAuthTypeList(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224707(String), 20180509224707(String), (String)
+[DEBUG] [2018-05-09 22:47:07][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:47:10][root.report.oracle.SqlControl]修改报表:<select id="查询科目组合-公司段" resultType="Map" parameterType="Map"><!--{
+	"db":"jlerp",
+	"desc":"查询科目组合-公司段",
+	"in":[],
+	"out":[
+		{
+			"id":"flex_value",
+			"name":"flex_value",
+			"datatype":"varchar"
+		},
+		{
+			"id":"description",
+			"name":"description",
+			"datatype":"varchar"
+		}
+	]
+}-->select ffv.flex_value,
+       ffvt.description
+ from fnd_id_flex_segments fifs,
+       gl_sets_of_books     gsob,
+       fnd_flex_values      ffv,
+       fnd_flex_values_tl   ffvt
+ where gsob.chart_of_accounts_id = fifs.id_flex_num
+   and id_flex_code = 'GL#'
+   and ffv.flex_value_id = ffvt.flex_value_id
+   and ffvt.language = 'ZHS'
+   and ffv.flex_value_set_id = fifs.flex_value_set_id
+   and ffv.enabled_flag = 'Y'
+   and ffv.end_date_active is null
+   and gsob.set_of_books_id = 2
+   and fifs.application_column_name = 'SEGMENT1'
+ order by ffv.flex_value
+</select>
+[INFO] [2018-05-09 22:47:10][com.alibaba.druid.pool.DruidDataSource]{dataSource-3} inited
+[DEBUG] [2018-05-09 22:47:10][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 22:47:11][root.report.db.DbManager]初始化数据库【jlerp】耗时0.7368s
+[DEBUG] [2018-05-09 22:47:11][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@42fd980] will not be managed by Spring
+[DEBUG] [2018-05-09 22:47:11][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:47:11][system.insertSysApiLog]==> Parameters: /reportServer//sql/modifyUserSql(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224710(String), 20180509224710(String), {"namespace":"总账查询","id":"查询科目组合-公司段","comment":{"db":"jlerp","desc":"查询科目组合-公司段","in":[],"out":[{"id":"flex_value","name":"flex_value","datatype":"varchar"},{"id":"description","name":"description","datatype":"varchar"}]},"cdata":"selectffv.flex_value,\r\nffvt.description\r\nfromfnd_id_flex_segmentsfifs,\r\ngl_sets_of_booksgsob,\r\nfnd_flex_valuesffv,\r\nfnd_flex_values_tlffvt\r\nwheregsob.chart_of_accounts_id=fifs.id_flex_num\r\nandid_flex_code='GL#'\r\nandffv.flex_value_id=ffvt.flex_value_id\r\nandffvt.language='ZHS'\r\nandffv.flex_value_set_id=fifs.flex_value_set_id\r\nandffv.enabled_flag='Y'\r\nandffv.end_date_activeisnull\r\nandgsob.set_of_books_id=2\r\nandfifs.application_column_name='SEGMENT1'\r\norderbyffv.flex_value","sqlType":"SQL"}(String)
+[DEBUG] [2018-05-09 22:47:11][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 22:47:52][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 22:47:52][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 22:47:53][root.report.db.DbManager]初始化数据库【form】耗时2.4095s
+[DEBUG] [2018-05-09 22:48:17][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-09 22:48:17][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:17][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-09 22:48:17][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:48:17][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-09 22:48:18][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:18][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:18][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224818(String), 20180509224818(String), (String)
+[DEBUG] [2018-05-09 22:48:18][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:23][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:23][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:48:23][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:48:23][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:48:23][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:23][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224823(String), 20180509224823(String), (String)
+[DEBUG] [2018-05-09 22:48:23][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:24][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:24][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:24][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectClass(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224824(String), 20180509224824(String), (String)
+[DEBUG] [2018-05-09 22:48:24][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:26][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:26][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:26][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectName/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224826(String), 20180509224826(String), (String)
+[DEBUG] [2018-05-09 22:48:26][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:28][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:28][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:28][system.insertSysApiLog]==> Parameters: /reportServer//DBConnection/ListAll(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224828(String), 20180509224828(String), (String)
+[DEBUG] [2018-05-09 22:48:28][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:28][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:28][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:28][system.insertSysApiLog]==> Parameters: /reportServer//select/qrySelectSqlDetail(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224828(String), 20180509224828(String), {"namespace":"总账查询","sqlid":"查询科目组合-公司段"}(String)
+[DEBUG] [2018-05-09 22:48:28][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 22:48:29][root.report.query.SelectControl]调用getDictionaryClass.
+[DEBUG] [2018-05-09 22:48:29][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]==> Parameters: /reportServer//dictionary/getDictionaryClass(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224829(String), 20180509224829(String), (String)
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:29][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]==> Parameters: /reportServer//dictionary/getDictionaryName/%E6%95%B0%E6%8D%AE%E5%AD%97%E5%85%B8(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224829(String), 20180509224829(String), (String)
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:29][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:29][authType.getAllAuthTypeList]==>  Preparing: select authtype_name as value,authtype_desc as name from fnd_authtype where authtype_class = 'data' 
+[DEBUG] [2018-05-09 22:48:29][authType.getAllAuthTypeList]==> Parameters: 
+[DEBUG] [2018-05-09 22:48:29][authType.getAllAuthTypeList]<==      Total: 2
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]==> Parameters: /reportServer//authType/getAllAuthTypeList(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224829(String), 20180509224829(String), (String)
+[DEBUG] [2018-05-09 22:48:29][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:34][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:34][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:48:34][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:48:34][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:48:34][rule.getSelectAuthListByClass]==>  Preparing: select a.func_id as name from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID where u.USER_NAME = ? and locate('总账查询/',a.func_id)>0 and a.auth_type = 'select' 
+[DEBUG] [2018-05-09 22:48:34][rule.getSelectAuthListByClass]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:48:34][rule.getSelectAuthListByClass]<==      Total: 0
+[DEBUG] [2018-05-09 22:48:34][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:34][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthListByClass/system/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224834(String), 20180509224834(String), (String)
+[DEBUG] [2018-05-09 22:48:34][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:35][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:35][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:35][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectParam/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224835(String), 20180509224835(String), (String)
+[DEBUG] [2018-05-09 22:48:35][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 22:48:37][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
+[DEBUG] [2018-05-09 22:48:37][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 22:48:37][root.report.db.DbManager]初始化数据库【jlerp】耗时0.7461s
+[DEBUG] [2018-05-09 22:48:37][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@52fabc4] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:37][总账查询.查询科目组合-公司段]==>  Preparing: select ffv.flex_value, ffvt.description from fnd_id_flex_segments fifs, gl_sets_of_books gsob, fnd_flex_values ffv, fnd_flex_values_tl ffvt where gsob.chart_of_accounts_id = fifs.id_flex_num and id_flex_code = 'GL#' and ffv.flex_value_id = ffvt.flex_value_id and ffvt.language = 'ZHS' and ffv.flex_value_set_id = fifs.flex_value_set_id and ffv.enabled_flag = 'Y' and ffv.end_date_active is null and gsob.set_of_books_id = 2 and fifs.application_column_name = 'SEGMENT1' order by ffv.flex_value 
+[DEBUG] [2018-05-09 22:48:37][总账查询.查询科目组合-公司段]==> Parameters: 
+[DEBUG] [2018-05-09 22:48:39][总账查询.查询科目组合-公司段]<==      Total: 19
+[DEBUG] [2018-05-09 22:48:39][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:39][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:39][system.insertSysApiLog]==> Parameters: /reportServer//select/execSelect/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224836(String), 20180509224836(String), [{"id":"查询科目组合-公司段","type":"sql","db":"jlerp","in":[]}](String)
+[DEBUG] [2018-05-09 22:48:39][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:42][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:42][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:48:42][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:48:42][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:48:43][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:43][system.insertSysApiLog]==> Parameters: /reportServer//template/getTemplateAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224842(String), 20180509224842(String), (String)
+[DEBUG] [2018-05-09 22:48:43][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:46][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:46][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:48:46][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:48:46][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:48:46][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:46][system.insertSysApiLog]==> Parameters: /reportServer//function/getFunctionAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224846(String), 20180509224846(String), (String)
+[DEBUG] [2018-05-09 22:48:46][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:48:49][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4e6163f2] will not be managed by Spring
+[DEBUG] [2018-05-09 22:48:49][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:48:49][system.insertSysApiLog]==> Parameters: /reportServer/DBConnection/ListAll(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509224849(String), 20180509224849(String), (String)
+[DEBUG] [2018-05-09 22:48:49][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 22:50:16][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 22:50:16][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 22:50:17][root.report.db.DbManager]初始化数据库【form】耗时2.1316s
+[DEBUG] [2018-05-09 22:50:35][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-09 22:50:35][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6a8b5b5d] will not be managed by Spring
+[DEBUG] [2018-05-09 22:50:35][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-09 22:50:35][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:50:35][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-09 22:50:36][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6a8b5b5d] will not be managed by Spring
+[DEBUG] [2018-05-09 22:50:36][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:50:36][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509225036(String), 20180509225036(String), (String)
+[DEBUG] [2018-05-09 22:50:36][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:50:41][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6a8b5b5d] will not be managed by Spring
+[DEBUG] [2018-05-09 22:50:41][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:50:41][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:50:41][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:50:41][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:50:41][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509225041(String), 20180509225041(String), (String)
+[DEBUG] [2018-05-09 22:50:41][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:50:43][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6a8b5b5d] will not be managed by Spring
+[DEBUG] [2018-05-09 22:50:43][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:50:43][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:50:43][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:50:43][rule.getSelectAuthListByClass]==>  Preparing: select a.func_id as name from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID where u.USER_NAME = ? and locate('总账查询/',a.func_id)>0 and a.auth_type = 'select' 
+[DEBUG] [2018-05-09 22:50:43][rule.getSelectAuthListByClass]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:50:43][rule.getSelectAuthListByClass]<==      Total: 0
+[DEBUG] [2018-05-09 22:50:43][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:50:43][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthListByClass/system/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509225043(String), 20180509225043(String), (String)
+[DEBUG] [2018-05-09 22:50:43][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:50:44][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6a8b5b5d] will not be managed by Spring
+[DEBUG] [2018-05-09 22:50:44][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:50:44][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectParam/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509225044(String), 20180509225044(String), (String)
+[DEBUG] [2018-05-09 22:50:45][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 22:50:46][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
+[DEBUG] [2018-05-09 22:50:46][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 22:50:46][root.report.db.DbManager]初始化数据库【jlerp】耗时0.6762s
+[DEBUG] [2018-05-09 22:50:46][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@52bd00fa] will not be managed by Spring
+[DEBUG] [2018-05-09 22:50:46][总账查询.查询科目组合-公司段]==>  Preparing: select ffv.flex_value, ffvt.description from fnd_id_flex_segments fifs, gl_sets_of_books gsob, fnd_flex_values ffv, fnd_flex_values_tl ffvt where gsob.chart_of_accounts_id = fifs.id_flex_num and id_flex_code = 'GL#' and ffv.flex_value_id = ffvt.flex_value_id and ffvt.language = 'ZHS' and ffv.flex_value_set_id = fifs.flex_value_set_id and ffv.enabled_flag = 'Y' and ffv.end_date_active is null and gsob.set_of_books_id = 2 and fifs.application_column_name = 'SEGMENT1' order by ffv.flex_value 
+[DEBUG] [2018-05-09 22:50:46][总账查询.查询科目组合-公司段]==> Parameters: 
+[DEBUG] [2018-05-09 22:50:48][总账查询.查询科目组合-公司段]<==      Total: 19
+[DEBUG] [2018-05-09 22:50:48][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6a8b5b5d] will not be managed by Spring
+[DEBUG] [2018-05-09 22:50:48][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:50:48][system.insertSysApiLog]==> Parameters: /reportServer//select/execSelect/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509225046(String), 20180509225046(String), [{"id":"查询科目组合-公司段","type":"sql","db":"jlerp","in":[]}](String)
+[DEBUG] [2018-05-09 22:50:48][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 22:51:46][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@6a8b5b5d] will not be managed by Spring
+[DEBUG] [2018-05-09 22:51:46][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 22:51:46][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 22:51:46][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 22:51:46][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 22:51:46][system.insertSysApiLog]==> Parameters: /reportServer//function/getFunctionAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509225146(String), 20180509225146(String), (String)
+[DEBUG] [2018-05-09 22:51:46][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 23:02:54][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[ERROR] [2018-05-09 23:02:54][root.report.db.DbManager]初始化数据库【form】失败!
+[INFO] [2018-05-09 23:04:59][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[ERROR] [2018-05-09 23:04:59][root.report.db.DbManager]初始化数据库【form】失败!
+[INFO] [2018-05-09 23:06:06][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[ERROR] [2018-05-09 23:07:17][root.report.db.DbManager]初始化数据库【form】失败!
+[INFO] [2018-05-09 23:08:09][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-09 23:08:17][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 23:08:20][root.report.db.DbManager]初始化数据库【form】耗时11.4637s
+[DEBUG] [2018-05-09 23:08:31][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-09 23:08:31][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@219ea7f8] will not be managed by Spring
+[DEBUG] [2018-05-09 23:08:31][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-09 23:08:31][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-09 23:08:32][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-09 23:08:32][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@219ea7f8] will not be managed by Spring
+[DEBUG] [2018-05-09 23:08:32][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 23:08:32][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509230832(String), 20180509230832(String), (String)
+[DEBUG] [2018-05-09 23:08:32][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 23:08:37][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@219ea7f8] will not be managed by Spring
+[DEBUG] [2018-05-09 23:08:37][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 23:08:37][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 23:08:37][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 23:08:37][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 23:08:37][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthList/system(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509230837(String), 20180509230837(String), (String)
+[DEBUG] [2018-05-09 23:08:37][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 23:08:39][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@219ea7f8] will not be managed by Spring
+[DEBUG] [2018-05-09 23:08:39][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-09 23:08:39][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-09 23:08:39][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-09 23:08:39][rule.getSelectAuthListByClass]==>  Preparing: select a.func_id as name from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID where u.USER_NAME = ? and locate('总账查询/',a.func_id)>0 and a.auth_type = 'select' 
+[DEBUG] [2018-05-09 23:08:39][rule.getSelectAuthListByClass]==> Parameters: system(String)
+[DEBUG] [2018-05-09 23:08:39][rule.getSelectAuthListByClass]<==      Total: 0
+[DEBUG] [2018-05-09 23:08:39][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 23:08:39][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthListByClass/system/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509230839(String), 20180509230839(String), (String)
+[DEBUG] [2018-05-09 23:08:39][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-09 23:08:41][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@219ea7f8] will not be managed by Spring
+[DEBUG] [2018-05-09 23:08:41][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 23:08:41][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectParam/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509230841(String), 20180509230841(String), (String)
+[DEBUG] [2018-05-09 23:08:41][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 23:08:43][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
+[DEBUG] [2018-05-09 23:08:50][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-09 23:08:51][root.report.db.DbManager]初始化数据库【jlerp】耗时7.7109s
+[DEBUG] [2018-05-09 23:08:51][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@698c67be] will not be managed by Spring
+[DEBUG] [2018-05-09 23:08:51][总账查询.查询科目组合-公司段]==>  Preparing: select ffv.flex_value, ffvt.description from fnd_id_flex_segments fifs, gl_sets_of_books gsob, fnd_flex_values ffv, fnd_flex_values_tl ffvt where gsob.chart_of_accounts_id = fifs.id_flex_num and id_flex_code = 'GL#' and ffv.flex_value_id = ffvt.flex_value_id and ffvt.language = 'ZHS' and ffv.flex_value_set_id = fifs.flex_value_set_id and ffv.enabled_flag = 'Y' and ffv.end_date_active is null and gsob.set_of_books_id = 2 and fifs.application_column_name = 'SEGMENT1' order by ffv.flex_value 
+[DEBUG] [2018-05-09 23:08:51][总账查询.查询科目组合-公司段]==> Parameters: 
+[DEBUG] [2018-05-09 23:08:54][总账查询.查询科目组合-公司段]<==      Total: 19
+[DEBUG] [2018-05-09 23:08:54][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@219ea7f8] will not be managed by Spring
+[DEBUG] [2018-05-09 23:08:54][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-09 23:08:54][system.insertSysApiLog]==> Parameters: /reportServer//select/execSelect/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.202","userName":"system"}(String), 20180509230843(String), 20180509230843(String), [{"id":"查询科目组合-公司段","type":"sql","db":"jlerp","in":[]}](String)
+[DEBUG] [2018-05-09 23:08:54][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-09 23:09:21][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[ERROR] [2018-05-09 23:09:21][root.report.db.DbManager]初始化数据库【form】失败!
+[INFO] [2018-05-10 09:31:49][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-10 09:31:49][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-10 09:31:52][root.report.db.DbManager]初始化数据库【form】耗时3.8358s
+[DEBUG] [2018-05-10 09:32:43][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-10 09:32:43][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4165d16a] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:43][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-10 09:32:43][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-10 09:32:43][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-10 09:32:44][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4165d16a] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:44][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@22b21566] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]==> Parameters: /reportServer/dynamicReport/getDirectory(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093244(String), 20180510093244(String), (String)
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]==> Parameters: /reportServer/web/getDirectory(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093244(String), 20180510093244(String), (String)
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:44][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@22b21566] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:44][user.qryMenuList]==>  Preparing: SELECT f.func_id,f.func_name from fnd_auth a ,fnd_user u ,fnd_func f where a.user_id = u.USER_ID and a.func_id = f.func_id and u.USER_NAME = ? and a.auth_type = 'webFunc' and f.func_pid = 0 
+[DEBUG] [2018-05-10 09:32:44][user.qryMenuList]==> Parameters: system(String)
+[DEBUG] [2018-05-10 09:32:44][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4165d16a] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:44][user.qryAllBudgetReportMenu]==>  Preparing: SELECT f.func_id,f.func_pid,f.func_name from fnd_func f where f.func_pid!=0 and f.func_type='web' and f.valid=1 order by f.func_id asc,f.func_pid asc 
+[DEBUG] [2018-05-10 09:32:44][user.qryAllBudgetReportMenu]==> Parameters: 
+[DEBUG] [2018-05-10 09:32:44][user.qryMenuList]<==      Total: 0
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]==> Parameters: /reportServer/user/qryMenuList(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093244(String), 20180510093244(String), (String)
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:44][user.qryAllBudgetReportMenu]<==      Total: 17
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]==> Parameters: /reportServer/user/getBudgetReport(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093244(String), 20180510093244(String), (String)
+[DEBUG] [2018-05-10 09:32:44][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:48][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4165d16a] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:48][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:48][system.insertSysApiLog]==> Parameters: /reportServer/DBConnection/ListAll(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093248(String), 20180510093248(String), (String)
+[DEBUG] [2018-05-10 09:32:48][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:50][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4165d16a] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:50][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@22b21566] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:50][user.getAllUser]==>  Preparing: SELECT u.user_id,u.user_name FROM fnd_user u where u.user_name like '%%' limit ?,? 
+[DEBUG] [2018-05-10 09:32:50][user.getUserListRows]==>  Preparing: select count(1) from fnd_user u where u.user_name like '%%' 
+[DEBUG] [2018-05-10 09:32:50][user.getUserListRows]==> Parameters: 
+[DEBUG] [2018-05-10 09:32:50][user.getAllUser]==> Parameters: 0(Integer), 10(Integer)
+[DEBUG] [2018-05-10 09:32:51][user.getAllUser]<==      Total: 9
+[DEBUG] [2018-05-10 09:32:51][user.getUserListRows]<==      Total: 1
+[DEBUG] [2018-05-10 09:32:51][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:51][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:51][system.insertSysApiLog]==> Parameters: /reportServer/user/getUserListRows(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093250(String), 20180510093250(String), [null](String)
+[DEBUG] [2018-05-10 09:32:51][system.insertSysApiLog]==> Parameters: /reportServer/user/getUserList(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093250(String), 20180510093250(String), [{"perPage":10,"startIndex":0,"currentPage":0,"totalPage":0},null](String)
+[DEBUG] [2018-05-10 09:32:51][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:51][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:52][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4165d16a] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:52][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:52][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093252(String), 20180510093252(String), (String)
+[DEBUG] [2018-05-10 09:32:52][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:54][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4165d16a] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:54][formUser.getUserList]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.isAdmin,t.encrypted_user_password,t.import, case when t.isAdmin=1 then '管理员' else '普通用户' end isAdminText,t.start_date,t.end_date,t.description from fnd_user t where t.user_name like '%%' limit ?,? 
+[DEBUG] [2018-05-10 09:32:54][formUser.getUserList]==> Parameters: 0(Integer), 10(Integer)
+[DEBUG] [2018-05-10 09:32:54][formUser.getUserList]<==      Total: 9
+[DEBUG] [2018-05-10 09:32:54][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@22b21566] will not be managed by Spring
+[DEBUG] [2018-05-10 09:32:54][formUser.getUserListTotalRows]==>  Preparing: select count(1) from fnd_user t where t.user_name like '%%' 
+[DEBUG] [2018-05-10 09:32:54][formUser.getUserListTotalRows]==> Parameters: 
+[DEBUG] [2018-05-10 09:32:54][formUser.getUserListTotalRows]<==      Total: 1
+[DEBUG] [2018-05-10 09:32:54][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:54][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 09:32:54][system.insertSysApiLog]==> Parameters: /reportServer/formUser/getUserList(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093254(String), 20180510093254(String), [{},{"perPage":10,"startIndex":0,"currentPage":0,"totalPage":0}](String)
+[DEBUG] [2018-05-10 09:32:54][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 09:32:54][system.insertSysApiLog]==> Parameters: /reportServer/formUser/getUserListTotalRows(String), {"remoteIP":"0:0:0:0:0:0:0:1","userName":"system"}(String), 20180510093254(String), 20180510093254(String), {}(String)
+[DEBUG] [2018-05-10 09:32:54][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-10 09:38:28][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[ERROR] [2018-05-10 09:38:28][root.report.db.DbManager]初始化数据库【form】失败!
+[INFO] [2018-05-10 10:07:26][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-10 10:07:26][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-10 10:07:28][root.report.db.DbManager]初始化数据库【form】耗时2.1946s
+[INFO] [2018-05-10 14:05:14][com.alibaba.druid.pool.DruidDataSource]{dataSource-1} inited
+[DEBUG] [2018-05-10 14:05:14][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-10 14:05:16][root.report.db.DbManager]初始化数据库【form】耗时2.7114s
+[DEBUG] [2018-05-10 14:09:36][root.report.auth.UserController]调用服务：/user/login
+[DEBUG] [2018-05-10 14:09:36][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@bee94e3] will not be managed by Spring
+[DEBUG] [2018-05-10 14:09:36][formUser.getUserInfoByUserId]==>  Preparing: select t._id,t.user_id,t.user_name,t.creation_date,t.start_date,t.end_date,t.description, t.isAdmin,t.import,t.encrypted_user_password from fnd_user t where t.user_name=? 
+[DEBUG] [2018-05-10 14:09:36][formUser.getUserInfoByUserId]==> Parameters: system(String)
+[DEBUG] [2018-05-10 14:09:36][formUser.getUserInfoByUserId]<==      Total: 1
+[DEBUG] [2018-05-10 14:09:37][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@bee94e3] will not be managed by Spring
+[DEBUG] [2018-05-10 14:09:37][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 14:09:37][system.insertSysApiLog]==> Parameters: /reportServer/getLambdaUrl(String), {"remoteIP":"172.16.131.138","userName":"system"}(String), 20180510140936(String), 20180510140936(String), (String)
+[DEBUG] [2018-05-10 14:09:37][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 14:09:44][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@bee94e3] will not be managed by Spring
+[DEBUG] [2018-05-10 14:09:44][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-10 14:09:44][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-10 14:09:44][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-10 14:09:44][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 14:09:44][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthList/system(String), {"remoteIP":"172.16.131.138","userName":"system"}(String), 20180510140944(String), 20180510140944(String), (String)
+[DEBUG] [2018-05-10 14:09:44][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 14:09:47][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@bee94e3] will not be managed by Spring
+[DEBUG] [2018-05-10 14:09:47][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-10 14:09:47][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-10 14:09:47][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-10 14:09:47][rule.getSelectAuthListByClass]==>  Preparing: select a.func_id as name from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID where u.USER_NAME = ? and locate('总账查询/',a.func_id)>0 and a.auth_type = 'select' 
+[DEBUG] [2018-05-10 14:09:47][rule.getSelectAuthListByClass]==> Parameters: system(String)
+[DEBUG] [2018-05-10 14:09:47][rule.getSelectAuthListByClass]<==      Total: 0
+[DEBUG] [2018-05-10 14:09:47][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 14:09:47][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectAuthListByClass/system/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2(String), {"remoteIP":"172.16.131.138","userName":"system"}(String), 20180510140947(String), 20180510140947(String), (String)
+[DEBUG] [2018-05-10 14:09:47][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 14:09:49][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@bee94e3] will not be managed by Spring
+[DEBUG] [2018-05-10 14:09:49][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 14:09:49][system.insertSysApiLog]==> Parameters: /reportServer//select/getSelectParam/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.138","userName":"system"}(String), 20180510140949(String), 20180510140949(String), (String)
+[DEBUG] [2018-05-10 14:09:49][system.insertSysApiLog]<==    Updates: 1
+[INFO] [2018-05-10 14:09:50][com.alibaba.druid.pool.DruidDataSource]{dataSource-2} inited
+[DEBUG] [2018-05-10 14:09:50][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-05-10 14:09:51][root.report.db.DbManager]初始化数据库【jlerp】耗时0.6148s
+[DEBUG] [2018-05-10 14:09:51][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@17e1d9fc] will not be managed by Spring
+[DEBUG] [2018-05-10 14:09:51][总账查询.查询科目组合-公司段]==>  Preparing: select ffv.flex_value, ffvt.description from fnd_id_flex_segments fifs, gl_sets_of_books gsob, fnd_flex_values ffv, fnd_flex_values_tl ffvt where gsob.chart_of_accounts_id = fifs.id_flex_num and id_flex_code = 'GL#' and ffv.flex_value_id = ffvt.flex_value_id and ffvt.language = 'ZHS' and ffv.flex_value_set_id = fifs.flex_value_set_id and ffv.enabled_flag = 'Y' and ffv.end_date_active is null and gsob.set_of_books_id = 2 and fifs.application_column_name = 'SEGMENT1' order by ffv.flex_value 
+[DEBUG] [2018-05-10 14:09:51][总账查询.查询科目组合-公司段]==> Parameters: 
+[DEBUG] [2018-05-10 14:09:52][总账查询.查询科目组合-公司段]<==      Total: 19
+[DEBUG] [2018-05-10 14:09:52][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@bee94e3] will not be managed by Spring
+[DEBUG] [2018-05-10 14:09:52][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 14:09:52][system.insertSysApiLog]==> Parameters: /reportServer//select/execSelect/%E6%80%BB%E8%B4%A6%E6%9F%A5%E8%AF%A2/%E6%9F%A5%E8%AF%A2%E7%A7%91%E7%9B%AE%E7%BB%84%E5%90%88-%E5%85%AC%E5%8F%B8%E6%AE%B5(String), {"remoteIP":"172.16.131.138","userName":"system"}(String), 20180510140950(String), 20180510140950(String), [{"id":"查询科目组合-公司段","type":"sql","db":"jlerp","in":[]}](String)
+[DEBUG] [2018-05-10 14:09:52][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 14:09:55][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@bee94e3] will not be managed by Spring
+[DEBUG] [2018-05-10 14:09:55][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 14:09:55][system.insertSysApiLog]==> Parameters: /reportServer//DBConnection/ListAll(String), {"remoteIP":"172.16.131.138","userName":"system"}(String), 20180510140955(String), 20180510140955(String), (String)
+[DEBUG] [2018-05-10 14:09:55][system.insertSysApiLog]<==    Updates: 1
+[DEBUG] [2018-05-10 14:10:17][org.mybatis.spring.transaction.SpringManagedTransaction]JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@bee94e3] will not be managed by Spring
+[DEBUG] [2018-05-10 14:10:17][user.isAdmin]==>  Preparing: SELECT u.ISADMIN FROM fnd_user u where u.user_name = ? 
+[DEBUG] [2018-05-10 14:10:17][user.isAdmin]==> Parameters: system(String)
+[DEBUG] [2018-05-10 14:10:18][user.isAdmin]<==      Total: 1
+[DEBUG] [2018-05-10 14:10:18][system.insertSysApiLog]==>  Preparing: insert into sys_api_log(api_code,client,begin_time,end_time,in_param) values (?,?,str_to_date(?,'%Y%m%d%H%i%s'),str_to_date(?,'%Y%m%d%H%i%s'), ?) 
+[DEBUG] [2018-05-10 14:10:18][system.insertSysApiLog]==> Parameters: /reportServer//function/getFunctionAuthList/system(String), {"remoteIP":"172.16.131.138","userName":"system"}(String), 20180510141017(String), 20180510141017(String), (String)
+[DEBUG] [2018-05-10 14:10:18][system.insertSysApiLog]<==    Updates: 1
