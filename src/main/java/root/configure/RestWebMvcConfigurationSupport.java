@@ -22,16 +22,11 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
     @Autowired
     private AppConstants appConstants;
 
-    @Bean
-    public HttpMessageConverter<String> responseBodyConverter() {
-        StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
-        return converter;
-    }
-
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
-        converters.add(responseBodyConverter());
+        StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+        converters.add(converter);
         FastJsonHttpMessageConverter4 fastConverter = new FastJsonHttpMessageConverter4();
         FastJsonConfig fastConfig =  new FastJsonConfig();
         fastConfig.setCharset(Charset.forName("UTF-8"));
