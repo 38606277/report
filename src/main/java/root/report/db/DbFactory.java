@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import root.configure.AppConstants;
 import root.configure.WebApplicationContext;
 import root.report.util.ErpUtil;
@@ -156,23 +157,13 @@ public class DbFactory {
         locations[0] = appConstants.getUserSqlPath();
         locations[1] = appConstants.getUserFunctionPath();
         locations[2] = appConstants.getUserDictionaryPath();
-        locations[3] = DbFactory.class.getClassLoader().getResource("mapper").getPath();
+        locations[3] = "classpath:mapper/**/*.xml";
         List<Resource> resources = new ArrayList<Resource>();
-        for (String location : locations) {
-            if (location.contains("jar!")) {
-                location = location.substring(5);//去掉修饰符"file:"
-                String jarPath = location.split("!")[0];
-                String jarInnerPath = location.substring(location.indexOf("!") + 2).replaceAll("!", "");
-                JarFile jarFile = new JarFile(new File(jarPath));
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    String entryName = entry.getName();
-                    if (!entry.isDirectory() && entryName.contains(jarInnerPath) && entryName.endsWith(".xml")) {
-                        resources.add(new SqlResource(jarPath, entryName));
-                    }
-                }
-            } else {
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        for(String location : locations){
+            if (location.startsWith("classpath")) {
+                resources.addAll(Arrays.asList(resolver.getResources(location)));
+            }else{
                 List<File> fileList = getFileList(location, new ArrayList<File>());
                 for (int i = 0; fileList != null && i < fileList.size(); i++) {
                     resources.add(new FileSystemResource(fileList.get(i)));
