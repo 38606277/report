@@ -55,8 +55,8 @@
     </select>
     <!--添加任务信息-->
     <insert id="insertTaskInfo" parameterType="Map" useGeneratedKeys="true" keyProperty="task_id">
-        insert into frm_form_task (task_id, template_id, task_name, start_date, end_date, create_by, create_date,deploy_date,task_state) values(
-          #{task_id, jdbcType=INTEGER},#{template_id, jdbcType=INTEGER},#{task_name, jdbcType=VARCHAR},#{start_date, jdbcType=TIMESTAMP},#{end_date, jdbcType=TIMESTAMP},
+        insert into frm_form_task (task_id, table_id, task_name, start_date, end_date, create_by, create_date,deploy_date,task_state) values(
+          #{task_id, jdbcType=INTEGER},#{table_id, jdbcType=INTEGER},#{task_name, jdbcType=VARCHAR},#{start_date, jdbcType=TIMESTAMP},#{end_date, jdbcType=TIMESTAMP},
           #{create_by, jdbcType=VARCHAR},#{create_date, jdbcType=TIMESTAMP},#{deploy_date, jdbcType=TIMESTAMP},#{task_state, jdbcType=VARCHAR}
         )
     </insert>
@@ -75,5 +75,27 @@
     <!--删除任务用户信息-->
     <delete id="deleteTaskUserInfo" parameterType="int">
         delete from frm_form_task_user where task_id=#{task_id}
+    </delete>
+
+    <!--加载报表数据-->
+    <select id="reportData" parameterType="Map" resultType="Map">
+        select * from ${tableName} where 1=1
+        <if test="createBy != null"> and create_by=#{createBy}</if>
+        <if test="taskId != null">and task_id=#{taskId}</if>
+    </select>
+    <!--保存报表数据-->
+    <insert id="saveReportData" parameterType="Map">
+        insert into ${tableName}
+        (<foreach collection="columnNames" item="col" separator=",">${col}</foreach>)
+        VALUES
+        <foreach collection="data" item="item" separator=",">
+            (<foreach collection="item" item="value" separator=",">#{value}</foreach>)
+        </foreach>
+    </insert>
+    <!--删除 任务 用户报表数据-->
+    <delete id="deleteReportData" parameterType="Map">
+        delete from ${tableName} where 1=1
+        <if test="createBy != null"> and create_by = #{createBy}</if>
+        <if test="taskId != null"> and task_id = #{taskId}</if>
     </delete>
 </mapper>
