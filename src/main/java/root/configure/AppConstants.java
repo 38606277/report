@@ -24,9 +24,11 @@ public class AppConstants {
     private String clientInstallFile;
     private String report2;//前端路径
     private String workPath;
+    private String appPath;
 
     public AppConstants(){
         workPath = System.getProperty("user.dir")+ File.separator + "work";
+        appPath = System.getProperty("user.dir")+ File.separator + "app";
     }
 
     public String getReportPath() {
@@ -97,7 +99,7 @@ public class AppConstants {
     }
 
     public String getReport2() {
-        return workPath+ File.separator+"webapp";
+        return appPath+ File.separator+"webapp";
     }
 
     @Override

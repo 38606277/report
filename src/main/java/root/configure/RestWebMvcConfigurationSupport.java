@@ -1,5 +1,8 @@
 package root.configure;
 
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,29 +19,20 @@ import java.util.List;
 
 @Configuration
 public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
-//    @Override
-//    protected void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-//        super.configureMessageConverters(converters);
-//        FastJsonHttpMessageConverter4 fastConverter = new FastJsonHttpMessageConverter4();
-//        FastJsonConfig fastConfig =  new FastJsonConfig();
-//        fastConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
-//        fastConverter.setFastJsonConfig(fastConfig);
-//        converters.add(fastConverter);
-//    }
-
     @Autowired
     private AppConstants appConstants;
-
-    @Bean
-    public HttpMessageConverter<String> responseBodyConverter() {
-        StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
-        return converter;
-    }
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         super.configureMessageConverters(converters);
-        converters.add(responseBodyConverter());
+        StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+        converters.add(converter);
+        FastJsonHttpMessageConverter4 fastConverter = new FastJsonHttpMessageConverter4();
+        FastJsonConfig fastConfig =  new FastJsonConfig();
+        fastConfig.setCharset(Charset.forName("UTF-8"));
+        fastConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
+        fastConverter.setFastJsonConfig(fastConfig);
+        converters.add(fastConverter);
     }
 
     @Override
