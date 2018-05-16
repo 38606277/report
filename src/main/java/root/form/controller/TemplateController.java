@@ -35,6 +35,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import root.configure.AppConstants;
+import root.form.constant.ColumnType;
 import root.report.common.BaseControl;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
@@ -136,6 +137,13 @@ public class TemplateController extends BaseControl {
         });
     }
 
+    @RequestMapping(value = "/listAllColumnTypes", produces = "text/plain;charset=UTF-8")
+    public String listAllColumnTypes(){
+        return this.doExecuteWithROReturn(()->{
+            return ColumnType.listAllColumnTypes();
+        });
+    }
+
     /**
      * 根据前台传递的表及字段信息建表
      * @param pJson
@@ -165,7 +173,7 @@ public class TemplateController extends BaseControl {
         	//拼接建表sql
         	columns.forEach(col->{
         		JSONObject jsonCol = (JSONObject)col;
-        		sb.append(jsonCol.getString("field_name") + " "+ jsonCol.getString("data_type"));
+        		sb.append(jsonCol.getString("field_name") + " "+ ColumnType.getDbType(jsonCol.getString("data_type")));
         		String length = jsonCol.getString("data_length");
         		if(null != length && !"".equals(length)) sb.append("("+length+")");
         		sb.append(",");
@@ -184,15 +192,14 @@ public class TemplateController extends BaseControl {
     private void addCommonColumns(JSONArray columns){
         JSONObject taskCol = new JSONObject();
         taskCol.put("field_name","task_id");
-        taskCol.put("data_type", "int");
-        taskCol.put("data_length","11");
+        taskCol.put("data_type", ColumnType.NUMBER);
         JSONObject userCol = new JSONObject();
         userCol.put("field_name","create_by");
-        userCol.put("data_type", "varchar");
+        userCol.put("data_type", ColumnType.STRING);
         userCol.put("data_length","128");
         JSONObject createTimeCol = new JSONObject();
         createTimeCol.put("field_name","create_time");
-        createTimeCol.put("data_type", "datetime");
+        createTimeCol.put("data_type", ColumnType.DATE);
         columns.add(taskCol);
         columns.add(userCol);
         columns.add(createTimeCol);
