@@ -2,14 +2,23 @@ package root.form.controller;
 
 
 import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
 
+import com.github.pagehelper.util.StringUtil;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,12 +39,14 @@ import root.report.common.BaseControl;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 @RestController
 @RequestMapping("/reportServer/dataCollect")
 public class TemplateController extends BaseControl {
-	
+
 	@Autowired
 	private AppConstants appConstant;
 
@@ -63,6 +74,29 @@ public class TemplateController extends BaseControl {
             DbFactory.Open(DbFactory.FORM).insert("dataCollect.addTemplate", map);
             return "";
         });
+    }
+
+    /**
+     * 下载模板
+     * @param response
+     * @param req
+     * @return
+     * @throws IOException
+     */
+    @RequestMapping(value = "/downloadTemplate", produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<byte[]> downloadTemplate(HttpServletResponse response, HttpServletRequest req) throws IOException {
+        //JSONObject json = (JSONObject) JSON.parse(pJson);
+        String path = req.getParameter("filePath");
+        String fileName = req.getParameter("fileName");
+        if(StringUtil.isEmpty(fileName)){
+            fileName = path;
+        }
+        File file = new File(path);
+        HttpHeaders headers = new HttpHeaders();
+        fileName = new String(fileName.getBytes("UTF-8"), "iso-8859-1");// 为了解决中文名称乱码问题
+        headers.setContentDispositionFormData("attachment", fileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
     }
 
     /**
@@ -276,6 +310,79 @@ public class TemplateController extends BaseControl {
             List<Map>  taskUserList = session.selectList("dataCollect.getTaskUserInfo", taskId);
             taskMap.put("taskUserList", taskUserList);
             return taskMap;
+        });
+    }
+
+    /**
+     * 根据任务ID和当前用户查询他的填报数据
+     * @param taskId
+     * @return
+     */
+    @RequestMapping(value = "/reportData/{table_name}/{task_id}", produces = "text/plain;charset=UTF-8")
+    public String getReportData(@PathVariable("table_name") String tableName,@PathVariable("task_id") Integer taskId){
+        return this.doExecuteWithROReturn(()->{
+            SqlSession session = DbFactory.Open(DbFactory.FORM );
+            String currentUser =  SysContext.getRequestUser().getUserName();
+            Map<String, Object> params = new HashMap<>();
+            params.put("tableName", tableName);
+            params.put("taskId", taskId);
+            params.put("createBy", currentUser);
+            return session.selectList("dataCollect.reportData",params);
+        });
+    }
+
+    /**
+     * pJson格式
+     * {
+     *     tableName:"",
+     *     taskId:"",
+     *     columnNames:[col1,col2,col3],
+     *     data:[{col1:'',col2:'',col3:''}]
+     * }
+     * @param pJson
+     * @return
+     */
+    @RequestMapping(value = "/saveData", produces = "text/plain;charset=UTF-8")
+    public String saveData(@RequestBody String pJson) throws SQLException {
+        JSONObject json = (JSONObject) JSON.parse(pJson);
+        JSONArray list = json.getJSONArray("data");
+        if(CollectionUtils.isEmpty(list)) return "";
+        JSONObject row = list.getJSONObject(0);
+        List<String> columnNames = new ArrayList<>();
+        for(String key : row.keySet()){
+            columnNames.add(key);
+        }
+        String currentUser =  SysContext.getRequestUser().getUserName();
+        json.put("columnNames", columnNames);
+        SqlSession session = null;
+        try {
+            session = DbFactory.Open(false, DbFactory.FORM);
+            //删除当前用户的任务填报数据
+            json.put("createBy", currentUser);
+            session.delete("dataCollect.deleteReportData",json);
+            //保存填报数据
+            addCommonColumnsToReportData(json);
+            session.insert("dataCollect.saveReportData", json);
+            session.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.rollback();
+            return ExceptionMsg(e.getMessage());
+        }
+        return SuccessMsg("操作成功","");
+    }
+    /*
+    添加任务id，创建人，创建时间到数据表
+     */
+    private void addCommonColumnsToReportData(JSONObject json) {
+        JSONArray array = json.getJSONArray("data");
+        if(array == null) return;
+        Date now = new Date();
+        array.forEach(j->{
+            JSONObject js = (JSONObject)j;
+            js.putIfAbsent("task_id", json.getInteger("taskId"));
+            js.putIfAbsent("create_by", json.getString("createBy"));
+            js.putIfAbsent("create_time", now);
         });
     }
 }
