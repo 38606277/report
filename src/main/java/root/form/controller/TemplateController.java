@@ -197,11 +197,11 @@ public class TemplateController extends BaseControl {
             String currentUser =  SysContext.getRequestUser().getUserName();
             json.put("create_by", currentUser);
             json.put("create_date", now);
-            session.update("dataCollect.addTableRecord", json);
+            session.insert("dataCollect.addTableRecord", json);
             //frm_table_filed添加数据
             Integer tableId = json.getInteger("_id");
             columns.forEach(j->((JSONObject)j).put("table_id", tableId));
-            session.update("dataCollect.addTableFields", columns);
+            session.insert("dataCollect.addTableFields", columns);
             //创建表
             this.addCommonColumns(columns);
         	StringBuffer sb = new StringBuffer();
@@ -391,6 +391,7 @@ public class TemplateController extends BaseControl {
         JSONArray list = json.getJSONArray("data");
         if(CollectionUtils.isEmpty(list)) return "";
         JSONObject row = list.getJSONObject(0);
+
         List<String> columnNames = new ArrayList<>();
         for(String key : row.keySet()){
             columnNames.add(key);
@@ -400,6 +401,12 @@ public class TemplateController extends BaseControl {
         SqlSession session = null;
         try {
             session = DbFactory.Open(false, DbFactory.FORM);
+            //查询字段名称和字段类型
+            /*List<Map<String, String>> columnNameAndTypes = session.selectList("dataCollect.getColumnNameAndType", json.getInteger("taskId"));
+            Map<String, String> types = new HashMap<>();
+            columnNameAndTypes.forEach(m->{
+                types.put(m.get("field_name"), ColumnType.getJdbcType(m.get("data_type")));
+            });*/
             //删除当前用户的任务填报数据
             json.put("createBy", currentUser);
             session.delete("dataCollect.deleteReportData",json);
