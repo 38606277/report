@@ -87,7 +87,7 @@
         <if test="taskId != null">and task_id=#{taskId}</if>
     </select>
     <!--根据任务id查询数据表的字段名称和字段类型-->
-    <select id="getColumnNameAndType" parameterType="int" resultMap="Map">
+    <select id="getColumnNameAndType" parameterType="int" resultType="Map">
         select f.field_name, f.data_type from frm_table_field f where
             f.table_id=(select t.table_id_ from frm_form_task t where t.task_id=#{taskId})
     </select>
