@@ -157,7 +157,9 @@ public class TemplateController extends BaseControl {
     }
 
     /**
-     * 根据模板ID删除模板， 删除之前要先判断模板下是否有任务,需要同步删除自定义表和元数据信息
+     * 根据模板ID删除模板，步骤：
+     * 先查询模板对应的表ID,再查询表ID对应的任务，
+     * 如果没有任务，则删除表定义及字段信息，再删除模板
      * @param templateId
      * @return
      */
@@ -165,10 +167,21 @@ public class TemplateController extends BaseControl {
     public String rmTemplate(@PathVariable("templateId") Integer templateId){
         return this.doExecuteWithROReturn(()->{
             SqlSession session = DbFactory.Open(DbFactory.FORM );
-            List taskList = session.selectList("dataCollect.getTableTaskList",templateId);
+            Map<String, Object> params = new HashMap<>();
+            params.put("templateId", templateId);
+            //查询模板关联表
+            Map<String, Object> table = session.selectOne("dataCollect.getFrmTable",params);
+            //查询表关联任务
+            Object tableId = table.get("table_id");
+            List taskList = session.selectList("dataCollect.getTableTaskList",tableId);
             if(!CollectionUtils.isEmpty(taskList)) throw new RuntimeException("该模板关联的有任务，不能删除");
+            //删除自定义表
+            session.delete("dataCollect.dropNewTable", table.get("table_name"));
+            //删除关联表定义和字段定义
+            session.delete("dataCollect.deleteFromFrmTableField", tableId);
+            session.delete("dataCollect.deleteFromFrmTable", tableId);
+            //删除模板
             session.delete("dataCollect.rmTemplate", templateId);
-            //删除自定义表和元数据信息 TODO
             return "";
         });
     }
@@ -251,7 +264,9 @@ public class TemplateController extends BaseControl {
             String currentUser =  SysContext.getRequestUser().getUserName();
             SqlSession session = DbFactory.Open(DbFactory.FORM );
             //查询用户创建的表
-            List<Map<String, Object>> tableList = session.selectList("dataCollect.getTableByCreateUser", currentUser);
+            Map<String, Object> params = new HashMap<>();
+            params.put("createBy", currentUser);
+            List<Map<String, Object>> tableList = session.selectList("dataCollect.getFrmTable", params);
             //根据表id查询字段及描述
             tableList.forEach(t->{
                 Object tableId = t.get("table_id");

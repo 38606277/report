@@ -46,9 +46,21 @@
             #{item.data_dict, jdbcType=VARCHAR},#{item.data_auth, jdbcType=VARCHAR},#{item.data_length, jdbcType=INTEGER})
         </foreach>
     </insert>
-    <!--根据用户查询表定义-->
-    <select id="getTableByCreateUser" parameterType="string" resultType="Map">
-        select * from frm_table t where t.create_by=#{createBy} order by t.create_date desc
+    <!--删除表定义信息-->
+    <delete id="deleteFromFrmTable" parameterType="int">
+        delete from frm_table where table_id=#{tableId}
+    </delete>
+    <!--删除字段定义信息-->
+    <delete id="deleteFromFrmTableField" parameterType="int">
+        delete from frm_table_field where table_id=#{tableId}
+    </delete>
+
+    <!--查询表定义-->
+    <select id="getFrmTable" parameterType="Map" resultType="Map">
+        select * from frm_table t where 1=1
+        <if test="createBy != null"> and t.create_by=#{createBy}</if>
+        <if test="templateId != null"> and t.template_id=#{templateId}</if>
+        order by t.create_date desc
     </select>
     <!--根据表ID查询表对应的字段描述-->
     <select id="getTableFieldDesc" parameterType="int" resultType="Map">
