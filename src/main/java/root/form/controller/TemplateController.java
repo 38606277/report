@@ -1,8 +1,11 @@
 package root.form.controller;
 
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -10,6 +13,7 @@ import java.sql.Statement;
 import java.util.*;
 
 import com.github.pagehelper.util.StringUtil;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
@@ -34,6 +38,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
 import root.configure.AppConstants;
 import root.form.constant.ColumnType;
 import root.report.common.BaseControl;
@@ -85,7 +90,7 @@ public class TemplateController extends BaseControl {
      * @throws IOException
      */
     @RequestMapping(value = "/downloadTemplate", produces = "text/plain;charset=UTF-8")
-    public ResponseEntity<byte[]> downloadTemplate(HttpServletResponse response, HttpServletRequest req) throws IOException {
+    public void downloadTemplate(HttpServletResponse response, HttpServletRequest req) throws IOException {
         //JSONObject json = (JSONObject) JSON.parse(pJson);
         String path = req.getParameter("filePath");
         String fileName = req.getParameter("fileName");
@@ -93,11 +98,42 @@ public class TemplateController extends BaseControl {
             fileName = path;
         }
         File file = new File(path);
-        HttpHeaders headers = new HttpHeaders();
         fileName = new String(fileName.getBytes("UTF-8"), "iso-8859-1");// 为了解决中文名称乱码问题
-        headers.setContentDispositionFormData("attachment", fileName);
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
+        response.setContentType("application/force-download");// 设置强制下载不打开
+        response.addHeader("Content-Disposition",
+                "attachment;fileName=" + fileName);// 设置文件名
+        response.setCharacterEncoding("UTF-8");
+        
+        byte[] buffer = new byte[1024];
+        FileInputStream fis = null;
+        BufferedInputStream bis = null;
+        try {
+            fis = new FileInputStream(file);
+            bis = new BufferedInputStream(fis);
+            OutputStream os = response.getOutputStream();
+            int i = bis.read(buffer);
+            while (i != -1) {
+                os.write(buffer, 0, i);
+                i = bis.read(buffer);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bis != null) {
+                try {
+                    bis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     /**
