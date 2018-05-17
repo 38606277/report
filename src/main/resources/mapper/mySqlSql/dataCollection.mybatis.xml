@@ -11,17 +11,16 @@
 	</insert>
     <!--查询模板列表-->
 	<select id="getTemplateList" parameterType="string" resultType="map">
-        select t.*, ft.table_id from frm_template t, frm_table ft where 1=1
-                and t.template_type = '0'
-                and t.template_id = ft.template_id
-                and t.createby = #{createBy}
+        select t.*, ft.table_id from frm_template t
+            LEFT JOIN frm_table ft on t.template_id = ft.template_id  where 1=1
+            and t.template_type = '0' and t.createby = #{createBy}
     </select>
     <!--删除模板-->
     <delete id="rmTemplate" parameterType="int">
         delete from frm_template where template_id=#{template_id}
     </delete>
-    <!--根据模板ID查询模板任务-->
-    <select id="getTemplateTaskList" parameterType="int" resultType="Map">
+    <!--根据表ID查询模板任务-->
+    <select id="getTableTaskList" parameterType="int" resultType="Map">
         select * from frm_form_task t where t.table_id=#{table_id}
     </select>
     <!--根据建表sql动态建表-->
