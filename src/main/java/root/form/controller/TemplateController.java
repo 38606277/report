@@ -241,7 +241,26 @@ public class TemplateController extends BaseControl {
         columns.add(createTimeCol);
     }
 
-    
+    /**
+     * 查询当前用户创建的表及字段描述
+     * @return
+     */
+    @RequestMapping(value = "/listTable", produces = "text/plain;charset=UTF-8")
+    public String listTable(){
+        return this.doExecuteWithROReturn(()->{
+            String currentUser =  SysContext.getRequestUser().getUserName();
+            SqlSession session = DbFactory.Open(DbFactory.FORM );
+            //查询用户创建的表
+            List<Map<String, Object>> tableList = session.selectList("dataCollect.getTableByCreateUser", currentUser);
+            //根据表id查询字段及描述
+            tableList.forEach(t->{
+                Object tableId = t.get("table_id");
+                List<Map<String, Object>> fieldList = session.selectList("dataCollect.getTableFieldDesc", tableId);
+                t.put("fieldList", fieldList);
+            });
+            return tableList;
+        });
+    }
 
     /**
      * 保存或发布任务

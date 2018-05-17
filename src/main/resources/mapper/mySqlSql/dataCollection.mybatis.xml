@@ -34,7 +34,7 @@
     </update>
     <!--添加表的描述信息-->
     <insert id="addTableRecord" parameterType="Map" useGeneratedKeys="true" keyProperty="_id">
-        insert into frm_table (table_name, table_desc, template_id, create_by, create_Date)
+        insert into frm_table (table_name, table_desc, template_id, create_by, create_date)
             values (#{table_name,jdbcType=VARCHAR},#{table_desc,jdbcType=VARCHAR},#{template_id,jdbcType=INTEGER},
                     #{create_by,jdbcType=VARCHAR},#{create_date,jdbcType=TIMESTAMP})
     </insert>
@@ -47,6 +47,14 @@
             #{item.data_dict, jdbcType=VARCHAR},#{item.data_auth, jdbcType=VARCHAR},#{item.data_length, jdbcType=INTEGER})
         </foreach>
     </insert>
+    <!--根据用户查询表定义-->
+    <select id="getTableByCreateUser" parameterType="string" resultType="Map">
+        select * from frm_table t where t.create_by=#{createBy} order by t.create_date desc
+    </select>
+    <!--根据表ID查询表对应的字段描述-->
+    <select id="getTableFieldDesc" parameterType="int" resultType="Map">
+        select * from frm_table_field t where t.table_id=#{tableId}
+    </select>
 
     <!--查询任务-->
     <select id="getTaskInfo" parameterType="int" resultType="Map">
