@@ -149,7 +149,7 @@ public class TemplateController extends BaseControl {
             //循环模板列表，添加任务列表
             for(Map<String, Object> map : result){
                 Object table_id = map.get("table_id");
-                List taskList = session.selectList("dataCollect.getTemplateTaskList",table_id);
+                List taskList = session.selectList("dataCollect.getTableTaskList",table_id);
                 map.put("taskList", taskList);
             }
             return result;
@@ -165,7 +165,7 @@ public class TemplateController extends BaseControl {
     public String rmTemplate(@PathVariable("templateId") Integer templateId){
         return this.doExecuteWithROReturn(()->{
             SqlSession session = DbFactory.Open(DbFactory.FORM );
-            List taskList = session.selectList("dataCollect.getTemplateTaskList",templateId);
+            List taskList = session.selectList("dataCollect.getTableTaskList",templateId);
             if(!CollectionUtils.isEmpty(taskList)) throw new RuntimeException("该模板关联的有任务，不能删除");
             session.delete("dataCollect.rmTemplate", templateId);
             //删除自定义表和元数据信息 TODO
@@ -275,9 +275,9 @@ public class TemplateController extends BaseControl {
         try {
             SqlSession session = DbFactory.Open(false, DbFactory.FORM );
             Integer taskId = json.getInteger("task_id");
-            List<Map> list = session.selectList("dataCollect.getTaskInfo", taskId);
-            if(!CollectionUtils.isEmpty(list)){
-            	Map<String, Object> map = list.get(0);
+            if(taskId != null){
+                List<Map> list = session.selectList("dataCollect.getTaskInfo", taskId);
+                Map<String, Object> map = list.get(0);
             	//任务如果已经发布，则不允许修改
             	if("1".equals(map.get("task_state"))) throw new RuntimeException("任务已经发布，不能修改");
             	json.put("create_date", map.get("create_date"));
@@ -440,6 +440,7 @@ public class TemplateController extends BaseControl {
         }
         return SuccessMsg("操作成功","");
     }
+
     /*
     添加任务id，创建人，创建时间到数据表
      */
