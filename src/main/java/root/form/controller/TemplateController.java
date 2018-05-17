@@ -148,8 +148,8 @@ public class TemplateController extends BaseControl {
             List<Map<String, Object>> result =  session.selectList("dataCollect.getTemplateList", currentUser);
             //循环模板列表，添加任务列表
             for(Map<String, Object> map : result){
-                Object templateId = map.get("template_id");
-                List taskList = session.selectList("dataCollect.getTemplateTaskList",templateId);
+                Object table_id = map.get("table_id");
+                List taskList = session.selectList("dataCollect.getTemplateTaskList",table_id);
                 map.put("taskList", taskList);
             }
             return result;
