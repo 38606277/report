@@ -394,11 +394,15 @@ public class TemplateController extends BaseControl {
 
     /**
      * 根据任务ID和当前用户查询他的填报数据
-     * @param taskId
+     * @param pJson
      * @return
      */
-    @RequestMapping(value = "/reportData/{table_name}/{task_id}", produces = "text/plain;charset=UTF-8")
-    public String getReportData(@PathVariable("table_name") String tableName,@PathVariable("task_id") Integer taskId){
+    @RequestMapping(value = "/reportData", produces = "text/plain;charset=UTF-8")
+    public String getReportData(@RequestBody String pJson){
+        JSONObject json = (JSONObject) JSON.parse(pJson);
+        String tableName = json.getString("tableName");
+        if(tableName == null) throw new RuntimeException("tableName参数不能为空!");
+        Integer taskId = json.getInteger("taskId");
         return this.doExecuteWithROReturn(()->{
             SqlSession session = DbFactory.Open(DbFactory.FORM );
             String currentUser =  SysContext.getRequestUser().getUserName();
