@@ -6,11 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
+import java.util.Date;
 
 import com.github.pagehelper.util.StringUtil;
 
@@ -403,7 +401,14 @@ public class TemplateController extends BaseControl {
             Map<String, Object> params = new HashMap<>();
             params.put("tableName", tableName);
             params.put("taskId", taskId);
-            params.put("createBy", currentUser);
+            //判断当前用户是否任务的创建人
+            if(taskId != null){
+                Map<String, Object> taskInfo = session.selectOne("dataCollect.getTaskInfo", taskId);
+                String createBy = (String)taskInfo.get("create_by");
+                if(!createBy.equals(currentUser)){
+                    params.put("createBy", currentUser);
+                }
+            }
             return session.selectList("dataCollect.reportData",params);
         });
     }
@@ -413,7 +418,6 @@ public class TemplateController extends BaseControl {
      * {
      *     tableName:"",
      *     taskId:"",
-     *     columnNames:[col1,col2,col3],
      *     data:[{col1:'',col2:'',col3:''}]
      * }
      * @param pJson
@@ -422,6 +426,9 @@ public class TemplateController extends BaseControl {
     @RequestMapping(value = "/saveData", produces = "text/plain;charset=UTF-8")
     public String saveData(@RequestBody String pJson) throws SQLException {
         JSONObject json = (JSONObject) JSON.parse(pJson);
+        //添加任务ID，创建人，创建时间
+        String currentUser =  SysContext.getRequestUser().getUserName();
+        addCommonColumnsToReportData(json, currentUser);
         JSONArray list = json.getJSONArray("data");
         if(CollectionUtils.isEmpty(list)) return "";
         JSONObject row = list.getJSONObject(0);
@@ -430,43 +437,63 @@ public class TemplateController extends BaseControl {
         for(String key : row.keySet()){
             columnNames.add(key);
         }
-        String currentUser =  SysContext.getRequestUser().getUserName();
-        json.put("columnNames", columnNames);
-        SqlSession session = null;
+        Connection conn = null;
+        PreparedStatement psD = null;
+        PreparedStatement psI = null;
         try {
-            session = DbFactory.Open(false, DbFactory.FORM);
-            //查询字段名称和字段类型
-            /*List<Map<String, String>> columnNameAndTypes = session.selectList("dataCollect.getColumnNameAndType", json.getInteger("taskId"));
-            Map<String, String> types = new HashMap<>();
-            columnNameAndTypes.forEach(m->{
-                types.put(m.get("field_name"), ColumnType.getJdbcType(m.get("data_type")));
-            });*/
-            //删除当前用户的任务填报数据
-            json.put("createBy", currentUser);
-            session.delete("dataCollect.deleteReportData",json);
-            //保存填报数据
-            addCommonColumnsToReportData(json);
-            session.insert("dataCollect.saveReportData", json);
-            session.commit();
+            SqlSession session = DbFactory.Open(DbFactory.FORM);
+            conn = session.getConnection();
+            conn.setAutoCommit(false);
+            String tableName = json.getString("tableName");
+            //删除当前用户的任务填报数据(如果有)
+            String delSql = "delete from "+tableName+" where create_by=? and task_id = ?";
+            psD = conn.prepareStatement(delSql);
+            psD.setString(1, currentUser);
+            psD.setInt(2, json.getInteger("taskId"));
+            psD.execute();
+
+            //保存数据
+            StringBuffer inserSqlBuffer = new StringBuffer("insert into "+tableName);
+            inserSqlBuffer.append("(");
+            columnNames.forEach(cn->inserSqlBuffer.append(cn+","));
+            inserSqlBuffer.deleteCharAt(inserSqlBuffer.length() - 1).append(")");
+            inserSqlBuffer.append(" values (");
+            columnNames.forEach(k->inserSqlBuffer.append("?,"));
+            inserSqlBuffer.deleteCharAt(inserSqlBuffer.length() - 1).append(")");
+            psI = conn.prepareStatement(inserSqlBuffer.toString());
+            for(Object r : list){
+                JSONObject j = (JSONObject)r;
+                for(int i=1;i<columnNames.size()+1;i++){
+                    psI.setObject(i, j.get(columnNames.get(i-1)));
+                }
+                psI.addBatch();
+            }
+            psI.executeBatch();
+            conn.commit();
         } catch (Exception e) {
             e.printStackTrace();
-            session.rollback();
+            conn.rollback();
             return ExceptionMsg(e.getMessage());
+
+        }finally {
+            if(psD != null) psD.close();
+            if(psI != null) psI.close();
         }
+
         return SuccessMsg("操作成功","");
     }
 
     /*
     添加任务id，创建人，创建时间到数据表
      */
-    private void addCommonColumnsToReportData(JSONObject json) {
+    private void addCommonColumnsToReportData(JSONObject json, String currentUser) {
         JSONArray array = json.getJSONArray("data");
         if(array == null) return;
         Date now = new Date();
         array.forEach(j->{
             JSONObject js = (JSONObject)j;
             js.putIfAbsent("task_id", json.getInteger("taskId"));
-            js.putIfAbsent("create_by", json.getString("createBy"));
+            js.putIfAbsent("create_by", currentUser);
             js.putIfAbsent("create_time", now);
         });
     }
