@@ -11,7 +11,7 @@
 	</insert>
     <!--查询模板列表-->
 	<select id="getTemplateList" parameterType="string" resultType="map">
-        select t.*, ft.table_id from frm_template t
+        select t.*, ft.table_id, ft.table_name from frm_template t
             LEFT JOIN frm_table ft on t.template_id = ft.template_id  where 1=1
             and t.template_type = '0' and t.createby = #{createBy}
     </select>
@@ -108,7 +108,7 @@
     <!--根据任务id查询数据表的字段名称和字段类型-->
     <select id="getColumnNameAndType" parameterType="int" resultType="Map">
         select f.field_name, f.data_type from frm_table_field f where
-            f.table_id=(select t.table_id_ from frm_form_task t where t.task_id=#{taskId})
+            f.table_id=(select t.table_id from frm_form_task t where t.task_id=#{taskId})
     </select>
     <!--保存报表数据-->
     <insert id="saveReportData" parameterType="Map">
