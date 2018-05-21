@@ -46,6 +46,8 @@ import root.report.sys.SysContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS.required;
+
 
 @RestController
 @RequestMapping("/reportServer/dataCollect")
@@ -256,15 +258,16 @@ public class TemplateController extends BaseControl {
      * 查询当前用户创建的表及字段描述
      * @return
      */
-    @RequestMapping(value = "/listTable/{tableId}", produces = "text/plain;charset=UTF-8")
-    public String listTable(@PathVariable("tableId") Integer tableId){
+    @RequestMapping(value = "/listTable", produces = "text/plain;charset=UTF-8")
+    public String listTable(@RequestBody String pJson){
+        JSONObject json = (JSONObject) JSON.parse(pJson);
         return this.doExecuteWithROReturn(()->{
             String currentUser =  SysContext.getRequestUser().getUserName();
             SqlSession session = DbFactory.Open(DbFactory.FORM );
             //查询用户创建的表
             Map<String, Object> params = new HashMap<>();
             params.put("createBy", currentUser);
-            params.put("tableId",tableId);
+            if(json != null) params.put("tableId",json.get("tableId"));
             List<Map<String, Object>> tableList = session.selectList("dataCollect.getFrmTable", params);
             //根据表id查询字段及描述
             tableList.forEach(t->{
