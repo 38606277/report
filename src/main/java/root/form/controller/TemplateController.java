@@ -256,19 +256,20 @@ public class TemplateController extends BaseControl {
      * 查询当前用户创建的表及字段描述
      * @return
      */
-    @RequestMapping(value = "/listTable", produces = "text/plain;charset=UTF-8")
-    public String listTable(){
+    @RequestMapping(value = "/listTable/{tableId}", produces = "text/plain;charset=UTF-8")
+    public String listTable(@PathVariable("tableId") Integer tableId){
         return this.doExecuteWithROReturn(()->{
             String currentUser =  SysContext.getRequestUser().getUserName();
             SqlSession session = DbFactory.Open(DbFactory.FORM );
             //查询用户创建的表
             Map<String, Object> params = new HashMap<>();
             params.put("createBy", currentUser);
+            params.put("tableId",tableId);
             List<Map<String, Object>> tableList = session.selectList("dataCollect.getFrmTable", params);
             //根据表id查询字段及描述
             tableList.forEach(t->{
-                Object tableId = t.get("table_id");
-                List<Map<String, Object>> fieldList = session.selectList("dataCollect.getTableFieldDesc", tableId);
+                Object tid = t.get("table_id");
+                List<Map<String, Object>> fieldList = session.selectList("dataCollect.getTableFieldDesc", tid);
                 t.put("fieldList", fieldList);
             });
             return tableList;

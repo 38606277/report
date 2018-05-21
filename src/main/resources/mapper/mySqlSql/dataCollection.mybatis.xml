@@ -60,6 +60,7 @@
         select * from frm_table t where 1=1
         <if test="createBy != null"> and t.create_by=#{createBy}</if>
         <if test="templateId != null"> and t.template_id=#{templateId}</if>
+        <if test="tableId != null"> and t.table_id=#{tableId}</if>
         order by t.create_date desc
     </select>
     <!--根据表ID查询表对应的字段描述-->
