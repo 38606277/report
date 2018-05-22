@@ -1,0 +1,69 @@
+<html>
+<head>
+	<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<style type="text/css">.b1{white-space-collapsing:preserve;}
+	.t1{border-collapse:collapse;border-spacing:0;}
+	.r1{height:18.75pt;}
+	.r2{height:13.5pt;}
+	.c1{white-space:pre-wrap;text-align:center;background-color:#00b0f0;border-top:thin solid black;border-right:thin solid black;border-bottom:thin solid black;border-left:thin solid black;font-weight:bold;color: black; font-size:14pt;}
+	.c2{white-space:pre-wrap;border-top:thin solid black;border-right:thin solid black;border-bottom:thin solid black;border-left:thin solid black;color: black; font-size:11pt;}
+	.c3{white-space:pre-wrap;border-top:thin solid black;border-right:thin solid black;border-bottom:thin solid black;border-left:thin solid black;color: #0000ff; font-size:11pt;}
+	</style>
+	<script src="https://cdn.bootcss.com/vue/2.2.2/vue.min.js"></script>
+	<script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.js"></script>
+</head>
+<body class="b1">
+<h2>Sheet1</h2>
+<div id="app">
+	<button @click="saveData()">保存</button>
+	<table class="t1">
+		<tr class="r1">
+			<th class="rownumber">1</th><td class="c1">厂商</td><td class="c1">人员姓名</td><td class="c1">手机</td><td class="c1">邮箱</td>
+		</tr>
+
+		<tr class="r2" v-for="obj in list">
+			<th class="rownumber">1</th>
+			<td class="c2"><input type="text" v-model="obj.column1" /></td>
+			<td class="c2"><input type="text" v-model="obj.column2" /></td>
+			<td class="c2"><input type="text" v-model="obj.column3" /></td>
+			<td class="c2"><input type="text" v-model="obj.column4" /></td>
+		</tr>
+	</table>
+	<div id="test1"></div>
+</div>
+</body>
+</html>
+<script>
+    var table = new Vue({
+        el: '#app',
+        data: {
+            list:[
+                {column1:"电讯盈科",column2:"张三",column3:"1505555555",column4:"2017-11-06"},
+                {column1:"电讯盈科",column2:"李四",column3:"1506666666",column4:"2017-10-06"},
+                {column1:"电讯盈科",column2:"王五",column3:"1507777777",column4:"2017-09-06"}
+            ]
+        },
+        methods: {
+            saveData: function () {
+                //document.getElementById("test1").innerHTML = JSON.stringify(this.list);
+                var pJson = {"tableName":"my_test_table11","taskId":"21", "data":this.list};
+                this.$http.post("/reportServer/dataCollect/saveData",pJson).then(function(response){
+                    alert(response.body.message);
+                });
+            }
+        }
+    })
+    function loadData(){
+        Vue.http.get("/reportServer/dataCollect/reportData/my_test_table11/21").then(function(response){
+            if(response.body.resultCode=="1000"){
+                table.list = response.body.data;
+            }else{
+                document.getElementById("test1").innerHTML=response.body.message;
+            }
+        },function(response){
+            document.getElementById("test1").innerHTML="无法访问";
+        })
+    }
+    loadData();
+
+</script>
