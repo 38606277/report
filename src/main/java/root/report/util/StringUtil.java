@@ -62,7 +62,12 @@ public class StringUtil {
         }  
         return df.format(number);  
     }  
-	
+
+    public static boolean isBlank(String str){
+		if(str == null || str.trim().equals("")) return Boolean.TRUE;
+		return Boolean.FALSE;
+	}
+
 	public static void main(String[] args) {
 		System.out.println(getLetterIntValue("ab"));
 		int size = getLetterIntValue("AA")-getLetterIntValue("A")+1;
