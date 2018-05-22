@@ -15,6 +15,10 @@
             LEFT JOIN frm_table ft on t.template_id = ft.template_id  where 1=1
             and t.template_type = '0' and t.createby = #{createBy}
     </select>
+    <!--根据模板id查询模板-->
+    <select id="getTemplate" parameterType="int" resultType="map">
+        select * from frm_template where template_id=#{templateId}
+    </select>
     <!--删除模板-->
     <delete id="rmTemplate" parameterType="int">
         delete from frm_template where template_id=#{template_id}
