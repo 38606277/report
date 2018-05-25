@@ -29,16 +29,18 @@ public class BudgetController {
 	private AppConstants appConstant;
 	@Autowired
 	private SelectControl selectControl;
-	@RequestMapping(value = "/getBudgetDetail", produces = "text/plain; charset=utf-8")
-	public String getBudgetClass(@RequestBody JSONObject pJson) {
+	@RequestMapping(value = "/getBudgetDetail/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
+	public String getBudgetClass(@PathVariable("namespace") String namespace,@PathVariable("sqlid") String sqlid,
+								 @PathVariable("type") String type,@RequestBody JSONObject pJson) {
 		StringBuilder sb = new StringBuilder();
 		Map<String,Object> tableMap = new HashMap<String,Object>();
 		String tableName = "budget_account_temp_"+sp.format(new Date());
 		tableMap.put("tableName", tableName);
 		try{
-			Map<String,Object> param = prepareParameter(pJson);
-			prepareCompanyIds(param,pJson);
-			List<BudgetAccount> budgetList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getBudgetDetail",param);
+			Map<String,Object> param1 = prepareParameter(pJson);
+			JSONObject param = JSONObject.parseObject(JSONObject.toJSONString(param1));
+			JSONArray budgetListTemp = JSONObject.parseObject(getReportDetail(namespace,sqlid,type,param)).getJSONArray("list");
+			List<BudgetAccount> budgetList = convertJSONToObject(budgetListTemp);
 			if(budgetList.size()>0){
 				//动态创建临时表
 				DbFactory.Open(DbFactory.FORM).update("budget.createBudgetAccountTempTable",tableMap);
@@ -127,17 +129,36 @@ public class BudgetController {
 		}
 		return sb.toString();
 	}
-	
-	@RequestMapping(value = "/getNetWorkFee", produces = "text/plain; charset=utf-8")
-	public String getNetWorFee(@RequestBody JSONObject pJson) {
+
+	private  List<BudgetAccount> convertJSONToObject(JSONArray budgetAccoutListTemp){
+		List<BudgetAccount> budgetAccountList = new ArrayList<BudgetAccount>();
+		BudgetAccount budgetAccount = null;
+		JSONObject obj = null;
+		for(int i=0;i<budgetAccoutListTemp.size();i++){
+			obj = budgetAccoutListTemp.getJSONObject(i);
+			budgetAccount = new BudgetAccount();
+			budgetAccount.setCompany_id(obj.get("COMPANY_ID").toString());
+			budgetAccount.setCompany_name(obj.get("COMPANY_NAME").toString());
+			budgetAccount.setBudget_account_name(obj.get("BUDGET_ACCOUNT_NAME").toString());
+			budgetAccount.setBudget_account_code(obj.get("BUDGET_ACCOUNT_CODE").toString());
+			budgetAccount.setTransmit_budget_amount((BigDecimal)obj.get("TRANSMIT_BUDGET_AMOUNT"));
+			budgetAccount.setApproved_budget_amount((BigDecimal)obj.get("APPROVED_BUDGET_AMOUNT"));
+			budgetAccount.setAccount_amount((BigDecimal)obj.get("ACCOUNT_AMOUNT"));
+			budgetAccount.setClaim_amount((BigDecimal)obj.get("CLAIM_AMOUNT"));
+			budgetAccountList.add(budgetAccount);
+		}
+		return budgetAccountList;
+	}
+
+	@RequestMapping(value = "/getNetWorkFee/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
+	public String getNetWorFee(@PathVariable("namespace") String namespace,@PathVariable("sqlid") String sqlid,
+							   @PathVariable("type") String type,@RequestBody JSONObject pJson) {
 		StringBuilder sb = new StringBuilder();
-		Map<String,Object> param = new HashMap<String,Object>();
-		param.put("budget_year", pJson.getIntValue("budget_year"));
-		prepareCompanyIds(param,pJson);
-		List<Map<String,Object>> list = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getNetWorkFee",param);
+		JSONArray budgetListTemp = JSONObject.parseObject(getReportDetail(namespace,sqlid,type,pJson)).getJSONArray("list");
+		List<Map<String,Object>> list = convertJSONToList(budgetListTemp);
 		Map<String,List<Map<String,Object>>> company_budget = converIntoCompanyBudget(list);
-		Set<String> keySet = company_budget.keySet();
 		List<Map<String,Object>> companyBudgetList = null;
+		Set<String> keySet = company_budget.keySet();
 		int k = 1;//树的起始index
 		Stack<Integer> parentId = new Stack<Integer>();
 		int fistCodeLength = 0;
@@ -194,17 +215,39 @@ public class BudgetController {
 		
 		return sb.toString();
 	}
-	
-	@RequestMapping(value = "/exportBudgetDetail", produces = "text/plain; charset=utf-8")
-	public String exportBudgetDetail(@RequestBody JSONObject pJson) {
+
+	private List<Map<String,Object>> convertJSONToList(JSONArray budgetListTemp){
+		List<Map<String,Object>> budgetList = new ArrayList<Map<String,Object>>();
+		Map<String,Object> map = null;
+		JSONObject obj = null;
+		for(int i=0;i<budgetListTemp.size();i++){
+			obj = budgetListTemp.getJSONObject(i);
+			map = new HashMap<String,Object>();
+			map.put("COMPANY_ID",obj.get("COMPANY_ID").toString());
+			map.put("COMPANY_NAME",obj.get("COMPANY_NAME").toString());
+			map.put("BUDGET_ACCOUNT_NAME",obj.get("BUDGET_ACCOUNT_NAME").toString());
+			map.put("BUDGET_ACCOUNT_CODE",obj.get("BUDGET_ACCOUNT_CODE").toString());
+			map.put("TRANSMIT_BUDGET_AMOUNT",obj.get("TRANSMIT_BUDGET_AMOUNT"));
+			map.put("APPROVED_BUDGET_AMOUNT",obj.get("APPROVED_BUDGET_AMOUNT"));
+			map.put("APPROVED_PRO",obj.get("APPROVED_PRO"));
+			map.put("OCCUPIED_BUDGET_AMOUNT_SUM",obj.get("OCCUPIED_BUDGET_AMOUNT_SUM"));
+			map.put("OCCUPIED_PRO",obj.get("OCCUPIED_PRO"));
+			budgetList.add(map);
+		}
+		return budgetList;
+	}
+	@RequestMapping(value = "/exportBudgetDetail/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
+	public String exportBudgetDetail(@PathVariable("namespace") String namespace,@PathVariable("sqlid") String sqlid,
+									 @PathVariable("type") String type,@RequestBody JSONObject pJson) {
 		Map<String,Object> tableMap = new HashMap<String,Object>();
 		String tableName = "budget_account_temp_"+sp.format(new Date());
 		tableMap.put("tableName", tableName);
 		List<Map<String,Object>> list = null;
 		try{
-			Map<String,Object> param = prepareParameter(pJson);
-			prepareCompanyIds(param,pJson);
-			List<BudgetAccount> budgetList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getBudgetDetail",param);
+			Map<String,Object> param1 = prepareParameter(pJson);
+			JSONObject param = JSONObject.parseObject(JSONObject.toJSONString(param1));
+			JSONArray budgetListTemp = JSONObject.parseObject(getReportDetail(namespace,sqlid,type,param)).getJSONArray("list");
+			List<BudgetAccount> budgetList = convertJSONToObject(budgetListTemp);
 			//动态创建临时表
 			DbFactory.Open(DbFactory.FORM).update("budget.createBudgetAccountTempTable",tableMap);
 			//将数据导入到mysql临时表
@@ -233,13 +276,10 @@ public class BudgetController {
 		return JSON.toJSONString(list);
 	}
 	
-	@RequestMapping(value = "/exportNetWorkFee", produces = "text/plain; charset=utf-8")
-	public String exportNetWorFee(@RequestBody JSONObject pJson) {
-		Map<String,Object> param = new HashMap<String,Object>();
-		param.put("budget_year", pJson.getIntValue("budget_year"));
-		prepareCompanyIds(param,pJson);
-		List<Map<String,Object>> list = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getNetWorkFee",param);
-		return JSON.toJSONString(list);
+	@RequestMapping(value = "/exportNetWorkFee/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
+	public String exportNetWorFee(@PathVariable("namespace") String namespace,@PathVariable("sqlid") String sqlid,
+								  @PathVariable("type") String type,@RequestBody JSONObject pJson) {
+		return getReportDetail(namespace,sqlid,type,pJson);
 	}
 	
 	private Map<String,List<Map<String,Object>>> converIntoCompanyBudget(List<Map<String,Object>> budget){
@@ -363,12 +403,54 @@ public class BudgetController {
 			param.put("claim_last_update_time_end", claim_last_update_time_end);
 			param.put("reward_last_update_time_start", reward_last_update_time_start);
 			param.put("reward_last_update_time_end", reward_last_update_time_end);
+			param.put("companycodes",obj.get("companycodes"));
+			param.put("departmentids",obj.get("departmentids"));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		return param;
 	}
-	
+
+	@RequestMapping(value="/getCompanyByDicItem",produces = "text/plain;charset=UTF-8")
+	public String getCompanyByDicItem(){
+		JSONObject result = new JSONObject();
+		UserModel user = SysContext.getRequestUser();
+		String userName = user.getUserName();
+		Map<String,Object> paramMap = new HashMap<String,Object>();
+		paramMap.put("userName", userName);
+		//如果用户最大permisssion是P,则默认给予所有公司查询权限,否则需要赋权才能查看
+		String userPermission = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getUserPermission", paramMap);
+		List<Map> companyList = new ArrayList<Map>();
+		if(userPermission!=null&&userPermission.equals("P")){
+			List<Map<String, String>> userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getAllCompanies");
+			Map<String, Object> map = null;
+			for (Map<String, String> temp : userCompanyList) {
+				map = new HashMap<String, Object>();
+				map.put("value", temp.get("COMPANY_CODE"));
+				map.put("name", temp.get("COMPANY_NAME"));
+				companyList.add(map);
+			}
+		}else{
+			Map<String, String> map = new HashMap<String,String>();
+			map.put("userName", user.getUserName());
+			map.put("type", "budget_account_ou");
+			List<Map<String,String>> list = DbFactory.Open(DbFactory.FORM).selectList("rule.getAuthListByConditions", map);
+			if(list.size()>0){
+				Map<String, Object> temp = null;
+				for (int i = 0; i < list.size(); i++) {
+					paramMap.put("company_code", Integer.valueOf(list.get(i).get("funcId")));
+					Map<String, Object> company = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getCompanyByCode", paramMap);
+					temp = new HashMap<String, Object>();
+					temp.put("name", company.get("COMPANY_NAME"));
+					temp.put("value", company.get("COMPANY_CODE"));
+					companyList.add(temp);
+				}
+			}
+		}
+		result.put("companys", companyList);
+		return result.toJSONString();
+	}
+
 	@RequestMapping(value="/getCompanyAndDepartmentByPermission",produces = "text/plain;charset=UTF-8")
     public String getCompanyAndDepartmentByPermission(){
 		JSONObject result = new JSONObject();
@@ -377,80 +459,57 @@ public class BudgetController {
         Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("userName", userName);
 		String userPermission = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getUserPermission", paramMap);
-		Map<String,String> kindItem = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getKindItem", paramMap);
 		List<Map> companyList = new ArrayList<Map>();
 		List<Map> departmentList = new ArrayList<Map>();
-		//字典表配置的是特殊情形的账号权限数据
-		if(kindItem != null){
-			String detail = (String)kindItem.get("DETAIL");
-			if("ALL".equals(detail)){
-				List<Map<String,String>> userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getAllCompanies");
-				Map<String,Object> map = null;
-				for(Map<String,String> temp:userCompanyList){
-					map = new HashMap<String,Object>();
-					map.put("value", temp.get("COMPANY_CODE"));
-					map.put("name", temp.get("COMPANY_NAME"));
-					companyList.add(map);
-				}
-			}else{
-				String[] companyIds = detail.split(",");
-				Map<String,Object> temp = null;
-				for(int i = 0;i < companyIds.length;i++){
-					paramMap.put("company_id", Integer.valueOf(companyIds[i]));
-					Map<String,Object> company = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getCompanyById", paramMap);
-					temp = new HashMap<String,Object>();
-					temp.put("name", company.get("COMPANY_NAME"));
-					temp.put("value", company.get("COMPANY_CODE"));
-					companyList.add(temp);
-				}
-			}
-			departmentList = this.getDepartmentByPermission(companyList);
-		//大部分账号走这个逻辑
-	    }else{
-			if(userPermission!=null && !userPermission.isEmpty()){
-				List<Map<String,String>> userCompanyList = null;
-				Map<String,Object> map = null;
-				if("P".equals(userPermission)){
-					userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getAllCompanies");
-					for(Map<String,String> temp:userCompanyList){
-						map = new HashMap<String,Object>();
-						map.put("value", temp.get("COMPANY_CODE"));
-						map.put("name", temp.get("COMPANY_NAME"));
-						companyList.add(map);
-					}
-				}else{
-					userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getUserCompany", paramMap);
-					map = new HashMap<String,Object>();
-					map.put("value", userCompanyList.get(0).get("COMPANY_CODE"));
-					map.put("name", userCompanyList.get(0).get("COMPANY_NAME"));
-					companyList.add(map);
-				}
-				departmentList = this.getDepartmentByPermission(companyList);
+		List<Map<String,String>> userCompanyList = null;
+		String org_code = null;
+		if(userPermission!=null&&userPermission.equals("P")){
+			userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getAllCompanies");
+		}else{
+			org_code = DbFactory.Open(DbFactory.FORM).selectOne("oa.getUserDepartmentNo",paramMap);
+			if(org_code!=null){
+				userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getUserCompany",org_code);
 			}
 		}
+		Map<String,Object> map = null;
+		for(Map<String,String> temp:userCompanyList){
+			map = new HashMap<String,Object>();
+			map.put("value", temp.get("COMPANY_CODE"));
+			map.put("name", temp.get("COMPANY_NAME"));
+			companyList.add(map);
+		}
+		departmentList = this.getDepartmentByPermission(userPermission,org_code,companyList);
+
 		result.put("companys", companyList);
 		result.put("departments", departmentList);
 		return result.toJSONString();
     }
 	
-	private List<Map> getDepartmentByPermission(List<Map> companyList ){
+	private List<Map> getDepartmentByPermission(String userPermission,String org_code,List<Map> companyList ){
 		List<Map> departmentList = new ArrayList<Map>();
 		List<Map> userDepartmentList = new ArrayList<Map>();
 		Map<String,String> paramMap = new HashMap<String,String>();
-		String companyCodes = "";
-		for(int i=0;i<companyList.size();i++){
-			String company_code = companyList.get(i).get("value").toString();
-			if(i==companyList.size()-1){
-				companyCodes = companyCodes+"'"+company_code+"'";
-			}else{
-				companyCodes = companyCodes+"'"+company_code+"',";
+		if(userPermission!=null&&(userPermission.equals("P")||userPermission.equals("C"))) {
+			String companyCodes = "";
+			for (int i = 0; i < companyList.size(); i++) {
+				String company_code = companyList.get(i).get("value").toString();
+				if (i == companyList.size() - 1) {
+					companyCodes = companyCodes + "'" + company_code + "'";
+				} else {
+					companyCodes = companyCodes + "'" + company_code + "',";
+				}
+			}
+			paramMap.put("companyCodes", companyCodes);
+			userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getDepartmentListByConmpanyCodes", paramMap);
+		}else{
+			if(org_code!=null){
+				userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getDepartmentInfo",org_code);
 			}
 		}
-		paramMap.put("companyCodes", companyCodes);
-		userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getDepartmentListByConmpanyCodes",paramMap);
-		Map<String,Object> map = null;
-		for(Map<String,Object> temp:userDepartmentList){
-			map = new HashMap<String,Object>();
+
+		Map<String, Object> map = null;
+		for (Map<String, Object> temp : userDepartmentList) {
+			map = new HashMap<String, Object>();
 			map.put("value", temp.get("VALUE"));
 			map.put("name", temp.get("NAME"));
 			departmentList.add(map);
@@ -468,25 +527,16 @@ public class BudgetController {
 		Map<String,Object> paramMap = new HashMap<String,Object>();
 		paramMap.put("userName", userName);
 		String userPermission = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getUserPermission", paramMap);
-		Map<String,String> kindItem = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getKindItem", paramMap);
-		if(kindItem != null){
-			//数据权限已配置,说明可以查询该公司的所有部门
-			Map<String,String> departmentParamMap = new HashMap<String,String>();
-			departmentParamMap.put("companyCodes", "'"+companyCode+"'");
-			userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getDepartmentListByConmpanyCodes",departmentParamMap);
-		//没有配置,则查询用户归属部门
-	    }else{
-			if(userPermission!=null && !userPermission.isEmpty()){
-				if("P".equals(userPermission)||"C".equals(userPermission)){
-					Map<String,String> departmentParamMap = new HashMap<String,String>();
-					departmentParamMap.put("companyCodes", "'"+companyCode+"'");
-					userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getDepartmentListByConmpanyCodes",departmentParamMap);
-				}else{
-					List<Map<String,String>> userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getUserCompany", paramMap);
-					if(userCompanyList!=null&&!userCompanyList.isEmpty()){
-						String departmentCode = userCompanyList.get(0).get("ORG_CODE");
-						userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getDepartmentInfo",departmentCode);
-					}
+		//根据角色对应的PCD来角色能查询的部门信息,P省公司可以查询所有公司和部门权限,C地市公司和部门权限,D所属公司的部门权限
+		if(userPermission!=null && !userPermission.isEmpty()){
+			if("P".equals(userPermission)||"C".equals(userPermission)){
+				Map<String,String> departmentParamMap = new HashMap<String,String>();
+				departmentParamMap.put("companyCodes", "'"+companyCode+"'");
+				userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getDepartmentListByConmpanyCodes",departmentParamMap);
+			}else{
+				String org_code = DbFactory.Open(DbFactory.FORM).selectOne("oa.getUserDepartmentNo",paramMap);
+				if(org_code!=null){
+					userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getDepartmentInfo",org_code);
 				}
 			}
 		}
@@ -564,7 +614,7 @@ public class BudgetController {
 	}
 	
 	@RequestMapping(value = "/report/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
-	public String getSingContractDetail(@PathVariable("namespace") String namespace,
+	public String getReportDetail(@PathVariable("namespace") String namespace,
 			@PathVariable("sqlid") String sqlid,@PathVariable("type") String type,@RequestBody JSONObject pJson) {
 		JSONObject obj = new JSONObject();
         obj.put("namespace", namespace);
@@ -581,6 +631,12 @@ public class BudgetController {
 		param.put("budget_year", pJson.getIntValue("budget_year"));
 		param.put("company_code", pJson.getString("company_code"));
 		param.put("department_id", pJson.getIntValue("department_id"));
+		param.put("period_name", pJson.getString("period_name"));
+		param.put("claim_last_update_time_start", pJson.getString("claim_last_update_time_start"));
+		param.put("claim_last_update_time_end", pJson.getString("claim_last_update_time_end"));
+		param.put("reward_last_update_time_start", pJson.getString("reward_last_update_time_start"));
+		param.put("reward_last_update_time_end", pJson.getString("reward_last_update_time_end"));
+		param.put("budget_account_code", pJson.getString("budget_account_code"));
 		param.put("budget_account_id", pJson.getIntValue("budget_account_id"));
 		param.put("accounting_subject_name", pJson.getString("accounting_subject_name"));
 		param.put("static_budget_account_name", pJson.getString("static_budget_account_name"));
