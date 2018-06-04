@@ -82,6 +82,7 @@ public class DbFactory {
             configuration.setCallSettersOnNulls(true);
             //启动SQL日志
             configuration.setLogImpl(Log4jImpl.class);
+            configuration.getTypeHandlerRegistry().register(GregorianCalendarTypeHandle.class);
             factoryBean.setConfiguration(configuration);
             factoryBean.setPlugins(getMybatisPlugins(dbtype));
             mapFactory.put(dbJson.getString("name"), factoryBean.getObject());
