@@ -74,6 +74,10 @@ public class TemplateController extends BaseControl {
         return this.doExecuteWithROReturn(() -> {
             //保存文件
             if (file == null) throw new RuntimeException("请上传模板文件");
+            SqlSession session = DbFactory.Open(DbFactory.FORM);
+            //判断是否有同名模板
+            List list = session.selectList("dataCollect.getTemplateByName", file.getOriginalFilename());
+            if(list != null && list.size()>0) throw new RuntimeException("该模板与服务器上其它模板同名！");
             String destPath = appConstant.getTemplatePath() + "/" + SysContext.getRequestUser().getUserName();
             File destDir = new File(destPath);
             if (!destDir.exists()) destDir.mkdirs();
@@ -85,7 +89,7 @@ public class TemplateController extends BaseControl {
             map.put("createby", SysContext.getRequestUser().getUserName());
             map.put("create_date", new Date());
             map.put("template_path", destFile.getAbsolutePath());
-            DbFactory.Open(DbFactory.FORM).insert("dataCollect.addTemplate", map);
+            session.insert("dataCollect.addTemplate", map);
             return "";
         });
     }
@@ -217,6 +221,11 @@ public class TemplateController extends BaseControl {
         JSONArray columns = json.getJSONArray("columns");
         try {
             SqlSession session = DbFactory.Open(false, DbFactory.FORM);
+            //查找表名是否已经存在
+            Map<String, Object> params = new HashMap<>();
+            params.put("tableName", tableName);
+            List<Map<String, Object>> tableList = session.selectList("dataCollect.getFrmTable", params);
+            if(tableList != null && tableList.size()>0) throw new RuntimeException("该表已经存在，请更换表名！");
             Date now = new Date();
             //frm_table添加数据
             String currentUser = SysContext.getRequestUser().getUserName();
