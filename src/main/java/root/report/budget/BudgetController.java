@@ -463,22 +463,51 @@ public class BudgetController {
 		List<Map> departmentList = new ArrayList<Map>();
 		List<Map<String,String>> userCompanyList = null;
 		String org_code = null;
-		if(userPermission!=null&&userPermission.equals("P")){
-			userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getAllCompanies");
-		}else{
-			org_code = DbFactory.Open(DbFactory.FORM).selectOne("oa.getUserDepartmentNo",paramMap);
-			if(org_code!=null){
-				userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getUserCompany",org_code);
+		//字典表配置的是特殊情形的账号权限数据
+		Map<String,String> kindItem = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getKindItem", paramMap);
+		if(kindItem != null) {
+			String detail = (String) kindItem.get("DETAIL");
+			if("ALL".equals(detail)){
+				userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getAllCompanies");
+				Map<String,Object> map = null;
+				for(Map<String,String> temp:userCompanyList){
+					map = new HashMap<String,Object>();
+					map.put("value", temp.get("COMPANY_CODE"));
+					map.put("name", temp.get("COMPANY_NAME"));
+					companyList.add(map);
+				}
+				departmentList = this.getDepartmentByPermission("P",org_code,companyList);
+			}else{
+				String[] companyIds = detail.split(",");
+				Map<String,Object> temp = null;
+				for(int i = 0;i < companyIds.length;i++){
+					paramMap.put("company_id", Integer.valueOf(companyIds[i]));
+					Map<String,Object> company = DbFactory.Open(DbFactory.BUDGET).selectOne("budget.getCompanyById", paramMap);
+					temp = new HashMap<String,Object>();
+					temp.put("name", company.get("COMPANY_NAME"));
+					temp.put("value", company.get("COMPANY_CODE"));
+					companyList.add(temp);
+				}
+				departmentList = this.getDepartmentByPermission("C",org_code,companyList);
 			}
+		}else {
+			if (userPermission != null && userPermission.equals("P")) {
+				userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getAllCompanies");
+			} else {
+				org_code = DbFactory.Open(DbFactory.FORM).selectOne("oa.getUserDepartmentNo", paramMap);
+				if (org_code != null) {
+					userCompanyList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getUserCompany", org_code);
+				}
+			}
+			Map<String,Object> map = null;
+			for(Map<String,String> temp:userCompanyList){
+				map = new HashMap<String,Object>();
+				map.put("value", temp.get("COMPANY_CODE"));
+				map.put("name", temp.get("COMPANY_NAME"));
+				companyList.add(map);
+			}
+			departmentList = this.getDepartmentByPermission(userPermission,org_code,companyList);
 		}
-		Map<String,Object> map = null;
-		for(Map<String,String> temp:userCompanyList){
-			map = new HashMap<String,Object>();
-			map.put("value", temp.get("COMPANY_CODE"));
-			map.put("name", temp.get("COMPANY_NAME"));
-			companyList.add(map);
-		}
-		departmentList = this.getDepartmentByPermission(userPermission,org_code,companyList);
 
 		result.put("companys", companyList);
 		result.put("departments", departmentList);
