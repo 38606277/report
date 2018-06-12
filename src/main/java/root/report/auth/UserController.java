@@ -48,6 +48,8 @@ public class UserController extends RO{
 		try{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
 			String userCode = jsonObject.getString("UserCode");
+			//转换成小写
+			userCode = userCode!=null?userCode.trim().toLowerCase():userCode;
 			String passWord = jsonObject.getString("Pwd");
             ErpUtil erpUtil = new ErpUtil();
             passWord = erpUtil.decode(passWord);
