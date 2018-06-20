@@ -115,9 +115,9 @@ public class RestInterceptor extends HandlerInterceptorAdapter {
 				pJson = pJson.substring(0, 1000);
 			}
 			api.setIn_param(pJson);
-			HandlerMethod method = (HandlerMethod)handler;
-			RequestMapping  requestMapping = method.getMethod().getAnnotation(RequestMapping.class);
-			api.setApi_name(requestMapping.name());
+			//HandlerMethod method = (HandlerMethod)handler;
+			//RequestMapping  requestMapping = method.getMethod().getAnnotation(RequestMapping.class);
+			//api.setApi_name(requestMapping.name());
 			logMap.set(api);
 		} catch (Exception e) {
 			e.printStackTrace();

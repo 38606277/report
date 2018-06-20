@@ -531,7 +531,12 @@ public class BudgetController {
 			paramMap.put("companyCodes", companyCodes);
 			userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getDepartmentListByConmpanyCodes", paramMap);
 		}else{
-			if(org_code!=null){
+			//首先通过角色获取用户有权限查询的部门
+			paramMap.put("userName",SysContext.getRequestUser().getUserName());
+			paramMap.put("org_code",org_code);
+			userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getDepartmentInfoByRole",paramMap);
+			//其次通过OA查询其所属部门
+			if(userDepartmentList.size()==0&&org_code!=null){
 				userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getDepartmentInfo",org_code);
 			}
 		}
@@ -564,7 +569,11 @@ public class BudgetController {
 				userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("cache.getDepartmentListByConmpanyCodes",departmentParamMap);
 			}else{
 				String org_code = DbFactory.Open(DbFactory.FORM).selectOne("oa.getUserDepartmentNo",paramMap);
-				if(org_code!=null){
+				//首先通过角色获取用户有权限查询的部门
+				paramMap.put("org_code",org_code);
+				userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getDepartmentInfoByRole",paramMap);
+				//其次通过OA查询其所属部门
+				if(userDepartmentList.size()==0&&org_code!=null){
 					userDepartmentList = DbFactory.Open(DbFactory.BUDGET).selectList("budget.getDepartmentInfo",org_code);
 				}
 			}

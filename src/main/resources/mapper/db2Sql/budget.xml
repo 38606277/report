@@ -181,4 +181,12 @@
       FROM tbm_budget_complete_status_data d
       WHERE d.PERIOD_NAME = #{period_name}
     </select>
+    <select id="getDepartmentInfoByRole" resultType="Map" parameterType="Map">
+    select distinct aoe.org_ext_id value,aoe.org_name name
+      from arch_user au,ARCH_USER_ROLE aur,arch_org_ext aoe
+     where au.user_id=aur.user_id
+       and aur.org_id=aoe.org_id
+       and aoe.company_id=(select company_id from arch_org_ext where org_code=#{org_code})
+       and au.account=lower('${userName}')
+    </select>
 </mapper>
