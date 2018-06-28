@@ -320,6 +320,10 @@ public class FunctionControl extends RO{
                 {
                     outobj.put("default", ((JSONObject)outarray.get(i)).getString("default"));
                 }
+                if(((JSONObject)outarray.get(i)).getString("link")!=null)
+                {
+                    outobj.put("link", ((JSONObject)outarray.get(i)).getString("link"));
+                }
                 out_array.add(outobj);
             }
             obj.put("out", out_array);
