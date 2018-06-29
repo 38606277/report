@@ -175,13 +175,9 @@ public class FunctionControl extends RO{
 	}
 	
 	@RequestMapping(value = "/saveUserSql", produces = "text/plain;charset=UTF-8")
-    public String saveUserSql(@RequestBody String pJson)
+    public String saveUserSql(@RequestBody JSONObject jsonObject)
     {
-        JSONObject retObj = null;
-        try
-        {
-            retObj = new JSONObject(true);
-            JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        try{
             String namespace = jsonObject.getString("namespace");
             String sqlType = jsonObject.getString("sqlType");
             JSONObject commonObj = jsonObject.getJSONObject("comment");
@@ -196,28 +192,17 @@ public class FunctionControl extends RO{
             XMLWriter writer = null;
             Document userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             boolean checkResult = checkIsContainsSqlId(userDoc, sqlId);
-            if(checkResult)
-            {
-                retObj.put("retCode", false);
-                retObj.put("retMsg", "已经存在相同的报表ID");
-                return retObj.toJSONString();
-            }
+            if(checkResult) return ExceptionMsg("已经存在相同的报表ID");
             Element root = (Element)userDoc.selectSingleNode("/mapper");
             Element newSql = root.addElement("select");
             newSql.addAttribute("id", sqlId);
-            if("SQL".equals(sqlType))
-            {
+            if("SQL".equals(sqlType)){
                 newSql.addAttribute("resultType", "BigDecimal");
-            }
-            else
-            {
+            }else{
                 newSql.addAttribute("statementType", "CALLABLE");
-                //addResultMap(root);
             }
             newSql.addAttribute("parameterType", "Map");
             newSql.addComment(formatCommentJson(commonObj)+"\n");
-            //newSql.addComment(JSONObject.toJSONString(jsonObject.getJSONObject("comment"), features)+"\n");
-            //newSql.addCDATA(cdata);
             addSqlText(newSql,cdata);
             log.debug("新增SQL:"+newSql.asXML());
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
@@ -227,20 +212,19 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
-            retObj.put("retCode", true);
-            retObj.put("retMsg", "新增报表成功");
             //重置该DB连接
             DbFactory.init(commonObj.getString("db"));
-        } 
-        catch (Exception e)
-        {
-            log.error("新增报表失败.");
-            e.printStackTrace();
-            retObj.put("retCode", false);
-            retObj.put("retMsg", "新增报表失败");
+        }catch (Exception e){
+			Throwable cause = e;
+			String message = null;
+			while((message = cause.getMessage())==null){
+				cause = cause.getCause();
+			}
+			return ExceptionMsg(message);
         }
-        return retObj.toJSONString();
+        return SuccessMsg("新增报表成功",null);
     }
+
 	private String formatCommentJson(JSONObject commentObj)
     {
         JSONObject obj = new JSONObject(true);
@@ -256,87 +240,15 @@ public class FunctionControl extends RO{
         if(commentObj.getString("desc")!=null){
             obj.put("desc", commentObj.getString("desc"));
         }
-        JSONArray inarray = commentObj.getJSONArray("in");
-        if(inarray!=null)
-        {
-            JSONObject inobj = null;
-            JSONArray in_array = new JSONArray();
-            for (int i = 0; i < inarray.size(); i++)
-            {
-                inobj = new JSONObject(true);
-                if(((JSONObject)inarray.get(i)).getString("id")!=null)
-                {
-                    inobj.put("id", ((JSONObject)inarray.get(i)).getString("id"));
-                }
-                if(((JSONObject)inarray.get(i)).getString("name")!=null)
-                {
-                    inobj.put("name", ((JSONObject)inarray.get(i)).getString("name"));
-                }
-                if(((JSONObject)inarray.get(i)).getString("datatype")!=null)
-                {
-                    inobj.put("datatype", ((JSONObject)inarray.get(i)).getString("datatype"));
-                }
-                if(((JSONObject)inarray.get(i)).getString("default")!=null)
-                {
-                    inobj.put("default", ((JSONObject)inarray.get(i)).getString("default"));
-                }
-                if(((JSONObject)inarray.get(i)).getString("lookup")!=null)
-                {
-                    inobj.put("lookup", ((JSONObject)inarray.get(i)).getString("lookup"));
-                }
-                if(((JSONObject)inarray.get(i)).getString("auth")!=null)
-                {
-                    inobj.put("auth", ((JSONObject)inarray.get(i)).getString("auth"));
-                }
-                if(((JSONObject)inarray.get(i)).getString("in_formula")!=null)
-                {
-                    inobj.put("in_formula", ((JSONObject)inarray.get(i)).getString("in_formula"));
-                }
-                in_array.add(inobj);
-            }
-            obj.put("in", in_array);
-        }
-        JSONArray outarray = commentObj.getJSONArray("out");
-        if(outarray!=null)
-        {
-            JSONObject outobj = null;
-            JSONArray out_array = new JSONArray();
-            for (int i = 0; i < outarray.size(); i++)
-            {
-                outobj = new JSONObject(true);
-                if(((JSONObject)outarray.get(i)).getString("id")!=null)
-                {
-                    outobj.put("id", ((JSONObject)outarray.get(i)).getString("id"));
-                }
-                if(((JSONObject)outarray.get(i)).getString("name")!=null)
-                {
-                    outobj.put("name", ((JSONObject)outarray.get(i)).getString("name"));
-                }
-                if(((JSONObject)outarray.get(i)).getString("datatype")!=null)
-                {
-                    outobj.put("datatype", ((JSONObject)outarray.get(i)).getString("datatype"));
-                }
-                if(((JSONObject)outarray.get(i)).getString("default")!=null)
-                {
-                    outobj.put("default", ((JSONObject)outarray.get(i)).getString("default"));
-                }
-                if(((JSONObject)outarray.get(i)).getString("link")!=null)
-                {
-                    outobj.put("link", ((JSONObject)outarray.get(i)).getString("link"));
-                }
-                out_array.add(outobj);
-            }
-            obj.put("out", out_array);
-        }
+        obj.put("in",commentObj.getJSONArray("in"));
+        obj.put("out",commentObj.getJSONArray("out"));
         return JSONObject.toJSONString(obj, features);
     }
+
 	@RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
     public String modifyUserSql(@RequestBody String pJson)
     {
-        JSONObject retObj = null;
-        try 
-        {
-            retObj = new JSONObject();
+        try{
             JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
             String namespace = jsonObject.getString("namespace");
             String sqlType = jsonObject.getString("sqlType");
@@ -378,19 +290,17 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
-            retObj.put("retCode", true);
-            retObj.put("retMsg", "修改报表成功");
             
             DbFactory.init(commonObj.getString("db"));
-        } 
-        catch (Exception e)
-        {
-            log.error("修改报表失败.");
-            e.printStackTrace();
-            retObj.put("retCode", false);
-            retObj.put("retMsg", "修改报表失败");
+        }catch (Exception e){
+			Throwable cause = e;
+			String message = null;
+			while((message = cause.getMessage())==null){
+				cause = cause.getCause();
+			}
+			return ExceptionMsg(message);
         }
-        return retObj.toJSONString();
+        return SuccessMsg("修改报表成功",null);
     }
 	
 	private void addSqlText(Element select, String sqlText) throws DocumentException 
