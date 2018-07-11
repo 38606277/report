@@ -175,16 +175,17 @@ public class FunctionControl extends RO{
 	}
 	
 	@RequestMapping(value = "/saveUserSql", produces = "text/plain;charset=UTF-8")
-    public String saveUserSql(@RequestBody JSONObject jsonObject)
+    public String saveUserSql(@RequestBody String pJson)
     {
         try{
-            String namespace = jsonObject.getString("namespace");
+			JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        	String namespace = jsonObject.getString("namespace");
             String sqlType = jsonObject.getString("sqlType");
             JSONObject commonObj = jsonObject.getJSONObject("comment");
             String sqlId = jsonObject.getString("id");
             String cdata = jsonObject.getString("cdata");
-            String category = jsonObject.getString("category");
-            String userSqlPath = GetSqlPath(category,namespace);
+            //String category = jsonObject.getString("category");
+			String userSqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml"; //GetSqlPath(category,namespace);
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
             format.setTrimText(false);
@@ -255,8 +256,8 @@ public class FunctionControl extends RO{
             JSONObject commonObj = jsonObject.getJSONObject("comment");
             String sqlId = jsonObject.getString("id");
             String cdata = jsonObject.getString("cdata");
-            String category = jsonObject.getString("category");
-            String userSqlPath = GetSqlPath(category,namespace);
+            //String category = jsonObject.getString("category");
+            String userSqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml"; //GetSqlPath(category,namespace);
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
             format.setTrimText(false);
@@ -265,20 +266,21 @@ public class FunctionControl extends RO{
             Document userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
-            List<Object> list = select.content();
-            Object object = null;
-            for (int i = list.size()-1; i >=0 ; i--) {
-                object = list.get(i);
-                if (object instanceof DefaultComment) {
-                    select.remove((DefaultComment)object);
-                }else if (object instanceof DefaultCDATA) {
-                    select.remove((DefaultCDATA)object);
-                }else if (object instanceof DefaultText) {
-                    select.remove((DefaultText)object);
-                }else if (object instanceof DefaultElement) {
-                    select.remove((DefaultElement)object);
-                } 
-            }
+            select.clearContent();
+//            List<Object> list = select.content();
+//            Object object = null;
+//            for (int i = list.size()-1; i >=0 ; i--) {
+//                object = list.get(i);
+//                if (object instanceof DefaultComment) {
+//                    select.remove((DefaultComment)object);
+//                }else if (object instanceof DefaultCDATA) {
+//                    select.remove((DefaultCDATA)object);
+//                }else if (object instanceof DefaultText) {
+//                    select.remove((DefaultText)object);
+//                }else if (object instanceof DefaultElement) {
+//                    select.remove((DefaultElement)object);
+//                }
+//            }
             select.addComment(formatCommentJson(commonObj));
             //select.addCDATA(cdata);
             addSqlText(select, cdata);
