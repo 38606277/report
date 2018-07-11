@@ -738,28 +738,22 @@ public class SqlControl extends RO{
 	private JSONArray parseSqlInputParams(String sqlType,String sql)
 	{
 		JSONArray list = new JSONArray();
-		if (sqlType.toLowerCase().equals("sql"))
-		{
+		if (sqlType.toLowerCase().equals("sql")){
 			String[] condition = sql.split("}");
 			int index = -1;
 			Map<String,Boolean> paramMap = new HashMap<String,Boolean>();
-			for (int i = 0; i < condition.length; i++)
-			{
+			for (int i = 0; i < condition.length; i++){
 			    Map<String,String> obj = new HashMap<String,String>();
 			    index = condition[i].indexOf("#{");
-			    if(index==-1)
-			    {
+			    if(index==-1){
 			        index = condition[i].indexOf("${");
 			    }
 			    String id = "";
 				if (index != -1) {
 				    id = condition[i].substring(index + 2);
-				    if(paramMap.containsKey(id))
-				    {
+				    if(paramMap.containsKey(id)){
 				        continue;
-				    }
-				    else
-				    {
+				    }else{
 				        paramMap.put(id, true);
     				    obj.put("id", id);
     				    obj.put("name", id);
@@ -769,35 +763,30 @@ public class SqlControl extends RO{
 				    }
 				}
 			}
-		} 
-		else 
-		{
+		}else{
 			// String sql="{call CMCC_BALANCES_CHECK_TEST(#{p_period_year,
 			// mode=IN,jdbcType=INTEGER},#{p_period_num,mode=IN,jdbcType=INTEGER}"
 			// + ",#{p_balance_type,mode=OUT,jdbcType=INTEGER})}";
 			String column = sql.substring(sql.indexOf("(") + 1,
 					sql.indexOf(")"));
-			String[] params = column.split("}");
-			for (String string : params)
-			{
-				if (string.indexOf(",") == 0)
-				{
+			String[] params = column.replaceAll("\n","").split("}");
+			for (String string : params){
+				if (string.indexOf(",") == 0){
 					string = string.substring(3);
-				}
-				else
-				{
+				}else{
 					string = string.substring(2);
-				}
-				if(string.indexOf("#{")==-1)
-				{
-					continue;
 				}
 				String[] param = string.split(",");
 				Map map = new HashMap();
-				map.put("id", param[0].replace("#{","").trim());
-				map.put("name", param[0].replace("#{","").trim());
-				map.put("jdbctype", param[2].split("=")[1].trim());
-				map.put("type", param[1].split("=")[1].trim());
+				map.put("id", param[0].trim());
+				map.put("name", param[0].trim());
+				if(param[1].split("=")[0].equals("jdbctype")){
+					map.put("jdbctype", param[1].split("=")[1].trim());
+					map.put("type", param[2].split("=")[1].trim());
+				}else{
+					map.put("jdbctype", param[2].split("=")[1].trim());
+					map.put("type", param[1].split("=")[1].trim());
+				}
 				list.add(map);
 			}
 		}
