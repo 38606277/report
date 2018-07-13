@@ -33,6 +33,8 @@ public class DbManager
     private static ErpUtil erpUtil = new ErpUtil();
     private static final String DB_CONFIG_PATH = System.getProperty("user.dir")+"/config/DBConfig.xml";
     @RequestMapping(value="/ListAll",produces = "text/plain;charset=UTF-8")
+
+//    TODO 这里没有错误处理
     public String getAllDBConnections(){
         JSONArray array = new JSONArray();
         Document dom = null;
@@ -59,7 +61,7 @@ public class DbManager
         
         return array.toJSONString();
     }
-    
+//    todo 这里没有错误处理
     @RequestMapping(value="/save",produces = "text/plain;charset=UTF-8")
     public String save(@RequestBody String pJson)
     {
@@ -145,7 +147,7 @@ public class DbManager
         
         return retObj.toJSONString();
     }
-    
+
     @RequestMapping(value="/update",produces = "text/plain;charset=UTF-8")
     public String update(@RequestBody String pJson)
     {

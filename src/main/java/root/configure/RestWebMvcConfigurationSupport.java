@@ -57,6 +57,7 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/**").addResourceLocations("file:"+appConstants.getReport2()+File.separator);
     }
 
+
     @Override
     protected void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/reportServer/**")
@@ -75,4 +76,9 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
                 .addPathPatterns("/reportServer/**")
                 .excludePathPatterns(EXCLUDE_URL);
     }
+
+//    @Bean
+//    public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+//        return new ByteArrayHttpMessageConverter();
+//    }
 }

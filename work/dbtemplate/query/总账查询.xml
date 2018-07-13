@@ -4,6 +4,7 @@
 <!--总账查询-->
 <mapper namespace="总账查询">
  <select id="查询科目组合-公司段" resultType="Map" parameterType="Map">
+ 
 <!--{
 	"db":"jlerp",
 	"desc":"查询科目组合-公司段",
@@ -40,7 +41,7 @@
  <select id="查询科目组合-成本中心段" resultType="Map" parameterType="Map">
  
 <!--{
-	"db":"system",
+	"db":"jlerp",
 	"desc":"查询科目组合-成本中心段",
 	"in":[
 		{
@@ -49,7 +50,7 @@
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"",
-			"mut":"",
+			"mut":"False",
 			"auth":""
 		},
 		{
@@ -58,7 +59,7 @@
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"",
-			"mut":"",
+			"mut":"False",
 			"auth":""
 		},
 		{
@@ -67,7 +68,7 @@
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"",
-			"mut":"",
+			"mut":"False",
 			"auth":""
 		},
 		{
@@ -76,7 +77,7 @@
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"",
-			"mut":"",
+			"mut":"False",
 			"auth":""
 		}
 	],
@@ -124,30 +125,30 @@ and ffv.flex_value&lt;=#{end_value}
  <select id="查询科目组合-会计科目段" resultType="Map" parameterType="Map">
  
 <!--{
-	"db":"system",
+	"db":"jlerp",
 	"desc":"查询科目组合-会计科目段",
 	"in":[
 		{
 			"id":"begin_value",
-			"name":"开始",
+			"name":"begin_value",
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"数据字典/会计科目字典",
-			"mut":"True",
+			"mut":"False",
 			"auth":""
 		},
 		{
 			"id":"end_value",
-			"name":"结束",
+			"name":"end_value",
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"数据字典/会计科目字典",
-			"mut":"True",
+			"mut":"False",
 			"auth":""
 		},
 		{
 			"id":"name",
-			"name":"名字",
+			"name":"name",
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"",
@@ -156,7 +157,7 @@ and ffv.flex_value&lt;=#{end_value}
 		},
 		{
 			"id":"code_length",
-			"name":"代码长度",
+			"name":"code_length",
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"",
@@ -167,7 +168,7 @@ and ffv.flex_value&lt;=#{end_value}
 	"out":[
 		{
 			"id":"flex_value",
-			"name":"科目代码",
+			"name":"科目编码",
 			"datatype":"varchar"
 		},
 		{
@@ -561,7 +562,7 @@ WHERE
  <select id="查询会计期间" resultType="Map" parameterType="Map">
  
 <!--{
-	"db":"system",
+	"db":"jlerp",
 	"desc":"查询会计期间",
 	"in":[
 		{
@@ -570,6 +571,7 @@ WHERE
 			"datatype":"varchar",
 			"default":"",
 			"lookup":"",
+			"mut":"",
 			"auth":""
 		}
 	],
@@ -596,12 +598,12 @@ WHERE
 		}
 	]
 }-->SELECT
-	gp.PERIOD_SET_NAME ,
-	gp.PERIOD_NAME ,
-	gp.START_DATE ,
-	gp.END_DATE
+    gp.PERIOD_SET_NAME ,
+    gp.PERIOD_NAME ,
+    gp.START_DATE ,
+    gp.END_DATE
 FROM
-	gl_periods gp
+    gl_periods gp
 where 1=1
  <if test="period_name!=''">
    and gp.period_name=#{period_name}
@@ -708,4 +710,509 @@ FROM
    and ffvt.description like nvl('%'||#{name}||'%', ffvt.description)
  order by ffv.flex_value
 ]]>
+</select><select id="heloo" resultType="Map" parameterType="Map">
+ 
+<!--{
+	"db":"jlerp",
+	"desc":"hello",
+	"in":[
+		{
+			"id":"begin_value",
+			"name":"会计科目开始",
+			"datatype":"varchar",
+			"default":"",
+			"lookup":"",
+			"mut":"",
+			"auth":""
+		},
+		{
+			"id":"end_value",
+			"name":"会计科目结束",
+			"datatype":"varchar",
+			"default":"",
+			"lookup":"",
+			"mut":"",
+			"auth":""
+		},
+		{
+			"id":"name",
+			"name":"name",
+			"datatype":"varchar",
+			"default":"",
+			"lookup":"",
+			"mut":"",
+			"auth":""
+		},
+		{
+			"id":"code_length",
+			"name":"code_length",
+			"datatype":"varchar",
+			"default":"",
+			"lookup":"",
+			"mut":"",
+			"auth":""
+		}
+	],
+	"out":[
+		{
+			"id":"flex_value",
+			"name":"flex_value",
+			"datatype":"varchar"
+		},
+		{
+			"id":"description",
+			"name":"description",
+			"datatype":"varchar"
+		}
+	]
+}
+-->select ffv.flex_value,
+       ffvt.description
+ from fnd_id_flex_segments fifs,
+       gl_sets_of_books     gsob,
+       fnd_flex_values      ffv,
+       fnd_flex_values_tl   ffvt
+ where gsob.chart_of_accounts_id = fifs.id_flex_num
+   and id_flex_code = 'GL#'
+   and ffv.flex_value_id = ffvt.flex_value_id
+   and ffvt.language = 'ZHS'
+   and ffv.flex_value_set_id = fifs.flex_value_set_id
+   and ffv.enabled_flag = 'Y'
+   and ffv.end_date_active is null
+   and gsob.set_of_books_id = 2
+   and fifs.application_column_name = 'SEGMENT3'
+<if test="begin_value!=''">
+ and ffv.flex_value&gt;=#{begin_value}
+</if>
+ <if test="end_value!=''">
+and ffv.flex_value&lt;=#{end_value}
+</if>
+ <if test="name!=''">
+   and ffvt.description like '${name}%'
+</if>
+ <if test="code_length!=''">
+ and length(ffv.flex_value)=${code_length}
+ </if>
+ order by ffv.flex_value
+</select><select id="查询明细账" resultType="Map" parameterType="Map">
+<!--{
+	"db":"jlerp",
+	"desc":"查询明细账",
+	"in":[
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"年",
+			"id":"period_year",
+			"mut":"false"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"月",
+			"id":"period_num",
+			"mut":"false"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"公司",
+			"id":"segment1",
+			"mut":"false"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"会计科目",
+			"id":"segment3",
+			"mut":"false"
+		}
+	],
+	"out":[
+		{
+			"datatype":"varchar",
+			"name":"creation_date",
+			"link":{},
+			"id":"creation_date"
+		},
+		{
+			"datatype":"varchar",
+			"name":"name",
+			"link":{},
+			"id":"name"
+		},
+		{
+			"datatype":"varchar",
+			"name":"je_line_num",
+			"link":{},
+			"id":"je_line_num"
+		},
+		{
+			"datatype":"varchar",
+			"name":"description",
+			"link":{},
+			"id":"description"
+		},
+		{
+			"datatype":"varchar",
+			"name":"accounted_dr",
+			"link":{},
+			"id":"accounted_dr"
+		},
+		{
+			"datatype":"varchar",
+			"name":"segment3",
+			"link":{},
+			"id":"segment3"
+		},
+		{
+			"datatype":"varchar",
+			"name":"segment2",
+			"link":{},
+			"id":"segment2"
+		}
+	]
+}-->SELECT
+    jh.CREATION_DATE ,
+    jh.NAME,
+    jl.JE_LINE_NUM ,
+    jl.DESCRIPTION,
+    jl.ACCOUNTED_DR ,
+    gcc.SEGMENT3,
+    gcc.SEGMENT2
+FROM
+    gl_je_headers_2014 jh ,
+    gl_je_lines_2014 jl ,
+    gl_code_combinations gcc ,
+    gl_periods gp
+WHERE
+    jh.JE_HEADER_ID = jl.JE_HEADER_ID
+ AND jl.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID
+ AND jh.PERIOD_NAME = gp.PERIOD_NAME
+ AND gp.PERIOD_YEAR = '${period_year}'
+ AND gp.PERIOD_NUM = '${period_num}'
+ AND gcc.SEGMENT1 = '${segment1}'
+ AND gcc.SEGMENT3 like '${segment3}%'
+</select><select id="查询会计凭证" resultType="Map" parameterType="Map">
+ 
+<!--{
+	"db":"jlerp",
+	"desc":"查询会计凭证",
+	"in":[
+		{
+			"id":"name",
+			"name":"凭证号",
+			"datatype":"varchar",
+			"default":"",
+			"lookup":"",
+			"mut":"",
+			"auth":""
+		}
+	],
+	"out":[
+		{
+			"id":"creation_date",
+			"name":"创建日期",
+			"datatype":"varchar"
+		},
+		{
+			"id":"name",
+			"name":"凭证号",
+			"datatype":"varchar"
+		},
+		{
+			"id":"je_line_num",
+			"name":"行号",
+			"datatype":"varchar"
+		},
+		{
+			"id":"description",
+			"name":"说明",
+			"datatype":"varchar"
+		},
+		{
+			"id":"accounted_dr",
+			"name":"借方",
+			"datatype":"varchar"
+		},
+		{
+			"id":"accounted_cr",
+			"name":"贷方",
+			"datatype":"varchar"
+		},
+		{
+			"id":"segment3",
+			"name":"会计科目",
+			"datatype":"varchar"
+		},
+		{
+			"id":"segment2",
+			"name":"部让",
+			"datatype":"varchar"
+		}
+	]
+}
+-->SELECT
+    jh.CREATION_DATE ,
+    jh.NAME,
+    jl.JE_LINE_NUM ,
+    jl.DESCRIPTION,
+    jl.ACCOUNTED_DR ,
+    jl.ACCOUNTED_CR,
+    gcc.SEGMENT3,
+    gcc.SEGMENT2
+FROM
+    gl_je_headers jh ,
+    gl_je_lines jl ,
+    gl_code_combinations gcc 
+WHERE
+    jh.JE_HEADER_ID = jl.JE_HEADER_ID
+ AND jl.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID
+ AND jh.NAME= '${name}' 
+</select><select id="w11" resultType="Map" parameterType="Map">
+ 
+<!--{
+	"db":"jlerp",
+	"desc":"w11",
+	"in":[
+		{
+			"lookup":"数据字典/会计期间",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"ou",
+			"name":"period_year",
+			"id":"period_year",
+			"mut":"true"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"period_num",
+			"id":"period_num",
+			"mut":"false"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"segment1",
+			"id":"segment1",
+			"mut":"false"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"segment3",
+			"id":"segment3",
+			"mut":"false"
+		}
+	],
+	"out":[
+		{
+			"datatype":"varchar",
+			"name":"creation_date",
+			"link":"",
+			"id":"creation_date"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"修改",
+			"name":"name",
+			"link":"",
+			"id":"name"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"修改",
+			"name":"je_line_num",
+			"link":"",
+			"id":"je_line_num"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"修改",
+			"name":"description",
+			"link":"",
+			"id":"description"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"修改",
+			"name":"accounted_dr",
+			"link":"",
+			"id":"accounted_dr"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"修改",
+			"name":"segment3",
+			"link":"",
+			"id":"segment3"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"修改",
+			"name":"segment2",
+			"link":"",
+			"id":"segment2"
+		}
+	]
+}-->SELECT
+    jh.CREATION_DATE ,
+    jh.NAME,
+    jl.JE_LINE_NUM ,
+    jl.DESCRIPTION,
+    jl.ACCOUNTED_DR ,
+    gcc.SEGMENT3,
+    gcc.SEGMENT2
+FROM
+    gl_je_headers_2014 jh ,
+    gl_je_lines_2014 jl ,
+    gl_code_combinations gcc ,
+    gl_periods gp
+WHERE
+    jh.JE_HEADER_ID = jl.JE_HEADER_ID
+ AND jl.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID
+ AND jh.PERIOD_NAME = gp.PERIOD_NAME
+ AND gp.PERIOD_YEAR = '${period_year}'
+ AND gp.PERIOD_NUM = '${period_num}'
+ AND gcc.SEGMENT1 = '${segment1}'
+ AND gcc.SEGMENT3 like '${segment3}%'
+</select><select id="wqqq" resultType="Map" parameterType="Map">
+ 
+<!--{
+	"db":"jlerp",
+	"desc":"wqqqq",
+	"in":[
+		{
+			"lookup":"数据字典/公司信息",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"ou",
+			"name":"period_year",
+			"id":"period_year",
+			"mut":"false"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"period_num",
+			"id":"period_num",
+			"mut":"false"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"segment1",
+			"id":"segment1",
+			"mut":"false"
+		},
+		{
+			"lookup":"",
+			"default":"",
+			"datatype":"varchar",
+			"auth":"",
+			"name":"segment3",
+			"id":"segment3",
+			"mut":"false"
+		}
+	],
+	"out":[
+		{
+			"datatype":"varchar",
+			"name":"creation_date",
+			"link":"",
+			"id":"creation_date"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"修改",
+			"name":"name",
+			"link":{
+				"param":[
+					{
+						"match":"period_year",
+						"paramname":"凭证号"
+					}
+				],
+				"className":"总账查询",
+				"selectName":"查询会计凭证"
+			},
+			"id":"name"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"新建",
+			"name":"je_line_num",
+			"link":"",
+			"id":"je_line_num"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"新建",
+			"name":"description",
+			"link":"",
+			"id":"description"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"新建",
+			"name":"accounted_dr",
+			"link":"",
+			"id":"accounted_dr"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"新建",
+			"name":"segment3",
+			"link":"",
+			"id":"segment3"
+		},
+		{
+			"datatype":"varchar",
+			"linkbutton":"新建",
+			"name":"segment2",
+			"link":"",
+			"id":"segment2"
+		}
+	]
+}
+-->SELECT
+    jh.CREATION_DATE ,
+    jh.NAME,
+    jl.JE_LINE_NUM ,
+    jl.DESCRIPTION,
+    jl.ACCOUNTED_DR ,
+    gcc.SEGMENT3,
+    gcc.SEGMENT2
+FROM
+    gl_je_headers_2014 jh ,
+    gl_je_lines_2014 jl ,
+    gl_code_combinations gcc ,
+    gl_periods gp
+WHERE
+    jh.JE_HEADER_ID = jl.JE_HEADER_ID
+ AND jl.CODE_COMBINATION_ID = gcc.CODE_COMBINATION_ID
+ AND jh.PERIOD_NAME = gp.PERIOD_NAME
+ AND gp.PERIOD_YEAR = '${period_year}'
+ AND gp.PERIOD_NUM = '${period_num}'
+ AND gcc.SEGMENT1 = '${segment1}'
+ AND gcc.SEGMENT3 like '${segment3}%'
 </select></mapper>

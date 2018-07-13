@@ -20,12 +20,14 @@ import root.configure.AppConstants;
 import root.form.user.UserModel;
 import root.report.common.RO;
 import root.report.db.DbFactory;
+import root.report.service.SelectService;
 import root.report.sys.SysContext;
 import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -371,9 +373,12 @@ public class SelectControl extends RO {
 			if(arr.size()>1){
 				page = arr.getJSONObject(1);  //分页对象
 			}
-			
-			String selectType = getSelectType(selectClassName, selectID);
-            String db = params.getString("db");
+
+            SelectService selectService=SelectService.Load(selectClassName,selectID);
+
+			String selectType = selectService.getSelectType();
+            String db =selectService.getDb();
+
 			JSONArray jsonArray = params.getJSONArray("in");
 			RowBounds bounds = null;
 			if(page==null){
@@ -413,6 +418,7 @@ public class SelectControl extends RO {
 		    }
 		    aResult = null;
 			result.put("list", newResult);
+			result.put("metadata",selectService.getMetaData());
 			result.put("totalSize", totalSize);
 		} 
 		catch (Exception e)
@@ -662,6 +668,42 @@ public class SelectControl extends RO {
 		return aJson;
 
 	}
+    public String getSelectDB(String selectClassId, String selectID) {
+        String result = "";
+        // 根据名称查找对应的模板文件
+        String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassId + ".xml";
+
+        try {
+            SAXReader sax = new SAXReader();
+            sax.setValidation(false);
+            sax.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);// 这一行是必须要有的
+            // 获得dom4j的文档对象
+            Document document = sax.read(new FileInputStream(usersqlPath));
+            Element root = document.getRootElement();
+            // 得到database节点
+            // List<Element> selects = root.selectNodes("//select");
+            // 得到database节点
+            Element aSelect = (Element) root.selectSingleNode("//select[@id='" + selectID + "']");
+
+            String aJsonString = "";
+            for (int j = 0; j < aSelect.nodeCount(); j++) {
+                Node node1 = aSelect.node(j);
+                if (node1.getNodeTypeName().equals("Comment")) {
+                    aJsonString = node1.getStringValue();
+                    break;
+                }
+            }
+
+            JSONObject commentObj = JSON.parseObject(aJsonString);
+            //in参数中带lookup属性的不展示
+            String db = commentObj.getString("db");
+            return db;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "";
+        }
+
+    }
 
 	private String getNameSpaceByFile(String selectClassName) {
 
