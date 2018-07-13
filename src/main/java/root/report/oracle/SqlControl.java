@@ -3,6 +3,7 @@ package root.report.oracle;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
@@ -256,17 +257,15 @@ public class SqlControl extends RO{
      * @return String
      */
     @RequestMapping(value = "/saveUserSql", produces = "text/plain;charset=UTF-8")
-    public String saveUserSql(@RequestBody String pJson)
-    {
+    public String saveUserSql(@RequestBody String pJson){
         try{
-            JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
             String namespace = jsonObject.getString("namespace");
-            String sqlType = jsonObject.getString("sqlType");
             JSONObject commonObj = jsonObject.getJSONObject("comment");
+			String type = commonObj.getString("type");
             String sqlId = jsonObject.getString("id");
-            String cdata = jsonObject.getString("cdata");
             String category = jsonObject.getString("category");
-            String userSqlPath = GetSqlPath(category) + File.separator + namespace + ".xml";
+            String userSqlPath = this.appConstant.getUserSqlPath() + File.separator + namespace + ".xml";
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
             format.setTrimText(false);
@@ -280,14 +279,20 @@ public class SqlControl extends RO{
             Element root = (Element)userDoc.selectSingleNode("/mapper");
             Element newSql = root.addElement("select");
             newSql.addAttribute("id", sqlId);
-            if("SQL".equals(sqlType)){
-                newSql.addAttribute("resultType", "Map");
-            }else{
-                newSql.addAttribute("statementType", "CALLABLE");
-            }
-            newSql.addAttribute("parameterType", "Map");
-            newSql.addComment(formatCommentJson(commonObj)+"\n");
-            addSqlText(newSql,cdata);
+			if("sql".equals(type)){
+				newSql.addAttribute("resultType", "Map");
+				newSql.addAttribute("parameterType", "Map");
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
+				String cdata = jsonObject.getString("cdata");
+				addSqlText(newSql,cdata);
+			}else if ("proc".equals(type)){
+				newSql.addAttribute("statementType", "CALLABLE");
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
+				String cdata = jsonObject.getString("cdata");
+				addSqlText(newSql,cdata);
+			}else if("http".equals(type)) {
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
+			}
             log.debug("新增SQL:"+newSql.asXML());
             writer = new XMLWriter(new FileOutputStream(userSqlPath),format);
             //删除空白行
@@ -308,27 +313,6 @@ public class SqlControl extends RO{
         }
         return SuccessMsg("操作成功", null);
     }
-
-    private String formatCommentJson(JSONObject commentObj)
-    {
-        JSONObject obj = new JSONObject(true);
-        if(commentObj.getString("db")!=null){
-            obj.put("db", commentObj.getString("db"));
-        }
-        if(commentObj.getString("id")!=null){
-            obj.put("id", commentObj.getString("id"));
-        }
-        if(commentObj.getString("name")!=null){
-            obj.put("name", commentObj.getString("name"));
-        }
-        if(commentObj.getString("desc")!=null){
-            obj.put("desc", commentObj.getString("desc"));
-        }
-        obj.put("in",commentObj.getJSONArray("in"));
-        obj.put("out",commentObj.getJSONArray("out"));
-        return JSONObject.toJSONString(obj, features);
-    }
-
     /**
      * 修改用户定义报表SQL
      * @return
@@ -338,14 +322,12 @@ public class SqlControl extends RO{
     public String modifyUserSql(@RequestBody String pJson)
     {
         try{
-            JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
             String namespace = jsonObject.getString("namespace");
-            String sqlType = jsonObject.getString("sqlType");
             JSONObject commonObj = jsonObject.getJSONObject("comment");
             String sqlId = jsonObject.getString("id");
             String cdata = jsonObject.getString("cdata");
-            String category = jsonObject.getString("category");
-            String userSqlPath = GetSqlPath(category) + File.separator + namespace + ".xml";
+            String userSqlPath =this.appConstant.getUserSqlPath() + File.separator + namespace + ".xml";
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
             format.setTrimText(false);
@@ -354,21 +336,8 @@ public class SqlControl extends RO{
             Document userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
-            List<Object> list = select.content();
-            Object object = null;
-            for (int i = list.size()-1; i >=0 ; i--) {
-                object = list.get(i);
-                if (object instanceof DefaultComment) {
-                    select.remove((DefaultComment)object);
-                }else if (object instanceof DefaultCDATA) {
-                    select.remove((DefaultCDATA)object);
-                }else if (object instanceof DefaultText) {
-                    select.remove((DefaultText)object);
-                }else if (object instanceof DefaultElement) {
-                    select.remove((DefaultElement)object);
-                } 
-            }
-            select.addComment(formatCommentJson(commonObj));
+            select.clearContent();
+            select.addComment(JSONObject.toJSONString(commonObj, features));
             addSqlText(select, cdata);
             log.debug("修改报表:"+select.asXML());
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
@@ -380,9 +349,7 @@ public class SqlControl extends RO{
             writer.close();
 
             DbFactory.init(commonObj.getString("db"));
-        } 
-        catch (Exception e)
-        {
+        }catch (Exception e){
         	Throwable cause = e;
 			String message = null;
 			while((message = cause.getMessage())==null){
@@ -496,42 +463,15 @@ public class SqlControl extends RO{
 	         }
     	 }
     }
-    
-    //判断doc是否存在某个节点
-    private boolean checkIsContainsSqlId(Document userDoc,String sqlId)
-    {
-        List<Element> list = userDoc.selectNodes("//select[@id='"+sqlId+"']");
-        if(list==null||list.size()==0)
-        {
-            return false;
-        }
-        return true;
-    }
-    
-    //移除某个节点
-    private void moveSqlId(Document userDoc,String sqlId)
-    {
-        List<Element> list = userDoc.selectNodes("//select[@id='"+sqlId+"']");
-        for (int i = 0; i < list.size(); i++)
-        {
-            list.get(i).getParent().remove(list.get(i));
-        }
-    }
-   
+
     //删除报表
     @RequestMapping(value = "/moveUserSql", produces = "text/plain;charset=UTF-8")
-    public String moveUserSql(@RequestBody String pJson)
-    {
-        JSONObject retObj = null;
-        try 
-        {
-            retObj = new JSONObject(); 
-            
+    public String moveUserSql(@RequestBody String pJson){
+        try{
             JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
             String namespace = jsonObject.getString("namespace");
             String sqlId = jsonObject.getString("id");
-            String category = jsonObject.getString("category");
-            String userSqlPath = GetSqlPath(category) + File.separator + namespace + ".xml";
+            String userSqlPath = this.appConstant.getUserSqlPath() + File.separator + namespace + ".xml";
             
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
@@ -544,13 +484,10 @@ public class SqlControl extends RO{
             JSONObject newObj = new JSONObject();
             newObj.put("namespace", namespace);
             newObj.put("sqlid", sqlId);
-
             JSONObject selectObj = JSONObject.parseObject(selectControl.qrySelectSqlDetail(newObj.toJSONString()));
             DbFactory.init(selectObj.getJSONObject("comment").getString("db"));
-            
             //删除该节点
             moveSqlId(userDoc,sqlId);
-            
             log.debug("删除报表:命名空间【"+namespace+"】,报表ID【"+sqlId+"】");
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
@@ -559,11 +496,7 @@ public class SqlControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
-            retObj.put("retCode", true);
-            retObj.put("retMsg", "删除报表成功");
-        } 
-        catch (Exception e)
-        {
+        }catch (Exception e){
         	Throwable cause = e;
 			String message = null;
 			while((message = cause.getMessage())==null){
@@ -571,7 +504,7 @@ public class SqlControl extends RO{
 			}
 			ErrorMsg("3000", message);
         }
-        return SuccessMsg("操作成功", retObj);
+        return SuccessMsg("操作成功", null);
     }
 	
 	// 根据SQL取参数 并转换为XML格式
@@ -792,15 +725,15 @@ public class SqlControl extends RO{
 		}
 		return list;
 	}
-	
-    private String GetSqlPath(String category){
-        if(category != null && category.equals("DataDictionary")){
-            return  appConstant.getUserDictionaryPath();
-        }else if (category != null && category.equals("function")){
-        	return  appConstant.getUserFunctionPath();
-        }else{
-    		return appConstant.getUserSqlPath();
-        }
-    }
+
+	private String GetSqlPath(String category){
+		if(category != null && category.equals("DataDictionary")){
+			return  appConstant.getUserDictionaryPath();
+		}else if (category != null && category.equals("function")){
+			return  appConstant.getUserFunctionPath();
+		}else{
+			return appConstant.getUserSqlPath();
+		}
+	}
 
 }

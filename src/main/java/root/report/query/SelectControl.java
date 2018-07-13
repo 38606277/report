@@ -78,7 +78,6 @@ public class SelectControl extends RO {
 	    //String result = "";
 		// 根据名称查找对应的模板文件
 		String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassName + ".xml";
-
 		try {
 			SAXReader sax = new SAXReader();
 			sax.setValidation(false);
