@@ -35,11 +35,10 @@ import java.util.*;
 public class FunctionControl extends RO{
 
 	private static Logger log = Logger.getLogger(FunctionControl.class);
-    @Autowired
-    private AppConstants appConstant;
+
 	@RequestMapping(value = "/getFunctionClass", produces = "text/plain;charset=UTF-8")
 	public String getFunctionClass() {
-		String usersqlPath = appConstant.getUserFunctionPath();
+		String usersqlPath = AppConstants.getUserFunctionPath();
 		File file = new File(usersqlPath);
 		File[] fileList = file.listFiles(new FilenameFilter() {
 			@Override
@@ -61,7 +60,7 @@ public class FunctionControl extends RO{
 			authNode.put("name", name);
 			authNode.put("value", name);
             // 根据名称查找对应的模板文件
-            String sqlPath = appConstant.getUserFunctionPath() + File.separator + name + ".xml";
+            String sqlPath = AppConstants.getUserFunctionPath() + File.separator + name + ".xml";
 
             try {
                 SAXReader sax = new SAXReader();
@@ -102,7 +101,7 @@ public class FunctionControl extends RO{
 	public String getFunctionName(@PathVariable("FunctionClass") String selectClassName) {
 		String result = "";
 		// 根据名称查找对应的模板文件
-		String usersqlPath = appConstant.getUserFunctionPath() + File.separator + selectClassName + ".xml";
+		String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + selectClassName + ".xml";
 		;
 
 		try {
@@ -164,7 +163,7 @@ public class FunctionControl extends RO{
 		String result = "";
 		try {
 			// 执行函数
-			String usersqlPath = appConstant.getUserFunctionPath() + File.separator + FunctionClassId
+			String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + FunctionClassId
 					+ ".xml";
 			SqlTemplate template = new SqlTemplate(usersqlPath, FunctionID);
 			// 输入参数放入map中
@@ -186,7 +185,7 @@ public class FunctionControl extends RO{
 			String sqlId = jsonObject.getString("id");
             JSONObject commonObj = jsonObject.getJSONObject("comment");
 			String type = commonObj.getString("type");
-			String userSqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml";
+			String userSqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
 
             OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setSuppressDeclaration(true);
@@ -247,7 +246,7 @@ public class FunctionControl extends RO{
 			String type = commonObj.getString("type");
             String sqlId = jsonObject.getString("id");
             String cdata = jsonObject.getString("cdata");
-            String userSqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml";
+            String userSqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
             format.setTrimText(false);
@@ -285,7 +284,7 @@ public class FunctionControl extends RO{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
 			String namespace = jsonObject.getString("namespace");
 			String sqlId = jsonObject.getString("id");
-			String userSqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml";
+			String userSqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
 
 			OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setEncoding("UTF-8");
@@ -391,7 +390,7 @@ public class FunctionControl extends RO{
 			//检查参数
 
 			// 执行函数
-			String usersqlPath = appConstant.getUserFunctionPath() + File.separator + FunctionClassName
+			String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + FunctionClassName
 					+ ".xml";
 			SqlTemplate template = new SqlTemplate(usersqlPath, FunctionID);
 			// 输入参数放入map中
@@ -504,7 +503,7 @@ public class FunctionControl extends RO{
 			String namespace = pObj.getString("namespace");
 			String sqlid = pObj.getString("sqlid");
 			String category = pObj.getString("category");
-			String sqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml";
+			String sqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
 			Document doc = XmlUtil.parseXmlToDom(sqlPath);
 			Element select = (Element) doc.selectSingleNode("/mapper/select[@id='" + sqlid + "']");
 			obj.put("namespace", namespace);
@@ -532,7 +531,7 @@ public class FunctionControl extends RO{
 	@RequestMapping(value = "/getAllFunctionClass", produces = "text/plain;charset=UTF-8")
 	public String getAllFunctionClass()
     {
-        String usersqlPath = appConstant.getUserFunctionPath();
+        String usersqlPath = AppConstants.getUserFunctionPath();
         File file = new File(usersqlPath);
         File[] fileList = file.listFiles(new FilenameFilter() {
             @Override
@@ -594,7 +593,7 @@ public class FunctionControl extends RO{
             functionAuth.put("name", str[str.length-1]);
         }
      // 根据名称查找对应的模板文件
-        String usersqlPath = appConstant.getUserFunctionPath() + File.separator + className + ".xml";
+        String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + className + ".xml";
 
 		SAXReader sax = new SAXReader();
 		sax.setValidation(false);

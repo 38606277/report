@@ -30,8 +30,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/reportServer")
 public class TemplateTableControl {
-	@Autowired
-	private AppConstants appConstant;
+
 	// 递归使用
 	private void showAllFiles(File dir, JSONArray aNode) {
 		File[] fs = dir.listFiles();
@@ -64,7 +63,7 @@ public class TemplateTableControl {
 	@RequestMapping(value = "/TemplateTable/getDirectory", produces = "text/plain; charset=utf-8")
 	public String getDirectory() {
 
-		String serverPath = appConstant.getFillTemplatePath();
+		String serverPath = AppConstants.getFillTemplatePath();
 
 		File file = new File(serverPath);
 		JSONArray rootNode = new JSONArray();
@@ -123,7 +122,7 @@ public class TemplateTableControl {
 							//文件名
 							String filePath = multiRequest.getParameter("filePath");
 							System.out.println("filePath: "+filePath);
-							String ServerPath = appConstant.getFillTemplatePath();
+							String ServerPath = AppConstants.getFillTemplatePath();
 							//文件地址
 							String dir = filePath.substring(0, filePath.lastIndexOf("."));
 							String pathDir = ServerPath + "/"+ dir+"/template";
@@ -178,7 +177,7 @@ public class TemplateTableControl {
 	@RequestMapping("/TemplateTable/download")
 	public ResponseEntity<byte[]> download(HttpServletRequest req) throws IOException {
 
-		String ServerPath = appConstant.getFillTemplatePath();
+		String ServerPath = AppConstants.getFillTemplatePath();
 
 		String filePath = req.getParameter("filePath");
 		String dir = filePath.substring(0, filePath.lastIndexOf("."));
@@ -213,7 +212,7 @@ public class TemplateTableControl {
 			// String filePath = request.getSession().getServletContext()
 			// .getRealPath(this.filePath);
 
-			String ServerPath = appConstant.getFillTemplatePath();
+			String ServerPath = AppConstants.getFillTemplatePath();
 
 			String filePath = ServerPath + "/" + fileDir;
 			// if(!StringUtils.isEmpty(fileDir)){
@@ -254,7 +253,7 @@ public class TemplateTableControl {
 			// .getRealPath(this.filePath);
 			// String newFile = filePath + newName;
 			//
-			String ServerPath = appConstant.getFillTemplatePath();
+			String ServerPath = AppConstants.getFillTemplatePath();
 
 			String newFile = ServerPath + "/" + newName;
 
@@ -298,7 +297,7 @@ public class TemplateTableControl {
 			String delName = jsonObject.getString("localPath");
 			// String filePath = request.getSession().getServletContext()
 			// .getRealPath(this.filePath);
-			String ServerPath = appConstant.getFillTemplatePath();
+			String ServerPath = AppConstants.getFillTemplatePath();
 
 			String filePath = ServerPath + "/" + delName;
 

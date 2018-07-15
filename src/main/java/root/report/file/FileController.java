@@ -34,8 +34,7 @@ import java.util.Map;
 public class FileController {
 	public static final String setupPath = "/file/";// "/WEB-INF/classes/report/";
 	public static final String filePath = "/WEB-INF/classes/iReport/file/";//上传文件目录
-	@Autowired
-	private AppConstants appConstant;
+
 	// exe文件下载
 	@RequestMapping(value="/downloadSetup",produces = "text/plain;charset=UTF-8")
 	public ResponseEntity<byte[]> downloadSetup(HttpServletRequest request,
@@ -473,7 +472,7 @@ public class FileController {
 	public @ResponseBody String GetExcelDirectory(
 			@PathVariable("userCode") String userCode) {
 
-		String serverPath = appConstant.getReportPath();
+		String serverPath = AppConstants.getReportPath();
 
 		File file = new File(serverPath + "/" + userCode);
 		JSONArray rootNode = new JSONArray();
@@ -517,7 +516,7 @@ public class FileController {
 						// 定义上传路径
 						String userCode = multiRequest.getParameter("userCode");
 						String filePath = multiRequest.getParameter("filePath");
-						String ServerPath = appConstant.getReportPath();
+						String ServerPath = AppConstants.getReportPath();
 
 						String path = ServerPath + "/" + userCode + "/"
 								+ filePath;
@@ -569,7 +568,7 @@ public class FileController {
                             // 重命名上传后的文件名配置路径+用户+用户路径+文件名
                             String fileName = file.getOriginalFilename();
                             // 定义上传路径
-                            String ServerPath = appConstant.getExcelFilePath();
+                            String ServerPath = AppConstants.getExcelFilePath();
     
                             path = ServerPath + "/"+fileName;
                             // 保存文件
@@ -626,7 +625,7 @@ public class FileController {
                             // 重命名上传后的文件名配置路径+用户+用户路径+文件名
                             String fileName = file.getOriginalFilename();
                             // 定义上传路径
-                            String ServerPath = appConstant.getExcelFilePath();
+                            String ServerPath = AppConstants.getExcelFilePath();
     
                             path = ServerPath + "/"+fileName;
                          // 保存文件
@@ -660,7 +659,7 @@ public class FileController {
 	public ResponseEntity<byte[]> downloadExcel(HttpServletRequest req)
 			throws IOException {
 
-		String ServerPath = appConstant.getStaticReportPath();
+		String ServerPath = AppConstants.getStaticReportPath();
 
 		String path = ServerPath + "/" + req.getParameter("userCode") + "/"
 				+ req.getParameter("filePath");

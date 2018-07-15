@@ -43,8 +43,7 @@ public class DictionaryControl extends RO {
     private  final String PASSWORD = "1234";
     //连接H2数据库时使用的驱动类，org.h2.Driver这个类是由H2数据库自己提供的，在H2数据库的jar包中可以找到
     private  final String DRIVER_CLASS="org.h2.Driver";
-	@Autowired
-	private AppConstants appConstant;
+	
 	@Autowired
 	private SelectControl selectControl;
 	@RequestMapping(value = "/h2", produces = "text/plain;charset=UTF-8")
@@ -88,7 +87,7 @@ public class DictionaryControl extends RO {
 	@RequestMapping(value = "/getDictionaryClass", produces = "text/plain;charset=UTF-8")
 	public String getDictionaryClass() {
 		log.info("调用getDictionaryClass.");
-		String usersqlPath = appConstant.getUserDictionaryPath();
+		String usersqlPath = AppConstants.getUserDictionaryPath();
 		File file = new File(usersqlPath);
 		File[] fileList = file.listFiles(new FilenameFilter() {
 			@Override
@@ -118,7 +117,7 @@ public class DictionaryControl extends RO {
 	@RequestMapping(value = "/getDictionaryName/{DictionaryClass}", produces = "text/plain;charset=UTF-8")
 	public String getDictionaryName(@PathVariable("DictionaryClass") String selectClassName) {
 		String result = "";
-		String usersqlPath = appConstant.getUserDictionaryPath() + File.separator + selectClassName + ".xml";
+		String usersqlPath = AppConstants.getUserDictionaryPath() + File.separator + selectClassName + ".xml";
 		;
 
 		try {
@@ -169,7 +168,7 @@ public class DictionaryControl extends RO {
 	public String getDictionaryParam(@PathVariable("DictionaryClassId") String DictionaryClassId,
 			@PathVariable("DictionaryID") String DictionaryID) {
 		String result = "";
-		String usersqlPath =appConstant.getUserDictionaryPath() + File.separator + DictionaryID + ".xml";
+		String usersqlPath =AppConstants.getUserDictionaryPath() + File.separator + DictionaryID + ".xml";
 		;
 
 		try {
@@ -210,7 +209,7 @@ public class DictionaryControl extends RO {
 
         try {
             
-            String usersqlPath = appConstant.getUserDictionaryPath()
+            String usersqlPath = AppConstants.getUserDictionaryPath()
                                   + File.separator + DictionaryClassName + ".xml";
             SqlTemplate template=new SqlTemplate(usersqlPath,DictionaryID);
             JSONArray inTemplate = template.getIn();
@@ -258,7 +257,7 @@ public class DictionaryControl extends RO {
             //检查函数参数个数
             
             //执行函数
-            String usersqlPath = appConstant.getUserDictionaryPath()
+            String usersqlPath = AppConstants.getUserDictionaryPath()
                                   + File.separator + DictionaryClassName + ".xml";
             SqlTemplate template=new SqlTemplate(usersqlPath,DictionaryID);
             //输入参数放入map中
@@ -308,7 +307,7 @@ public class DictionaryControl extends RO {
 			JSONObject pObj = (JSONObject) JSON.parse(pJson);
 			String namespace = pObj.getString("namespace");
 			String sqlid = pObj.getString("sqlid");
-			String sqlPath = appConstant.getUserDictionaryPath() + File.separator + namespace + ".xml";
+			String sqlPath = AppConstants.getUserDictionaryPath() + File.separator + namespace + ".xml";
 			Document doc = XmlUtil.parseXmlToDom(sqlPath);
 			Element select = (Element) doc.selectSingleNode("/mapper/select[@id='" + sqlid + "']");
 			obj.put("namespace", namespace);
@@ -340,7 +339,7 @@ public class DictionaryControl extends RO {
 		String namespace = pObj.getString("namespace");
 		String sqlid = pObj.getString("sqlid");
 		long t1 = System.nanoTime();
-		String sqlPath = appConstant.getUserDictionaryPath() + File.separator + namespace + ".xml";
+		String sqlPath = AppConstants.getUserDictionaryPath() + File.separator + namespace + ".xml";
 		Document doc = XmlUtil.parseXmlToDom(sqlPath);
 		Element select = (Element) doc.selectSingleNode("/mapper/select[@id='" + sqlid + "']");
 		List<Object> list = select.content();
@@ -381,7 +380,7 @@ public class DictionaryControl extends RO {
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
 			String namespace = jsonObject.getString("namespace");
 			String sqlId = jsonObject.getString("id");
-			String userSqlPath = this.appConstant.getUserDictionaryPath() + File.separator + namespace + ".xml";
+			String userSqlPath = AppConstants.getUserDictionaryPath() + File.separator + namespace + ".xml";
 
 			OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setEncoding("UTF-8");
@@ -430,7 +429,7 @@ public class DictionaryControl extends RO {
 			JSONObject commonObj = jsonObject.getJSONObject("comment");
 			String type = commonObj.getString("type");
 			String sqlId = jsonObject.getString("id");
-			String userSqlPath = this.appConstant.getUserDictionaryPath() + File.separator + namespace + ".xml";
+			String userSqlPath = AppConstants.getUserDictionaryPath() + File.separator + namespace + ".xml";
 			OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setEncoding("UTF-8");
 			format.setTrimText(false);
@@ -492,7 +491,7 @@ public class DictionaryControl extends RO {
 			JSONObject commonObj = jsonObject.getJSONObject("comment");
 			String sqlId = jsonObject.getString("id");
 			String cdata = jsonObject.getString("cdata");
-			String userSqlPath = this.appConstant.getUserDictionaryPath()+ File.separator + namespace + ".xml";
+			String userSqlPath = AppConstants.getUserDictionaryPath()+ File.separator + namespace + ".xml";
 			OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setEncoding("UTF-8");
 			format.setTrimText(false);

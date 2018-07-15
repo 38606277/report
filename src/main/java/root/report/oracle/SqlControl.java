@@ -43,8 +43,7 @@ import java.util.*;
 public class SqlControl extends RO{
 
     private static final Logger log = Logger.getLogger(SqlControl.class);
-    @Autowired
-    private AppConstants appConstant;
+    
 	private static SerializerFeature[] features = { SerializerFeature.WriteNullNumberAsZero,
             SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteMapNullValue,
             SerializerFeature.PrettyFormat, SerializerFeature.UseISO8601DateFormat,
@@ -265,7 +264,7 @@ public class SqlControl extends RO{
 			String type = commonObj.getString("type");
             String sqlId = jsonObject.getString("id");
             String category = jsonObject.getString("category");
-            String userSqlPath = this.appConstant.getUserSqlPath() + File.separator + namespace + ".xml";
+            String userSqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
             format.setTrimText(false);
@@ -327,7 +326,7 @@ public class SqlControl extends RO{
             JSONObject commonObj = jsonObject.getJSONObject("comment");
             String sqlId = jsonObject.getString("id");
             String cdata = jsonObject.getString("cdata");
-            String userSqlPath =this.appConstant.getUserSqlPath() + File.separator + namespace + ".xml";
+            String userSqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
             format.setTrimText(false);
@@ -471,7 +470,7 @@ public class SqlControl extends RO{
             JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
             String namespace = jsonObject.getString("namespace");
             String sqlId = jsonObject.getString("id");
-            String userSqlPath = this.appConstant.getUserSqlPath() + File.separator + namespace + ".xml";
+            String userSqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
             
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
@@ -728,11 +727,11 @@ public class SqlControl extends RO{
 
 	private String GetSqlPath(String category){
 		if(category != null && category.equals("DataDictionary")){
-			return  appConstant.getUserDictionaryPath();
+			return  AppConstants.getUserDictionaryPath();
 		}else if (category != null && category.equals("function")){
-			return  appConstant.getUserFunctionPath();
+			return  AppConstants.getUserFunctionPath();
 		}else{
-			return appConstant.getUserSqlPath();
+			return AppConstants.getUserSqlPath();
 		}
 	}
 

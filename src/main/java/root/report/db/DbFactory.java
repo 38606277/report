@@ -14,7 +14,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import root.configure.AppConstants;
-import root.configure.WebApplicationContext;
 import root.report.util.ErpUtil;
 
 import java.io.File;
@@ -154,10 +153,9 @@ public class DbFactory {
 
     private static Resource[] getMapLocations(String dbType, String dbName) throws Exception {
         String[] locations = new String[4];
-        AppConstants appConstants = WebApplicationContext.getBean(AppConstants.class);
-        locations[0] = appConstants.getUserSqlPath();
-        locations[1] = appConstants.getUserFunctionPath();
-        locations[2] = appConstants.getUserDictionaryPath();
+        locations[0] = AppConstants.getUserSqlPath();
+        locations[1] = AppConstants.getUserFunctionPath();
+        locations[2] = AppConstants.getUserDictionaryPath();
         locations[3] = "classpath:mapper/**/*.xml";
         List<Resource> resources = new ArrayList<Resource>();
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

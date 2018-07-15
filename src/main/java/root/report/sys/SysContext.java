@@ -22,12 +22,9 @@ public class SysContext {
         return map.get();
     }
 
-    @Autowired
-    private AppConstants appConstant;
-
 	@RequestMapping(value = "/getLambdaUrl", produces = "text/plain;charset=UTF-8")
 	public String getLambdaUrl() {
-		return appConstant.getLambdaUrl();
+		return AppConstants.getLambdaUrl();
 	}
 	
 }

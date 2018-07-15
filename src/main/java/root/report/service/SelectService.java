@@ -16,12 +16,7 @@ import java.io.FileInputStream;
 
 public class SelectService {
 
-
-    //@Autowired
-    public static AppConstants appConstant;
-
     private JSONObject metaData=null;
-
 
     public Element getSelectElement() {
         return selectElement;
@@ -40,14 +35,11 @@ public class SelectService {
         this.metaData = metaData;
     }
 
-
-
     public static  SelectService Load(String className,String selectID){
 
         String result = "";
         // 根据名称查找对应的模板文件
-        appConstant=new AppConstants();
-        String usersqlPath = appConstant.getUserSqlPath() + File.separator + className + ".xml";
+        String usersqlPath = AppConstants.getUserSqlPath() + File.separator + className + ".xml";
         JSONObject commentObj=null;
         Element aSelect=null;
         try {

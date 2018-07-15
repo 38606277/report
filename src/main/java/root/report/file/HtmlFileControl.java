@@ -30,8 +30,7 @@ import java.util.Iterator;
 @RequestMapping("/reportServer/html")
 public class HtmlFileControl {
 	public static final String filePath = "/WEB-INF/classes/iReport/file/web/";
-	@Autowired
-	private AppConstants appConstant;
+
 	//递归使用
 	public void showAllFiles(File dir, JSONArray aNode) {
 		File[] fs = dir.listFiles();
@@ -64,7 +63,7 @@ public class HtmlFileControl {
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
 	public String getHtmlDirectory() {
 
-		String serverPath = appConstant.getStaticReportPath();
+		String serverPath = AppConstants.getStaticReportPath();
 
 		File file = new File(serverPath);
 		JSONArray rootNode = new JSONArray();
@@ -107,7 +106,7 @@ public class HtmlFileControl {
 						// 定义上传路径
 						//String userCode = multiRequest.getParameter("userCode");
 						String filePath = multiRequest.getParameter("filePath");
-						String ServerPath = appConstant.getStaticReportPath();
+						String ServerPath = AppConstants.getStaticReportPath();
 
 						String path = ServerPath + "/" + filePath;
 						// 保存文件
@@ -135,7 +134,7 @@ public class HtmlFileControl {
 
 	public ResponseEntity<byte[]> downloadHtml(HttpServletRequest req) throws IOException {
 
-		String ServerPath = appConstant.getStaticReportPath();
+		String ServerPath = AppConstants.getStaticReportPath();
 
 		String path = ServerPath + "/" + req.getParameter("userCode") + "/" 
 		                               + req.getParameter("filePath");
@@ -291,7 +290,7 @@ public class HtmlFileControl {
 						// 定义上传路径
 						//String userCode = multiRequest.getParameter("userCode");
 						String filePath = multiRequest.getParameter("filePath");
-						String ServerPath = appConstant.getStaticReportPath();
+						String ServerPath = AppConstants.getStaticReportPath();
 
 						String path = ServerPath + "/" + filePath+".zip";
 						// 保存文件

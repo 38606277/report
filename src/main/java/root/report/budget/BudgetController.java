@@ -26,8 +26,6 @@ import java.util.*;
 public class BudgetController {
 	private SimpleDateFormat sp = new SimpleDateFormat("yyMMddHH24mmss");
 	@Autowired
-	private AppConstants appConstant;
-	@Autowired
 	private SelectControl selectControl;
 	@RequestMapping(value = "/getBudgetDetail/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
 	public String getBudgetClass(@PathVariable("namespace") String namespace,@PathVariable("sqlid") String sqlid,
@@ -749,7 +747,7 @@ public class BudgetController {
 	@RequestMapping(value = "/getContractBudgetList/{namespace}/{sqlid}/{type}", produces = "text/plain; charset=utf-8")
     public String getContractBudgetList(@PathVariable("namespace") String namespace,
             @PathVariable("sqlid") String sqlid,@PathVariable("type") String type,@RequestBody JSONObject pJson) {
-        String userSqlPath = appConstant.getUserSqlPath() + File.separator
+        String userSqlPath = AppConstants.getUserSqlPath() + File.separator
                 + namespace + ".xml";
         JSONObject obj = new JSONObject();
         obj.put("namespace", namespace);

@@ -19,8 +19,6 @@ import java.util.List;
 
 @Configuration
 public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
-    @Autowired
-    private AppConstants appConstants;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -51,10 +49,10 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/report/static/**").addResourceLocations("file:"+appConstants.getStaticReportPath()+ File.separator);
-        registry.addResourceHandler("/report/dynamic/**").addResourceLocations("file:"+appConstants.getDynamicReportPath()+File.separator);
-        registry.addResourceHandler("/ibas2/**").addResourceLocations("file:"+appConstants.getClientInstallFile()+File.separator);
-        registry.addResourceHandler("/**").addResourceLocations("file:"+appConstants.getReport2()+File.separator);
+        registry.addResourceHandler("/report/static/**").addResourceLocations("file:"+AppConstants.getStaticReportPath()+ File.separator);
+        registry.addResourceHandler("/report/dynamic/**").addResourceLocations("file:"+AppConstants.getDynamicReportPath()+File.separator);
+        registry.addResourceHandler("/ibas2/**").addResourceLocations("file:"+AppConstants.getClientInstallFile()+File.separator);
+        registry.addResourceHandler("/**").addResourceLocations("file:"+AppConstants.getReport2()+File.separator);
     }
 
 

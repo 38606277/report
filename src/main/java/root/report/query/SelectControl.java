@@ -40,12 +40,11 @@ import java.util.*;
 public class SelectControl extends RO {
 
     private static Logger log = Logger.getLogger(SelectControl.class);
-    @Autowired
-    private AppConstants appConstant;
+
 	@RequestMapping(value = "/getSelectClass", produces = "text/plain;charset=UTF-8")
 	public String getSelectClass()
 	{
-		String usersqlPath = appConstant.getUserSqlPath();
+		String usersqlPath = AppConstants.getUserSqlPath();
 		File file = new File(usersqlPath);
 		File[] fileList = file.listFiles(new FilenameFilter() {
 			@Override
@@ -77,7 +76,7 @@ public class SelectControl extends RO {
 	public String getSelectName(@PathVariable("selectClassName") String selectClassName) {
 	    //String result = "";
 		// 根据名称查找对应的模板文件
-		String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassName + ".xml";
+		String usersqlPath = AppConstants.getUserSqlPath() + File.separator + selectClassName + ".xml";
 		try {
 			SAXReader sax = new SAXReader();
 			sax.setValidation(false);
@@ -136,7 +135,7 @@ public class SelectControl extends RO {
 			@PathVariable("selectID") String selectID) {
 		String result = "";
 		// 根据名称查找对应的模板文件
-		String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassId + ".xml";
+		String usersqlPath = AppConstants.getUserSqlPath() + File.separator + selectClassId + ".xml";
 
 		try {
 			SAXReader sax = new SAXReader();
@@ -220,7 +219,7 @@ public class SelectControl extends RO {
             selectAuth.put("name", str[str.length-1]);
         }
 	 // 根据名称查找对应的模板文件
-        String usersqlPath = appConstant.getUserSqlPath() + File.separator + className + ".xml";
+        String usersqlPath = AppConstants.getUserSqlPath() + File.separator + className + ".xml";
 
        
             SAXReader sax = new SAXReader();
@@ -295,7 +294,7 @@ public class SelectControl extends RO {
         
     @RequestMapping(value = "/getSelectClassTree", produces = "text/plain;charset=UTF-8")
     public String getSelectClassTree() {
-        String usersqlPath = appConstant.getUserSqlPath();
+        String usersqlPath = AppConstants.getUserSqlPath();
         File file = new File(usersqlPath);
         File[] fileList = file.listFiles(new FilenameFilter() {
             @Override
@@ -319,7 +318,7 @@ public class SelectControl extends RO {
             
             String result = "";
             // 根据名称查找对应的模板文件
-            String sqlPath = appConstant.getUserSqlPath() + File.separator + name + ".xml";
+            String sqlPath = AppConstants.getUserSqlPath() + File.separator + name + ".xml";
 
             try {
                 SAXReader sax = new SAXReader();
@@ -359,8 +358,7 @@ public class SelectControl extends RO {
 
 	@RequestMapping(value = "/execSelect/{selectClassName}/{selectID}", produces = "text/plain;charset=UTF-8")
 	public String execSelect(@PathVariable("selectClassName") String selectClassName,
-			@PathVariable("selectID") String selectID, @RequestBody String pJson)
-	{
+			@PathVariable("selectID") String selectID, @RequestBody String pJson){
 		System.out.println("开始执行查询:" + "selectClassName:" + selectClassName + "," + "selectID:" + selectID + ","
 				+ "pJson:" + pJson + ",");
 		long t1 = System.nanoTime();
@@ -419,10 +417,7 @@ public class SelectControl extends RO {
 			result.put("list", newResult);
 			result.put("metadata",selectService.getMetaData());
 			result.put("totalSize", totalSize);
-		} 
-		catch (Exception e)
-		{
-			
+		}catch (Exception e){
 			e.printStackTrace();
 			return ExceptionMsg(e.getCause().getMessage());
 		}
@@ -593,7 +588,7 @@ public class SelectControl extends RO {
 			@PathVariable("selectName") String selectName) {
 		String aJson = null;
 		// 根据名称查找对应的模板文件
-		String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassName + ".xml";
+		String usersqlPath = AppConstants.getUserSqlPath() + File.separator + selectClassName + ".xml";
 		;
 
 		try {
@@ -639,7 +634,7 @@ public class SelectControl extends RO {
 	public String getSelectType(String selectClassName, String selectName) {
 		String aJson = null;
 		// 根据名称查找对应的模板文件
-		String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassName + ".xml";
+		String usersqlPath = AppConstants.getUserSqlPath() + File.separator + selectClassName + ".xml";
 		;
 
 		try {
@@ -670,7 +665,7 @@ public class SelectControl extends RO {
     public String getSelectDB(String selectClassId, String selectID) {
         String result = "";
         // 根据名称查找对应的模板文件
-        String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassId + ".xml";
+        String usersqlPath = AppConstants.getUserSqlPath() + File.separator + selectClassId + ".xml";
 
         try {
             SAXReader sax = new SAXReader();
@@ -708,7 +703,7 @@ public class SelectControl extends RO {
 
 		String aNameSpace = "";
 
-		String usersqlPath = appConstant.getUserSqlPath() + File.separator + selectClassName + ".xml";
+		String usersqlPath = AppConstants.getUserSqlPath() + File.separator + selectClassName + ".xml";
 		;
 
 		SAXReader sax = new SAXReader();
@@ -853,7 +848,7 @@ public class SelectControl extends RO {
     @RequestMapping(value="/getSelectTree" , produces = "text/plain;charset=UTF-8")
     public String getSelectTree()
     {  
-        String usersqlPath = appConstant.getUserSqlPath();
+        String usersqlPath = AppConstants.getUserSqlPath();
         File file = new File(usersqlPath);
         File[] fileList = file.listFiles(new FilenameFilter(){
             @Override
@@ -934,7 +929,7 @@ public class SelectControl extends RO {
 			JSONObject pObj = (JSONObject) JSON.parse(pJson);
 			String namespace = pObj.getString("namespace");
 			String sqlid = pObj.getString("sqlid");
-			String sqlPath = appConstant.getUserSqlPath() + File.separator + namespace + ".xml";
+			String sqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
 			Document doc = XmlUtil.parseXmlToDom(sqlPath);
 			Element select = (Element) doc.selectSingleNode("/mapper/select[@id='" + sqlid + "']");
 			obj.put("namespace", namespace);
@@ -962,7 +957,7 @@ public class SelectControl extends RO {
     public String getSelectItem(@PathVariable("searchValue") String searchValue)
     {
 	    String result = "";
-	    String usersqlPath = appConstant.getUserSqlPath();
+	    String usersqlPath = AppConstants.getUserSqlPath();
         File file = new File(usersqlPath);
         File[] fileList = file.listFiles(new FilenameFilter() {
             @Override
@@ -982,7 +977,7 @@ public class SelectControl extends RO {
             String name = filename.substring(0, filename.lastIndexOf("."));
             
             // 根据名称查找对应的模板文件
-            String sqlPath = appConstant.getUserSqlPath() + File.separator + name + ".xml";
+            String sqlPath = AppConstants.getUserSqlPath() + File.separator + name + ".xml";
 
             try {
                 SAXReader sax = new SAXReader();

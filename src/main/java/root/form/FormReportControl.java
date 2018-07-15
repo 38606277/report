@@ -27,8 +27,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/reportServer/formReport")
 public class FormReportControl extends BaseControl {
-	@Autowired
-	private AppConstants appConstant;
+
 	/**
 	 * 上传报表
 	 * @return
@@ -38,7 +37,7 @@ public class FormReportControl extends BaseControl {
 		return this.doExecuteWithROReturn(()->{
 			//保存文件
 			if(file == null) throw new RuntimeException("请上传模板文件");
-			String destPath = appConstant.getTemplatePath()+"/"+SysContext.getRequestUser().getUserName();
+			String destPath = AppConstants.getTemplatePath()+"/"+SysContext.getRequestUser().getUserName();
 			File destDir = new File(destPath);
 			if(!destDir.exists()) destDir.mkdirs();
 			File destFile = new File(destDir+"/"+file.getOriginalFilename());

@@ -29,8 +29,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/reportServer")
 public class TaskTableControl {
-	@Autowired
-	private AppConstants appConstant;
 	/**
 	 * *取所有的报表定义，返回以下json格式
 	 * @return
@@ -94,7 +92,7 @@ public class TaskTableControl {
 			}
 //		}
 		if("true".equals(retCode)){
-		    String serverPath = appConstant.getFillTemplatePath();
+		    String serverPath = AppConstants.getFillTemplatePath();
 		    String dir = fillTemplate.substring(0, fillTemplate.lastIndexOf("."));
             serverPath += "/"+dir+"/"+fillTaskName;
 		    File dirFile = new File(serverPath);
@@ -184,7 +182,7 @@ public class TaskTableControl {
 		    result.put("name", dir);
 		    JSONArray aNode = new JSONArray();
 		    for (int i = 0; i < taskList.size(); i++) {
-		        String serverPath = appConstant.getFillTemplatePath();
+		        String serverPath = AppConstants.getFillTemplatePath();
                 JSONArray rootNode = new JSONArray();
                 String taskName = taskList.get(i).get("task_name").toString();
                 System.out.println(taskName+"    "+template);
@@ -220,7 +218,7 @@ public class TaskTableControl {
 	public String getCurrentTaskByTemplate(@RequestBody String templateInfo) throws Exception {
 	    JSONObject jsonObject = (JSONObject) JSON.parseObject(templateInfo);
         String template = (String)jsonObject.get("template");
-	    String serverPath = appConstant.getFillTemplatePath();
+	    String serverPath = AppConstants.getFillTemplatePath();
 	    JSONArray rootNode = new JSONArray();
 	    List<Map> taskList =DbFactory.Open(DbFactory.FORM).selectList("task.getTaskListByTemplate",template);
 	    for (Map map : taskList) {
@@ -409,7 +407,7 @@ public class TaskTableControl {
 							//文件名
 							String filePath = multiRequest.getParameter("filePath");
 							System.out.println("filePath: "+filePath);
-							String ServerPath = appConstant.getFillTemplatePath();
+							String ServerPath = AppConstants.getFillTemplatePath();
 							//文件地址
 							path = ServerPath + filePath;
 							System.out.println("path: "+path);

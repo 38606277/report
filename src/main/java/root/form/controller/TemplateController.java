@@ -60,9 +60,6 @@ import static com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOU
 @RequestMapping("/reportServer/dataCollect")
 public class TemplateController extends BaseControl {
 
-    @Autowired
-    private AppConstants appConstant;
-
     /**
      * 添加模板
      *
@@ -78,7 +75,7 @@ public class TemplateController extends BaseControl {
             //判断是否有同名模板
             List list = session.selectList("dataCollect.getTemplateByName", file.getOriginalFilename());
             if(list != null && list.size()>0) throw new RuntimeException("该模板与服务器上其它模板同名！");
-            String destPath = appConstant.getTemplatePath() + "/" + SysContext.getRequestUser().getUserName();
+            String destPath = AppConstants.getTemplatePath() + "/" + SysContext.getRequestUser().getUserName();
             File destDir = new File(destPath);
             if (!destDir.exists()) destDir.mkdirs();
             File destFile = new File(destDir + "/" + file.getOriginalFilename());
@@ -557,7 +554,7 @@ public class TemplateController extends BaseControl {
         XSSFExcelToHtml t = new XSSFExcelToHtml();
         File templateFile = new File(templatePath);
         //html文件创建位置
-        File htmlFile = new File(appConstant.getStaticReportPath() + File.separator + tid + ".html");
+        File htmlFile = new File(AppConstants.getStaticReportPath() + File.separator + tid + ".html");
         boolean isCreate = t.convertToStaticHtml(templateFile, htmlFile);
         if(!isCreate) throw new RuntimeException("生成html文件失败");
         parseHtml(htmlFile);

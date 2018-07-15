@@ -34,8 +34,7 @@ import java.util.Iterator;
 public class DynamicReportControl {
 	
     private static final Logger log = Logger.getLogger(DynamicReportControl.class);
-	@Autowired
-	private AppConstants appConstant;
+	
 	//递归使用
     //fileType 静态和动态
 	private void showAllFiles(File dir, JSONArray aNode){
@@ -82,7 +81,7 @@ public class DynamicReportControl {
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
 	public String getDirectory(){
 	    
-		String serverPath = appConstant.getDynamicReportPath();
+		String serverPath = AppConstants.getDynamicReportPath();
 
 		File file = new File(serverPath);
 		JSONArray rootNode = new JSONArray();
@@ -102,7 +101,7 @@ public class DynamicReportControl {
 
 	public ResponseEntity<byte[]> downloadHtml(HttpServletRequest req) throws IOException {
 
-		String ServerPath = appConstant.getStaticReportPath();
+		String ServerPath = AppConstants.getStaticReportPath();
 
 		String path = ServerPath + "/" + req.getParameter("userCode") + "/" 
 		                               + req.getParameter("filePath");
@@ -149,7 +148,7 @@ public class DynamicReportControl {
 //			String filePath = request.getSession().getServletContext()
 //					.getRealPath(this.filePath);
 			
-			String ServerPath = appConstant.getDynamicReportPath();
+			String ServerPath = AppConstants.getDynamicReportPath();
 
 			String filePath = ServerPath + "/" + fileDir;
 //			if(!StringUtils.isEmpty(fileDir)){
@@ -189,7 +188,7 @@ public class DynamicReportControl {
 //				.getRealPath(this.filePath);
 //		String newFile = filePath + newName;
 //		
-		String ServerPath = appConstant.getDynamicReportPath();
+		String ServerPath = AppConstants.getDynamicReportPath();
 
 		String newFile = ServerPath + "/" + newName;
 		
@@ -233,7 +232,7 @@ public class DynamicReportControl {
 			String delName = jsonObject.getString("localPath");
 //			String filePath = request.getSession().getServletContext()
 //					.getRealPath(this.filePath);
-			String ServerPath = appConstant.getDynamicReportPath();
+			String ServerPath = AppConstants.getDynamicReportPath();
 
 			String filePath = ServerPath + "/" + delName;
 
@@ -280,7 +279,7 @@ public class DynamicReportControl {
 						// 定义上传路径
 						//String userCode = multiRequest.getParameter("userCode");
 						String filePath = multiRequest.getParameter("filePath");
-						String ServerPath = appConstant.getDynamicReportPath();
+						String ServerPath = AppConstants.getDynamicReportPath();
 						String path = ServerPath + File.separator + filePath;
 						// 保存文件
 						File localFile = new File(path);
@@ -301,7 +300,7 @@ public class DynamicReportControl {
     public String GetMyTemplateUrl()
     {
         JSONObject obj = new JSONObject();
-        obj.put("webPath", appConstant.getDynamicReportPath().replaceAll("\\\\", "/"));
+        obj.put("webPath", AppConstants.getDynamicReportPath().replaceAll("\\\\", "/"));
         return obj.toJSONString();
     }
 	
@@ -311,7 +310,7 @@ public class DynamicReportControl {
         boolean result = false;
         if(localFile.getName().endsWith(".xlsx"))
         {
-        	String dynamicreportPath = appConstant.getDynamicReportPath();
+        	String dynamicreportPath = AppConstants.getDynamicReportPath();
         	File desFile = new File(localFile.getAbsolutePath().replaceAll("(.xlsx|.xls)", ".html"));
         	log.info("【动态模板转换】目标文件:"+desFile.getName());
             result = new XSSFExcelToHtml().convertToDynamicHtml(localFile, desFile, dynamicreportPath);
