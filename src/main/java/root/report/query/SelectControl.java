@@ -14,7 +14,12 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.dom4j.tree.DefaultComment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
 import root.form.user.UserModel;
@@ -40,6 +45,8 @@ import java.util.*;
 public class SelectControl extends RO {
 
     private static Logger log = Logger.getLogger(SelectControl.class);
+    @Autowired
+    private RestTemplate restTemplate;
 
 	@RequestMapping(value = "/getSelectClass", produces = "text/plain;charset=UTF-8")
 	public String getSelectClass()
@@ -407,7 +414,9 @@ public class SelectControl extends RO {
 			else if (selectType.equals("proc")){
 			    DbFactory.Open(db).select(selectClassName + "." + selectID, map, null);
 				aResult = (List<Map>) map.get("p_out_data");
-			}
+			}else if(selectType.equals("http")){
+                return invokeHttpService(selectService,map);
+            }
 			//将结果集Map的key值统一转换成大写形式
 			List<Map> newResult = new ArrayList<Map>();
 		    for(Map temp:aResult){
@@ -428,7 +437,16 @@ public class SelectControl extends RO {
 		return SuccessMsg("查询成功",result);  //JSON.toJSONString(result, features);
 
 	}
-	
+
+    public String invokeHttpService(SelectService selectService,Map<String,String> map){
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+        headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8.toString());
+        HttpEntity<String> requestEntity = new HttpEntity<String>(JSON.toJSONString(map), headers);
+        //  执行HTTP请求
+        ResponseEntity<String> response = restTemplate.exchange(selectService.getMetaData().getString("url"), HttpMethod.POST, requestEntity, String.class);
+        return response.getBody();
+    }
+
 	public Map<String, String> getSelectSqlDataFilter(String selectClassName, String selectID)
 	{
 	    Map<String,String> result = new HashMap<String,String>();

@@ -93,13 +93,14 @@ public class SelectService {
     }
     public String getSelectType()
     {
-
-        String statementType = this.getSelectElement().attributeValue("statementType");
-
-        if (statementType == null) {
-            statementType= "sql";
-        } else if (statementType.equals("CALLABLE")) {
-            statementType="proc";
+        String statementType = metaData.getString("type");
+        if(statementType==null){
+            statementType = this.getSelectElement().attributeValue("statementType");
+            if (statementType == null) {
+                statementType = "sql";
+            } else if (statementType.equals("CALLABLE")) {
+                statementType = "proc";
+            }
         }
 
         return statementType;
