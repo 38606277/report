@@ -35,8 +35,7 @@ import java.util.*;
 public class AppControl {
 	
     private static final Logger log = Logger.getLogger(AppControl.class);
-	@Autowired
-	private AppConstants appConstant;
+	
 	//递归使用
     //fileType 静态和动态
 	private void showAllFiles(File dir, JSONArray aNode){
@@ -83,7 +82,7 @@ public class AppControl {
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
 	public String getDirectory(){
 	    
-		String serverPath = appConstant.getStaticReportPath();
+		String serverPath = AppConstants.getStaticReportPath();
 
 		File file = new File(serverPath);
 		JSONArray rootNode = new JSONArray();
@@ -96,7 +95,7 @@ public class AppControl {
 	@RequestMapping(value = "/getTemplateDirectory", produces = "text/plain; charset=utf-8")
     public String getTemplateDirectory(){
         
-        String serverPath = appConstant.getDynamicReportPath();
+        String serverPath = AppConstants.getDynamicReportPath();
 
         File file = new File(serverPath);
         JSONArray rootNode = new JSONArray();
@@ -139,7 +138,7 @@ public class AppControl {
 						// 定义上传路径
 						//String userCode = multiRequest.getParameter("userCode");
 						String filePath = multiRequest.getParameter("filePath");
-						String ServerPath = appConstant.getStaticReportPath();
+						String ServerPath = AppConstants.getStaticReportPath();
 
 						String path = ServerPath + "/" + filePath;
 						// 保存文件
@@ -167,7 +166,7 @@ public class AppControl {
 
 	public ResponseEntity<byte[]> downloadHtml(HttpServletRequest req) throws IOException {
 
-		String ServerPath = appConstant.getStaticReportPath();
+		String ServerPath = AppConstants.getStaticReportPath();
 
 		String path = ServerPath + "/" + req.getParameter("userCode") + "/" 
 		                               + req.getParameter("filePath");
@@ -214,7 +213,7 @@ public class AppControl {
 //			String filePath = request.getSession().getServletContext()
 //					.getRealPath(this.filePath);
 			
-			String ServerPath = appConstant.getStaticReportPath();
+			String ServerPath = AppConstants.getStaticReportPath();
 
 			String filePath = ServerPath + "/" + fileDir;
 //			if(!StringUtils.isEmpty(fileDir)){
@@ -254,7 +253,7 @@ public class AppControl {
 //				.getRealPath(this.filePath);
 //		String newFile = filePath + newName;
 //		
-		String ServerPath = appConstant.getStaticReportPath();
+		String ServerPath = AppConstants.getStaticReportPath();
 
 		String newFile = ServerPath + "/" + newName;
 		
@@ -298,7 +297,7 @@ public class AppControl {
 			String delName = jsonObject.getString("localPath");
 //			String filePath = request.getSession().getServletContext()
 //					.getRealPath(this.filePath);
-			String ServerPath = appConstant.getStaticReportPath();
+			String ServerPath = AppConstants.getStaticReportPath();
 
 			String filePath = ServerPath + "/" + delName;
 
@@ -345,7 +344,7 @@ public class AppControl {
 						// 定义上传路径
 						//String userCode = multiRequest.getParameter("userCode");
 						String filePath = multiRequest.getParameter("filePath");
-						String ServerPath = appConstant.getStaticReportPath();
+						String ServerPath = AppConstants.getStaticReportPath();
 
 						String path = ServerPath + File.separator + filePath+".zip";
 						// 保存文件
@@ -375,7 +374,7 @@ public class AppControl {
 	public String GetAppReportUrl()
 	{
 		JSONObject obj = new JSONObject();
-	    obj.put("appPath", appConstant.getAppFilePath().replaceAll("\\\\", "/"));
+	    obj.put("appPath", AppConstants.getAppFilePath().replaceAll("\\\\", "/"));
 		return obj.toJSONString();
 	}
 	
@@ -383,7 +382,7 @@ public class AppControl {
     public String GetMyTemplateUrl()
     {
         JSONObject obj = new JSONObject();
-        obj.put("webPath", appConstant.getDynamicReportPath().replaceAll("\\\\", "/"));
+        obj.put("webPath", AppConstants.getDynamicReportPath().replaceAll("\\\\", "/"));
         return obj.toJSONString();
     }
 	
@@ -393,9 +392,9 @@ public class AppControl {
         boolean result = false;
         if(localFile.getName().endsWith(".xlsx"))
         {
-        	String bynamicReportPath = appConstant.getDynamicReportPath();
-        	File desFile = new File(appConstant.getDynamicReportPath()+File.separator+
-        			localFile.getAbsolutePath().replace(appConstant.getTemplatePath(), "")
+        	String bynamicReportPath = AppConstants.getDynamicReportPath();
+        	File desFile = new File(AppConstants.getDynamicReportPath()+File.separator+
+        			localFile.getAbsolutePath().replace(AppConstants.getTemplatePath(), "")
         			.replaceAll("(.xlsx|.xls)", ".html"));
         	log.info("【静态模板转换】目标文件:"+desFile.getName());
             result = new XSSFExcelToHtml().convertToDynamicHtml(localFile, desFile, bynamicReportPath);
@@ -409,8 +408,8 @@ public class AppControl {
         boolean result = false;
         if(localFile.getName().endsWith(".xlsx"))
         {
-        	File desFile = new File(appConstant.getStaticReportPath()+
-        			localFile.getAbsolutePath().replace(appConstant.getTemplatePath(), "")
+        	File desFile = new File(AppConstants.getStaticReportPath()+
+        			localFile.getAbsolutePath().replace(AppConstants.getTemplatePath(), "")
         			.replaceAll("(.xlsx|.xls)", ".html"));
         	log.info("【动态模板转换】目标文件:"+desFile.getName());
             result = new XSSFExcelToHtml().convertToStaticHtml(localFile, desFile);
@@ -421,7 +420,7 @@ public class AppControl {
     @RequestMapping(value = "/getAppFile", produces = "text/plain;charset=UTF-8")
     public String getAppFile()
     {
-        String usersqlPath = appConstant.getAppFilePath();
+        String usersqlPath = AppConstants.getAppFilePath();
         File file = new File(usersqlPath);
         File[] fileList = file.listFiles(new FilenameFilter() {
             @Override

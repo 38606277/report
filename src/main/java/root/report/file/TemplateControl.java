@@ -33,8 +33,7 @@ import java.util.*;
 public class TemplateControl extends RO {
 	public static final String setupPath = "/file/";// "/WEB-INF/classes/report/";
 	public static final String filePath = "/WEB-INF/classes/iReport/file/template/";
-	@Autowired
-	private AppConstants appConstant;
+	
 	// 递归使用
 	private void showAllFiles(File dir, JSONArray aNode) {
 	    String name = dir.getName();
@@ -73,7 +72,7 @@ public class TemplateControl extends RO {
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
 	public String getDirectory() {
 
-		String serverPath = appConstant.getTemplatePath();
+		String serverPath = AppConstants.getTemplatePath();
 
 		File file = new File(serverPath);
 		JSONArray rootNode = new JSONArray();
@@ -119,7 +118,7 @@ public class TemplateControl extends RO {
     public String getTemplateAuthList(@PathVariable("userName") String userName) {
 
         try{
-        	String serverPath = appConstant.getTemplatePath();
+        	String serverPath = AppConstants.getTemplatePath();
             Map<String, String> map = new HashMap<String, String>();
             map.put("userName", userName);
             JSONArray rootNode = new JSONArray();
@@ -181,7 +180,7 @@ public class TemplateControl extends RO {
 	{
         // 模板文件
 	    JSONObject pObj = JSONObject.parseObject(pJson);
-        String templateFile = appConstant.getTemplatePath() + File.separator + pObj.getString("templateName");
+        String templateFile = AppConstants.getTemplatePath() + File.separator + pObj.getString("templateName");
         XSSFWorkbook wk = new XSSFWorkbook(new FileInputStream(new File(templateFile)));
         XSSFSheet sheet = wk.getSheetAt(0);
         JSONArray inArr = new JSONArray();
@@ -345,7 +344,7 @@ public class TemplateControl extends RO {
 						{
 							// 定义上传路径
 							String filePath = multiRequest.getParameter("filePath");
-							String ServerPath = appConstant.getTemplatePath();
+							String ServerPath = AppConstants.getTemplatePath();
 							String path = ServerPath + "/" + filePath;
 							// 保存文件
 							File localFile = new File(path);
@@ -376,7 +375,7 @@ public class TemplateControl extends RO {
 
 //	public ResponseEntity<byte[]> download(HttpServletRequest req) throws IOException {
 //
-//		String ServerPath = appConstant.getTemplatePath();
+//		String ServerPath = AppConstants.getTemplatePath();
 //
 //		String path = ServerPath + "/" + req.getParameter("filePath");
 //
@@ -396,7 +395,7 @@ public class TemplateControl extends RO {
 		if (StringUtil.isEmpty(fileName)) {
 			fileName = path;
 		}
-		String ServerPath = appConstant.getTemplatePath();
+		String ServerPath = AppConstants.getTemplatePath();
 //
 		path = ServerPath + "/" + req.getParameter("filePath");
 		File file = new File(path);
@@ -459,7 +458,7 @@ public class TemplateControl extends RO {
 			// String filePath = request.getSession().getServletContext()
 			// .getRealPath(this.filePath);
 
-			String ServerPath = appConstant.getTemplatePath();
+			String ServerPath = AppConstants.getTemplatePath();
 
 			String filePath = ServerPath + "/" + fileDir;
 			// if(!StringUtils.isEmpty(fileDir)){
@@ -500,7 +499,7 @@ public class TemplateControl extends RO {
 			// .getRealPath(this.filePath);
 			// String newFile = filePath + newName;
 			//
-			String ServerPath = appConstant.getTemplatePath();
+			String ServerPath = AppConstants.getTemplatePath();
 
 			String newFile = ServerPath + "/" + newName;
 
@@ -544,7 +543,7 @@ public class TemplateControl extends RO {
 			String delName = jsonObject.getString("localPath");
 			// String filePath = request.getSession().getServletContext()
 			// .getRealPath(this.filePath);
-			String ServerPath = appConstant.getTemplatePath();
+			String ServerPath = AppConstants.getTemplatePath();
 
 			String filePath = ServerPath + "/" + delName;
 

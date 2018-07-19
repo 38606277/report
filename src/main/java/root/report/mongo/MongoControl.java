@@ -26,8 +26,6 @@ import java.util.Set;
 @RequestMapping("/reportServer/mongo")
 public class MongoControl extends BaseControl{
 
-	@Autowired
-	private AppConstants appConstant;
 	//校验并返回输入内容
 	@RequestMapping(value = "/getInputOutputParas", produces = "text/plain;charset=UTF-8")
 	public String getInputOutputParas(@RequestBody String pJson) {
@@ -73,7 +71,7 @@ public class MongoControl extends BaseControl{
 	private void saveJson(String pJson) throws IOException{
 		JSONObject metadata = (JSONObject)JSONObject.parse(pJson);
 		String dbName = metadata.getString("db");
-		String filePath = appConstant.getMongoTemplate()+File.separator+dbName+".json";
+		String filePath = AppConstants.getMongoTemplate()+File.separator+dbName+".json";
 
 		File file = new File(filePath);
 		if(!file.exists())file.createNewFile();

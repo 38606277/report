@@ -32,11 +32,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/reportServer/mobileSubject")
 public class MobileSubjectControl {
-	
+
     private static final Logger log = Logger.getLogger(MobileSubjectControl.class);
     private static HashMap<String,String> mapJson = new HashMap<String,String>();
-	@Autowired
-	private AppConstants appConstant;
+
 	//递归使用
     //fileType 静态和动态
 	private void showAllFiles(File dir, JSONArray aNode){
@@ -146,17 +145,17 @@ public class MobileSubjectControl {
 	 */
 	@RequestMapping(value = "/getDirectory", produces = "text/plain; charset=utf-8")
 	public String getDirectory(){
-	    
-		String serverPath = appConstant.getMobileSubjectPath();
+
+		String serverPath = AppConstants.getMobileSubjectPath();
 
 		File file = new File(serverPath);
 		JSONArray rootNode = new JSONArray();
 
 		showAllFiles(file, rootNode);
-		
+
 		return rootNode.toJSONString();
 	}
-	
+
 	@RequestMapping(value = "/setParam", produces = "text/plain; charset=utf-8")
 	public String setParam(@RequestBody String pJson){
 		JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
@@ -165,7 +164,7 @@ public class MobileSubjectControl {
 	    mapJson.put(key, value);
 		return key;
 	}
-	
+
 	@RequestMapping(value = "/getParam", produces = "text/plain; charset=utf-8")
 	public String getParam(String key){
 		String value = "";
@@ -174,34 +173,34 @@ public class MobileSubjectControl {
 		}
 		return "draw("+value+")";
 	}
-	
+
 	@RequestMapping(value = "/getMobileDirectory", produces = "text/plain; charset=utf-8")
     public String getMobileDirectory(@RequestBody String pJson){
 	    JSONObject page = JSON.parseObject(pJson);
-	    
-        String serverPath = appConstant.getMobileSubjectPath();
+
+        String serverPath = AppConstants.getMobileSubjectPath();
 
         File file = new File(serverPath);
         JSONArray rootNode = new JSONArray();
 
         getAllFilesContent(file, rootNode, page);
-        
+
         return rootNode.toJSONString();
     }
-	
+
 	@RequestMapping(value = "/getTemplateDirectory", produces = "text/plain; charset=utf-8")
     public String getTemplateDirectory(){
-        
-        String serverPath =appConstant.getDynamicReportPath();
+
+        String serverPath =AppConstants.getDynamicReportPath();
 
         File file = new File(serverPath);
         JSONArray rootNode = new JSONArray();
 
         showAllFiles(file, rootNode);
-        
+
         return rootNode.toJSONString();
     }
-	
+
 	/**
 	 * request需要传递 userCode：用户名 filePath：文件路径
 	 */
@@ -235,7 +234,7 @@ public class MobileSubjectControl {
 						// 定义上传路径
 						//String userCode = multiRequest.getParameter("userCode");
 						String filePath = multiRequest.getParameter("filePath");
-						String ServerPath = appConstant.getMobileSubjectPath();
+						String ServerPath = AppConstants.getMobileSubjectPath();
 
 						String path = ServerPath + "/" + filePath;
 						// 保存文件
@@ -263,9 +262,9 @@ public class MobileSubjectControl {
 
 	public ResponseEntity<byte[]> downloadHtml(HttpServletRequest req) throws IOException {
 
-		String ServerPath = appConstant.getMobileSubjectPath();
+		String ServerPath = AppConstants.getMobileSubjectPath();
 
-		String path = ServerPath + "/" + req.getParameter("userCode") + "/" 
+		String path = ServerPath + "/" + req.getParameter("userCode") + "/"
 		                               + req.getParameter("filePath");
 
 		File file = new File(path);
@@ -277,7 +276,7 @@ public class MobileSubjectControl {
 	}
 
 //	@RequestMapping("/mkDir/{filePath}")
-//	public String mkDir(@PathVariable("filePath") String filePath) throws IOException 
+//	public String mkDir(@PathVariable("filePath") String filePath) throws IOException
 //	{
 //		String webPath = SysContext.getWebPath()+ File.separator + filePath;
 //		File file = new File(webPath);
@@ -286,14 +285,14 @@ public class MobileSubjectControl {
 //			file.mkdirs();
 //			return "0001";
 //		}
-//		
+//
 //		return "";
 //	}
-	
+
 	/**
-	 *  
+	 *
 	 * fileDir 文件夹及其路径
-	 *  
+	 *
 	 * filePath 文件默认路径 /WEB-INF/classes/iReport/file/web/
 	 * @param request
 	 * @param pJson
@@ -309,28 +308,28 @@ public class MobileSubjectControl {
 			String fileDir = jsonObject.getString("fileDir");
 //			String filePath = request.getSession().getServletContext()
 //					.getRealPath(this.filePath);
-			
-			String ServerPath = appConstant.getMobileSubjectPath();
+
+			String ServerPath = AppConstants.getMobileSubjectPath();
 
 			String filePath = ServerPath + "/" + fileDir;
 //			if(!StringUtils.isEmpty(fileDir)){
 //				filePath = filePath + fileDir+File.separator;
 //			}
-			 
+
 			File file = new File(filePath);
 			if (file.exists()) { // 判断文件是否存在
 				// 文件夹名重复，请重新命名
 				resultMsg="0002";//重名
 			} else {
 				file.mkdirs();
-				 
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			resultMsg="0003";//异常
 		}
 		return resultMsg;
- 
+
 	}
 	/**
 	 * oldName 原文件夹或者文件名称 几路径 wangjian or wangjian/test  or wangjian/test.txt
@@ -349,11 +348,11 @@ public class MobileSubjectControl {
 //		String filePath = request.getSession().getServletContext()
 //				.getRealPath(this.filePath);
 //		String newFile = filePath + newName;
-//		
-		String ServerPath = appConstant.getMobileSubjectPath();
+//
+		String ServerPath = AppConstants.getMobileSubjectPath();
 
 		String newFile = ServerPath + "/" + newName;
-		
+
 		String oldFile = ServerPath + "/" + oldName;
 
 		File file = new File(oldFile);
@@ -368,7 +367,7 @@ public class MobileSubjectControl {
 					resultMsg = "0005";//修改失败！
 				}
 			}
-			 
+
 		} else {
 			resultMsg="0003";//原文件夹或者文件不存在
 		}
@@ -378,9 +377,9 @@ public class MobileSubjectControl {
 		}
 		return resultMsg;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * filePath 文件默认路径 /WEB-INF/classes/iReport/file/template/
 	 * delName 文件夹或者文件名称
 	 * @return
@@ -394,7 +393,7 @@ public class MobileSubjectControl {
 			String delName = jsonObject.getString("localPath");
 //			String filePath = request.getSession().getServletContext()
 //					.getRealPath(this.filePath);
-			String ServerPath = appConstant.getMobileSubjectPath();
+			String ServerPath = AppConstants.getMobileSubjectPath();
 
 			String filePath = ServerPath + "/" + delName;
 
@@ -412,7 +411,7 @@ public class MobileSubjectControl {
 		}
 		return resultMsg;
 	}
-	
+
 	@RequestMapping(value="/uploadZip", produces = "text/plain; charset=utf-8")
 	public String uploadZip(HttpServletRequest request) throws Exception {
 		// 创建一个通用的多部分解析器
@@ -441,17 +440,17 @@ public class MobileSubjectControl {
 						// 定义上传路径
 						//String userCode = multiRequest.getParameter("userCode");
 						String filePath = multiRequest.getParameter("filePath");
-						String ServerPath = appConstant.getMobileSubjectPath();
+						String ServerPath = AppConstants.getMobileSubjectPath();
 
 						String path = ServerPath + File.separator + filePath+".zip";
 						// 保存文件
 						File localFile = new File(path);
 
 						file.transferTo(localFile);
-						
-						
+
+
 						//此处加入解压缩
-						
+
 						String unzipFilePath=localFile.getPath().substring(0, localFile.getPath().lastIndexOf(File.separator) + 1);
 						ZipUtil.unzip(path, unzipFilePath, false);
 						//删除Zip文件
@@ -471,42 +470,42 @@ public class MobileSubjectControl {
 	public String GetMyReportUrl()
 	{
 		JSONObject obj = new JSONObject();
-	    obj.put("webPath", appConstant.getStaticReportPath().replaceAll("\\\\", "/"));
+	    obj.put("webPath", AppConstants.getStaticReportPath().replaceAll("\\\\", "/"));
 		return obj.toJSONString();
 	}
-	
+
 	@RequestMapping(value="/MyTemplateUrl", produces = "text/plain; charset=utf-8")
     public String GetMyTemplateUrl()
     {
         JSONObject obj = new JSONObject();
-        obj.put("webPath", appConstant.getDynamicReportPath().replaceAll("\\\\", "/"));
+        obj.put("webPath", AppConstants.getDynamicReportPath().replaceAll("\\\\", "/"));
         return obj.toJSONString();
     }
-	
+
     public String convertToDynamicHtml(File localFile) throws Exception
     {
         //转换结果
         boolean result = false;
         if(localFile.getName().endsWith(".xlsx"))
         {
-        	String dynamicReportPath = appConstant.getDynamicReportPath();
-        	File desFile = new File(appConstant.getDynamicReportPath()+File.separator+
-        			localFile.getAbsolutePath().replace(appConstant.getTemplatePath(), "")
+        	String dynamicReportPath = AppConstants.getDynamicReportPath();
+        	File desFile = new File(AppConstants.getDynamicReportPath()+File.separator+
+        			localFile.getAbsolutePath().replace(AppConstants.getTemplatePath(), "")
         			.replaceAll("(.xlsx|.xls)", ".html"));
         	log.info("【静态模板转换】目标文件:"+desFile.getName());
             result = new XSSFExcelToHtml().convertToDynamicHtml(localFile, desFile, dynamicReportPath);
         }
         return result==true?"success":"false";
     }
-    
+
     public String convertToStaticHtml(File localFile)
     {
     	//转换结果
         boolean result = false;
         if(localFile.getName().endsWith(".xlsx"))
         {
-        	File desFile = new File(appConstant.getStaticReportPath()+
-        			localFile.getAbsolutePath().replace(appConstant.getTemplatePath(), "")
+        	File desFile = new File(AppConstants.getStaticReportPath()+
+        			localFile.getAbsolutePath().replace(AppConstants.getTemplatePath(), "")
         			.replaceAll("(.xlsx|.xls)", ".html"));
         	log.info("【动态模板转换】目标文件:"+desFile.getName());
             result = new XSSFExcelToHtml().convertToStaticHtml(localFile, desFile);

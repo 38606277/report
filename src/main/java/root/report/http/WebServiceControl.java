@@ -25,12 +25,11 @@ import java.util.Map;
 public class WebServiceControl {
 
 	private static final Logger log = Logger.getLogger(WebServiceControl.class);
-    @Autowired
-    private AppConstants appConstant;
+
 	@RequestMapping(value = "/getWebServiceClass", produces = "text/plain;charset=UTF-8")
     public String getSelectClass()
 	{
-        String usersqlPath = appConstant.getWebServicePath();
+        String usersqlPath = AppConstants.getWebServicePath();
         File file = new File(usersqlPath);
         File[] fileList = file.listFiles(new FilenameFilter() {
             @Override
@@ -100,7 +99,7 @@ public class WebServiceControl {
 
 	private Document getWebServiceDocument(String fileName)
     {
-        String webServicePath = appConstant.getWebServicePath();
+        String webServicePath = AppConstants.getWebServicePath();
         String webServiceFilePath = webServicePath + File.pathSeparator + fileName;
         File file = new File(webServiceFilePath);
         Document dom = null;

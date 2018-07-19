@@ -35,11 +35,10 @@ import java.util.*;
 public class FunctionControl extends RO{
 
 	private static Logger log = Logger.getLogger(FunctionControl.class);
-    @Autowired
-    private AppConstants appConstant;
+
 	@RequestMapping(value = "/getFunctionClass", produces = "text/plain;charset=UTF-8")
 	public String getFunctionClass() {
-		String usersqlPath = appConstant.getUserFunctionPath();
+		String usersqlPath = AppConstants.getUserFunctionPath();
 		File file = new File(usersqlPath);
 		File[] fileList = file.listFiles(new FilenameFilter() {
 			@Override
@@ -61,7 +60,7 @@ public class FunctionControl extends RO{
 			authNode.put("name", name);
 			authNode.put("value", name);
             // 根据名称查找对应的模板文件
-            String sqlPath = appConstant.getUserFunctionPath() + File.separator + name + ".xml";
+            String sqlPath = AppConstants.getUserFunctionPath() + File.separator + name + ".xml";
 
             try {
                 SAXReader sax = new SAXReader();
@@ -102,7 +101,7 @@ public class FunctionControl extends RO{
 	public String getFunctionName(@PathVariable("FunctionClass") String selectClassName) {
 		String result = "";
 		// 根据名称查找对应的模板文件
-		String usersqlPath = appConstant.getUserFunctionPath() + File.separator + selectClassName + ".xml";
+		String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + selectClassName + ".xml";
 		;
 
 		try {
@@ -125,13 +124,6 @@ public class FunctionControl extends RO{
 				// 取出id
 				Map<String, String> map = new HashMap<String, String>();
 				map.put("name", element.attributeValue("id"));
-				// 取出数据查询类型
-//				String statementType = element.attributeValue("statementType");
-//				if (statementType == null) {
-//					map.put("type", "sql");
-//				} else if (statementType.equals("CALLABLE")) {
-//					map.put("type", "proc");
-//				}
 				// 取出db和描述信息
 				String aJsonString = "";
 				for (int j = 0; j < element.nodeCount(); j++) {
@@ -171,7 +163,7 @@ public class FunctionControl extends RO{
 		String result = "";
 		try {
 			// 执行函数
-			String usersqlPath = appConstant.getUserFunctionPath() + File.separator + FunctionClassId
+			String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + FunctionClassId
 					+ ".xml";
 			SqlTemplate template = new SqlTemplate(usersqlPath, FunctionID);
 			// 输入参数放入map中
@@ -191,27 +183,15 @@ public class FunctionControl extends RO{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
         	String namespace = jsonObject.getString("namespace");
 			String sqlId = jsonObject.getString("id");
-
             JSONObject commonObj = jsonObject.getJSONObject("comment");
 			String type = commonObj.getString("type");
+			String userSqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
 
-
-            //String category = jsonObject.getString("category");
-			String userSqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml"; //GetSqlPath(category,namespace);
             OutputFormat format = OutputFormat.createPrettyPrint();
-//            format.setEncoding("UTF-8");
-//            format.setTrimText(false);
-//            format.setIndent(false);
-			 format.setSuppressDeclaration(true);
+			format.setSuppressDeclaration(true);
 			format.setIndentSize(2);
 			format.setNewlines(true);
 			format.setTrimText(false);
-
-//
-//			format.setPadText(true);
-//			format.setIndent(true); //设置是否缩进
-// format.setIndent(" "); //以空格方式实现缩进
-// format.setNewlines(true); //设置是否换行
 
             XMLWriter writer = null;
             Document userDoc = XmlUtil.parseXmlToDom(userSqlPath);
@@ -219,26 +199,21 @@ public class FunctionControl extends RO{
             if(checkResult) return ExceptionMsg("已经存在相同的报表ID");
             Element root = (Element)userDoc.selectSingleNode("/mapper");
             Element newSql = root.addElement("select");
-
             newSql.addAttribute("id", sqlId);
             if("sql".equals(type)){
                 newSql.addAttribute("resultType", "BigDecimal");
 				newSql.addAttribute("parameterType", "Map");
-				newSql.addComment(formatCommentJson(commonObj)+"\n");
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
 				String cdata = jsonObject.getString("cdata");
 				addSqlText(newSql,cdata);
-
             }else if ("proc".equals(type)){
                 newSql.addAttribute("statementType", "CALLABLE");
-				newSql.addComment(formatCommentJson(commonObj)+"\n");
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
 				String cdata = jsonObject.getString("cdata");
 				addSqlText(newSql,cdata);
             }else if("http".equals(type)) {
-				newSql.addComment(formatCommentJson(commonObj)+"\n");
-
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
             }
-
-
 
             log.debug("新增SQL:"+newSql.asXML());
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
@@ -261,39 +236,17 @@ public class FunctionControl extends RO{
         return SuccessMsg("新增报表成功",null);
     }
 
-	private String formatCommentJson(JSONObject commentObj)
-    {
-//        JSONObject obj = new JSONObject(true);
-//        if(commentObj.getString("db")!=null){
-//            obj.put("db", commentObj.getString("db"));
-//        }
-//
-//        if(commentObj.getString("name")!=null){
-//            obj.put("name", commentObj.getString("name"));
-//        }
-//        if(commentObj.getString("desc")!=null){
-//            obj.put("desc", commentObj.getString("desc"));
-//        }
-//		if(commentObj.getString("type")!=null){
-//			obj.put("type", commentObj.getString("type"));
-//		}
-//        obj.put("in",commentObj.getJSONArray("in"));
-//        obj.put("out",commentObj.getJSONArray("out"));
-        return JSONObject.toJSONString(commentObj, features);
-    }
-
 	@RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
     public String modifyUserSql(@RequestBody String pJson)
     {
         try{
-            JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
             String namespace = jsonObject.getString("namespace");
-            String sqlType = jsonObject.getString("sqlType");
             JSONObject commonObj = jsonObject.getJSONObject("comment");
+			String type = commonObj.getString("type");
             String sqlId = jsonObject.getString("id");
             String cdata = jsonObject.getString("cdata");
-            //String category = jsonObject.getString("category");
-            String userSqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml"; //GetSqlPath(category,namespace);
+            String userSqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
             OutputFormat format = OutputFormat.createPrettyPrint();
             format.setEncoding("UTF-8");
             format.setTrimText(false);
@@ -303,22 +256,7 @@ public class FunctionControl extends RO{
             
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
             select.clearContent();
-//            List<Object> list = select.content();
-//            Object object = null;
-//            for (int i = list.size()-1; i >=0 ; i--) {
-//                object = list.get(i);
-//                if (object instanceof DefaultComment) {
-//                    select.remove((DefaultComment)object);
-//                }else if (object instanceof DefaultCDATA) {
-//                    select.remove((DefaultCDATA)object);
-//                }else if (object instanceof DefaultText) {
-//                    select.remove((DefaultText)object);
-//                }else if (object instanceof DefaultElement) {
-//                    select.remove((DefaultElement)object);
-//                }
-//            }
-            select.addComment(formatCommentJson(commonObj));
-            //select.addCDATA(cdata);
+            select.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
             addSqlText(select, cdata);
             log.debug("修改报表:"+select.asXML());
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
@@ -328,7 +266,6 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
-            
             DbFactory.init(commonObj.getString("db"));
         }catch (Exception e){
 			Throwable cause = e;
@@ -342,18 +279,12 @@ public class FunctionControl extends RO{
     }
 	//删除报表
 	@RequestMapping(value = "/moveUserSql", produces = "text/plain;charset=UTF-8")
-	public String moveUserSql(@RequestBody String pJson)
-	{
-		JSONObject retObj = null;
-		try
-		{
-			retObj = new JSONObject();
-
+	public String moveUserSql(@RequestBody String pJson){
+		try{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
 			String namespace = jsonObject.getString("namespace");
 			String sqlId = jsonObject.getString("id");
-			String category = jsonObject.getString("category");
-			String userSqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml";
+			String userSqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
 
 			OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setEncoding("UTF-8");
@@ -381,8 +312,6 @@ public class FunctionControl extends RO{
 			writer.write(userDoc);
 			writer.flush();
 			writer.close();
-			retObj.put("retCode", true);
-			retObj.put("retMsg", "删除报表成功");
 		}
 		catch (Exception e)
 		{
@@ -393,21 +322,10 @@ public class FunctionControl extends RO{
 			}
 			ErrorMsg("3000", message);
 		}
-		return SuccessMsg("操作成功", retObj);
+		return SuccessMsg("操作成功", null);
 	}
 
-
-	//移除某个节点
-	private void moveSqlId(Document userDoc,String sqlId)
-	{
-		List<Element> list = userDoc.selectNodes("//select[@id='"+sqlId+"']");
-		for (int i = 0; i < list.size(); i++)
-		{
-			list.get(i).getParent().remove(list.get(i));
-		}
-	}
-	private void addSqlText(Element select, String sqlText) throws DocumentException 
-    { 
+	private void addSqlText(Element select, String sqlText) throws DocumentException{
     	String xmlText = "<sql>"+sqlText+"</sql>";
     	Document doc = DocumentHelper.parseText(xmlText);
     	//获取根节点    
@@ -419,65 +337,52 @@ public class FunctionControl extends RO{
 		}
     }
 	private void removeBlankNewLine(Node node){
-   	 List<Node> list = ((Element)node).content();
-   	 boolean textOnly = true;
-   	 if(node.getNodeType()==Node.ELEMENT_NODE){
-   		 for(Node temp:list){
-   			 if(temp.getNodeType()!=Node.TEXT_NODE){
-   				 textOnly = false;
-   				 break;
-   			 }
-   		 }
-   	 }
-   	 for(Node temp:list){
-   		 int nodeType = temp.getNodeType();
-	         switch (nodeType) {
-	             case Node.ELEMENT_NODE:
-	            	 removeBlankNewLine(temp);
-	                 break;
-	             case Node.CDATA_SECTION_NODE:
-	            	 break;
-	             case Node.COMMENT_NODE:
-	            	 break;
-	             case Node.TEXT_NODE:
-	            	 Text text =  (Text)temp;
-	            	 String value = text.getText();
-	            	 if(!value.trim().equals("")){
-	            		//清空右边空白
-	            		value = value.substring(0,value.indexOf(value.trim().substring(0, 1))+value.trim().length());
-	            		if(textOnly){
-	            			value+="\n";
-	            		}
-	            	 }else{
-	            		 value = value.trim()+"\n"; 
-	            	 }
-	            	 text.setText(value);
-	                 break;
-	             default:break;
-	         }
-   	 }
-   }
-    //判断doc是否存在某个节点
-    private boolean checkIsContainsSqlId(Document userDoc,String sqlId)
-    {
-        List<Element> list = userDoc.selectNodes("//select[@id='"+sqlId+"']");
-        if(list==null||list.size()==0)
-        {
-            return false;
-        }
-        return true;
+   	    List<Node> list = ((Element)node).content();
+		 boolean textOnly = true;
+		 if(node.getNodeType()==Node.ELEMENT_NODE){
+			 for(Node temp:list){
+				 if(temp.getNodeType()!=Node.TEXT_NODE){
+					 textOnly = false;
+					 break;
+				 }
+			 }
+		 }
+		 for(Node temp:list){
+			 int nodeType = temp.getNodeType();
+				 switch (nodeType) {
+					 case Node.ELEMENT_NODE:
+						 removeBlankNewLine(temp);
+						 break;
+					 case Node.CDATA_SECTION_NODE:
+						 break;
+					 case Node.COMMENT_NODE:
+						 break;
+					 case Node.TEXT_NODE:
+						 Text text =  (Text)temp;
+						 String value = text.getText();
+						 if(!value.trim().equals("")){
+							//清空右边空白
+							value = value.substring(0,value.indexOf(value.trim().substring(0, 1))+value.trim().length());
+							if(textOnly){
+								value+="\n";
+							}
+						 }else{
+							 value = value.trim()+"\n";
+						 }
+						 text.setText(value);
+						 break;
+					 default:break;
+				 }
+		 }
     }
 
 	@RequestMapping(value = "/execFunction/{FunctionClassName}/{FunctionID}", produces = "text/plain;charset=UTF-8")
 	public String execFunction(@PathVariable("FunctionClassName") String FunctionClassName,
 			@PathVariable("FunctionID") String FunctionID, @RequestBody String pJson) {
-
 		System.out.println("开始执行查询:" + "selectClassName:" + FunctionClassName + "," + "selectID:" + FunctionID + ","
 				+ "pJson:" + pJson + ",");
 		long t1 = System.nanoTime();
-
 		Object aResult = null;
-
 		try {
 
 			// 检查函数名是否存在
@@ -485,7 +390,7 @@ public class FunctionControl extends RO{
 			//检查参数
 
 			// 执行函数
-			String usersqlPath = appConstant.getUserFunctionPath() + File.separator + FunctionClassName
+			String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + FunctionClassName
 					+ ".xml";
 			SqlTemplate template = new SqlTemplate(usersqlPath, FunctionID);
 			// 输入参数放入map中
@@ -597,8 +502,8 @@ public class FunctionControl extends RO{
 			JSONObject pObj = (JSONObject) JSON.parse(pJson);
 			String namespace = pObj.getString("namespace");
 			String sqlid = pObj.getString("sqlid");
-			//String category = pObj.getString("category");
-			String sqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml";
+			String category = pObj.getString("category");
+			String sqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
 			Document doc = XmlUtil.parseXmlToDom(sqlPath);
 			Element select = (Element) doc.selectSingleNode("/mapper/select[@id='" + sqlid + "']");
 			obj.put("namespace", namespace);
@@ -623,20 +528,10 @@ public class FunctionControl extends RO{
 		return obj.toJSONString();
 	}
 
-	private String GetSqlPath(String category, String namespace) {
-		if (category != null && category.equals("DataDictionary")) {
-			return appConstant.getUserDictionaryPath() + File.separator + namespace + ".xml";
-		} else if (category != null && category.equals("function")) {
-			return appConstant.getUserFunctionPath() + File.separator + namespace + ".xml";
-		} else {
-			return appConstant.getUserSqlPath() + File.separator + namespace + ".xml";
-		}
-	}
-	
 	@RequestMapping(value = "/getAllFunctionClass", produces = "text/plain;charset=UTF-8")
 	public String getAllFunctionClass()
     {
-        String usersqlPath = appConstant.getUserFunctionPath();
+        String usersqlPath = AppConstants.getUserFunctionPath();
         File file = new File(usersqlPath);
         File[] fileList = file.listFiles(new FilenameFilter() {
             @Override
@@ -698,63 +593,62 @@ public class FunctionControl extends RO{
             functionAuth.put("name", str[str.length-1]);
         }
      // 根据名称查找对应的模板文件
-        String usersqlPath = appConstant.getUserFunctionPath() + File.separator + className + ".xml";
+        String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + className + ".xml";
 
-       
-            SAXReader sax = new SAXReader();
-            sax.setValidation(false);
-            sax.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);// 这一行是必须要有的
-            // 获得dom4j的文档对象
-            Document document = sax.read(new FileInputStream(usersqlPath));
-            Element root = document.getRootElement();
-            // 得到database节点
-            List<Element> selects = root.selectNodes("//select");
+		SAXReader sax = new SAXReader();
+		sax.setValidation(false);
+		sax.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);// 这一行是必须要有的
+		// 获得dom4j的文档对象
+		Document document = sax.read(new FileInputStream(usersqlPath));
+		Element root = document.getRootElement();
+		// 得到database节点
+		List<Element> selects = root.selectNodes("//select");
 
-            // 构造返回json
-            List<Map> list = new ArrayList<Map>();
+		// 构造返回json
+		List<Map> list = new ArrayList<Map>();
 
-            for (int i = 0; i < selects.size(); i++) {
+		for (int i = 0; i < selects.size(); i++) {
 
-                Element element = selects.get(i);
+			Element element = selects.get(i);
 
-                //取出id
-                Map<String, String> map = new HashMap<String, String>();
-                map.put("name", element.attributeValue("id"));
-                //取出数据查询类型
-                String statementType = element.attributeValue("statementType");
-                if (statementType == null) {
-                    map.put("type", "sql");
-                } else if (statementType.equals("CALLABLE")) {
-                    map.put("type", "proc");
-                }
-               //取出db和描述信息
-                String aJsonString = "";
-                for (int j = 0; j < element.nodeCount(); j++) {
-                    Node node1 = element.node(j);
-                    if (node1.getNodeTypeName().equals("Comment")) {
-                        aJsonString = node1.getStringValue();
-                        break;
-                    }
-                }
-                JSONObject jsonObject = (JSONObject) JSON.parse(aJsonString);
-                map.put("db", jsonObject.getString("db"));
-                map.put("desc", jsonObject.getString("desc"));
+			//取出id
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("name", element.attributeValue("id"));
+			//取出数据查询类型
+			String statementType = element.attributeValue("statementType");
+			if (statementType == null) {
+				map.put("type", "sql");
+			} else if (statementType.equals("CALLABLE")) {
+				map.put("type", "proc");
+			}
+		   //取出db和描述信息
+			String aJsonString = "";
+			for (int j = 0; j < element.nodeCount(); j++) {
+				Node node1 = element.node(j);
+				if (node1.getNodeTypeName().equals("Comment")) {
+					aJsonString = node1.getStringValue();
+					break;
+				}
+			}
+			JSONObject jsonObject = (JSONObject) JSON.parse(aJsonString);
+			map.put("db", jsonObject.getString("db"));
+			map.put("desc", jsonObject.getString("desc"));
 
-                list.add(map);
-            }
-            if(isAdmin == 1){
-                return SuccessMsg("查询成功",list);
-            }else{
-                List<Map> authMap = new ArrayList<Map>();
-                for (Map auth : functionAuthList) {
-                    for (Map l : list) {
-                        if(l.get("name").equals(auth.get("name"))){
-                            authMap.add(l);
-                        }
-                    }
-                }
-                return SuccessMsg("查询成功",authMap);
-            }
+			list.add(map);
+		}
+		if(isAdmin == 1){
+			return SuccessMsg("查询成功",list);
+		}else{
+			List<Map> authMap = new ArrayList<Map>();
+			for (Map auth : functionAuthList) {
+				for (Map l : list) {
+					if(l.get("name").equals(auth.get("name"))){
+						authMap.add(l);
+					}
+				}
+			}
+			return SuccessMsg("查询成功",authMap);
+		}
         } catch (Exception e) {
             e.printStackTrace();
             return ErrorMsg("3000", e.getMessage());

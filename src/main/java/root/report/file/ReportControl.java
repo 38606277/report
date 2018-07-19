@@ -26,8 +26,7 @@ import java.util.Iterator;
 public class ReportControl {
 	public static final String setupPath = "/file/";// "/WEB-INF/classes/report/";
 	public static final String filePath = "/WEB-INF/classes/iReport/file/report/";
-	@Autowired
-	private AppConstants appConstant;
+	
 	// 递归使用
 	private void showAllFiles(File dir, JSONArray aNode) {
 		File[] fs = dir.listFiles();
@@ -60,7 +59,7 @@ public class ReportControl {
 	@RequestMapping(value = "/getDirectory/{userCode}", produces = "text/plain; charset=utf-8")
 	public String getDirectory(@PathVariable("userCode") String userCode) {
 
-		String serverPath = appConstant.getReportPath();
+		String serverPath = AppConstants.getReportPath();
 
 		File file = new File(serverPath+File.separator+userCode);
 		JSONArray rootNode = new JSONArray();
@@ -107,7 +106,7 @@ public class ReportControl {
 							// String userCode =
 							// multiRequest.getParameter("userCode");
 							String filePath = multiRequest.getParameter("filePath");
-							String ServerPath = appConstant.getReportPath();
+							String ServerPath = AppConstants.getReportPath();
 
 							String path = ServerPath +File.separator +userCode+File.separator+filePath;
 							// 保存文件
@@ -140,7 +139,7 @@ public class ReportControl {
 	@RequestMapping(value="/download/{userCode}", produces = "text/plain; charset=utf-8")
 	public ResponseEntity<byte[]> download(@PathVariable("userCode") String userCode,HttpServletRequest req) throws IOException {
 
-		String ServerPath = appConstant.getReportPath();
+		String ServerPath = AppConstants.getReportPath();
 
 		String path = ServerPath +File.separator+userCode+File.separator+req.getParameter("filePath");
 
@@ -173,7 +172,7 @@ public class ReportControl {
 			// String filePath = request.getSession().getServletContext()
 			// .getRealPath(this.filePath);
 
-			String ServerPath = appConstant.getReportPath();
+			String ServerPath = AppConstants.getReportPath();
 
 			String filePath = ServerPath + File.separator +userCode+File.separator + fileDir;
 			// if(!StringUtils.isEmpty(fileDir)){
@@ -215,7 +214,7 @@ public class ReportControl {
 			// .getRealPath(this.filePath);
 			// String newFile = filePath + newName;
 			//
-			String ServerPath = appConstant.getReportPath();
+			String ServerPath = AppConstants.getReportPath();
 
 			String newFile = ServerPath + File.separator +userCode+File.separator + newName;
 
@@ -259,7 +258,7 @@ public class ReportControl {
 			String delName = jsonObject.getString("localPath");
 			// String filePath = request.getSession().getServletContext()
 			// .getRealPath(this.filePath);
-			String ServerPath = appConstant.getReportPath();
+			String ServerPath = AppConstants.getReportPath();
 
 			String filePath = ServerPath + File.separator +userCode+File.separator + delName;
 

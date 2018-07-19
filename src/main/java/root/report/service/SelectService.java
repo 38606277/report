@@ -16,12 +16,7 @@ import java.io.FileInputStream;
 
 public class SelectService {
 
-
-    //@Autowired
-    public static AppConstants appConstant;
-
     private JSONObject metaData=null;
-
 
     public Element getSelectElement() {
         return selectElement;
@@ -40,14 +35,11 @@ public class SelectService {
         this.metaData = metaData;
     }
 
-
-
     public static  SelectService Load(String className,String selectID){
 
         String result = "";
         // 根据名称查找对应的模板文件
-        appConstant=new AppConstants();
-        String usersqlPath = appConstant.getUserSqlPath() + File.separator + className + ".xml";
+        String usersqlPath = AppConstants.getUserSqlPath() + File.separator + className + ".xml";
         JSONObject commentObj=null;
         Element aSelect=null;
         try {
@@ -101,13 +93,14 @@ public class SelectService {
     }
     public String getSelectType()
     {
-
-        String statementType = this.getSelectElement().attributeValue("statementType");
-
-        if (statementType == null) {
-            statementType= "sql";
-        } else if (statementType.equals("CALLABLE")) {
-            statementType="proc";
+        String statementType = metaData.getString("type");
+        if(statementType==null){
+            statementType = this.getSelectElement().attributeValue("statementType");
+            if (statementType == null) {
+                statementType = "sql";
+            } else if (statementType.equals("CALLABLE")) {
+                statementType = "proc";
+            }
         }
 
         return statementType;
