@@ -4,21 +4,20 @@
 <!--总账查询-->
 <mapper namespace="总账查询">
  <select id="查询科目组合-公司段" resultType="Map" parameterType="Map">
- 
 <!--{
 	"db":"jlerp",
 	"desc":"查询科目组合-公司段",
 	"in":[],
 	"out":[
 		{
-			"id":"flex_value",
-			"name":"flex_value",
-			"datatype":"varchar"
+			"datatype":"varchar",
+			"name":"公司编码",
+			"id":"flex_value"
 		},
 		{
-			"id":"description",
-			"name":"description",
-			"datatype":"varchar"
+			"datatype":"varchar",
+			"name":"公司名称",
+			"id":"description"
 		}
 	]
 }-->select ffv.flex_value,
@@ -795,6 +794,7 @@ and ffv.flex_value&lt;=#{end_value}
  </if>
  order by ffv.flex_value
 </select><select id="查询明细账" resultType="Map" parameterType="Map">
+ 
 <!--{
 	"db":"jlerp",
 	"desc":"查询明细账",

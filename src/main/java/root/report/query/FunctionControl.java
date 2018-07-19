@@ -597,7 +597,7 @@ public class FunctionControl extends RO{
 			JSONObject pObj = (JSONObject) JSON.parse(pJson);
 			String namespace = pObj.getString("namespace");
 			String sqlid = pObj.getString("sqlid");
-			String category = pObj.getString("category");
+			//String category = pObj.getString("category");
 			String sqlPath =appConstant.getUserFunctionPath()+File.separator + namespace + ".xml";
 			Document doc = XmlUtil.parseXmlToDom(sqlPath);
 			Element select = (Element) doc.selectSingleNode("/mapper/select[@id='" + sqlid + "']");
