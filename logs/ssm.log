@@ -3475,3 +3475,15 @@ WHERE 1=1
 [INFO] [2018-07-19 20:39:28][com.alibaba.druid.pool.DruidDataSource]{dataSource-4} inited
 [DEBUG] [2018-07-19 20:39:28][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
 [INFO] [2018-07-19 20:39:29][root.report.db.DbManager]初始化数据库【form】耗时0.8786s
+[INFO] [2018-07-19 20:49:51][com.alibaba.druid.pool.DruidDataSource]{dataSource-5} inited
+[DEBUG] [2018-07-19 20:49:51][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-07-19 20:49:52][root.report.db.DbManager]初始化数据库【form】耗时0.9738s
+[INFO] [2018-07-19 20:50:15][com.alibaba.druid.pool.DruidDataSource]{dataSource-6} inited
+[DEBUG] [2018-07-19 20:50:15][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-07-19 20:50:16][root.report.db.DbManager]初始化数据库【form】耗时1.0088s
+[INFO] [2018-07-19 20:50:35][com.alibaba.druid.pool.DruidDataSource]{dataSource-7} inited
+[DEBUG] [2018-07-19 20:50:35][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-07-19 20:50:35][root.report.db.DbManager]初始化数据库【form】耗时0.6249s
+[INFO] [2018-07-20 00:21:30][com.alibaba.druid.pool.DruidDataSource]{dataSource-8} inited
+[DEBUG] [2018-07-20 00:21:30][org.apache.ibatis.logging.LogFactory]Logging initialized using 'class org.apache.ibatis.logging.log4j.Log4jImpl' adapter.
+[INFO] [2018-07-20 00:21:31][root.report.db.DbManager]初始化数据库【form】耗时1.1677s
