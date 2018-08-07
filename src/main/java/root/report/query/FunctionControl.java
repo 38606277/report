@@ -7,6 +7,7 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.*;
@@ -230,21 +231,7 @@ public class FunctionControl extends RO{
             writer.flush();
             writer.close();
 
-            // 往MYSQL数据库当中插入值 ： 对commonObj进行JSON解析，然后将数据插入到不同的数据表当中
-            // 从 commomObj 当中获取到 type （如sql）、 desc （如a1）、
-			//  url -- 暂定 file --暂定 class = namespace ,name= id  是从json当中 获取，还是从程序中判断得到
-            List<Map<String,String>>  tempTestMapList = new ArrayList<Map<String,String>>();
-            // '${class}', '${name}', '${desc}', '${type}', '${file}', '${url}'
-            Map<String,String> tempMap = new HashMap<String,String>();
-			JSONObject jsonParse = commonObj;
-            tempMap.put("class",jsonObject.getString("namespace"));
-            tempMap.put("name",jsonObject.getString("id"));
-            tempMap.put("desc",jsonParse.getString("desc"));
-            tempMap.put("type",jsonParse.getString("type"));
-            // tempMap.put("file",null);
-            // tempMap.put("url",null);
-            tempTestMapList.add(tempMap);
-            int addFuncNumber = functionService.addFunctionName(tempTestMapList);
+            int addFuncNumber = functionService.addFunctionNameForJson(jsonObject);
             if(addFuncNumber!=1){
                 sqlSession.getConnection().rollback();
                 // throw new  Exception("添加func_name记录失败");
@@ -252,31 +239,13 @@ public class FunctionControl extends RO{
                 throw new Exception("添加func_name记录失败");
             }
             log.info("增加func_name记录成功");
+
             HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
             selectFuncNameMap.put("name",jsonObject.getString("id"));
             Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
             String insertResultFuncNameID = String.valueOf(funcNameResult.get("func_id"));
 
-            // 插入 func_in 表
-            List<Map<String,String>> funcInMapList = new ArrayList<Map<String,String>> ();
-            JSONArray jsonArray = jsonParse.getJSONArray("in");
-            String funcInStr = JSONArray.toJSONString(jsonArray,SerializerFeature.WriteMapNullValue);
-            List<Map> parseFuncInMap =  JSONObject.parseArray(funcInStr,Map.class);
-            int addFuncInNumber = 0;
-            for( Map funcInMap : parseFuncInMap){
-                Map<String,String> paramMap = new HashMap<String,String>();
-                paramMap.put("func_id",insertResultFuncNameID);
-                // paramMap.put("func_id",String.valueOf(funcInMap.get("id")));
-                paramMap.put("in_id",String.valueOf(funcInMap.get("id")));
-                paramMap.put("in_name",String.valueOf(funcInMap.get("name")));
-                paramMap.put("datatype",String.valueOf(funcInMap.get("datatype")));
-                paramMap.put("dict",String.valueOf(funcInMap.get("dict")));
-                // paramMap.put("validate","");
-                paramMap.put("default_value",String.valueOf(funcInMap.get("default")));
-                paramMap.put("isformula",String.valueOf(funcInMap.get("isformula")));
-                funcInMapList.add(paramMap);
-            }
-            addFuncInNumber = functionService.addFunctionIn(funcInMapList);
+            int addFuncInNumber = functionService.addFunctionInForJson(jsonObject,insertResultFuncNameID);
             if(addFuncInNumber!=1){
                 sqlSession.getConnection().rollback();
                 // throw new  Exception("添加func_name记录失败");
@@ -285,21 +254,7 @@ public class FunctionControl extends RO{
             }
             log.info("增加func_in记录成功");
 
-            // 插入记录到 func_out 表
-            List<Map<String,String>> funcOutMapList = new ArrayList<Map<String,String>> ();
-            JSONArray jsonFuncOutArray = jsonParse.getJSONArray("out");
-            String funcOutStr = JSONArray.toJSONString(jsonFuncOutArray,SerializerFeature.WriteMapNullValue);
-            List<Map> parseFuncOutMap =  JSONObject.parseArray(funcOutStr,Map.class);
-            int addFuncOutNumber = 0;
-            for( Map funcOutMap : parseFuncOutMap){
-                Map<String,String> paramMap = new HashMap<String,String>();
-                paramMap.put("func_id",insertResultFuncNameID);
-                paramMap.put("out_id",String.valueOf(funcOutMap.get("id")));
-                paramMap.put("out_name",String.valueOf(funcOutMap.get("name")));
-                paramMap.put("link",String.valueOf(funcOutMap.get("link")));
-                funcOutMapList.add(paramMap);
-            }
-            addFuncOutNumber = functionService.addFunctionOut(funcOutMapList);
+            int addFuncOutNumber = functionService.addFunctionOutForJson(jsonObject,insertResultFuncNameID);
             if(addFuncOutNumber!=1){
                 sqlSession.getConnection().rollback();
                 log.error("添加func_out记录失败");
@@ -336,6 +291,7 @@ public class FunctionControl extends RO{
 	@RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
     public String modifyUserSql(@RequestBody String pJson)
     {
+		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
             String namespace = jsonObject.getString("namespace");
@@ -363,6 +319,50 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
+
+            // 先查询有没有记录
+			HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
+			selectFuncNameMap.put("name",jsonObject.getString("id"));
+			Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
+			String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
+			if(StringUtils.isNotBlank(funcIdStr)){
+				// 不为空 ，先删除记录
+				int funcId = Integer.parseInt(funcIdStr);
+				functionService.deleteFunctionIn(funcId);
+				functionService.deleteFunctionOut(funcId);
+				functionService.deleteFunctionName(funcId);
+			}
+			int addFuncNumber = functionService.addFunctionNameForJson(jsonObject);
+			if(addFuncNumber!=1){
+				sqlSession.getConnection().rollback();
+				// throw new  Exception("添加func_name记录失败");
+				log.error("添加func_name记录失败");
+				throw new Exception("添加func_name记录失败");
+			}
+			log.info("增加func_name记录成功");
+
+			HashMap<String,String> selectFuncNameMapInsert = new HashMap<String,String>();
+			selectFuncNameMapInsert.put("name",jsonObject.getString("id"));
+			Map  funcNameResultInsert =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMapInsert));
+			String insertResultFuncNameID = String.valueOf(funcNameResultInsert.get("func_id"));
+
+			int addFuncInNumber = functionService.addFunctionInForJson(jsonObject,insertResultFuncNameID);
+			if(addFuncInNumber!=1){
+				sqlSession.getConnection().rollback();
+				// throw new  Exception("添加func_name记录失败");
+				log.error("添加func_in记录失败");
+				throw new Exception("添加func_in记录失败");
+			}
+			log.info("增加func_in记录成功");
+
+			int addFuncOutNumber = functionService.addFunctionOutForJson(jsonObject,insertResultFuncNameID);
+			if(addFuncOutNumber!=1){
+				sqlSession.getConnection().rollback();
+				log.error("添加func_out记录失败");
+				throw new Exception("添加func_out记录失败");
+			}
+			log.info("增加func_out记录成功");
+
             DbFactory.init(commonObj.getString("db"));
         }catch (Exception e){
 			Throwable cause = e;
@@ -371,7 +371,18 @@ public class FunctionControl extends RO{
 				cause = cause.getCause();
 			}
 			return ExceptionMsg(message);
-        }
+        }finally {
+			try {
+				sqlSession.getConnection().setAutoCommit(true);
+			}catch(Exception e) {
+				Throwable cause = e;
+				String message = null;
+				while((message = cause.getMessage())==null){
+					cause = cause.getCause();
+				}
+				return ExceptionMsg(message);
+			}
+		}
         return SuccessMsg("修改报表成功",null);
     }
 	//删除报表
@@ -395,6 +406,19 @@ public class FunctionControl extends RO{
 			newObj.put("namespace", namespace);
 			newObj.put("sqlid", sqlId);
 
+			// 先查询有没有记录
+			HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
+			selectFuncNameMap.put("name",jsonObject.getString("id"));
+			Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
+			String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
+			if(StringUtils.isNotBlank(funcIdStr)){
+				// 不为空 ，先删除记录
+				int funcId = Integer.parseInt(funcIdStr);
+				functionService.deleteFunctionIn(funcId);
+				functionService.deleteFunctionOut(funcId);
+				functionService.deleteFunctionName(funcId);
+			}
+
 			JSONObject selectObj = JSONObject.parseObject(this.qryFunctionDetail(newObj.toJSONString()));
 			DbFactory.init(selectObj.getJSONObject("comment").getString("db"));
 
@@ -409,6 +433,8 @@ public class FunctionControl extends RO{
 			writer.write(userDoc);
 			writer.flush();
 			writer.close();
+
+
 		}
 		catch (Exception e)
 		{

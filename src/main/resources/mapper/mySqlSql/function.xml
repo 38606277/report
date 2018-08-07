@@ -14,9 +14,7 @@
 
     </select>
 
-
-    <!--插入函数名称-->
-    <select id="addFunctionName" parameterType="Map" resultType="Map">
+    <insert id="addFunctionName" parameterType="Map">
 
 		INSERT INTO func_name(func_class,func_name,func_desc,func_type,func_file,func_url)
 		VALUES ('${class}', '${name}', '${desc}', '${type}',
@@ -27,41 +25,18 @@
 		<if  test="url != null">'${url}'</if>
 		)
 
-    </select>
+    </insert>
 
     <!--删除函数名称-->
-    <select id="deleteFunctionName" parameterType="Map" resultType="Map">
+    <delete id="deleteFunctionName" parameterType="int">
 
-		SELECT
-			fn.func_class ,
-			fn.func_name ,
-			fn.func_id
-		FROM
-			func_name fn
-		WHERE
-			fn.func_name LIKE '%${name}%'
-    </select>
+		delete from  func_name
+		where func_id=#{func_id}
 
-    <!--查询函数输入参数表-->
-    <select id="getFunctionIn" parameterType="Map" resultType="Map">
-
-		SELECT
-		fn.func_class ,
-		fn.func_name ,
-		fn.func_id ,
-		fi.param_id ,
-		fi.param_name ,
-		fi.dict ,
-		fi.datatype
-		FROM
-		func_name fn ,
-		func_in fi
-		WHERE
-		fn.func_id = fi.func_id
-    </select>
+    </delete>
 
     <!--插入数据到函数输入参数表-->
-    <select id="addFunctionIn" parameterType="Map" resultType="Map">
+    <insert id="addFunctionIn" parameterType="Map">
 		INSERT INTO func_in
 		(func_id,in_id,in_name,datatype,dict,validate,default_value,isformula)
 		VALUES (
@@ -70,36 +45,18 @@
 		<if  test="validate == null">NULL</if>
 		<if  test="validate != null">'${validate}'</if>
 		,'${default_value}','${isformula}')
-    </select>
+    </insert>
 
     <!--删除函数输入参数表数据-->
-    <select id="deleteFunctionIn" parameterType="Map" resultType="Map">
+    <delete id="deleteFunctionIn" parameterType="int">
 
-		SELECT
-			fn.func_class ,
-			fn.func_name ,
-			fn.func_id
-		FROM
-			func_name fn
-		WHERE
-			fn.func_name LIKE '%${name}%'
-    </select>
+		delete from  func_in
+		where func_id=#{func_id}
+
+    </delete>
 
     <!--查询函数输出参数表-->
-    <select id="getFunctionOut" parameterType="Map" resultType="Map">
-
-		SELECT
-			fn.func_class ,
-			fn.func_name ,
-			fn.func_id
-		FROM
-			func_name fn
-		WHERE
-			fn.func_name LIKE '%${name}%'
-    </select>
-
-    <!--查询函数输出参数表-->
-    <select id="addFunctionOut" parameterType="Map" resultType="Map">
+    <insert id="addFunctionOut" parameterType="Map">
 
 		INSERT INTO func_out
 		(func_id,out_id,out_name,link)
@@ -110,18 +67,13 @@
 
 		)
 
-    </select>
+    </insert>
 
     <!--查询函数输出参数表-->
-    <select id="deleteFunctionOut" parameterType="Map" resultType="Map">
+    <delete id="deleteFunctionOut" parameterType="int">
 
-		SELECT
-			fn.func_class ,
-			fn.func_name ,
-			fn.func_id
-		FROM
-			func_name fn
-		WHERE
-			fn.func_name LIKE '%${name}%'
-    </select>
+		delete from  func_out
+		where func_id=#{func_id}
+
+    </delete>
 </mapper>
