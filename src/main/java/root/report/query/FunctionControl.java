@@ -7,6 +7,7 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import root.configure.AppConstants;
 import root.report.common.RO;
 import root.report.db.DbFactory;
+import root.report.service.FunctionService;
 import root.report.util.XmlUtil;
 
 import java.io.File;
@@ -35,6 +37,9 @@ import java.util.*;
 public class FunctionControl extends RO{
 
 	private static Logger log = Logger.getLogger(FunctionControl.class);
+
+	@Autowired
+	private FunctionService functionService;
 
 	@RequestMapping(value = "/getFunctionClass", produces = "text/plain;charset=UTF-8")
 	public String getFunctionClass() {
@@ -179,6 +184,7 @@ public class FunctionControl extends RO{
 	@RequestMapping(value = "/saveUserSql", produces = "text/plain;charset=UTF-8")
     public String saveUserSql(@RequestBody String pJson)
     {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
         	String namespace = jsonObject.getString("namespace");
@@ -223,6 +229,84 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
+
+            // 往MYSQL数据库当中插入值 ： 对commonObj进行JSON解析，然后将数据插入到不同的数据表当中
+            // 从 commomObj 当中获取到 type （如sql）、 desc （如a1）、
+			//  url -- 暂定 file --暂定 class = namespace ,name= id  是从json当中 获取，还是从程序中判断得到
+            List<Map<String,String>>  tempTestMapList = new ArrayList<Map<String,String>>();
+            // '${class}', '${name}', '${desc}', '${type}', '${file}', '${url}'
+            Map<String,String> tempMap = new HashMap<String,String>();
+			JSONObject jsonParse = commonObj;
+            tempMap.put("class",jsonObject.getString("namespace"));
+            tempMap.put("name",jsonObject.getString("id"));
+            tempMap.put("desc",jsonParse.getString("desc"));
+            tempMap.put("type",jsonParse.getString("type"));
+            // tempMap.put("file",null);
+            // tempMap.put("url",null);
+            tempTestMapList.add(tempMap);
+            int addFuncNumber = functionService.addFunctionName(tempTestMapList);
+            if(addFuncNumber!=1){
+                sqlSession.getConnection().rollback();
+                // throw new  Exception("添加func_name记录失败");
+                log.error("添加func_name记录失败");
+                throw new Exception("添加func_name记录失败");
+            }
+            log.info("增加func_name记录成功");
+            HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
+            selectFuncNameMap.put("name",jsonObject.getString("id"));
+            Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
+            String insertResultFuncNameID = String.valueOf(funcNameResult.get("func_id"));
+
+            // 插入 func_in 表
+            List<Map<String,String>> funcInMapList = new ArrayList<Map<String,String>> ();
+            JSONArray jsonArray = jsonParse.getJSONArray("in");
+            String funcInStr = JSONArray.toJSONString(jsonArray,SerializerFeature.WriteMapNullValue);
+            List<Map> parseFuncInMap =  JSONObject.parseArray(funcInStr,Map.class);
+            int addFuncInNumber = 0;
+            for( Map funcInMap : parseFuncInMap){
+                Map<String,String> paramMap = new HashMap<String,String>();
+                paramMap.put("func_id",insertResultFuncNameID);
+                // paramMap.put("func_id",String.valueOf(funcInMap.get("id")));
+                paramMap.put("in_id",String.valueOf(funcInMap.get("id")));
+                paramMap.put("in_name",String.valueOf(funcInMap.get("name")));
+                paramMap.put("datatype",String.valueOf(funcInMap.get("datatype")));
+                paramMap.put("dict",String.valueOf(funcInMap.get("dict")));
+                // paramMap.put("validate","");
+                paramMap.put("default_value",String.valueOf(funcInMap.get("default")));
+                paramMap.put("isformula",String.valueOf(funcInMap.get("isformula")));
+                funcInMapList.add(paramMap);
+            }
+            addFuncInNumber = functionService.addFunctionIn(funcInMapList);
+            if(addFuncInNumber!=1){
+                sqlSession.getConnection().rollback();
+                // throw new  Exception("添加func_name记录失败");
+                log.error("添加func_in记录失败");
+                throw new Exception("添加func_in记录失败");
+            }
+            log.info("增加func_in记录成功");
+
+            // 插入记录到 func_out 表
+            List<Map<String,String>> funcOutMapList = new ArrayList<Map<String,String>> ();
+            JSONArray jsonFuncOutArray = jsonParse.getJSONArray("out");
+            String funcOutStr = JSONArray.toJSONString(jsonFuncOutArray,SerializerFeature.WriteMapNullValue);
+            List<Map> parseFuncOutMap =  JSONObject.parseArray(funcOutStr,Map.class);
+            int addFuncOutNumber = 0;
+            for( Map funcOutMap : parseFuncOutMap){
+                Map<String,String> paramMap = new HashMap<String,String>();
+                paramMap.put("func_id",insertResultFuncNameID);
+                paramMap.put("out_id",String.valueOf(funcOutMap.get("id")));
+                paramMap.put("out_name",String.valueOf(funcOutMap.get("name")));
+                paramMap.put("link",String.valueOf(funcOutMap.get("link")));
+                funcOutMapList.add(paramMap);
+            }
+            addFuncOutNumber = functionService.addFunctionOut(funcOutMapList);
+            if(addFuncOutNumber!=1){
+                sqlSession.getConnection().rollback();
+                log.error("添加func_out记录失败");
+                throw new Exception("添加func_out记录失败");
+            }
+            log.info("增加func_out记录成功");
+
             //重置该DB连接
             DbFactory.init(commonObj.getString("db"));
         }catch (Exception e){
@@ -231,8 +315,21 @@ public class FunctionControl extends RO{
 			while((message = cause.getMessage())==null){
 				cause = cause.getCause();
 			}
+
 			return ExceptionMsg(message);
-        }
+        }finally {
+            try {
+                sqlSession.getConnection().setAutoCommit(true);
+            }catch(Exception e) {
+                Throwable cause = e;
+                String message = null;
+                while((message = cause.getMessage())==null){
+                    cause = cause.getCause();
+                }
+                return ExceptionMsg(message);
+            }
+		}
+
         return SuccessMsg("新增报表成功",null);
     }
 
