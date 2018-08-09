@@ -230,37 +230,8 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
-
-            int addFuncNumber = functionService.addFunctionNameForJson(jsonObject);
-            if(addFuncNumber!=1){
-                sqlSession.getConnection().rollback();
-                // throw new  Exception("添加func_name记录失败");
-                log.error("添加func_name记录失败");
-                throw new Exception("添加func_name记录失败");
-            }
-            log.info("增加func_name记录成功");
-
-            HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
-            selectFuncNameMap.put("name",jsonObject.getString("id"));
-            Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
-            String insertResultFuncNameID = String.valueOf(funcNameResult.get("func_id"));
-
-            int addFuncInNumber = functionService.addFunctionInForJson(jsonObject,insertResultFuncNameID);
-            if(addFuncInNumber!=1){
-                sqlSession.getConnection().rollback();
-                // throw new  Exception("添加func_name记录失败");
-                log.error("添加func_in记录失败");
-                throw new Exception("添加func_in记录失败");
-            }
-            log.info("增加func_in记录成功");
-
-            int addFuncOutNumber = functionService.addFunctionOutForJson(jsonObject,insertResultFuncNameID);
-            if(addFuncOutNumber!=1){
-                sqlSession.getConnection().rollback();
-                log.error("添加func_out记录失败");
-                throw new Exception("添加func_out记录失败");
-            }
-            log.info("增加func_out记录成功");
+            //
+			functionService.insertRecordsToFunc(jsonObject,sqlSession);
 
             //重置该DB连接
             DbFactory.init(commonObj.getString("db"));
@@ -332,36 +303,7 @@ public class FunctionControl extends RO{
 				functionService.deleteFunctionOut(funcId);
 				functionService.deleteFunctionName(funcId);
 			}
-			int addFuncNumber = functionService.addFunctionNameForJson(jsonObject);
-			if(addFuncNumber!=1){
-				sqlSession.getConnection().rollback();
-				// throw new  Exception("添加func_name记录失败");
-				log.error("添加func_name记录失败");
-				throw new Exception("添加func_name记录失败");
-			}
-			log.info("增加func_name记录成功");
-
-			HashMap<String,String> selectFuncNameMapInsert = new HashMap<String,String>();
-			selectFuncNameMapInsert.put("name",jsonObject.getString("id"));
-			Map  funcNameResultInsert =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMapInsert));
-			String insertResultFuncNameID = String.valueOf(funcNameResultInsert.get("func_id"));
-
-			int addFuncInNumber = functionService.addFunctionInForJson(jsonObject,insertResultFuncNameID);
-			if(addFuncInNumber!=1){
-				sqlSession.getConnection().rollback();
-				// throw new  Exception("添加func_name记录失败");
-				log.error("添加func_in记录失败");
-				throw new Exception("添加func_in记录失败");
-			}
-			log.info("增加func_in记录成功");
-
-			int addFuncOutNumber = functionService.addFunctionOutForJson(jsonObject,insertResultFuncNameID);
-			if(addFuncOutNumber!=1){
-				sqlSession.getConnection().rollback();
-				log.error("添加func_out记录失败");
-				throw new Exception("添加func_out记录失败");
-			}
-			log.info("增加func_out记录成功");
+			functionService.insertRecordsToFunc(jsonObject,sqlSession);
 
             DbFactory.init(commonObj.getString("db"));
         }catch (Exception e){

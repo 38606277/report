@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import root.report.db.DbFactory;
 
@@ -12,24 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
-
-/**
- * @Auther: pccw - liaoxufeng
- * @Date: 2018/8/6 15:56
- * @Description: 往mysql的 func_name  func_in func_out 插入对应的信息
- */
 @Component
 public class FunctionService {
-    
-    /**
-     *
-     * 功能描述: 查询func_name表
-     *
-     * @param: map
-     * @return: 
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
-     */
+
+    private static Logger log = Logger.getLogger(FunctionService.class);
+
     public String getFunctionName(Map<String,String> map){
         List<Map<String,String>> resultList = new  ArrayList<Map<String,String>>();
         List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getFunctionName",map);
@@ -44,11 +33,6 @@ public class FunctionService {
     /**
      *
      * 功能描述: 往func_name表增加记录
-     *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
      */
     public int addFunctionName(List<Map<String,String>> mapList){
         // 事务管理 放在了controller层,return 0 意味着要进行事务回滚
@@ -65,10 +49,6 @@ public class FunctionService {
      *
      * 功能描述: 根据传递过来的JSONObject，对其解析，然后往func_name表增加记录
      *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/7 16:03
      */
     public int addFunctionNameForJson(JSONObject jsonObject){
         List<Map<String,String>>  tempTestMapList = new ArrayList<Map<String,String>>();
@@ -89,11 +69,6 @@ public class FunctionService {
     /**
      *
      * 功能描述: 删除func_name当中的记录
-     *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
      */
     public void deleteFunctionName(int funcId){
         DbFactory.Open(DbFactory.FORM).delete("function.deleteFunctionName",funcId);
@@ -103,10 +78,6 @@ public class FunctionService {
      *
      * 功能描述: 查询 func_in表
      *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
      */
    /* public String getFunctionIn(List<Map<String,String>> map){
         return "";
@@ -116,10 +87,6 @@ public class FunctionService {
      *
      * 功能描述: 增加func_in表记录
      *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
      */
     public int addFunctionIn(List<Map<String,String>> mapList){
         // 事务管理 放在了controller层,return 0 意味着要进行事务回滚
@@ -136,10 +103,6 @@ public class FunctionService {
      *
      * 功能描述: 根据传递过来的JSONObject，对其解析，然后往func_name表增加记录
      *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/7 16:27
      */
     public int addFunctionInForJson(JSONObject jsonObject,String funcId){
         JSONObject jsonParse = jsonObject.getJSONObject("comment");
@@ -166,11 +129,6 @@ public class FunctionService {
     /**
      *
      * 功能描述: 删除func_in表的记录
-     *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
      */
     public void deleteFunctionIn(int funcId){
         DbFactory.Open(DbFactory.FORM).delete("function.deleteFunctionIn",funcId);
@@ -180,10 +138,6 @@ public class FunctionService {
      *
      * 功能描述: 查询func_out表的记录
      *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
      */
     /* public String selectFunctionOut(List<Map<String,String>> map){
         return "";
@@ -192,11 +146,6 @@ public class FunctionService {
     /**
      *
      * 功能描述: 新增func_out表的记录
-     *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
      */
     public int addFunctionOut(List<Map<String,String>> mapList){
         // 事务管理 放在了controller层,return 0 意味着要进行事务回滚
@@ -231,13 +180,44 @@ public class FunctionService {
      *
      * 功能描述: 删除func_out表的记录
      *
-     * @param:
-     * @return:
-     * @auther: pccw
-     * @date: 2018/8/6 16:09
      */
     public void deleteFunctionOut(int funcId){
         DbFactory.Open(DbFactory.FORM).delete("function.deleteFunctionOut",funcId);
+    }
+
+    // 往 func_name 、 func_in 、 fuc_out 3张表当中插入记录
+    public void insertRecordsToFunc(JSONObject jsonObject,SqlSession sqlSession) throws Exception{
+
+        int addFuncNumber = this.addFunctionNameForJson(jsonObject);
+        if(addFuncNumber!=1){
+            sqlSession.getConnection().rollback();
+            // throw new  Exception("添加func_name记录失败");
+            log.error("添加func_name记录失败");
+            throw new Exception("添加func_name记录失败");
+        }
+        log.info("增加func_name记录成功");
+
+        HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
+        selectFuncNameMap.put("name",jsonObject.getString("id"));
+        Map  funcNameResult =  (Map)JSON.parse( this.getFunctionName(selectFuncNameMap));
+        String insertResultFuncNameID = String.valueOf(funcNameResult.get("func_id"));
+
+        int addFuncInNumber = this.addFunctionInForJson(jsonObject,insertResultFuncNameID);
+        if(addFuncInNumber!=1){
+            sqlSession.getConnection().rollback();
+            log.error("添加func_in记录失败");
+            throw new Exception("添加func_in记录失败");
+        }
+        log.info("增加func_in记录成功");
+
+        int addFuncOutNumber = this.addFunctionOutForJson(jsonObject,insertResultFuncNameID);
+        if(addFuncOutNumber!=1){
+            sqlSession.getConnection().rollback();
+            log.error("添加func_out记录失败");
+            throw new Exception("添加func_out记录失败");
+        }
+        log.info("增加func_out记录成功");
+
     }
 
 }
