@@ -144,5 +144,38 @@ public class FormUserService
         int count = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getCountByUserName",userName);
         return JSON.toJSONString(count);
     }
-    
+
+
+    @RequestMapping(value = "/getUserListReact", produces = "text/plain; charset=utf-8")
+    public String getUserListReact(@RequestBody String pJson)
+    {
+        // JSONArray obj = (JSONArray)JSONObject.parse(pJson);
+        JSONObject obj = JSONObject.parseObject(pJson);
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("userName", obj.getString("userName"));
+        map.put("startIndex", Integer.valueOf(obj.getString("startIndex")));
+        map.put("perPage", Integer.valueOf(obj.getString("perPage")));
+        List<UserModel> userInfolist = DbFactory.Open(DbFactory.FORM).selectList("formUser.getUserList",map);
+        Map<String,Object> map2 =new HashMap<String,Object>();
+        Map<String,Object> map3 =new HashMap<String,Object>();
+        map3.put("list",userInfolist);
+        map2.put("msg","查询成功");
+        map2.put("data",map3);
+        map2.put("status",0);
+        return JSON.toJSONString(map2);
+    }
+    @RequestMapping(value = "/getUserInfoByUserId", produces = "text/plain; charset=utf-8")
+    public String getUserInfoByUserId(@RequestBody String pJson)
+    {
+        JSONObject obj = JSONObject.parseObject(pJson);
+        int id=Integer.valueOf(obj.get("id").toString());
+        UserModel usermodel = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserInfoById",id);
+        Map<String,Object> map2 =new HashMap<String,Object>();
+        Map<String,Object> map3 =new HashMap<String,Object>();
+        map3.put("userInfo",usermodel);
+        map2.put("msg","查询成功");
+        map2.put("data",map3);
+        map2.put("status",0);
+        return JSON.toJSONString(map2);
+    }
 }

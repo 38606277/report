@@ -92,6 +92,74 @@ public class UserController extends RO{
 			DbFactory.close(DbFactory.FORM);
 		}
 	}
+
+	/**
+	 * UserCode 用户ID
+	 * Pwd 用户密码des3加密后的
+	 * @param pJson
+	 * @return 成功返回Y 否则返回N
+	 */
+	@RequestMapping(value="/Reactlogin",method=RequestMethod.POST,produces = "text/plain;charset=UTF-8")
+	public String Reactlogin(@RequestBody String pJson) {
+		log.debug("调用服务：/user/login");
+		Map<String, Object> map = new HashMap<String, Object>();
+		try{
+			JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+			String userCode = jsonObject.getString("UserCode");
+			//转换成小写
+			userCode = userCode!=null?userCode.trim().toLowerCase():userCode;
+			String passWord = jsonObject.getString("Pwd");
+			ErpUtil erpUtil = new ErpUtil();
+			passWord = erpUtil.decode(passWord);
+			//查询用户信息
+			UserModel userModel = DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserInfoByUserId", userCode);
+			List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
+			//用户不存在
+			if(userModel==null) {
+				map.put("LOGINRESULT", "InvalidUser");
+				return JSON.toJSONString(map);
+			}//如果是erp用户，则到Erp中验证密码
+			else if(userModel!=null&&"erp".equals(userModel.getRegisType())){
+				map.put("userCode", userCode);
+				map.put("pwd", passWord);
+				map = DbFactory.Open(DbFactory.SYSTEM).selectOne("role.loginUser", map);
+			}
+			//如果是本地用户，则验证密码
+			else if(userModel!=null&&"local".equals(userModel.getRegisType())){
+				String encryptPwd = erpUtil.encode(passWord);
+				if(encryptPwd.equals(userModel.getEncryptPwd())) {
+					map.put("LOGINRESULT", "Y");
+				} else {
+					map.put("LOGINRESULT", "N");
+				}
+			}
+
+			map.put("userCode", userCode);
+			map.put("pwd", passWord);
+			map.put("id", userModel.getId());
+			map.put("userId", userModel.getUserId());
+			int isAdmin = userModel.getIsAdmin();
+			String regisType = userModel.getRegisType();
+			map.put("isAdmin", isAdmin);
+			map.put("import", regisType);
+			Map<String, Object> map2 = new HashMap<String, Object>();
+			map2.put("status",0);
+			map2.put("data",map);
+			map2.put("msg","登录成功");
+			return JSON.toJSONString(map2);
+		} catch (Exception e) {
+			log.error("登录异常："+e.getMessage());
+			e.printStackTrace();
+			map.put("LOGINRESULT","Exception");
+			map.put("Message",e.getMessage());
+			return JSON.toJSONString(map);
+		} finally {
+			//由于不走拦截器,需手动关闭连接
+			DbFactory.close(DbFactory.SYSTEM);
+			DbFactory.close(DbFactory.FORM);
+		}
+	}
+
 	/**
 	 * @param pwd 用户密码(未加密)
 	 * @return 成功返回Y 否则返回N

@@ -14,6 +14,7 @@ import com.github.pagehelper.util.StringUtil;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
@@ -28,12 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
@@ -615,5 +611,73 @@ public class TemplateController extends BaseControl {
             Element s = new Element(Tag.valueOf("script"), "", attrs);
             header.appendChild(s);
         }
+    }
+
+    /**
+     * 根据任务ID和当前用户查询他的填报数据
+     *
+     * @param pJson
+     * @return
+     */
+    @RequestMapping(value = "/getMyTaskByUserId", produces = "text/plain;charset=UTF-8")
+    public String getMyTaskByUserId(@RequestBody String pJson,HttpServletRequest request) {
+        JSONObject obj = (JSONObject) JSON.parse(pJson);
+        //获取当前登录人所有信息
+        String  userInfo=request.getHeader("credentials");
+        JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
+
+        SqlSession session = DbFactory.Open(DbFactory.FORM);
+        //判断当前用户是否任务的创建人
+        Map<String,Object> map2 =new HashMap<String,Object>();
+        Map<String,Object> map3 =new HashMap<String,Object>();
+        try{
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("userId", obj2.getString("userId"));
+            map.put("startIndex", Integer.valueOf(obj.getString("startIndex")));
+            map.put("perPage", Integer.valueOf(obj.getString("perPage")));
+            List<Map>  tasklist= session.selectList("dataCollect.getMytaskByUserId", map);
+            map3.put("list",tasklist);
+            map2.put("msg","查询成功");
+            map2.put("data",map3);
+            map2.put("status",0);
+        }catch (Exception e){
+            map3.put("list",null);
+            map2.put("msg","查询失败");
+            map2.put("data",map3);
+            map2.put("status",10);
+        }
+        return JSON.toJSONString(map2);
+    }
+
+    /**
+     * 查询任务及任务用户信息
+     *
+     * @param taskId
+     * @return
+     */
+    @RequestMapping(value = "/getTaskAndUsersByid", produces = "text/plain;charset=UTF-8")
+    public String getTaskAndUsersByid(@RequestBody String taskId,HttpServletRequest request) {
+            //获取当前登录人所有信息
+            String  userInfo=request.getHeader("credentials");
+            JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
+
+            JSONObject obj3 = (JSONObject) JSON.parse(taskId);
+            SqlSession session = DbFactory.Open(DbFactory.FORM);
+            Map<String,Object> map =new HashMap<String,Object>();
+            map.put("userId",obj2.getString("userId"));
+            map.put("taskId",Integer.valueOf(obj3.getString("taskId")));
+
+            Map  taskInfo =session.selectOne("dataCollect.getTaskUserInfoByUserId",map);
+            if(null!=taskInfo && (null==taskInfo.get("receive_date") || "".equals(taskInfo.get("receive_date")))){
+             session.update("dataCollect.updateReportTaskUserBytaskIdUserId", map);
+             }
+            Map<String,Object> map2 =new HashMap<String,Object>();
+            Map<String,Object> map3 =new HashMap<String,Object>();
+            map3.put("taskInfo",taskInfo);
+            map2.put("msg","查询成功");
+            map2.put("data",map3);
+            map2.put("status",0);
+       return JSON.toJSONString(map2);
+
     }
 }
