@@ -44,6 +44,7 @@ import root.form.constant.ColumnType;
 import root.report.common.BaseControl;
 import root.report.db.DbFactory;
 import root.report.excel.XSSFExcelToHtml;
+import root.report.excel.XSSFExcelToHtmlReact;
 import root.report.sys.SysContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -557,6 +558,102 @@ public class TemplateController extends BaseControl {
         return null;
     }
 
+
+    /**
+     * 生成绑定vue指令及相关代码的html文件
+     *
+     * @param taskId
+     * @return
+     */
+    @RequestMapping(value = "/createHtmlForReact/{taskId}", produces = "text/plain;charset=UTF-8")
+    public String createHtmlForReact(@PathVariable("taskId") Integer taskId) {
+        SqlSession session = DbFactory.Open(DbFactory.FORM);
+
+
+        Map<String, Object> paramsone = new HashMap<>();
+        paramsone.put("taskId", taskId);
+        //查询模板关联表
+        Map<String, Object> table_id = session.selectOne("dataCollect.getFrmTableByTaskId", paramsone);
+
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("tableId", table_id.get("table_id"));
+        //查询模板关联表
+        Map<String, Object> tables = session.selectOne("dataCollect.getFrmTable", params);
+        //查询字段描述
+        Object tid = tables.get("table_id");
+        List<Map<String, Object>> fieldList = session.selectList("dataCollect.getTableFieldDesc", tid);
+        //查询模板文件
+        Map<String, Object> templateInfo = session.selectOne("dataCollect.getTemplate", tables.get("template_id"));
+        String templatePath = (String) templateInfo.get("template_path");
+        XSSFExcelToHtmlReact t = new XSSFExcelToHtmlReact();
+        File templateFile = new File(templatePath);
+        //html文件创建位置
+        File htmlFile = new File(AppConstants.getStaticReportPath() + File.separator + tid + ".html");
+
+        boolean isCreate = t.convertToDynamicHtml(templateFile, htmlFile,AppConstants.getStaticReportPath());
+        if(!isCreate) throw new RuntimeException("生成html文件失败");
+
+        Map<String,Object> map2 =new HashMap<String,Object>();
+        Map<String,Object> map3 =new HashMap<String,Object>();
+        try {
+            Document dom = Jsoup.parse(htmlFile, "UTF-8");
+            //去掉无用标签字符
+            dom.select("h2").remove();
+            dom.select("body>table>thead").remove();
+            dom.select("tbody>tr>th").remove();
+            Elements els = dom.select("table>tbody>tr");
+            dom.select("table>tbody").first().remove();
+            Element table = dom.select("table").first();
+            table.attr("id","tabid");
+            els.forEach(e -> table.appendChild(e));
+            //在head标签中追加script标签
+            Element header = dom.select("head").get(0);
+
+           // addScript(scripts, header);
+            //在table外面增加div
+            Attributes attrs = new Attributes();
+            attrs.put("id", "app");
+            Element div = new Element(Tag.valueOf("div"), "", attrs);
+            div.appendChild(dom.select("body>table").first());
+            dom.select("body>table").remove();
+            dom.select("body").first().appendChild(div);
+            //在tr上绑定v-for指令,查找到一个空行，然后把后面的tr都删除掉
+            Elements trs = dom.select("table>tr");
+            Elements table3 = dom.select("table");
+            for (int i = 0; i < trs.size(); i++) {
+                Element tr = trs.get(i);
+                Elements tds = tr.children();
+                boolean isBlank = Boolean.TRUE;
+                for (int j = 0; j < tds.size(); j++) {
+                    isBlank = isBlank && isBlank(tds.get(j).text());
+                }
+                if (isBlank && i < trs.size() - 1) tr.remove();
+            }
+
+           int leng=fieldList.size();
+           /*  String strs="<tr><td></td>";
+            for(int i=0;i<leng;i++){
+                strs=strs+"<td><input type='text' name='"+fieldList.get(i).get("field_name")+"'style='width: 100px' value='' /></td>";
+            }*/
+            String btn="<div style='padding-top:10px;'><td align=\"center\" colspan=\"'"+leng+"'\"><input type=\"button\" name=\"insert\"  value=\"增加一行\" style=\"width:80px\" " +
+                    " onclick=\"addTableTr()\" />&nbsp&nbsp\n" +
+                                              " <input type=\"button\"  value=\" 保    存 \"  style=\"width:80px\"  onclick=\"GetValue()\" /></td></div>";
+
+            table3.after(btn);
+           Object obj=dom.html();
+            map3.put("taskInfo",obj);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+        map2.put("msg","查询成功");
+        map2.put("data",map3);
+        map2.put("status",0);
+        return JSON.toJSONString(map2);
+    }
+
     String scripts[] = {"https://cdn.bootcss.com/vue/2.2.2/vue.min.js","https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.js"};
 
     private void parseHtml(File htmlFile) {
@@ -607,12 +704,18 @@ public class TemplateController extends BaseControl {
     private void addScripts(String[] scripts, Element header) {
         for (int i = 0; i < scripts.length; i++) {
             Attributes attrs = new Attributes();
-            attrs.put("src", scripts[i]);
+            attrs.put("type=\"text/javascript\">", scripts[i]);
             Element s = new Element(Tag.valueOf("script"), "", attrs);
             header.appendChild(s);
         }
     }
+    private void addScript(String scripts, Element header) {
+        Attributes attrs = new Attributes();
+        attrs.put("src", scripts);
+            Element s = new Element(Tag.valueOf("script"),"", attrs);
+            header.appendChild(s);
 
+    }
     /**
      * 根据任务ID和当前用户查询他的填报数据
      *
@@ -680,4 +783,27 @@ public class TemplateController extends BaseControl {
        return JSON.toJSONString(map2);
 
     }
+
+    @RequestMapping(value = "/saveTaskInfo", produces = "text/plain;charset=UTF-8")
+    public String saveTaskInfo(@RequestBody String taskjson,HttpServletRequest request) {
+        //获取当前登录人所有信息
+        String userInfo = request.getHeader("credentials");
+        JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
+        JSONObject obj3 = (JSONObject) JSON.parse(taskjson);
+        //String tableName=obj3.get("tableName").toString();
+        List<Object> jsonArray= (List<Object>) obj3.get("dataList");
+        for (int i=0;i<jsonArray.size();i++){
+            List<String> l= (List<String>) jsonArray.get(i);
+            for(int j=0;j<l.size();j++){
+                String d=l.get(j);
+            }
+        }
+        HashMap<String, Object> map2 = new HashMap<String, Object>();
+        Map<String, Object> map3 = new HashMap<String, Object>();
+        map2.put("msg", "查询成功");
+        map2.put("data", obj3);
+        map2.put("status", 0);
+        return JSON.toJSONString(map2);
+    }
+
 }
