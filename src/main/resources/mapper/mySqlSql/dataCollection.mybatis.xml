@@ -63,6 +63,10 @@
     </delete>
 
     <!--查询表定义-->
+    <select id="getFrmTableByTaskId" parameterType="Map" resultType="Map">
+       select DISTINCT table_id from frm_form_task t where t.task_id=#{taskId}
+    </select>
+    <!--查询表定义-->
     <select id="getFrmTable" parameterType="Map" resultType="Map">
         select * from frm_table t where 1=1
         <if test="createBy != null"> and t.create_by=#{createBy}</if>
