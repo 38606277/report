@@ -150,11 +150,14 @@ public class XSSFExcelToHtmlReact
                     x_index = Integer.valueOf(map.get("rowIndex").toString());
                     y_index = Integer.valueOf(map.get("columnIndex").toString());
                     //取输入框当前行的行高样式
+
                     String height = hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").attr("class");
                     hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")>td:eq("+(y_index-blankColNum+1)+")").get(0).empty()
                         .append("<input class=\""+height+"\" type=\"text\"  name=\""+map.get("table")+"."+map.get("fields")+"\"></input>");
                     if(kk==report.getInCell().size()){
                         hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").append("<td><button type='button' class='btn btn-danger btn-xs' id='delete' onclick='deletetr(this)' >删除</button></td>");
+                      //给tr加一个id
+                        Elements trs = hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").attr("id","del"+x_index);
                     }
 
                 }
@@ -710,13 +713,15 @@ public class XSSFExcelToHtmlReact
                              if(null!=comment && !"".equals(comment)){
                                  String arr[]=comment.split("\\.");
                                  map.put("table",arr[0]);
-                                 map.put("fields",arr[1]);
+                                 if(arr.length>1) {
+                                     map.put("fields", arr[1]);
+                                 }
                              }
-                            // JSONObject commentObj = JSON.parseObject(comment);
-                            // String func = commentObj.getString("func");
-                             String field = null;
-                             Map<String, Object> param = null;
-                            /* if("in".equals(func))
+                           /* JSONObject commentObj = JSON.parseObject(comment);
+                              String func = commentObj.getString("func");
+                              String field = null;
+                              Map<String, Object> param = null;
+                             if("in".equals(func))
                              {
                                  field = commentObj.getString("field");
                                  if(field!=null)
@@ -755,25 +760,24 @@ public class XSSFExcelToHtmlReact
                              else
                              {
                                  field = commentObj.getString("field");
-                               //  param = getFieldInfo(field, "out");
-                                // map.put("type", func.split("\\.")[1]);
-                              //   map.put("id", param.get("id"));
-                              //   map.put("namespace", field.split("\\.")[0]);
-                              //   map.put("sqlid", field.split("\\.")[1]);
-                               //  if(commentObj.getJSONObject("link")!=null)
-                              //   {
-                               //      map.put("link", getLinkInfo(commentObj.getJSONObject("link"), field, desFile, dynamicReportPath));
-                               //  }
-                               //  if(commentObj.getString("join")!=null)
-                               //  {
-                                //     String joinValue = commentObj.getString("join");
-                                //     map.put("joinkey", getFieldInfo(joinValue.split("=")[0],"out").get("id"));
-                                // }
+                                 param = getFieldInfo(field, "out");
+                                 map.put("type", func.split("\\.")[1]);
+                                 map.put("id", param.get("id"));
+                                 map.put("namespace", field.split("\\.")[0]);
+                                 map.put("sqlid", field.split("\\.")[1]);
+                                if(commentObj.getJSONObject("link")!=null)
+                                {
+                                    map.put("link", getLinkInfo(commentObj.getJSONObject("link"), field, desFile, dynamicReportPath));
+                                }
+                                if(commentObj.getString("join")!=null)
+                                {
+                                    String joinValue = commentObj.getString("join");
+                                     map.put("joinkey", getFieldInfo(joinValue.split("=")[0],"out").get("id"));
+                                 }
                                  outCell.add(map);
                              }*/
                              inCell.add(map);
                          }
-
                          //当前单元格为合并单元格时,需要取其合并的单元格数,以便下一个批准单元格能准确读获取到它的坐标
                          blankColNum+=getCellCombineColNum(cell,combineCells);
                      }
@@ -781,7 +785,7 @@ public class XSSFExcelToHtmlReact
              }
          }
          report.setInCell(inCell);
-         report.setOutCell(outCell);
+         //report.setOutCell(outCell);
          return report;
      }
      //固定table宽度

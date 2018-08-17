@@ -1,11 +1,8 @@
 package root.form.controller;
 
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URLDecoder;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
@@ -566,25 +563,30 @@ public class TemplateController extends BaseControl {
      * @return
      */
     @RequestMapping(value = "/createHtmlForReact/{taskId}", produces = "text/plain;charset=UTF-8")
-    public String createHtmlForReact(@PathVariable("taskId") Integer taskId) {
+    public String createHtmlForReact(@PathVariable("taskId") Integer taskId,HttpServletRequest request) {
+        String userInfo = request.getHeader("credentials");
+        JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
         SqlSession session = DbFactory.Open(DbFactory.FORM);
-
-
         Map<String, Object> paramsone = new HashMap<>();
         paramsone.put("taskId", taskId);
         //查询模板关联表
         Map<String, Object> table_id = session.selectOne("dataCollect.getFrmTableByTaskId", paramsone);
-
-
         Map<String, Object> params = new HashMap<>();
         params.put("tableId", table_id.get("table_id"));
         //查询模板关联表
         Map<String, Object> tables = session.selectOne("dataCollect.getFrmTable", params);
         //查询字段描述
         Object tid = tables.get("table_id");
+        Object tName = tables.get("table_name");
+        //获取已经填报的数据
+        String selectTab=" select * from `"+tName +"` where create_by='"+obj2.get("userCode").toString()+"'";
+        List<Map<String, Object>> dataList = session.selectList("dataCollect.getTableData", selectTab);
+
         List<Map<String, Object>> fieldList = session.selectList("dataCollect.getTableFieldDesc", tid);
         //查询模板文件
         Map<String, Object> templateInfo = session.selectOne("dataCollect.getTemplate", tables.get("template_id"));
+        //关闭连接
+        session.close();
         String templatePath = (String) templateInfo.get("template_path");
         XSSFExcelToHtmlReact t = new XSSFExcelToHtmlReact();
         File templateFile = new File(templatePath);
@@ -630,18 +632,23 @@ public class TemplateController extends BaseControl {
                 }
                 if (isBlank && i < trs.size() - 1) tr.remove();
             }
+            if(dataList.size()>0){
+                Element tr =  trs.get(trs.size()-1);
+                Elements tds = tr.children();
+
+            }
 
            int leng=fieldList.size();
            /*  String strs="<tr><td></td>";
             for(int i=0;i<leng;i++){
                 strs=strs+"<td><input type='text' name='"+fieldList.get(i).get("field_name")+"'style='width: 100px' value='' /></td>";
             }*/
-            String btn="<div style='padding-top:10px;'><td align=\"center\" colspan=\"'"+leng+"'\"><input type=\"button\" name=\"insert\"  value=\"增加一行\" style=\"width:80px\" " +
+            String btn="<div style='padding-top:10px;'><input type=\"button\" name=\"insert\"  value=\"增加一行\" style=\"width:80px\" " +
                     " onclick=\"addTableTr()\" />&nbsp&nbsp\n" +
-                                              " <input type=\"button\"  value=\" 保    存 \"  style=\"width:80px\"  onclick=\"GetValue()\" /></td></div>";
-
+                                              " <input type=\"button\"  value=\" 保    存 \"  style=\"width:80px\"  onclick=\"GetValue()\" />" +
+                    "<input type='hidden' id='fieldLength' value='"+leng+"'></div>";
             table3.after(btn);
-           Object obj=dom.html();
+            Object obj=dom.html();
             map3.put("taskInfo",obj);
         } catch (IOException e){
             e.printStackTrace();
@@ -790,14 +797,60 @@ public class TemplateController extends BaseControl {
         String userInfo = request.getHeader("credentials");
         JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
         JSONObject obj3 = (JSONObject) JSON.parse(taskjson);
-        //String tableName=obj3.get("tableName").toString();
+
+        String userId=obj3.get("userId").toString();
+        String taskId = obj3.get("taskId").toString();
         List<Object> jsonArray= (List<Object>) obj3.get("dataList");
+        //insert into +表名（表中的字段，，）values（字段所对应的记录，，)(字段所对应的记录);
+        String tableName="";//表名
+        String valus=""; //执行值
+        String fields=""; //列名
+        boolean flag=true;
         for (int i=0;i<jsonArray.size();i++){
             List<String> l= (List<String>) jsonArray.get(i);
+            String valu="";
             for(int j=0;j<l.size();j++){
-                String d=l.get(j);
+                String comment=l.get(j);
+                try {
+                    comment=URLDecoder.decode(comment, "UTF-8");//解码
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                //进行值拆解 格式为 [表名.列名:值]
+                if(null!=comment && !"".equals(comment)){
+                    //分解字符串
+                    String arr[]=comment.split("\\:");
+                    String val="";
+                    //获取表名
+                    String arr2[]=arr[0].split("\\.");
+                    if(null==tableName || "".equals(tableName)){
+                        tableName =arr2[0];
+                    }
+                    //获取列名，只有第一个循环进行拼接
+                    if(flag) {
+                        fields = fields + "," + arr2[1];
+                    }
+                    //获取值
+                    if(arr.length>1) {
+                        val = arr[1];
+                    }
+                    valu=valu+",'"+ val+"'";
+                }
             }
+            flag=false;
+            //将值进行组装  values(1),(2);
+            valu=valu.substring(1,valu.length());
+            valus=valus+",("+valu+",'"+taskId+"','"+userId+"',sysdate())";
         }
+        //生成sql语句，可以一次性执行多条数据保存
+        fields=fields.substring(1,fields.length());
+        valus=valus.substring(1,valus.length());
+        String sql="insert into "+tableName+ " ("+fields+",task_id,create_by,create_time) values "+valus;
+        System.out.println(sql);
+        //进行插入数据
+        SqlSession session = DbFactory.Open(DbFactory.FORM);
+        session.selectOne("dataCollect.insetTaskInfo", sql);
+
         HashMap<String, Object> map2 = new HashMap<String, Object>();
         Map<String, Object> map3 = new HashMap<String, Object>();
         map2.put("msg", "查询成功");

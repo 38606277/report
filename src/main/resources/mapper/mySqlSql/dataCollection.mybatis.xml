@@ -154,5 +154,13 @@
     <select id="getTaskUserInfoByUserId" parameterType="map" resultType="Map">
         select * from frm_form_task_user tu where 1=1 and tu.task_id=#{taskId} and tu.user_id=#{userId}
     </select>
+    <!--保存填报值-->
+    <select id="insetTaskInfo" parameterType="String" resultType="Map">
+      ${value}
+    </select>
+    <!-- 根据userID获取已经填报的数据-->
+    <select id="getTableData" parameterType="String" resultType="Map">
+      ${value}
+    </select>
 
 </mapper>
