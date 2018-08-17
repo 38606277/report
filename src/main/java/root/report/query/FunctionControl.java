@@ -7,6 +7,8 @@ import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import root.configure.AppConstants;
 import root.report.common.RO;
 import root.report.db.DbFactory;
+import root.report.service.FunctionService;
 import root.report.util.XmlUtil;
 
 import java.io.File;
@@ -35,6 +38,9 @@ import java.util.*;
 public class FunctionControl extends RO{
 
 	private static Logger log = Logger.getLogger(FunctionControl.class);
+
+	@Autowired
+	private FunctionService functionService;
 
 	@RequestMapping(value = "/getFunctionClass", produces = "text/plain;charset=UTF-8")
 	public String getFunctionClass() {
@@ -179,6 +185,7 @@ public class FunctionControl extends RO{
 	@RequestMapping(value = "/saveUserSql", produces = "text/plain;charset=UTF-8")
     public String saveUserSql(@RequestBody String pJson)
     {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
         	String namespace = jsonObject.getString("namespace");
@@ -223,6 +230,9 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
+            //
+			functionService.insertRecordsToFunc(jsonObject,sqlSession);
+
             //重置该DB连接
             DbFactory.init(commonObj.getString("db"));
         }catch (Exception e){
@@ -231,14 +241,28 @@ public class FunctionControl extends RO{
 			while((message = cause.getMessage())==null){
 				cause = cause.getCause();
 			}
+
 			return ExceptionMsg(message);
-        }
+        }finally {
+            try {
+                sqlSession.getConnection().setAutoCommit(true);
+            }catch(Exception e) {
+                Throwable cause = e;
+                String message = null;
+                while((message = cause.getMessage())==null){
+                    cause = cause.getCause();
+                }
+                return ExceptionMsg(message);
+            }
+		}
+
         return SuccessMsg("新增报表成功",null);
     }
 
 	@RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
     public String modifyUserSql(@RequestBody String pJson)
     {
+		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
             String namespace = jsonObject.getString("namespace");
@@ -266,6 +290,21 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
+
+            // 先查询有没有记录
+			HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
+			selectFuncNameMap.put("name",jsonObject.getString("id"));
+			Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
+			String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
+			if(StringUtils.isNotBlank(funcIdStr)){
+				// 不为空 ，先删除记录
+				int funcId = Integer.parseInt(funcIdStr);
+				functionService.deleteFunctionIn(funcId);
+				functionService.deleteFunctionOut(funcId);
+				functionService.deleteFunctionName(funcId);
+			}
+			functionService.insertRecordsToFunc(jsonObject,sqlSession);
+
             DbFactory.init(commonObj.getString("db"));
         }catch (Exception e){
 			Throwable cause = e;
@@ -274,7 +313,18 @@ public class FunctionControl extends RO{
 				cause = cause.getCause();
 			}
 			return ExceptionMsg(message);
-        }
+        }finally {
+			try {
+				sqlSession.getConnection().setAutoCommit(true);
+			}catch(Exception e) {
+				Throwable cause = e;
+				String message = null;
+				while((message = cause.getMessage())==null){
+					cause = cause.getCause();
+				}
+				return ExceptionMsg(message);
+			}
+		}
         return SuccessMsg("修改报表成功",null);
     }
 	//删除报表
@@ -298,6 +348,19 @@ public class FunctionControl extends RO{
 			newObj.put("namespace", namespace);
 			newObj.put("sqlid", sqlId);
 
+			// 先查询有没有记录
+			HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
+			selectFuncNameMap.put("name",jsonObject.getString("id"));
+			Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
+			String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
+			if(StringUtils.isNotBlank(funcIdStr)){
+				// 不为空 ，先删除记录
+				int funcId = Integer.parseInt(funcIdStr);
+				functionService.deleteFunctionIn(funcId);
+				functionService.deleteFunctionOut(funcId);
+				functionService.deleteFunctionName(funcId);
+			}
+
 			JSONObject selectObj = JSONObject.parseObject(this.qryFunctionDetail(newObj.toJSONString()));
 			DbFactory.init(selectObj.getJSONObject("comment").getString("db"));
 
@@ -312,6 +375,8 @@ public class FunctionControl extends RO{
 			writer.write(userDoc);
 			writer.flush();
 			writer.close();
+
+
 		}
 		catch (Exception e)
 		{

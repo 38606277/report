@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="function">
+
+    <!--查我函数名称-->
+    <select id="getFunctionName" parameterType="Map" resultType="Map">
+
+		SELECT fn.func_id,fn.func_class,fn.func_name,
+			fn.func_desc,fn.func_type,fn.func_file,
+			fn.func_url
+		FROM func_name fn
+		WHERE fn.func_name LIKE '${name}'
+
+    </select>
+
+    <insert id="addFunctionName" parameterType="Map">
+
+		INSERT INTO func_name(func_class,func_name,func_desc,func_type,func_file,func_url)
+		VALUES ('${class}', '${name}', '${desc}', '${type}',
+		<if  test="file == null">NULL</if>
+		<if  test="file != null">'${file}'</if>
+		,
+		<if  test="url == null">NULL</if>
+		<if  test="url != null">'${url}'</if>
+		)
+
+    </insert>
+
+    <!--删除函数名称-->
+    <delete id="deleteFunctionName" parameterType="int">
+
+		delete from  func_name
+		where func_id=#{func_id}
+
+    </delete>
+
+    <!--插入数据到函数输入参数表-->
+    <insert id="addFunctionIn" parameterType="Map">
+		INSERT INTO func_in
+		(func_id,in_id,in_name,datatype,dict,validate,default_value,isformula)
+		VALUES (
+		<if  test="func_id != null">#{func_id,jdbcType=INTEGER}</if>,
+		'${in_id}', '${in_name}', '${datatype}','${dict}',
+		<if  test="validate == null">NULL</if>
+		<if  test="validate != null">'${validate}'</if>
+		,'${default_value}','${isformula}')
+    </insert>
+
+    <!--删除函数输入参数表数据-->
+    <delete id="deleteFunctionIn" parameterType="int">
+
+		delete from  func_in
+		where func_id=#{func_id}
+
+    </delete>
+
+    <!--查询函数输出参数表-->
+    <insert id="addFunctionOut" parameterType="Map">
+
+		INSERT INTO func_out
+		(func_id,out_id,out_name,link)
+		VALUES (
+
+		<if  test="func_id != null">#{func_id,jdbcType=INTEGER}</if>,
+		'${out_id}', '${out_name}', '${link}'
+
+		)
+
+    </insert>
+
+    <!--查询函数输出参数表-->
+    <delete id="deleteFunctionOut" parameterType="int">
+
+		delete from  func_out
+		where func_id=#{func_id}
+
+    </delete>
+</mapper>
