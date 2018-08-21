@@ -7,6 +7,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.github.pagehelper.util.StringUtil;
 
 import org.apache.commons.io.FileUtils;
@@ -632,12 +633,34 @@ public class TemplateController extends BaseControl {
                 }
                 if (isBlank && i < trs.size() - 1) tr.remove();
             }
+            int oldLen=trs.size() - 1;
+            int length=trs.size();
+            Element oldTr = trs.get(oldLen);
+            List<Element> trList = new ArrayList<>();
             if(dataList.size()>0){
-                Element tr =  trs.get(trs.size()-1);
-                Elements tds = tr.children();
-
+                for(int d=0;d<dataList.size();d++) {
+                    int newLen=length+d;
+                    trs.add(newLen,oldTr.clone());
+                    Element newTr =trs.get(trs.size()-1);
+                    Elements newTd = newTr.children();
+                    newTr.attr("id","del"+(newLen+1));
+                    for (int jj = 0; jj < newTd.size(); jj++) {
+                        for(int k=0;k<fieldList.size();k++) {
+                            if (!newTd.get(jj).getElementsByClass(fieldList.get(k).get("field_name").toString()).isEmpty()) {
+                                newTd.get(jj).children().attr("value", dataList.get(d).get(fieldList.get(k).get("field_name").toString())==null?"":dataList.get(d).get(fieldList.get(k).get("field_name").toString()).toString());
+                                break;
+                            }
+                        }
+                    }
+                    newTd.get(newTd.size()-1).children().get(0).attr("value",dataList.get(d).get("_id").toString());
+                    newTd.get(newTd.size()-1).children().get(1).attr("onclick","deletetr(this,'"+dataList.get(d).get("_id").toString()+"')");
+                    trList.add(newTr);
+                }
+                List<Element> trListnew =  dom.select("div>table>tr");
+                trListnew.addAll(trList);
+                els.addAll(oldLen,trList);
+                els.forEach(e -> table.appendChild(e));
             }
-
            int leng=fieldList.size();
            /*  String strs="<tr><td></td>";
             for(int i=0;i<leng;i++){
@@ -798,8 +821,10 @@ public class TemplateController extends BaseControl {
         JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
         JSONObject obj3 = (JSONObject) JSON.parse(taskjson);
 
+        SqlSession session = DbFactory.Open(DbFactory.FORM);
         String userId=obj3.get("userId").toString();
         String taskId = obj3.get("taskId").toString();
+        String delId= obj3.getString("delId");
         List<Object> jsonArray= (List<Object>) obj3.get("dataList");
         //insert into +表名（表中的字段，，）values（字段所对应的记录，，)(字段所对应的记录);
         String tableName="";//表名
@@ -808,49 +833,83 @@ public class TemplateController extends BaseControl {
         boolean flag=true;
         for (int i=0;i<jsonArray.size();i++){
             List<String> l= (List<String>) jsonArray.get(i);
-            String valu="";
-            for(int j=0;j<l.size();j++){
-                String comment=l.get(j);
+            String values="";
+            boolean isUpdate=false;
+            String forupdate="";
+            String forupdatewhere="";
+            for(int j=l.size()-1;j>=0;j--){
+               String lastObject=l.get(j);
                 try {
-                    comment=URLDecoder.decode(comment, "UTF-8");//解码
+                    lastObject=URLDecoder.decode(lastObject, "UTF-8");//解码
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
                 //进行值拆解 格式为 [表名.列名:值]
-                if(null!=comment && !"".equals(comment)){
+                if(null!=lastObject && !"".equals(lastObject)){
                     //分解字符串
-                    String arr[]=comment.split("\\:");
-                    String val="";
+                    String arr[]=lastObject.split("\\:");
                     //获取表名
-                    String arr2[]=arr[0].split("\\.");
+                    String tableColumns[]=arr[0].split("\\.");
                     if(null==tableName || "".equals(tableName)){
-                        tableName =arr2[0];
-                    }
-                    //获取列名，只有第一个循环进行拼接
-                    if(flag) {
-                        fields = fields + "," + arr2[1];
+                        tableName =tableColumns[0];
                     }
                     //获取值
+                    String val="";
                     if(arr.length>1) {
                         val = arr[1];
                     }
-                    valu=valu+",'"+ val+"'";
+                    if(tableColumns[1].equals("_id") && !"".equals(val)) {
+                        isUpdate = true;
+                        forupdatewhere=" where "+tableColumns[1]+"='"+val+"'";
+                    }
+                    if(isUpdate){
+                        if(!tableColumns[1].equals("_id")) {
+                            forupdate = forupdate + "," + tableColumns[1] + "='"+val+"'";
+                        }
+                    }else{
+                        //获取列名，只有第一个循环进行拼接
+                        if (flag && !tableColumns[1].equals("_id")) {
+                            fields = fields + "," + tableColumns[1];
+                        }
+                        if(!tableColumns[1].equals("_id")) {
+                            values = values + ",'" + val + "'";
+                        }
+                    }
                 }
             }
-            flag=false;
-            //将值进行组装  values(1),(2);
-            valu=valu.substring(1,valu.length());
-            valus=valus+",("+valu+",'"+taskId+"','"+userId+"',sysdate())";
+
+            if(isUpdate){
+                forupdate=forupdate.substring(1,forupdate.length());
+                String up="update "+tableName+" set "+forupdate+forupdatewhere;
+                session.selectOne("dataCollect.insetTaskInfo", up);
+            }else {
+                flag=false;
+                //将值进行组装  values(1),(2);
+                values = values.substring(1, values.length());
+                valus = valus + ",(" + values + ",'" + taskId + "','" + userId + "',sysdate())";
+            }
         }
         //生成sql语句，可以一次性执行多条数据保存
-        fields=fields.substring(1,fields.length());
-        valus=valus.substring(1,valus.length());
-        String sql="insert into "+tableName+ " ("+fields+",task_id,create_by,create_time) values "+valus;
-        System.out.println(sql);
-        //进行插入数据
-        SqlSession session = DbFactory.Open(DbFactory.FORM);
-        session.selectOne("dataCollect.insetTaskInfo", sql);
-
+        if(!"".equals(fields)) {
+            fields = fields.substring(1, fields.length());
+            valus = valus.substring(1, valus.length());
+            String insetsql = "insert into " + tableName + " (" + fields + ",task_id,create_by,create_time) values " + valus;
+           // System.out.println(insetsql);
+            //进行插入数据
+            session.selectOne("dataCollect.insetTaskInfo", insetsql);
+        }
+        if(delId.trim().length()>0){
+            delId=delId.trim();
+            String delarr[]=delId.split(",");
+            String delsql="delete from "+  tableName + " where _id in (";
+            String delid="";
+            for(int h=0;h<delarr.length;h++){
+                delid=delid+",'"+delarr[h]+"'";
+            }
+            delid = delid.substring(1, delid.length());
+            delsql=delsql+delid+")";
+            session.selectOne("dataCollect.insetTaskInfo", delsql);
+        }
         HashMap<String, Object> map2 = new HashMap<String, Object>();
         Map<String, Object> map3 = new HashMap<String, Object>();
         map2.put("msg", "查询成功");

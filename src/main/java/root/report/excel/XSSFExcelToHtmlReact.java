@@ -128,7 +128,7 @@ public class XSSFExcelToHtmlReact
                 hdom.select("body>table>thead>tr>th").empty();
                 hdom.select("body>table>tbody tr>th").empty();
                 //添加工具条
-              //  addToolBar(hdom);
+                //addToolBar(hdom);
                 //获取批注内容
                 ReportPackage report = getInputOutputParams(hdom,workBook, desFile, dynamicReportPath);
         
@@ -153,9 +153,9 @@ public class XSSFExcelToHtmlReact
 
                     String height = hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").attr("class");
                     hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")>td:eq("+(y_index-blankColNum+1)+")").get(0).empty()
-                        .append("<input class=\""+height+"\" type=\"text\"  name=\""+map.get("table")+"."+map.get("fields")+"\"></input>");
+                        .append("<input class=\""+height+"\" type=\"text\"  name=\""+map.get("table")+"."+map.get("fields")+"\"></input>").attr("class",map.get("fields").toString());
                     if(kk==report.getInCell().size()){
-                        hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").append("<td><button type='button' class='btn btn-danger btn-xs' id='delete' onclick='deletetr(this)' >删除</button></td>");
+                        hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").append("<td><input type='hidden' name='"+map.get("table")+"._id'></input><button type='button' class='btn btn-danger btn-xs' id='delete' onclick='deletetr(this,null)' >删除</button></td>");
                       //给tr加一个id
                         Elements trs = hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").attr("id","del"+x_index);
                     }
@@ -187,8 +187,8 @@ public class XSSFExcelToHtmlReact
              //   js.append("}\n");
                 
                // hdom.select("body").append("<script type=\"text/javascript\" src=\""+relativePath+"static/jquery.min.js\" ></script>");
-              //  hdom.select("body").append("<script type=\"text/javascript\" src=\""+relativePath+"static/spin.min.js\" ></script>");
-              //  hdom.select("body").append("<script type=\"text/javascript\" src=\""+relativePath+"static/common.js\" ></script>");
+                //hdom.select("body").append("<script type=\"text/javascript\" src=\""+relativePath+"static/spin.min.js\" ></script>");
+               // hdom.select("body").append("<script type=\"text/javascript\" src=\""+relativePath+"static/common.js\" ></script>");
               //  hdom.select("body").append("<script type=\"text/javascript\">\n"+js.toString()+"</script>");
                 fo = new FileOutputStream(desFile,false);
                 os = new OutputStreamWriter(fo, "utf-8");  
