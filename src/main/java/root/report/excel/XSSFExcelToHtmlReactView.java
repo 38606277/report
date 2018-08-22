@@ -26,9 +26,9 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.*;
 
-public class XSSFExcelToHtmlReact
+public class XSSFExcelToHtmlReactView
 {
-    private static final Logger log = Logger.getLogger(XSSFExcelToHtmlReact.class);
+    private static final Logger log = Logger.getLogger(XSSFExcelToHtmlReactView.class);
     
     public boolean convertToStaticHtml(File sourceFile, File desFile)
     {
@@ -130,7 +130,7 @@ public class XSSFExcelToHtmlReact
                 //添加工具条
                 //addToolBar(hdom);
                 //获取批注内容
-                ReportPackage report = getInputOutputParams(hdom,workBook, desFile, dynamicReportPath);
+               // ReportPackage report = getInputOutputParams(hdom,workBook, desFile, dynamicReportPath);
         
                 int blankRowNum = 0;
                 int blankColNum = 0;
@@ -138,30 +138,29 @@ public class XSSFExcelToHtmlReact
                 int y_index = 0;
                 //增加查询参数
                 int kk=0;
-                for (Map<String, Object> map:report.getInCell())
-                {
-                    kk++;
-                    //对于主从查询,查询参数须剔重
-                    if(map.get("name")!=null){
-                        continue;
-                    }
-                    blankRowNum = Integer.valueOf(map.get("blankRowNum").toString());
-                    blankColNum = Integer.valueOf(map.get("blankColNum").toString());
-                    x_index = Integer.valueOf(map.get("rowIndex").toString());
-                    y_index = Integer.valueOf(map.get("columnIndex").toString());
-                    //取输入框当前行的行高样式
-
-                    String height = hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").attr("class");
-                    hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")>td:eq("+(y_index-blankColNum+1)+")").get(0).empty()
-                        .append("<input class=\""+height+"\" type=\"text\"  name=\""+map.get("table")+"."+map.get("fields")+"\"></input>").attr("class",map.get("fields").toString());
-                    if(kk==report.getInCell().size()){
-                        hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").append("<td><input type='hidden' name='"+map.get("table")+"._id'></input>" +
-                                "<button type='button' class='btn btn-danger btn-xs' id='delete' onclick='deletetr(this,null)' >删除</button></td>").attr("id","del"+x_index);
-                      //给tr加一个id
-                       // Elements trs = hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").attr("id","del"+x_index);
-                    }
-
-                }
+//                for (Map<String, Object> map:report.getInCell())
+//                {
+//                    kk++;
+//                    //对于主从查询,查询参数须剔重
+//                    if(map.get("name")!=null){
+//                        continue;
+//                    }
+//                    blankRowNum = Integer.valueOf(map.get("blankRowNum").toString());
+//                    blankColNum = Integer.valueOf(map.get("blankColNum").toString());
+//                    x_index = Integer.valueOf(map.get("rowIndex").toString());
+//                    y_index = Integer.valueOf(map.get("columnIndex").toString());
+//                    //取输入框当前行的行高样式
+//
+//                    String height = hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").attr("class");
+//                    hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")>td:eq("+(y_index-blankColNum+1)+")").get(0).empty()
+//                        .append("<input class=\""+height+"\" type=\"text\"  name=\""+map.get("table")+"."+map.get("fields")+"\"></input>").attr("class",map.get("fields").toString());
+//                    if(kk==report.getInCell().size()){
+//                        hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").append("<td><input type='hidden' name='"+map.get("table")+"._id'></input><button type='button' class='btn btn-danger btn-xs' id='delete' onclick='deletetr(this,null)' >删除</button></td>");
+//                      //给tr加一个id
+//                        Elements trs = hdom.select("body>table>tbody>tr:eq("+(x_index-blankRowNum)+")").attr("id","del"+x_index);
+//                    }
+//
+//                }
                 //当为1时标志已经执行某个操作
                 int flag = 0;
                 //增加输出参数

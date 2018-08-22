@@ -145,9 +145,19 @@
        from frm_form_task_user u,frm_form_task t where u.task_id=t.task_id and u.commit_date is null and t.task_state='1'
         and u.user_id=#{userId} limit #{startIndex},#{perPage}
     </select>
+    <select id="getMytaskListByUserId" parameterType="map" resultType="Map">
+       select u.user_id as userid,t.task_id as taskid,t.task_name as taskname,date_format(t.start_date,'%Y-%m-%d') as startdate,date_format(t.end_date,'%Y-%m-%d') as enddate,t.task_state as taskstate
+       from frm_form_task_user u,frm_form_task t where u.task_id=t.task_id and u.commit_date is not null and t.task_state='1'
+        and u.user_id=#{userId} limit #{startIndex},#{perPage}
+    </select>
+
 
     <update id="updateReportTaskUserBytaskIdUserId" parameterType="map" >
         update frm_form_task_user tu set tu.receive_date=sysdate() where tu.user_id=#{userId} and tu.task_id=#{taskId}
+    </update>
+
+    <update id="commitReportTaskUserBytaskIdUserId" parameterType="map" >
+        update frm_form_task_user tu set tu.commit_date=sysdate() where tu.user_id=#{userId} and tu.task_id=#{taskId}
     </update>
 
     <!--根据用户id、任务id 查询任务用户-->

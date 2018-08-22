@@ -6,13 +6,7 @@ import java.net.URLDecoder;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
-
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.github.pagehelper.util.StringUtil;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.SqlSession;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
@@ -20,35 +14,22 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-
 import root.configure.AppConstants;
 import root.form.constant.ColumnType;
 import root.report.common.BaseControl;
 import root.report.db.DbFactory;
 import root.report.excel.XSSFExcelToHtml;
 import root.report.excel.XSSFExcelToHtmlReact;
+import root.report.excel.XSSFExcelToHtmlReactView;
 import root.report.sys.SysContext;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS.required;
 
 
 @RestController
@@ -568,6 +549,16 @@ public class TemplateController extends BaseControl {
         String userInfo = request.getHeader("credentials");
         JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
         SqlSession session = DbFactory.Open(DbFactory.FORM);
+
+        Map<String,Object> map =new HashMap<String,Object>();
+        map.put("userId",obj2.getString("userId"));
+        map.put("taskId",taskId);
+
+        Map  taskInfo =session.selectOne("dataCollect.getTaskUserInfoByUserId",map);
+        if(null!=taskInfo && (null==taskInfo.get("receive_date") || "".equals(taskInfo.get("receive_date")))){
+            session.update("dataCollect.updateReportTaskUserBytaskIdUserId", map);
+        }
+
         Map<String, Object> paramsone = new HashMap<>();
         paramsone.put("taskId", taskId);
         //查询模板关联表
@@ -668,7 +659,8 @@ public class TemplateController extends BaseControl {
             }*/
             String btn="<div style='padding-top:10px;'><input type=\"button\" name=\"insert\"  value=\"增加一行\" style=\"width:80px\" " +
                     " onclick=\"addTableTr()\" />&nbsp&nbsp\n" +
-                                              " <input type=\"button\"  value=\" 保    存 \"  style=\"width:80px\"  onclick=\"GetValue()\" />" +
+                                              " <input type=\"button\"  value=\" 保    存 \"  style=\"width:80px\"  onclick=\"GetValue(false)\" />&nbsp;&nbsp;" +
+                    "<input type=\"button\"  value=\" 提    交 \"  style=\"width:80px\"  onclick=\"GetValue(true)\" />" +
                     "<input type='hidden' id='fieldLength' value='"+leng+"'></div>";
             table3.after(btn);
             Object obj=dom.html();
@@ -782,6 +774,35 @@ public class TemplateController extends BaseControl {
         return JSON.toJSONString(map2);
     }
 
+    @RequestMapping(value = "/getMyTaskListByUserId", produces = "text/plain;charset=UTF-8")
+    public String getMyTaskListByUserId(@RequestBody String pJson,HttpServletRequest request) {
+        JSONObject obj = (JSONObject) JSON.parse(pJson);
+        //获取当前登录人所有信息
+        String  userInfo=request.getHeader("credentials");
+        JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
+
+        SqlSession session = DbFactory.Open(DbFactory.FORM);
+        //判断当前用户是否任务的创建人
+        Map<String,Object> map2 =new HashMap<String,Object>();
+        Map<String,Object> map3 =new HashMap<String,Object>();
+        try{
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("userId", obj2.getString("userId"));
+            map.put("startIndex", Integer.valueOf(obj.getString("startIndex")));
+            map.put("perPage", Integer.valueOf(obj.getString("perPage")));
+            List<Map>  tasklist= session.selectList("dataCollect.getMytaskListByUserId", map);
+            map3.put("list",tasklist);
+            map2.put("msg","查询成功");
+            map2.put("data",map3);
+            map2.put("status",0);
+        }catch (Exception e){
+            map3.put("list",null);
+            map2.put("msg","查询失败");
+            map2.put("data",map3);
+            map2.put("status",10);
+        }
+        return JSON.toJSONString(map2);
+    }
     /**
      * 查询任务及任务用户信息
      *
@@ -825,6 +846,7 @@ public class TemplateController extends BaseControl {
         String userId=obj3.get("userId").toString();
         String taskId = obj3.get("taskId").toString();
         String delId= obj3.getString("delId");
+        String isSubmit = obj3.getString("isSubmit");
         List<Object> jsonArray= (List<Object>) obj3.get("dataList");
         //insert into +表名（表中的字段，，）values（字段所对应的记录，，)(字段所对应的记录);
         String tableName="";//表名
@@ -910,6 +932,12 @@ public class TemplateController extends BaseControl {
             delsql=delsql+delid+")";
             session.selectOne("dataCollect.insetTaskInfo", delsql);
         }
+        if("true".equals(isSubmit)){
+            Map<String,Object> map=new HashMap<String,Object>();
+            map.put("userId",userId);
+            map.put("taskId",taskId);
+            session.update("dataCollect.commitReportTaskUserBytaskIdUserId", map);
+        }
         HashMap<String, Object> map2 = new HashMap<String, Object>();
         Map<String, Object> map3 = new HashMap<String, Object>();
         map2.put("msg", "查询成功");
@@ -918,4 +946,91 @@ public class TemplateController extends BaseControl {
         return JSON.toJSONString(map2);
     }
 
+    /**
+     * 生成绑定vue指令及相关代码的html文件
+     *
+     * @param taskId
+     * @return
+     */
+    @RequestMapping(value = "/viewHtmlForReact/{taskId}", produces = "text/plain;charset=UTF-8")
+    public String viewHtmlForReact(@PathVariable("taskId") Integer taskId,HttpServletRequest request) {
+        String userInfo = request.getHeader("credentials");
+        JSONObject obj2 = (JSONObject) JSON.parse(userInfo);
+        SqlSession session = DbFactory.Open(DbFactory.FORM);
+        Map<String, Object> paramsone = new HashMap<>();
+        paramsone.put("taskId", taskId);
+        //查询模板关联表
+        Map<String, Object> table_id = session.selectOne("dataCollect.getFrmTableByTaskId", paramsone);
+        Map<String, Object> params = new HashMap<>();
+        params.put("tableId", table_id.get("table_id"));
+        //查询模板关联表
+        Map<String, Object> tables = session.selectOne("dataCollect.getFrmTable", params);
+        //查询字段描述
+        Object tid = tables.get("table_id");
+        Object tName = tables.get("table_name");
+        //获取已经填报的数据
+        String selectTab=" select * from `"+tName +"` where create_by='"+obj2.get("userCode").toString()+"'";
+        List<Map<String, Object>> dataList = session.selectList("dataCollect.getTableData", selectTab);
+
+        List<Map<String, Object>> fieldList = session.selectList("dataCollect.getTableFieldDesc", tid);
+        //查询模板文件
+        Map<String, Object> templateInfo = session.selectOne("dataCollect.getTemplate", tables.get("template_id"));
+        //关闭连接
+        session.close();
+        String templatePath = (String) templateInfo.get("template_path");
+        XSSFExcelToHtmlReactView t = new XSSFExcelToHtmlReactView();
+        File templateFile = new File(templatePath);
+        //html文件创建位置
+        File htmlFile = new File(AppConstants.getStaticReportPath() + File.separator + tid + ".html");
+
+        boolean isCreate = t.convertToDynamicHtml(templateFile, htmlFile,AppConstants.getStaticReportPath());
+        if(!isCreate) throw new RuntimeException("生成html文件失败");
+
+        Map<String,Object> map2 =new HashMap<String,Object>();
+        Map<String,Object> map3 =new HashMap<String,Object>();
+        try {
+            Document dom = Jsoup.parse(htmlFile, "UTF-8");
+            //去掉无用标签字符
+            dom.select("h2").remove();
+            dom.select("body>table>thead").remove();
+            dom.select("tbody>tr>th").remove();
+            Elements els = dom.select("table>tbody>tr");
+            dom.select("table>tbody").first().remove();
+            Element table = dom.select("table").first();
+            table.attr("id","tabid");
+            els.forEach(e -> table.appendChild(e));
+            //在head标签中追加script标签
+            Element header = dom.select("head").get(0);
+
+            //在table外面增加div
+            Attributes attrs = new Attributes();
+            attrs.put("id", "app");
+            Element div = new Element(Tag.valueOf("div"), "", attrs);
+            div.appendChild(dom.select("body>table").first());
+            dom.select("body>table").remove();
+            dom.select("body").first().appendChild(div);
+            //在tr上绑定v-for指令,查找到一个空行，然后把后面的tr都删除掉
+            Elements trs = dom.select("table>tr");
+            for (int i = 0; i < trs.size(); i++) {
+                Element tr = trs.get(i);
+                Elements tds = tr.children();
+                boolean isBlank = Boolean.TRUE;
+                for (int j = 0; j < tds.size(); j++) {
+                    isBlank = isBlank && isBlank(tds.get(j).text());
+                }
+                if (isBlank && i < trs.size() - 1) tr.remove();
+            }
+
+            Object obj=dom.html();
+            map3.put("taskInfo",obj);
+            map3.put("dataList",dataList);
+            map3.put("fieldList",fieldList);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        map2.put("msg","查询成功");
+        map2.put("data",map3);
+        map2.put("status",0);
+        return JSON.toJSONString(map2);
+    }
 }
