@@ -637,8 +637,8 @@ public class TemplateController extends BaseControl {
                     newTr.attr("id","del"+(newLen+1));
                     for (int jj = 0; jj < newTd.size(); jj++) {
                         for(int k=0;k<fieldList.size();k++) {
-                            if (!newTd.get(jj).getElementsByClass(fieldList.get(k).get("field_name").toString()).isEmpty()) {
-                                newTd.get(jj).children().attr("value", dataList.get(d).get(fieldList.get(k).get("field_name").toString())==null?"":dataList.get(d).get(fieldList.get(k).get("field_name").toString()).toString());
+                            if (!newTd.get(jj).getElementsByClass(fieldList.get(k).get("field_name").toString().trim()).isEmpty()) {
+                                newTd.get(jj).children().attr("value", dataList.get(d).get(fieldList.get(k).get("field_name").toString().trim())==null?"":dataList.get(d).get(fieldList.get(k).get("field_name").toString().trim()).toString());
                                 break;
                             }
                         }
