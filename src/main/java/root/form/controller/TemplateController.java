@@ -571,7 +571,7 @@ public class TemplateController extends BaseControl {
         Object tid = tables.get("table_id");
         Object tName = tables.get("table_name");
         //获取已经填报的数据
-        String selectTab=" select * from `"+tName +"` where create_by='"+obj2.get("userCode").toString()+"'";
+        String selectTab=" select * from `"+tName +"` where create_by='"+obj2.get("userId").toString()+"'";
         List<Map<String, Object>> dataList = session.selectList("dataCollect.getTableData", selectTab);
 
         List<Map<String, Object>> fieldList = session.selectList("dataCollect.getTableFieldDesc", tid);
@@ -647,8 +647,8 @@ public class TemplateController extends BaseControl {
                     newTd.get(newTd.size()-1).children().get(1).attr("onclick","deletetr(this,'"+dataList.get(d).get("_id").toString()+"')");
                     trList.add(newTr);
                 }
-                List<Element> trListnew =  dom.select("div>table>tr");
-                trListnew.addAll(trList);
+//                List<Element> trListnew =  dom.select("div>table>tr");
+//                trListnew.addAll(trList);
                 els.addAll(oldLen,trList);
                 els.forEach(e -> table.appendChild(e));
             }
@@ -969,7 +969,7 @@ public class TemplateController extends BaseControl {
         Object tid = tables.get("table_id");
         Object tName = tables.get("table_name");
         //获取已经填报的数据
-        String selectTab=" select * from `"+tName +"` where create_by='"+obj2.get("userCode").toString()+"'";
+        String selectTab=" select * from `"+tName +"` where create_by='"+obj2.get("userId").toString()+"'";
         List<Map<String, Object>> dataList = session.selectList("dataCollect.getTableData", selectTab);
 
         List<Map<String, Object>> fieldList = session.selectList("dataCollect.getTableFieldDesc", tid);
@@ -1020,11 +1020,33 @@ public class TemplateController extends BaseControl {
                 }
                 if (isBlank && i < trs.size() - 1) tr.remove();
             }
+            int oldLen=trs.size() - 1;
+            int length=trs.size();
+            Element oldTr = trs.get(oldLen);
+            List<Element> trList = new ArrayList<>();
+            if(dataList.size()>0){
+                for(int d=0;d<dataList.size();d++) {
+                    int newLen=length+d;
+                    trs.add(newLen,oldTr.clone());
+                    Element newTr =trs.get(trs.size()-1);
+                    Elements newTd = newTr.children();
 
+                    for (int jj = 0; jj < newTd.size(); jj++) {
+                        for(int k=0;k<fieldList.size();k++) {
+                            if (!newTd.get(jj).getElementsByClass(fieldList.get(k).get("field_name").toString().trim()).isEmpty()) {
+                                newTd.get(jj).children().attr("value", dataList.get(d).get(fieldList.get(k).get("field_name").toString().trim())==null?"":dataList.get(d).get(fieldList.get(k).get("field_name").toString().trim()).toString());
+                                break;
+                            }
+                        }
+                    }
+                    trList.add(newTr);
+                }
+                els.addAll(oldLen,trList);
+                els.forEach(e -> table.appendChild(e));
+                table.select("tr").last().remove();
+            }
             Object obj=dom.html();
             map3.put("taskInfo",obj);
-            map3.put("dataList",dataList);
-            map3.put("fieldList",fieldList);
         } catch (IOException e){
             e.printStackTrace();
         }
