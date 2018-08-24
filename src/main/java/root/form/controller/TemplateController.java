@@ -757,10 +757,19 @@ public class TemplateController extends BaseControl {
         Map<String,Object> map3 =new HashMap<String,Object>();
         try{
             Map<String,Object> map = new HashMap<String,Object>();
+            int currentPage=Integer.valueOf(obj.getString("currentPage"));
+            int perPage=Integer.valueOf(obj.getString("perPage"));
+            if(1==currentPage|| 0==currentPage){
+                currentPage=0;
+            }else{
+                currentPage=(currentPage-1)*perPage;
+            }
+
             map.put("userId", obj2.getString("userId"));
+            map.put("startIndex", currentPage);
+            map.put("perPage",currentPage*perPage);
             map.put("keyword",  obj.get("keyword")==null?"":obj.getString("keyword"));
-            map.put("startIndex", Integer.valueOf(obj.getString("startIndex")));
-            map.put("perPage", Integer.valueOf(obj.getString("perPage")));
+
             List<Map>  tasklist= session.selectList("dataCollect.getMytaskByUserId", map);
             String total=session.selectOne("dataCollect.countMytaskByUserId", map);
             map3.put("list",tasklist);
@@ -795,9 +804,17 @@ public class TemplateController extends BaseControl {
         Map<String,Object> map3 =new HashMap<String,Object>();
         try{
             Map<String,Object> map = new HashMap<String,Object>();
+            int currentPage=Integer.valueOf(obj.getString("currentPage"));
+            int perPage=Integer.valueOf(obj.getString("perPage"));
+            if(1==currentPage|| 0==currentPage){
+                currentPage=0;
+            }else{
+                currentPage=(currentPage-1)*perPage;
+            }
+
             map.put("userId", obj2.getString("userId"));
-            map.put("startIndex", Integer.valueOf(obj.getString("startIndex")));
-            map.put("perPage", Integer.valueOf(obj.getString("perPage")));
+            map.put("startIndex", currentPage);
+            map.put("perPage",currentPage*perPage);
             map.put("keyword",  obj.get("keyword")==null?"":obj.getString("keyword"));
             List<Map>  tasklist= session.selectList("dataCollect.getMytaskListByUserId", map);
             String total=session.selectOne("dataCollect.countMytaskListByUserId", map);
