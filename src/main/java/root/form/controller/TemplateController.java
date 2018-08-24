@@ -774,7 +774,7 @@ public class TemplateController extends BaseControl {
             List<Map>  tasklist= session.selectList("dataCollect.getMytaskByUserId", map);
             String total=session.selectOne("dataCollect.countMytaskByUserId", map);
             map3.put("list",tasklist);
-            map3.put("total",total);
+            map3.put("total",Integer.valueOf(total));
             map2.put("msg","查询成功");
             map2.put("data",map3);
             map2.put("status",0);
@@ -821,7 +821,7 @@ public class TemplateController extends BaseControl {
             List<Map>  tasklist= session.selectList("dataCollect.getMytaskListByUserId", map);
             String total=session.selectOne("dataCollect.countMytaskListByUserId", map);
             map3.put("list",tasklist);
-            map3.put("total",total);
+            map3.put("total",Integer.valueOf(total));
             map2.put("msg","查询成功");
             map2.put("data",map3);
             map2.put("status",0);
