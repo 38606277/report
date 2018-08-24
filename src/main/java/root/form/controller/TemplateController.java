@@ -758,6 +758,7 @@ public class TemplateController extends BaseControl {
         try{
             Map<String,Object> map = new HashMap<String,Object>();
             map.put("userId", obj2.getString("userId"));
+            map.put("keyword",  obj.get("keyword")==null?"":obj.getString("keyword"));
             map.put("startIndex", Integer.valueOf(obj.getString("startIndex")));
             map.put("perPage", Integer.valueOf(obj.getString("perPage")));
             List<Map>  tasklist= session.selectList("dataCollect.getMytaskByUserId", map);
@@ -790,6 +791,7 @@ public class TemplateController extends BaseControl {
             map.put("userId", obj2.getString("userId"));
             map.put("startIndex", Integer.valueOf(obj.getString("startIndex")));
             map.put("perPage", Integer.valueOf(obj.getString("perPage")));
+            map.put("keyword",  obj.get("keyword")==null?"":obj.getString("keyword"));
             List<Map>  tasklist= session.selectList("dataCollect.getMytaskListByUserId", map);
             map3.put("list",tasklist);
             map2.put("msg","查询成功");
