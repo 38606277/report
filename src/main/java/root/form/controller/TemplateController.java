@@ -740,7 +740,7 @@ public class TemplateController extends BaseControl {
     }
     /**
      * 根据任务ID和当前用户查询他的填报数据
-     *
+     * 代办任务
      * @param pJson
      * @return
      */
@@ -762,7 +762,9 @@ public class TemplateController extends BaseControl {
             map.put("startIndex", Integer.valueOf(obj.getString("startIndex")));
             map.put("perPage", Integer.valueOf(obj.getString("perPage")));
             List<Map>  tasklist= session.selectList("dataCollect.getMytaskByUserId", map);
+            String total=session.selectOne("dataCollect.countMytaskByUserId", map);
             map3.put("list",tasklist);
+            map3.put("total",total);
             map2.put("msg","查询成功");
             map2.put("data",map3);
             map2.put("status",0);
@@ -774,7 +776,12 @@ public class TemplateController extends BaseControl {
         }
         return JSON.toJSONString(map2);
     }
-
+    /**
+     * 根据任务ID和当前用户查询他的填报数据
+     * 已办任务
+     * @param pJson
+     * @return
+     */
     @RequestMapping(value = "/getMyTaskListByUserId", produces = "text/plain;charset=UTF-8")
     public String getMyTaskListByUserId(@RequestBody String pJson,HttpServletRequest request) {
         JSONObject obj = (JSONObject) JSON.parse(pJson);
@@ -793,7 +800,9 @@ public class TemplateController extends BaseControl {
             map.put("perPage", Integer.valueOf(obj.getString("perPage")));
             map.put("keyword",  obj.get("keyword")==null?"":obj.getString("keyword"));
             List<Map>  tasklist= session.selectList("dataCollect.getMytaskListByUserId", map);
+            String total=session.selectOne("dataCollect.countMytaskListByUserId", map);
             map3.put("list",tasklist);
+            map3.put("total",total);
             map2.put("msg","查询成功");
             map2.put("data",map3);
             map2.put("status",0);
@@ -807,7 +816,6 @@ public class TemplateController extends BaseControl {
     }
     /**
      * 查询任务及任务用户信息
-     *
      * @param taskId
      * @return
      */
@@ -949,8 +957,6 @@ public class TemplateController extends BaseControl {
     }
 
     /**
-     * 生成绑定vue指令及相关代码的html文件
-     *
      * @param taskId
      * @return
      */
