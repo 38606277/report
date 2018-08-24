@@ -143,26 +143,26 @@
     <select id="getMytaskByUserId" parameterType="map" resultType="Map">
        select u.user_id as userid,t.task_id as taskid,t.task_name as taskname,date_format(t.start_date,'%Y-%m-%d') as startdate,date_format(t.end_date,'%Y-%m-%d') as enddate,t.task_state as taskstate
        from frm_form_task_user u,frm_form_task t where u.task_id=t.task_id and u.commit_date is null and t.task_state='1'
-        <if test="keyword != null">   and t.task_name like '%${keyword}%' </if>
-        and u.user_id=#{userId} limit #{startIndex},#{perPage}
+        <if test="keyword != null  and keyword!=''">   and t.task_name like '%${keyword}%' </if>  and u.user_id=#{userId}
+        limit #{startIndex},#{perPage}
     </select>
     <select id="countMytaskByUserId" parameterType="map" resultType="String">
         select count(t.task_id) as total from frm_form_task_user u,frm_form_task t where u.task_id=t.task_id and u.commit_date is null and t.task_state='1'
-        <if test="keyword != null">   and t.task_name like '%${keyword}%' </if> and u.user_id=#{userId}
+        <if test="keyword != null and keyword!=''">   and t.task_name like '%${keyword}%' </if>  and u.user_id=#{userId}
     </select>
 
     <!--根据用户id查询已办任务-->
     <select id="getMytaskListByUserId" parameterType="map" resultType="Map">
        select u.user_id as userid,t.task_id as taskid,t.task_name as taskname,date_format(t.start_date,'%Y-%m-%d') as startdate,date_format(t.end_date,'%Y-%m-%d') as enddate,t.task_state as taskstate
        from frm_form_task_user u,frm_form_task t where u.task_id=t.task_id and u.commit_date is not null and t.task_state='1'
-        <if test="keyword != null">   and t.task_name like '%${keyword}%' </if>
+        <if test="keyword != null and keyword!=''">   and t.task_name like '%${keyword}%' </if>
         and u.user_id=#{userId} limit #{startIndex},#{perPage}
     </select>
 
     <select id="countMytaskListByUserId" parameterType="map" resultType="String">
         select count(t.task_id) as total
         from frm_form_task_user u,frm_form_task t where u.task_id=t.task_id and u.commit_date is not null and t.task_state='1'
-        <if test="keyword != null">   and t.task_name like '%${keyword}%' </if>
+        <if test="keyword != null and keyword!=''">   and t.task_name like '%${keyword}%' </if>
         and u.user_id=#{userId}
     </select>
 
