@@ -176,15 +176,43 @@ public class UserController extends RO{
 			encodePwd = erp.encode(pwd);
 			obj.put("encodePwd", encodePwd);
 		}
-		catch (Exception e) 
+		catch (Exception e)
 		{
 			e.printStackTrace();
 			obj.put("encodePwd", "");
 		}
 		return JSON.toJSONString(obj);
 	}
-	
-    @RequestMapping(value = "/getUserListRows",method=RequestMethod.POST, produces = "text/plain; charset=utf-8")
+
+	/**
+	 * @param pwd 用户密码(未加密)
+	 * @return 成功返回Y 否则返回N
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(value="/encodePwdReact",method=RequestMethod.POST,produces = "text/plain;charset=UTF-8")
+	public String encodePwdReact(@RequestBody String pwd) throws UnsupportedEncodingException
+	{
+		String encodePwd = "";
+		JSONObject jsonObject = (JSONObject) JSON.parse(pwd);
+		String pwdv = jsonObject.getString("Pwd");
+		try {
+			ErpUtil erp = new ErpUtil();
+			pwdv = URLDecoder.decode(pwdv,"utf-8");
+			encodePwd = erp.encode(pwdv);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		Map<String, Object> map2 = new HashMap<String, Object>();
+		map2.put("status",0);
+		map2.put("data",encodePwd);
+		map2.put("msg","登录成功");
+		return JSON.toJSONString(map2);
+	}
+
+
+	@RequestMapping(value = "/getUserListRows",method=RequestMethod.POST, produces = "text/plain; charset=utf-8")
     public String getUserListRows(@RequestBody String pJson){
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
