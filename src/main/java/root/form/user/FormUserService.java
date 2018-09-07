@@ -161,7 +161,7 @@ public class FormUserService
         }
         map.put("startIndex", currentPage);
         map.put("perPage",perPage);
-        map.put("keyword",  obj.get("keyword")==null?"":obj.getString("keyword"));
+        map.put("userName",  obj.get("keyword")==null?"":obj.getString("keyword"));
         List<UserModel> userInfolist = DbFactory.Open(DbFactory.FORM).selectList("formUser.getUserList",map);
         String total=DbFactory.Open(DbFactory.FORM).selectOne("formUser.countUser", map);
         Map<String,Object> map2 =new HashMap<String,Object>();
