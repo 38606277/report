@@ -67,6 +67,6 @@
     </select>
     <select id="countUser" parameterType="map" resultType="String">
         select count(_id) as total  from fnd_user t  where 1=1
-        <if test="keyword != null and keyword!=''"> t.user_name like '%${userName}%' </if>
+        <if test="keyword != null and keyword!=''"> t.user_name like '%${keyword}%' </if>
     </select>
 </mapper>
