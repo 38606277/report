@@ -25,6 +25,7 @@
                case when t.isAdmin=1 then '管理员' else '普通用户' end isAdminText,t.start_date,t.end_date,t.description
           from fnd_user t 
          where 1=1   <if test="keyword != null and keyword!=''">  and t.user_name like '%${keyword}%' </if>
+        <if test="userName != null and userName!=''">  and t.user_name like '%${userName}%' </if>
          limit #{startIndex},#{perPage}
     </select>
     <select id="getUserInfoById" resultMap="userModel" parameterType="int">
