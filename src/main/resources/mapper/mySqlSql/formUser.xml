@@ -24,7 +24,7 @@
         select t._id,t.user_id,t.user_name,t.creation_date,t.isAdmin,t.encrypted_user_password,t.import,
                case when t.isAdmin=1 then '管理员' else '普通用户' end isAdminText,t.start_date,t.end_date,t.description
           from fnd_user t 
-         where t.user_name like '%${userName}%'
+         where 1=1   <if test="keyword != null and keyword!=''">  and t.user_name like '%${keyword}%' </if>
          limit #{startIndex},#{perPage}
     </select>
     <select id="getUserInfoById" resultMap="userModel" parameterType="int">
@@ -67,6 +67,6 @@
     </select>
     <select id="countUser" parameterType="map" resultType="String">
         select count(_id) as total  from fnd_user t  where 1=1
-        <if test="keyword != null and keyword!=''"> t.user_name like '%${keyword}%' </if>
+        <if test="keyword != null and keyword!=''"> and t.user_name like '%${keyword}%' </if>
     </select>
 </mapper>
