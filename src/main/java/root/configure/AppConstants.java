@@ -93,4 +93,7 @@ public class AppConstants {
     public static String getReport2() {
         return appPath + File.separator + "webapp";
     }
+    public static String getPhoneapp() {
+        return appPath + File.separator + "app";
+    }
 }

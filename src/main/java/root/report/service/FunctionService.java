@@ -19,6 +19,40 @@ public class FunctionService {
 
     private static Logger log = Logger.getLogger(FunctionService.class);
 
+
+    //查找func主表
+    public String getFunctionByID(String func_id){
+
+        Map<String,String> param=new HashMap<String, String>();
+        param.put("func_id",func_id);
+
+        JSONObject jResult=new JSONObject();
+
+
+        //查找函数定义头
+        Map<String,String> mapFunc =new HashMap<String,String>();
+        mapFunc = DbFactory.Open(DbFactory.FORM).selectOne("function.getNameByID",param);
+        jResult.put("id", mapFunc.get("func_id"));
+        jResult.put("db", mapFunc.get("func_name"));
+        jResult.put("desc", mapFunc.get("func_desc"));
+
+        //查找定义的SQL语句
+
+        //查找函数定义输入参数
+        List<Map<String,String>> inList = DbFactory.Open(DbFactory.FORM).selectList("function.getInByID",param);
+        JSONArray inArray=JSONArray.parseArray(JSONArray.toJSONString(inList));
+        jResult.put("in",inArray);
+
+        //查找函数定义输出参数
+        List<Map<String,String>> outList = DbFactory.Open(DbFactory.FORM).selectList("function.getOutByID",param);
+        JSONArray outArray=JSONArray.parseArray(JSONArray.toJSONString(outList));
+        jResult.put("out",outArray);
+
+        // 默认返回第一个
+        return jResult.toJSONString();
+    }
+
+    //查找func主表
     public String getFunctionName(Map<String,String> map){
         List<Map<String,String>> resultList = new  ArrayList<Map<String,String>>();
         List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getFunctionName",map);
@@ -28,7 +62,39 @@ public class FunctionService {
         // 默认返回第一个
         return JSONObject.toJSONString(resultList.get(0));
     }
+    //查找输入参数
+    public String getIn(Map<String,String> map){
+        List<Map<String,String>> resultList = new  ArrayList<Map<String,String>>();
+        List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getFunctionName",map);
+        if(selectMap!=null && selectMap.size()>0){
+            resultList.addAll(selectMap);
+        }
+        // 默认返回第一个
+        return JSONObject.toJSONString(resultList.get(0));
+    }
+    //查询输出参数
+    public String getOut(Map<String,String> map){
+        List<Map<String,String>> resultList = new  ArrayList<Map<String,String>>();
+        List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getFunctionName",map);
+        if(selectMap!=null && selectMap.size()>0){
+            resultList.addAll(selectMap);
+        }
+        // 默认返回第一个
+        return JSONObject.toJSONString(resultList.get(0));
+    }
 
+
+
+
+    public String getAllFunctionName(){
+        List<Map<String,String>> resultList = new  ArrayList<Map<String,String>>();
+        List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getAllFunctionName");
+        if(selectMap!=null && selectMap.size()>0){
+            resultList.addAll(selectMap);
+        }
+        // 默认返回第一个
+        return JSONArray.toJSONString(resultList);
+    }
 
     /**
      *

@@ -4,17 +4,83 @@
 <mapper namespace="function">
 
     <!--查我函数名称-->
-    <select id="getFunctionName" parameterType="Map" resultType="Map">
+    <select id="getAllFunctionName" parameterType="Map" resultType="Map">
+		SELECT
+			fn.func_id ,
+			fn.func_name ,
+			func_desc ,
+			fc.class_name ,
+			func_type ,
+			func_url
+		FROM
+			func_name fn ,
+			func_class fc
+		WHERE
+		   fc.class_id = fn.func_class
+
+    </select>
+	<!--查我函数名称-->
+	<select id="getNameByID" parameterType="Map" resultType="Map">
+		SELECT
+			fn.func_id ,
+			fn.func_name ,
+			func_desc ,
+			fc.class_name ,
+			func_type ,
+			func_url
+		FROM
+			func_name fn ,
+			func_class fc
+		WHERE
+			fc.class_id = fn.func_class
+		and fn.func_id = ${func_id}
+
+	</select>
+	<!--查我函数名称-->
+	<select id="getInByID" parameterType="Map" resultType="Map">
+		SELECT
+			fi.func_id ,
+			fi.in_id ,
+			fi.in_name ,
+			fi.datatype ,
+			fi.dict ,
+			fi.validate ,
+			fi.datatype ,
+			fi.isformula
+		FROM
+		    func_in fi
+		WHERE
+			fi.func_id = ${func_id}
+
+	</select>
+
+	<!--查我函数名称-->
+	<select id="getOutByID" parameterType="Map" resultType="Map">
+		SELECT
+			fo.func_id ,
+			fo.out_id ,
+			out_name ,
+			fo.link
+		FROM
+			func_out fo
+		WHERE
+			fo.func_id =${func_id}
+
+	</select>
+
+	<!--查我函数名称-->
+	<select id="getFunctionName" parameterType="Map" resultType="Map">
 
 		SELECT fn.func_id,fn.func_class,fn.func_name,
-			fn.func_desc,fn.func_type,fn.func_file,
-			fn.func_url
+		fn.func_desc,fn.func_type,fn.func_file,
+		fn.func_url
 		FROM func_name fn
 		WHERE fn.func_name LIKE '${name}'
 
-    </select>
+	</select>
 
-    <insert id="addFunctionName" parameterType="Map">
+
+	<insert id="addFunctionName" parameterType="Map">
 
 		INSERT INTO func_name(func_class,func_name,func_desc,func_type,func_file,func_url)
 		VALUES ('${class}', '${name}', '${desc}', '${type}',

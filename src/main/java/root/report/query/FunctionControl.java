@@ -42,6 +42,21 @@ public class FunctionControl extends RO{
 	@Autowired
 	private FunctionService functionService;
 
+	@RequestMapping(value = "/getAllFunctionName", produces = "text/plain;charset=UTF-8")
+	public String getAllFunctionName() {
+
+		return functionService.getAllFunctionName();
+
+	}
+
+
+	@RequestMapping(value = "/getFunctionByID/{func_id}", produces = "text/plain;charset=UTF-8")
+	public String getFunctionByID(@PathVariable("func_id") String func_id) {
+
+		return functionService.getFunctionByID(func_id);
+
+	}
+
 	@RequestMapping(value = "/getFunctionClass", produces = "text/plain;charset=UTF-8")
 	public String getFunctionClass() {
 		String usersqlPath = AppConstants.getUserFunctionPath();
