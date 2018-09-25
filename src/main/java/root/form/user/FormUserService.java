@@ -96,6 +96,7 @@ public class FormUserService
     public String updateUser(@RequestBody String pJson)
     {
         String result = "false";
+        JSONObject obj = new JSONObject();
         try{
             UserModel userModel = JSONObject.parseObject(pJson, UserModel.class);
             if(!userModel.getRegisType().equals("erp"))
@@ -110,25 +111,30 @@ public class FormUserService
             }
             DbFactory.Open(DbFactory.FORM).update("formUser.updateUser", userModel);
             result = "success";
+            obj.put("result", "success");
         }catch(Exception e){
             log.error("修改用户失败!");
+            obj.put("result", "error");
             e.printStackTrace();
         }
-        return result;
+        return JSON.toJSONString(obj);
     }
     
     @RequestMapping(value = "/deleteUser", produces = "text/plain; charset=utf-8")
     public String deleteUser(@RequestBody int id)
     {
         String result = "false";
+        JSONObject obj = new JSONObject();
         try{
             DbFactory.Open(DbFactory.FORM).delete("formUser.deleteUser", id);
             result = "success";
+            obj.put("result", "success");
         }catch(Exception e){
             log.error("删除用户失败!");
-            e.printStackTrace();
+            //e.printStackTrace();
+            obj.put("result", "error");
         }
-        return result;
+        return JSON.toJSONString(obj);
     }
     
     @RequestMapping(value = "/getCountByUserId", produces = "text/plain; charset=utf-8")
