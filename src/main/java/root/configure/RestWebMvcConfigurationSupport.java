@@ -28,6 +28,7 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
         FastJsonHttpMessageConverter4 fastConverter = new FastJsonHttpMessageConverter4();
         FastJsonConfig fastConfig =  new FastJsonConfig();
         fastConfig.setCharset(Charset.forName("UTF-8"));
+        converter.setWriteAcceptCharset(false);
         fastConfig.setSerializerFeatures(SerializerFeature.PrettyFormat);
         fastConverter.setFastJsonConfig(fastConfig);
         converters.add(fastConverter);

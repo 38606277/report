@@ -1796,7 +1796,7 @@ WHERE 1=1
 FROM
     gl_bal_${period_year} gb
 WHERE 1=1
-    <if test="period_num!='' ">
+     <if test="period_num!='' ">
    and gb.PERIOD_NUM=${period_num}
 </if>
    AND gb.SEGMENT1 like '${segment1}%'
@@ -1804,7 +1804,9 @@ WHERE 1=1
      <if test="segment5!='' ">
    and gb.segment5 LIKE '${segment5}%'
 </if>
-  </select>  <select id="a123" resultType="BigDecimal" parameterType="Map">
+  </select>
+   <select id="a123" resultType="BigDecimal" parameterType="Map">
+ 
     <!--{
 	"type":"sql",
 	"desc":"a123",
@@ -1871,11 +1873,161 @@ WHERE 1=1
 FROM
     gl_bal_${period_year} gb
 WHERE 1=1
-     <if test="period_num!='' ">
+    <if test="period_num!='' ">
    and gb.PERIOD_NUM=${period_num}
 </if>
    AND gb.SEGMENT1 LIKE '${segment1}%'
    AND gb.segment3 LIKE '${segment3}%'
+     <if test="segment5!='' ">
+   and gb.segment5 LIKE '${segment5}%'
+</if>
+  </select>
+   <select id="T10" resultType="BigDecimal" parameterType="Map">
+ 
+    <!--{
+	"type":"sql",
+	"desc":"T10",
+	"db":"jlerp",
+	"in":[
+		{
+			"id":"period_year",
+			"name":"a",
+			"datatype":"varchar",
+			"dict":"数据字典/查询公司信息",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"period_num",
+			"name":"b",
+			"datatype":"varchar",
+			"dict":"数据字典/会计科目",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment1",
+			"name":"c",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment3",
+			"name":"d",
+			"datatype":"varchar",
+			"dict":"数据字典/会计科目",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment5",
+			"name":"e",
+			"datatype":"varchar",
+			"dict":"数据字典/部门字典",
+			"default":"",
+			"isformula":"false"
+		}
+	],
+	"out":[
+		{
+			"id":"net_bal",
+			"name":"net_bal",
+			"datatype":"varchar",
+			"link":{}
+		}
+	]
+}
+-->SELECT
+    ifnull(
+        sum(
+            gb.PERIOD_NET_DR-gb.PERIOD_NET_CR
+        ) ,
+        0
+    ) net_bal
+FROM
+    gl_bal_${period_year} gb
+WHERE 1=1
+     <if test="period_num!='' ">
+   and gb.PERIOD_NUM=${period_num}
+</if>
+   AND gb.SEGMENT1 like '${segment1}%'
+   and gb.segment3 LIKE '${segment3}%'
+     <if test="segment5!='' ">
+   and gb.segment5 LIKE '${segment5}%'
+</if>
+  </select>  <select id="bbbbbbbb" resultType="BigDecimal" parameterType="Map">
+    <!--{
+	"type":"sql",
+	"desc":"bbbbbbbbbbbbb",
+	"db":"jlerp",
+	"in":[
+		{
+			"id":"period_year",
+			"name":"period_year",
+			"datatype":"varchar",
+			"dict":"数据字典/查询值集信息",
+			"default":"",
+			"isformula":"true"
+		},
+		{
+			"id":"period_num",
+			"name":"period_num",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment1",
+			"name":"segment1",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment3",
+			"name":"segment3",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment5",
+			"name":"segment5",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		}
+	],
+	"out":[
+		{
+			"id":"net_bal",
+			"name":"net_bal",
+			"datatype":"varchar",
+			"link":{}
+		}
+	]
+}
+-->SELECT
+    ifnull(
+        sum(
+            gb.PERIOD_NET_DR-gb.PERIOD_NET_CR
+        ) ,
+        0
+    ) net_bal
+FROM
+    gl_bal_${period_year} gb
+WHERE 1=1
+    <if test="period_num!='' ">
+   and gb.PERIOD_NUM=${period_num}
+</if>
+   AND gb.SEGMENT1 like '${segment1}%'
+   and gb.segment3 LIKE '${segment3}%'
      <if test="segment5!='' ">
    and gb.segment5 LIKE '${segment5}%'
 </if>  </select></mapper>

@@ -1,5 +1,7 @@
 package root.ai;
-
+import com.hankcs.hanlp.seg.NShort.NShortSegment;
+import com.hankcs.hanlp.seg.Segment;
+import com.hankcs.hanlp.seg.common.Term;
 public class App
 {
     public static void main( String[] args )
