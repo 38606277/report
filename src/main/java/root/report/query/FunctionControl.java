@@ -101,7 +101,65 @@ public class FunctionControl extends RO{
 		return JSON.toJSONString(list);
 
 	}
+	@RequestMapping(value = "/getFunctionClassReact", produces = "text/plain;charset=UTF-8")
+	public String getFunctionClassReact() {
+		String usersqlPath = AppConstants.getUserFunctionPath();
+		File file = new File(usersqlPath);
+		File[] fileList = file.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				if (name.endsWith(".xml")) {
+					return true;
+				}
+				return false;
+			}
+		});
+		// 构造返回json
+		List<Map> list = new ArrayList<Map>();
 
+		for (int i = 0; i < fileList.length; i++) {
+
+			JSONObject authNode = new JSONObject(true);
+			String filename = fileList[i].getName();
+			String name = filename.substring(0, filename.lastIndexOf("."));
+			authNode.put("title", name);
+			authNode.put("key", name);
+			// 根据名称查找对应的模板文件
+			String sqlPath = AppConstants.getUserFunctionPath() + File.separator + name + ".xml";
+
+			try {
+				SAXReader sax = new SAXReader();
+				sax.setValidation(false);
+				sax.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);// 这一行是必须要有的
+				// 获得dom4j的文档对象
+				Document document = sax.read(new FileInputStream(sqlPath));
+				Element root = document.getRootElement();
+				// 得到database节点
+				List<Element> selects = root.selectNodes("//select");
+
+				// 构造返回json
+				List<Map> childlist = new ArrayList<Map>();
+
+				for (int j = 0; j < selects.size(); j++) {
+
+					Element element = selects.get(j);
+
+					//取出id
+					Map<String, String> childmap = new HashMap<String, String>();
+					childmap.put("title", element.attributeValue("id"));
+					childmap.put("key", name+"/"+element.attributeValue("id"));
+					childlist.add(childmap);
+				}
+				authNode.put("children", childlist);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			list.add(authNode);
+
+		}
+		return JSON.toJSONString(list);
+
+	}
 	// 取所有报表基本信息
 	@RequestMapping(value = "/getFunctionName/{FunctionClass}", produces = "text/plain;charset=UTF-8")
 	public String getFunctionName(@PathVariable("FunctionClass") String selectClassName) {
