@@ -76,6 +76,37 @@ public class RuleController {
         }
         
     }
+    @RequestMapping(value="/getFunRuleListReact",produces = "text/plain;charset=UTF-8")
+    public String getFunRuleListReact(@RequestBody JSONObject pJson) throws UnsupportedEncodingException{
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("type", pJson.getString("type"));
+        //默认查询pid为0的数据
+        map.put("pid", "0");
+        JSONArray tNode = new JSONArray();
+        showExcelRuleTreeNodeReact(map,tNode);
+        return tNode.toString();
+    }
+    public void showExcelRuleTreeNodeReact(Map<String,String> map, JSONArray aNode) {
+        List<Map> authList = DbFactory.Open(DbFactory.FORM).selectList("rule.getExcelRuleList",map);
+        for (Map auth : authList) {
+            JSONObject authNode = new JSONObject(true);
+            authNode.put("title", auth.get("funcName").toString());
+            if(map.get("type").equals("webFunc")){
+                authNode.put("key", auth.get("funcName").toString());
+            }else{
+                authNode.put("key", auth.get("funcId").toString());
+            }
+            aNode.add(authNode);
+            map.put("pid", auth.get("funcId").toString());
+            List<Map> childExcelRule = DbFactory.Open(DbFactory.FORM).selectList("rule.getExcelRuleList",map);
+            if(childExcelRule.size()>0){
+                JSONArray nNode = new JSONArray();
+                authNode.put("children", nNode);
+                showExcelRuleTreeNodeReact(map,nNode);
+            }
+        }
+
+    }
     @RequestMapping(value="/getFuncRuleList",produces = "text/plain;charset=UTF-8")
     public String getFuncRuleList(@RequestBody String pJson) throws UnsupportedEncodingException{
         Map<String,String> map = new HashMap<String,String>();
