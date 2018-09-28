@@ -8,10 +8,10 @@
 		SELECT
 			fn.func_id ,
 			fn.func_name ,
-			func_desc ,
+			fn.func_desc ,
 			fc.class_name ,
-			func_type ,
-			func_url
+			fn.func_type ,
+			fn.func_url
 		FROM
 			func_name fn ,
 			func_class fc
@@ -24,10 +24,13 @@
 		SELECT
 			fn.func_id ,
 			fn.func_name ,
-			func_desc ,
+			fn.func_desc ,
+		    fc.class_id,
+		    fn.func_class ,
 			fc.class_name ,
 			func_type ,
-			func_url
+			func_url,
+		    program
 		FROM
 			func_name fn ,
 			func_class fc
@@ -142,4 +145,14 @@
 		where func_id=#{func_id}
 
     </delete>
+
+	<!--查我函数类别-->
+	<select id="getAllFunctionClass" parameterType="Map" resultType="Map">
+		SELECT
+		 fc.class_id ,
+		 fc.class_name
+		FROM
+		  func_class fc
+
+	</select>
 </mapper>

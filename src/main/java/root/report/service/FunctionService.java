@@ -4,11 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.mysql.cj.x.json.JsonArray;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import root.report.db.DbFactory;
 
+import javax.print.DocFlavor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,11 +35,18 @@ public class FunctionService {
         //查找函数定义头
         Map<String,String> mapFunc =new HashMap<String,String>();
         mapFunc = DbFactory.Open(DbFactory.FORM).selectOne("function.getNameByID",param);
-        jResult.put("id", mapFunc.get("func_id"));
-        jResult.put("db", mapFunc.get("func_name"));
-        jResult.put("desc", mapFunc.get("func_desc"));
+        jResult.put("func_id", mapFunc.get("func_id"));
+        jResult.put("func_name", mapFunc.get("func_name"));
+        jResult.put("func_desc", mapFunc.get("func_desc"));
+        jResult.put("func_url", mapFunc.get("func_url"));
+        jResult.put("class_id", mapFunc.get("class_id"));
+        jResult.put("class_name", mapFunc.get("class_name"));
+        jResult.put("program", mapFunc.get("program"));
+        jResult.put("func_type", mapFunc.get("func_type"));
 
         //查找定义的SQL语句
+
+
 
         //查找函数定义输入参数
         List<Map<String,String>> inList = DbFactory.Open(DbFactory.FORM).selectList("function.getInByID",param);
@@ -50,6 +60,25 @@ public class FunctionService {
 
         // 默认返回第一个
         return jResult.toJSONString();
+    }
+
+    @Transactional
+    public String saveFunction(SqlSession sqlSession,String aJson){
+
+
+        Map<String,String> funcName=(Map)JSON.parseObject("");
+
+        //Map<String,String> funcName=new HashMap<>();
+        sqlSession.insert("function.addFunctionName",funcName);
+
+
+        Map<String,String> in=new HashMap<>();
+        sqlSession.insert("function.addFunctionIn",in);
+
+        Map<String,String> out=new HashMap<>();
+        sqlSession.insert("function.addFunctionOut",out);
+
+        return "";
     }
 
     //查找func主表
@@ -116,6 +145,7 @@ public class FunctionService {
      * 功能描述: 根据传递过来的JSONObject，对其解析，然后往func_name表增加记录
      *
      */
+    @Transactional
     public int addFunctionNameForJson(JSONObject jsonObject){
         List<Map<String,String>>  tempTestMapList = new ArrayList<Map<String,String>>();
         // '${class}', '${name}', '${desc}', '${type}', '${file}', '${url}'
@@ -285,5 +315,30 @@ public class FunctionService {
         log.info("增加func_out记录成功");
 
     }
+
+    // 取函数类别
+    public String getAllFunctionClass(){
+
+        SqlSession sqlSession=DbFactory.Open(DbFactory.FORM);
+        List<Map<String,String>> list =sqlSession.selectList("function.getAllFunctionClass");
+        return JSONArray.toJSONString(list);
+
+    }
+    // 创建一个函数类别
+    public void CreateFunctionClass() throws Exception{
+
+
+    }
+    // 删除一个函数类别
+    public void DeleteFunctionClass() throws Exception{
+
+
+    }
+    // 修改一个函数类别
+    public void UpdateFunctionClass() throws Exception{
+
+
+    }
+
 
 }

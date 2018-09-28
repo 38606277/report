@@ -336,52 +336,7 @@ WHERE 1=1
   </select>
    <select id="借方累积" resultType="BigDecimal" parameterType="Map">
  
-    <!--{
-    "type":"sql",
-	"db":"jlerp",
-	"desc":"会计科目的借方累积发生额",
-	"in":[
-		{
-			"id":"period_year",
-			"name":"年",
-			"datatype":"varchar",
-			"default":"",
-			"lookup":"",
-			"in_formula":"0"
-		},
-		{
-			"id":"period_num",
-			"name":"月",
-			"datatype":"varchar",
-			"default":"",
-			"lookup":"",
-			"in_formula":"0"
-		},
-		{
-			"id":"segment1",
-			"name":"公司",
-			"datatype":"varchar",
-			"default":"",
-			"lookup":"",
-			"in_formula":"0"
-		},
-		{
-			"id":"segment3",
-			"name":"会计科目",
-			"datatype":"varchar",
-			"default":"",
-			"lookup":"",
-			"in_formula":"0"
-		}
-	],
-	"out":[
-		{
-			"id":"net_bal",
-			"name":"net_bal",
-			"datatype":"BigDecimal"
-		}
-	]
-}-->SELECT 
+SELECT
         ifnull(CONVERT(SUM(gb.period_net_dr), DECIMAL(15, 2)), 0) AS net_bal
 FROM
 	gl_bal_${period_year} gb
@@ -1957,7 +1912,9 @@ WHERE 1=1
      <if test="segment5!='' ">
    and gb.segment5 LIKE '${segment5}%'
 </if>
-  </select>  <select id="bbbbbbbb" resultType="BigDecimal" parameterType="Map">
+  </select>
+   <select id="bbbbbbbb" resultType="BigDecimal" parameterType="Map">
+ 
     <!--{
 	"type":"sql",
 	"desc":"bbbbbbbbbbbbb",
@@ -1970,6 +1927,156 @@ WHERE 1=1
 			"dict":"数据字典/查询值集信息",
 			"default":"",
 			"isformula":"true"
+		},
+		{
+			"id":"period_num",
+			"name":"period_num",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment1",
+			"name":"segment1",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment3",
+			"name":"segment3",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment5",
+			"name":"segment5",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		}
+	],
+	"out":[
+		{
+			"id":"net_bal",
+			"name":"net_bal",
+			"datatype":"varchar",
+			"link":{}
+		}
+	]
+}
+-->SELECT
+    ifnull(
+        sum(
+            gb.PERIOD_NET_DR-gb.PERIOD_NET_CR
+        ) ,
+        0
+    ) net_bal
+FROM
+    gl_bal_${period_year} gb
+WHERE 1=1
+     <if test="period_num!='' ">
+   and gb.PERIOD_NUM=${period_num}
+</if>
+   AND gb.SEGMENT1 like '${segment1}%'
+   and gb.segment3 LIKE '${segment3}%'
+     <if test="segment5!='' ">
+   and gb.segment5 LIKE '${segment5}%'
+</if>
+  </select>
+   <select id="tttt" resultType="BigDecimal" parameterType="Map">
+ 
+    <!--{
+	"type":"sql",
+	"desc":"bbbb",
+	"db":"jlerp",
+	"in":[
+		{
+			"id":"period_year",
+			"name":"期间",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"period_num",
+			"name":"period_num",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment1",
+			"name":"segment1",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment3",
+			"name":"segment3",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		},
+		{
+			"id":"segment5",
+			"name":"segment5",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
+		}
+	],
+	"out":[
+		{
+			"id":"net_bal",
+			"name":"net_bal",
+			"datatype":"varchar",
+			"link":{}
+		}
+	]
+}
+-->SELECT
+    ifnull(
+        sum(
+            gb.PERIOD_NET_DR-gb.PERIOD_NET_CR
+        ) ,
+        0
+    ) net_bal
+FROM
+    gl_bal_${period_year} gb
+WHERE 1=1
+     <if test="period_num!='' ">
+   and gb.PERIOD_NUM=${period_num}
+</if>
+   AND gb.SEGMENT1 like '${segment1}%'
+   and gb.segment3 LIKE '${segment3}%'
+     <if test="segment5!='' ">
+   and gb.segment5 LIKE '${segment5}%'
+</if>
+  </select>  <select id="a987" resultType="BigDecimal" parameterType="Map">
+    <!--{
+	"type":"sql",
+	"desc":"bbbb",
+	"db":"jlerp",
+	"in":[
+		{
+			"id":"period_year",
+			"name":"期间",
+			"datatype":"varchar",
+			"dict":"",
+			"default":"",
+			"isformula":"false"
 		},
 		{
 			"id":"period_num",

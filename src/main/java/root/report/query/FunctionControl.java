@@ -274,6 +274,87 @@ public class FunctionControl extends RO{
         return SuccessMsg("新增报表成功",null);
     }
 
+	@RequestMapping(value = "/saveUserSql/V2", produces = "text/plain;charset=UTF-8")
+	public String saveUserSqlV2(@RequestBody String pJson)
+	{
+		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+		try{
+			//写入fnc_name,写入func_in,func_out
+
+			//写入配置文件
+
+			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
+			String namespace = jsonObject.getString("namespace");
+			String sqlId = jsonObject.getString("id");
+			JSONObject commonObj = jsonObject.getJSONObject("comment");
+			String type = commonObj.getString("type");
+			String userSqlPath =AppConstants.getUserFunctionPath()+File.separator + namespace + ".xml";
+
+			OutputFormat format = OutputFormat.createPrettyPrint();
+			format.setSuppressDeclaration(true);
+			format.setIndentSize(2);
+			format.setNewlines(true);
+			format.setTrimText(false);
+
+			XMLWriter writer = null;
+			Document userDoc = XmlUtil.parseXmlToDom(userSqlPath);
+			boolean checkResult = checkIsContainsSqlId(userDoc, sqlId);
+			if(checkResult) return ExceptionMsg("已经存在相同的报表ID");
+			Element root = (Element)userDoc.selectSingleNode("/mapper");
+			Element newSql = root.addElement("select");
+			newSql.addAttribute("id", sqlId);
+			if("sql".equals(type)){
+				newSql.addAttribute("resultType", "BigDecimal");
+				newSql.addAttribute("parameterType", "Map");
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
+				String cdata = jsonObject.getString("cdata");
+				addSqlText(newSql,cdata);
+			}else if ("proc".equals(type)){
+				newSql.addAttribute("statementType", "CALLABLE");
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
+				String cdata = jsonObject.getString("cdata");
+				addSqlText(newSql,cdata);
+			}else if("http".equals(type)) {
+				newSql.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
+			}
+
+			log.debug("新增SQL:"+newSql.asXML());
+			writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
+			//删除空白行
+			Element rootEle = userDoc.getRootElement();
+			removeBlankNewLine(rootEle);
+			writer.write(userDoc);
+			writer.flush();
+			writer.close();
+			//
+			functionService.insertRecordsToFunc(jsonObject,sqlSession);
+
+			//重置该DB连接
+			DbFactory.init(commonObj.getString("db"));
+		}catch (Exception e){
+			Throwable cause = e;
+			String message = null;
+			while((message = cause.getMessage())==null){
+				cause = cause.getCause();
+			}
+
+			return ExceptionMsg(message);
+		}finally {
+			try {
+				sqlSession.getConnection().setAutoCommit(true);
+			}catch(Exception e) {
+				Throwable cause = e;
+				String message = null;
+				while((message = cause.getMessage())==null){
+					cause = cause.getCause();
+				}
+				return ExceptionMsg(message);
+			}
+		}
+
+		return SuccessMsg("新增报表成功",null);
+	}
+
 	@RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
     public String modifyUserSql(@RequestBody String pJson)
     {
