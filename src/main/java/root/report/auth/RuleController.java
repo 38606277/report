@@ -254,4 +254,15 @@ public class RuleController {
         
         return JSON.toJSONString(null);
     }
+
+    /**
+     * @author  gaoluo
+     * date 2018-9-30
+     * */
+    @RequestMapping(value="/getRoleList",produces = "text/plain;charset=UTF-8")
+    public String getRoleList() throws UnsupportedEncodingException{
+        List<Map> dataList = DbFactory.Open(DbFactory.FORM).selectList("role.getRoleList");
+        return JSON.toJSONString(dataList);
+    }
+
 }
