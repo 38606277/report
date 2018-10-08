@@ -24,61 +24,85 @@ public class FunctionService {
 
 
     //查找func主表
-    public String getFunctionByID(String func_id){
+    public JSONObject getFunctionByID(String func_id){
 
         Map<String,String> param=new HashMap<String, String>();
         param.put("func_id",func_id);
 
         JSONObject jResult=new JSONObject();
-
-
         //查找函数定义头
-        Map<String,String> mapFunc =new HashMap<String,String>();
-        mapFunc = DbFactory.Open(DbFactory.FORM).selectOne("function.getNameByID",param);
-        jResult.put("func_id", mapFunc.get("func_id"));
-        jResult.put("func_name", mapFunc.get("func_name"));
-        jResult.put("func_desc", mapFunc.get("func_desc"));
-        jResult.put("func_url", mapFunc.get("func_url"));
-        jResult.put("class_id", mapFunc.get("class_id"));
-        jResult.put("class_name", mapFunc.get("class_name"));
-        jResult.put("program", mapFunc.get("program"));
-        jResult.put("func_type", mapFunc.get("func_type"));
+        try{
 
-        //查找定义的SQL语句
+            Map<String,String> mapFunc =new HashMap<String,String>();
+            mapFunc = DbFactory.Open(DbFactory.FORM).selectOne("function.getNameByID",param);
+            jResult.put("func_id", mapFunc.get("func_id"));
+            jResult.put("func_name", mapFunc.get("func_name"));
+            jResult.put("func_desc", mapFunc.get("func_desc"));
+            jResult.put("func_db", mapFunc.get("func_db"));
+            jResult.put("class_id", mapFunc.get("class_id"));
+            jResult.put("class_name", mapFunc.get("class_name"));
+            jResult.put("func_sql", mapFunc.get("func_sql"));
+            jResult.put("func_type", mapFunc.get("func_type"));
+            //查找定义的SQL语句
 
 
 
-        //查找函数定义输入参数
-        List<Map<String,String>> inList = DbFactory.Open(DbFactory.FORM).selectList("function.getInByID",param);
-        JSONArray inArray=JSONArray.parseArray(JSONArray.toJSONString(inList));
-        jResult.put("in",inArray);
+            //查找函数定义输入参数
+            List<Map<String,String>> inList = DbFactory.Open(DbFactory.FORM).selectList("function.getInByID",param);
+            JSONArray inArray=JSONArray.parseArray(JSONArray.toJSONString(inList));
+            jResult.put("in",inArray);
 
-        //查找函数定义输出参数
-        List<Map<String,String>> outList = DbFactory.Open(DbFactory.FORM).selectList("function.getOutByID",param);
-        JSONArray outArray=JSONArray.parseArray(JSONArray.toJSONString(outList));
-        jResult.put("out",outArray);
+            //查找函数定义输出参数
+            List<Map<String,String>> outList = DbFactory.Open(DbFactory.FORM).selectList("function.getOutByID",param);
+            JSONArray outArray=JSONArray.parseArray(JSONArray.toJSONString(outList));
+            jResult.put("out",outArray);
 
-        // 默认返回第一个
-        return jResult.toJSONString();
+            // 默认返回第一个
+            return jResult;
+
+        }catch (Exception ex){
+           throw  ex;
+        }
+
     }
 
     @Transactional
-    public String saveFunction(SqlSession sqlSession,String aJson){
+    public String saveFunction(String aJson){
 
+        //拿到sqlSerssion
+        SqlSession sqlSession=DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonFunc=JSONObject.parseObject(aJson);
 
-        Map<String,String> funcName=(Map)JSON.parseObject("");
+        //保存头
+        Map<String,String> mapFunc=new HashMap<>();
 
-        //Map<String,String> funcName=new HashMap<>();
-        sqlSession.insert("function.addFunctionName",funcName);
+        mapFunc.put("class_id",jsonFunc.getString("class_id"));
+        mapFunc.put("func_id",jsonFunc.getString("func_id"));
+        mapFunc.put("func_name",jsonFunc.getString("func_name"));
+        mapFunc.put("func_desc",jsonFunc.getString("func_desc"));
+        mapFunc.put("func_url",jsonFunc.getString("func_url"));
+        mapFunc.put("program",jsonFunc.getString("program"));
 
+        sqlSession.insert("function.addFunctionName",mapFunc);
 
+        //保存IN
         Map<String,String> in=new HashMap<>();
         sqlSession.insert("function.addFunctionIn",in);
 
+        //保存Out
         Map<String,String> out=new HashMap<>();
         sqlSession.insert("function.addFunctionOut",out);
 
+        //保存SQL到mybatis配置文件文件
+        SaveSqlTemplate("2.xml","2",jsonFunc.getString("program"));
         return "";
+    }
+
+    public  String SaveSqlTemplate(String TemplateName,String SelectID,String aSQLTemplate)
+    {
+
+
+        return  "";
     }
 
     //查找func主表
@@ -115,14 +139,21 @@ public class FunctionService {
 
 
 
-    public String getAllFunctionName(){
+    public List<Map<String,String>> getAllFunctionName(){
         List<Map<String,String>> resultList = new  ArrayList<Map<String,String>>();
-        List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getAllFunctionName");
-        if(selectMap!=null && selectMap.size()>0){
-            resultList.addAll(selectMap);
+        try
+        {
+            SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+            resultList=sqlSession.selectList("function.getAllFunctionName");
+            return resultList;
+
+        }catch (Exception ex){
+
+           throw  ex;
         }
-        // 默认返回第一个
-        return JSONArray.toJSONString(resultList);
+
+
+       //JSONArray.toJSONString(resultList);
     }
 
     /**
@@ -317,11 +348,11 @@ public class FunctionService {
     }
 
     // 取函数类别
-    public String getAllFunctionClass(){
+    public List<Map<String,String>> getAllFunctionClass(){
 
         SqlSession sqlSession=DbFactory.Open(DbFactory.FORM);
         List<Map<String,String>> list =sqlSession.selectList("function.getAllFunctionClass");
-        return JSONArray.toJSONString(list);
+        return list;
 
     }
     // 创建一个函数类别
