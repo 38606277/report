@@ -34,11 +34,14 @@
           from fnd_user t 
          where t._id=#{id} 
     </select>
-    <insert id="addUser" parameterType="root.form.user.UserModel">
+    <insert id="addUser" parameterType="root.form.user.UserModel" useGeneratedKeys="true" keyColumn="_id" keyProperty="id">
         insert into fnd_user(user_id,user_name,creation_date,start_date,end_date,description,
                 isAdmin,encrypted_user_password,import)
         values (#{userId},#{userName},date_format(now(),'%Y/%m/%d %h:%i:%s'),#{startDate},#{endDate},#{description},
                 #{isAdmin},#{encryptPwd},#{regisType})
+        <selectKey resultType="int" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
     </insert>
 	<select id="deleteUser" parameterType="int">
         delete t from fnd_user t where t._id=#{id} 
