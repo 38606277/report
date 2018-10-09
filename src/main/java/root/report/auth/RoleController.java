@@ -37,6 +37,7 @@ public class RoleController {
         map.put("startIndex", currentPage);
         map.put("perPage",perPage);
         map.put("roleName",  obj.get("roleName")==null?"":obj.getString("roleName"));
+        map.put("roleId",  obj.get("roleId")==null?"":obj.getString("roleId"));
         List<RoleModel> rolelist = DbFactory.Open(DbFactory.FORM).selectList("role.getRolesList",map);
         int total=DbFactory.Open(DbFactory.FORM).selectOne("role.countRole", map);
         Map<String,Object> map3 =new HashMap<String,Object>();
@@ -122,5 +123,39 @@ public class RoleController {
         }
         return JSON.toJSONString(obj);
     }
+    @RequestMapping(value = "/getUserListByRoleId", produces = "text/plain; charset=utf-8")
+    public String getUserListByRoleId(@RequestBody String roleId)
+    {
+        Map<String,Object> map =new HashMap<String,Object>();
+        map.put("roleId",roleId);
+        List rolelist = DbFactory.Open(DbFactory.FORM).selectList("role.getUserListByRoleId",map);
+        return JSON.toJSONString(rolelist);
+    }
+    @RequestMapping(value = "/saveOrupdateUserId", produces = "text/plain; charset=utf-8")
+    public String saveOrupdateUserId(@RequestBody String pJson)
+    {
+        JSONObject obj = (JSONObject) JSON.parse(pJson);
+        String roleId = obj.getString("roleId");;
+        List<String> userArray = (List<String>) obj.get("userList");
+
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("role_id", roleId);
+        DbFactory.Open(DbFactory.FORM).delete("role.deleteUserRole",map);
+
+        Map<String,Object> resultmap=new HashMap<String,Object>();
+        try{
+            for (int i = 0; i < userArray.size(); i++) {
+                map.put("user_id", userArray.get(i));
+                DbFactory.Open(DbFactory.FORM).insert("role.addRoleUser",map);
+            }
+            resultmap.put("result", "success");
+        }catch(Exception e){
+            log.error("保存失败!");
+            resultmap.put("result", "error");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(resultmap);
+    }
+
 
 }

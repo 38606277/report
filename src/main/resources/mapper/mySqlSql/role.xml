@@ -21,7 +21,9 @@
     </insert>
 
     <select id="deleteUserRole" parameterType="Map">
-        delete t from fnd_user_role t where t.user_id=#{user_id} and t.role_id=#{role_id}
+        delete t from fnd_user_role t where 1=1
+        <if test="user_id != null and user_id!=''">  and t.user_id='${user_id}' </if>
+        <if test="role_id != null and role_id!=''">  and t.role_id='${role_id}' </if>
     </select>
 
     <select id="getRolesList" resultMap="roleModel" parameterType="map">
@@ -30,8 +32,16 @@
         from fnd_role t
         where 1=1
         <if test="roleName != null and roleName!=''">  and t.role_name like '%${roleName}%' </if>
+        <if test="roleId != null and roleId!=''">  and t.role_id= '${roleId}' </if>
         limit #{startIndex},#{perPage}
     </select>
+
+    <select id="getUserListByRoleId" resultType="Map" parameterType="Map">
+        select u.user_id from fnd_user_role u  where 1=1
+        <if test="roleId != null and roleId!=''">  and u.role_id= '${roleId}' </if>
+
+    </select>
+
     <select id="getRoleInfoById" resultMap="roleModel" parameterType="int">
         select t.role_id,t.role_name,t.enabled,DATE_FORMAT(t.created_date,'%Y-%m-%d') created_date,DATE_FORMAT(t.last_updated_date,'%Y-%m-%d') last_updated_date,t.created_by,
         t.last_updated_by
@@ -62,4 +72,9 @@
         </trim>
         where role_id=#{roleId}
     </update>
+    <insert id="addRoleUser" parameterType="root.report.auth.RoleModel">
+        insert into fnd_user_role(role_id,user_id) values (#{role_id},#{user_id})
+    </insert>
+
+
 </mapper>
