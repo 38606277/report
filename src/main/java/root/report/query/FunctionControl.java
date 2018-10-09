@@ -423,7 +423,6 @@ public class FunctionControl extends RO{
 	@RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
     public String modifyUserSql(@RequestBody String pJson)
     {
-		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
             String namespace = jsonObject.getString("namespace");
@@ -451,20 +450,8 @@ public class FunctionControl extends RO{
             writer.write(userDoc);
             writer.flush();
             writer.close();
-
-            // 先查询有没有记录
-			HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
-			selectFuncNameMap.put("name",jsonObject.getString("id"));
-			Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
-			String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
-			if(StringUtils.isNotBlank(funcIdStr)){
-				// 不为空 ，先删除记录
-				int funcId = Integer.parseInt(funcIdStr);
-				functionService.deleteFunctionIn(funcId);
-				functionService.deleteFunctionOut(funcId);
-				functionService.deleteFunctionName(funcId);
-			}
-			functionService.insertRecordsToFunc(jsonObject,sqlSession);
+			// 往func_name,func_in,func_out当中插入对应记录
+			functionService.insertRecordsToFunction(jsonObject);
 
             DbFactory.init(commonObj.getString("db"));
         }catch (Exception e){
@@ -474,18 +461,7 @@ public class FunctionControl extends RO{
 				cause = cause.getCause();
 			}
 			return ExceptionMsg(message);
-        }finally {
-			try {
-				sqlSession.getConnection().setAutoCommit(true);
-			}catch(Exception e) {
-				Throwable cause = e;
-				String message = null;
-				while((message = cause.getMessage())==null){
-					cause = cause.getCause();
-				}
-				return ExceptionMsg(message);
-			}
-		}
+        }
         return SuccessMsg("修改报表成功",null);
     }
 	//删除报表
@@ -513,8 +489,8 @@ public class FunctionControl extends RO{
 			HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
 			selectFuncNameMap.put("name",jsonObject.getString("id"));
 			Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
-			String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
-			if(StringUtils.isNotBlank(funcIdStr)){
+			if(funcNameResult!=null &&   StringUtils.isNotBlank(String.valueOf(funcNameResult.get("func_id")))){
+				String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
 				// 不为空 ，先删除记录
 				int funcId = Integer.parseInt(funcIdStr);
 				functionService.deleteFunctionIn(funcId);

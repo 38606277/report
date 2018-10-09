@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.mysql.cj.x.json.JsonArray;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import root.report.db.DbFactory;
 
@@ -17,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
-@Component
+@Service
 public class FunctionService {
 
     private static Logger log = Logger.getLogger(FunctionService.class);
@@ -111,6 +113,8 @@ public class FunctionService {
         List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getFunctionName",map);
         if(selectMap!=null && selectMap.size()>0){
             resultList.addAll(selectMap);
+        }else {
+            return "";
         }
         // 默认返回第一个
         return JSONObject.toJSONString(resultList.get(0));
@@ -121,6 +125,8 @@ public class FunctionService {
         List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getFunctionName",map);
         if(selectMap!=null && selectMap.size()>0){
             resultList.addAll(selectMap);
+        }else {
+            return "";
         }
         // 默认返回第一个
         return JSONObject.toJSONString(resultList.get(0));
@@ -131,6 +137,8 @@ public class FunctionService {
         List<Map<String,String>> selectMap = DbFactory.Open(DbFactory.FORM).selectList("function.getFunctionName",map);
         if(selectMap!=null && selectMap.size()>0){
             resultList.addAll(selectMap);
+        }else {
+            return "";
         }
         // 默认返回第一个
         return JSONObject.toJSONString(resultList.get(0));
@@ -346,6 +354,30 @@ public class FunctionService {
         log.info("增加func_out记录成功");
 
     }
+
+    // 对  FunctionControl方法当中的 moveUserSql  以及  modifyUserSql 当中的插入方法进行改写 -》 放到service层完成并加上事物管理
+    // 对事物进行声明
+    @Transactional(rollbackFor=Exception.class)
+    public void insertRecordsToFunction(JSONObject jsonObject) throws Exception{
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        // 先查询有没有记录
+        sqlSession.getConnection().setAutoCommit(false);  // 个人觉得还是得关闭掉自动提交
+        HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
+        selectFuncNameMap.put("name",jsonObject.getString("id"));
+        Map  funcNameResult =  (Map)JSON.parse( this.getFunctionName(selectFuncNameMap));
+
+        if(funcNameResult!=null &&  StringUtils.isNotBlank(String.valueOf(funcNameResult.get("func_id")))){
+            String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
+            // 不为空 ，先删除记录
+            int funcId = Integer.parseInt(funcIdStr);
+            this.deleteFunctionIn(funcId);
+            this.deleteFunctionOut(funcId);
+            this.deleteFunctionName(funcId);
+        }
+        this.insertRecordsToFunc(jsonObject,sqlSession);
+        sqlSession.getConnection().commit();
+    }
+
 
     // 取函数类别
     public List<Map<String,String>> getAllFunctionClass(){
