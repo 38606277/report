@@ -45,7 +45,7 @@ public class FunctionControl extends RO{
 	@RequestMapping(value = "/getAllFunctionName", produces = "text/plain;charset=UTF-8")
 	public String getAllFunctionName() {
 
-		return functionService.getAllFunctionName();
+		return "";//functionService.getAllFunctionName();
 
 	}
 
@@ -53,7 +53,14 @@ public class FunctionControl extends RO{
 	@RequestMapping(value = "/getFunctionByID/{func_id}", produces = "text/plain;charset=UTF-8")
 	public String getFunctionByID(@PathVariable("func_id") String func_id) {
 
-		return functionService.getFunctionByID(func_id);
+
+		try{
+			JSONObject jsonObject=functionService.getFunctionByID(func_id);
+			return  SuccessMsg("",jsonObject);
+		}catch (Exception ex){
+			return ExceptionMsg(ex.getMessage());
+
+		}
 
 	}
 
@@ -254,7 +261,7 @@ public class FunctionControl extends RO{
 		}
 		return result;
 	}
-	
+
 	@RequestMapping(value = "/saveUserSql", produces = "text/plain;charset=UTF-8")
     public String saveUserSql(@RequestBody String pJson)
     {
@@ -431,7 +438,7 @@ public class FunctionControl extends RO{
             format.setIndent(false);
             XMLWriter writer = null;
             Document userDoc = XmlUtil.parseXmlToDom(userSqlPath);
-            
+
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
             select.clearContent();
             select.addComment(JSONObject.toJSONString(commonObj, features)+"\n");
@@ -605,7 +612,7 @@ public class FunctionControl extends RO{
 		try {
 
 			// 检查函数名是否存在
-			
+
 			//检查参数
 
 			// 执行函数
@@ -651,7 +658,7 @@ public class FunctionControl extends RO{
 		return JSON.toJSONString(aResult, features);
 
 	}
-	
+
 	private BigDecimal excuteFunc(List<FuncMetaData> list,int index,Map<String,Object> paramMap,SqlTemplate template) throws Exception{
 		BigDecimal sum = null;
 		int size = list.size();
@@ -708,7 +715,7 @@ public class FunctionControl extends RO{
 			}
 		}
 	}
-	
+
 	private static SerializerFeature[] features = { SerializerFeature.WriteNullNumberAsZero,
 			SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteMapNullValue,
 			SerializerFeature.PrettyFormat, SerializerFeature.UseISO8601DateFormat,
@@ -788,18 +795,18 @@ public class FunctionControl extends RO{
                 List<Map> functionAuthList = DbFactory.Open(DbFactory.FORM).selectList("rule.getFunctionAuthList",map);
                 return SuccessMsg("查询成功", functionAuthList);
             }
-             
-            
+
+
         }catch(Exception ex)
         {
             ex.printStackTrace();
             return ErrorMsg("3000", ex.getMessage());
         }
-        
+
     }
     @RequestMapping(value = "/getFunctionAuthListByClass/{userName}/{className}", produces = "text/plain;charset=UTF-8")
     public String getFunctionAuthListByClass(@PathVariable("userName") String userName,@PathVariable("className") String className) {
-        
+
         String result = "";
          try {
         Map<String,String> cmap = new HashMap<String,String>();
@@ -872,7 +879,7 @@ public class FunctionControl extends RO{
             e.printStackTrace();
             return ErrorMsg("3000", e.getMessage());
         }
-      
+
     }
 
 }

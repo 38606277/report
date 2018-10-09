@@ -5,18 +5,20 @@
 
     <!--查我函数名称-->
     <select id="getAllFunctionName" parameterType="Map" resultType="Map">
-		SELECT
-			fn.func_id ,
-			fn.func_name ,
-			fn.func_desc ,
-			fc.class_name ,
-			fn.func_type ,
-			fn.func_url
-		FROM
-			func_name fn ,
-			func_class fc
-		WHERE
-		   fc.class_id = fn.func_class
+        SELECT
+            fn.func_id ,
+            fn.func_name ,
+            fn.func_desc ,
+            fc.class_id,
+            fc.class_name ,
+            func_type ,
+            func_db,
+            func_sql
+        FROM
+            func_name fn ,
+            func_class fc
+        WHERE
+            fc.class_id = fn.class_id
 
     </select>
 	<!--查我函数名称-->
@@ -26,16 +28,15 @@
 			fn.func_name ,
 			fn.func_desc ,
 		    fc.class_id,
-		    fn.func_class ,
 			fc.class_name ,
 			func_type ,
-			func_url,
-		    program
+			func_db,
+		    func_sql
 		FROM
 			func_name fn ,
 			func_class fc
 		WHERE
-			fc.class_id = fn.func_class
+			fc.class_id = fn.class_id
 		and fn.func_id = ${func_id}
 
 	</select>
