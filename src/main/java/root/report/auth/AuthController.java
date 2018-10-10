@@ -3,23 +3,21 @@ package root.report.auth;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import root.form.user.UserModel;
+import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
+import java.util.*;
 
 @RestController
 @RequestMapping("/reportServer/auth")
-public class AuthController {
+public class AuthController extends RO {
 
     @RequestMapping(value="/getAuthByConditions",produces = "text/plain;charset=UTF-8")
     public String getAuthByConditions(@RequestBody String pJson) throws UnsupportedEncodingException {
@@ -48,37 +46,7 @@ public class AuthController {
         List<Map> authList = DbFactory.Open(DbFactory.FORM).selectList("auth.getAuthByFuncType",map);
         return JSON.toJSONString(authList);
     }
-    @RequestMapping(value="/getFunRuleList",produces = "text/plain;charset=UTF-8")
-    public String getExcelRuleList(@RequestBody JSONObject pJson) throws UnsupportedEncodingException{
-        Map<String,String> map = new HashMap<String,String>();
-        map.put("type", pJson.getString("type"));
-        //默认查询pid为0的数据
-        map.put("pid", "0");
-        JSONArray tNode = new JSONArray();
-        showExcelRuleTreeNode(map,tNode);
-        return tNode.toString();
-    }
-    public void showExcelRuleTreeNode(Map<String,String> map, JSONArray aNode) {
-        List<Map> authList = DbFactory.Open(DbFactory.FORM).selectList("auth.getExcelRuleList",map);
-        for (Map auth : authList) {
-            JSONObject authNode = new JSONObject(true);
-            authNode.put("name", auth.get("funcName").toString());
-            if(map.get("type").equals("webFunc")){
-                authNode.put("value", auth.get("funcName").toString());
-            }else{
-                authNode.put("value", auth.get("funcId").toString());
-            }
-            aNode.add(authNode);
-            map.put("pid", auth.get("funcId").toString());
-            List<Map> childExcelRule = DbFactory.Open(DbFactory.FORM).selectList("auth.getExcelRuleList",map);
-            if(childExcelRule.size()>0){
-                JSONArray nNode = new JSONArray();
-                authNode.put("children", nNode);
-                showExcelRuleTreeNode(map,nNode);
-            }
-        }
 
-    }
     @RequestMapping(value="/getFunRuleListReact",produces = "text/plain;charset=UTF-8")
     public String getFunRuleListReact(@RequestBody JSONObject pJson) throws UnsupportedEncodingException{
         Map<String,String> map = new HashMap<String,String>();
@@ -265,6 +233,34 @@ public class AuthController {
         List<Map> dataList = DbFactory.Open(DbFactory.FORM).selectList("role.getRoleList");
         return JSON.toJSONString(dataList);
     }
+    //数据权限合并
+    @RequestMapping(value = "/getAllAuthTypeList", produces = "text/plain;charset=UTF-8")
+    public @ResponseBody  String getAllAuthTypeList() {
+        try{
+            List<Map> authTypeList = DbFactory.Open(DbFactory.FORM).selectList("authType.getAllAuthTypeList");
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (int s = 0; s <authTypeList.size() ; s++) {
+                Map rule =authTypeList.get(s);
+                String aythTypeName =rule.get("value").toString();
+                Map authType = DbFactory.Open(DbFactory.FORM).selectOne("authType.getAuthTypeByName",aythTypeName);
 
+                Statement stat = DbFactory.Open(authType.get("auth_db").toString()).getConnection().createStatement();
+                ResultSet set = stat.executeQuery(authType.get("auth_sql").toString());
+                ResultSetMetaData rsmd = set.getMetaData();
+                int cc = rsmd.getColumnCount();
+                while (set.next()) {
+                    Map<String, Object> retMap = new LinkedHashMap<String, Object>(cc);
+                    list.add(retMap);
+                    for (int i = 1; i <= cc; i++) {
+                        retMap.put(rsmd.getColumnLabel(i).toLowerCase(), set.getObject(i));
+                    }
+                }
+            }
+            return SuccessMsg("查询成功", list);
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return ErrorMsg("3000", ex.getMessage());
+        }
+    }
 
 }
