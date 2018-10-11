@@ -79,10 +79,18 @@
 		fn.func_desc,fn.func_type,fn.func_file,
 		fn.func_url
 		FROM func_name fn
-		WHERE fn.func_name LIKE '${name}'
+		WHERE fn.func_name LIKE '%${name}%'
 
 	</select>
 
+	<!--查我函数名称-->
+	<select id="getFunctionClassByName" parameterType="Map" resultType="Map">
+
+		SELECT class_id,class_name
+		FROM func_class
+		WHERE class_name LIKE '%${name}%'
+
+	</select>
 
 	<insert id="addFunctionName" parameterType="Map">
 
@@ -156,4 +164,16 @@
 		  func_class fc
 
 	</select>
+
+	<insert id="addFunctionClass" parameterType="String">
+		insert into func_class(class_name) values('${_parameter}')
+	</insert>
+
+	<delete id="deleteFunctionClass"  parameterType="int">
+		delete from func_class where class_id=#{class_id}
+	</delete>
+
+	<update id="updateFunctionClass"  parameterType="Map">
+		update func_class set class_name='${class_name}' where class_id=#{class_id};
+	</update>
 </mapper>
