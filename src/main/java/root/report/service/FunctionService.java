@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import root.report.db.DbFactory;
+import root.report.util.JsonUtil;
 
 import javax.print.DocFlavor;
 import java.util.HashMap;
@@ -32,34 +33,30 @@ public class FunctionService {
         param.put("func_id",func_id);
 
         JSONObject jResult=new JSONObject();
-        //查找函数定义头
+
         try{
 
+            //查找函数定义头
             Map<String,String> mapFunc =new HashMap<String,String>();
-            mapFunc = DbFactory.Open(DbFactory.FORM).selectOne("function.getNameByID",param);
-            jResult.put("func_id", mapFunc.get("func_id"));
-            jResult.put("func_name", mapFunc.get("func_name"));
-            jResult.put("func_desc", mapFunc.get("func_desc"));
-            jResult.put("func_db", mapFunc.get("func_db"));
-            jResult.put("class_id", mapFunc.get("class_id"));
-            jResult.put("class_name", mapFunc.get("class_name"));
-            jResult.put("func_sql", mapFunc.get("func_sql"));
-            jResult.put("func_type", mapFunc.get("func_type"));
-            //查找定义的SQL语句
-
+            mapFunc = DbFactory.Open(DbFactory.FORM)
+                    .selectOne("function.getNameByID",param);
+            jResult=JSONObject.parseObject(JSON.toJSONString(mapFunc,JsonUtil.features));
+            //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
 
 
             //查找函数定义输入参数
-            List<Map<String,String>> inList = DbFactory.Open(DbFactory.FORM).selectList("function.getInByID",param);
-            JSONArray inArray=JSONArray.parseArray(JSONArray.toJSONString(inList));
+            List<Map<String,String>> inList = DbFactory.Open(DbFactory.FORM)
+                    .selectList("function.getInByID",param);
+            JSONArray inArray=JSONArray.parseArray(JSONArray.toJSONString(inList,JsonUtil.features));
             jResult.put("in",inArray);
 
             //查找函数定义输出参数
-            List<Map<String,String>> outList = DbFactory.Open(DbFactory.FORM).selectList("function.getOutByID",param);
-            JSONArray outArray=JSONArray.parseArray(JSONArray.toJSONString(outList));
+            List<Map<String,String>> outList = DbFactory.Open(DbFactory.FORM)
+                    .selectList("function.getOutByID",param);
+            JSONArray outArray=JSONArray.parseArray(JSONArray.toJSONString(outList,JsonUtil.features));
             jResult.put("out",outArray);
 
-            // 默认返回第一个
+
             return jResult;
 
         }catch (Exception ex){
@@ -361,7 +358,7 @@ public class FunctionService {
     public void insertRecordsToFunction(JSONObject jsonObject) throws Exception{
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         // 先查询有没有记录
-        sqlSession.getConnection().setAutoCommit(false);  // 个人觉得还是得关闭掉自动提交
+        //sqlSession.getConnection().setAutoCommit(false);  // 个人觉得还是得关闭掉自动提交
         HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
         selectFuncNameMap.put("name",jsonObject.getString("id"));
         Map  funcNameResult =  (Map)JSON.parse( this.getFunctionName(selectFuncNameMap));
@@ -375,7 +372,7 @@ public class FunctionService {
             this.deleteFunctionName(funcId);
         }
         this.insertRecordsToFunc(jsonObject,sqlSession);
-        sqlSession.getConnection().commit();
+        //sqlSession.getConnection().commit();
     }
 
 

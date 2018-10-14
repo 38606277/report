@@ -47,14 +47,19 @@
 			fi.in_id ,
 			fi.in_name ,
 			fi.datatype ,
-			fi.dict ,
+			fi.dict_id ,
+			fd.dict_name ,
 			fi.validate ,
-			fi.datatype ,
-			fi.isformula
+			IF(fi.isformula, 1, 0) isformula,
+			fi.authtype_id ,
+			fat.authtype_desc
 		FROM
-		    func_in fi
+			func_in fi
+			LEFT JOIN func_dict fd ON fi.dict_id = fd.dict_id
+			LEFT JOIN fnd_authtype fat ON fi.authtype_id = fat.authtype_id
 		WHERE
-			fi.func_id = ${func_id}
+			fi.func_id =  ${func_id}
+
 
 	</select>
 
@@ -63,7 +68,8 @@
 		SELECT
 			fo.func_id ,
 			fo.out_id ,
-			out_name ,
+			fo.out_name ,
+		    fo.datatype,
 			fo.link
 		FROM
 			func_out fo

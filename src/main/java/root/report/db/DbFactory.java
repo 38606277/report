@@ -75,6 +75,7 @@ public class DbFactory {
 
             //填充数据源
             factoryBean.setDataSource(dataSource);
+
             //填充SQL文件
             factoryBean.setMapperLocations(getMapLocations(dbtype, dbName));
             Configuration configuration = new Configuration();

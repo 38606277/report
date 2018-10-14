@@ -454,15 +454,16 @@ public class FunctionControl extends RO{
 			functionService.insertRecordsToFunction(jsonObject);
 
             DbFactory.init(commonObj.getString("db"));
+			return SuccessMsg("修改报表成功",null);
         }catch (Exception e){
-			Throwable cause = e;
-			String message = null;
-			while((message = cause.getMessage())==null){
-				cause = cause.getCause();
-			}
-			return ExceptionMsg(message);
+//			Throwable cause = e;
+//			String message = null;
+//			while((message = cause.getMessage())==null){
+//				cause = cause.getCause();
+//			}
+			return ExceptionMsg(e.getMessage());
         }
-        return SuccessMsg("修改报表成功",null);
+
     }
 	//删除报表
 	@RequestMapping(value = "/moveUserSql", produces = "text/plain;charset=UTF-8")

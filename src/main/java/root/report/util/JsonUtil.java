@@ -6,9 +6,15 @@ import java.sql.SQLException;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 public class JsonUtil {
 
+
+	public static SerializerFeature[] features = { SerializerFeature.WriteNullNumberAsZero,
+			SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteMapNullValue,
+			SerializerFeature.PrettyFormat, SerializerFeature.UseISO8601DateFormat,
+			SerializerFeature.WriteDateUseDateFormat, SerializerFeature.WriteNullListAsEmpty };
 	
 	public static String resultSetToJson(ResultSet rs) throws SQLException  
 	{  
