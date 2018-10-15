@@ -70,20 +70,17 @@ public class FunctionControl1 extends RO {
     public String createFunction(@RequestBody String pJson) throws Exception
     {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
-
         try{
             sqlSession.getConnection().setAutoCommit(false);
-
             JSONObject jsonFunc = JSONObject.parseObject(pJson);
 
-            int func_id=functionService.createFunctionName(sqlSession,jsonFunc);
+            String func_id = functionService.createFunctionName(sqlSession,jsonFunc);
 
-            functionService.createFunctionIn(sqlSession,jsonFunc.getJSONArray("in"));
-            functionService.createFunctionOut(sqlSession,jsonFunc.getJSONArray("out"));
+            functionService.createFunctionIn(sqlSession,jsonFunc.getJSONArray("in"),func_id);
+            functionService.createFunctionOut(sqlSession,jsonFunc.getJSONArray("out"),func_id);
             functionService.createSqlTemplate(jsonFunc.getString("class_id"),
-                                              jsonFunc.getString("func_id"),
+                                                func_id,
                                               jsonFunc.getString("func_sql"));
-
             sqlSession.commit();
             return SuccessMsg("新增报表成功",func_id);
 
@@ -96,7 +93,7 @@ public class FunctionControl1 extends RO {
 
     }
 
-    @RequestMapping(value = "/UpdateFunction", produces = "text/plain;charset=UTF-8")
+  /*  @RequestMapping(value = "/UpdateFunction", produces = "text/plain;charset=UTF-8")
     public String updateFunction(@RequestBody String pJson)
     {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
@@ -157,7 +154,7 @@ public class FunctionControl1 extends RO {
         }
 
     }
-
+*/
 
 
 }

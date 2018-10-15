@@ -47,7 +47,7 @@ public class FunctionService {
 
         JSONObject jResult = new JSONObject();
 
-        try {
+
 
             //查找函数定义头
             Map<String, String> mapFunc = new HashMap<String, String>();
@@ -72,38 +72,28 @@ public class FunctionService {
 
             return jResult;
 
-        } catch (Exception ex) {
-            throw ex;
-        }
 
 
     }
 
-    public int createFunctionName(SqlSession sqlSession, JSONObject jsonFunc) throws Exception {
-
-
-            Map<String, String> mapFunc = new HashMap<>();
-
+    public String createFunctionName(SqlSession sqlSession, JSONObject jsonFunc) throws Exception {
+            Map<String, Object> mapFunc = new HashMap<>();   // 必须设定为Object,因为我们想要让其返回自增长类型值
             mapFunc.put("class_id", jsonFunc.getString("class_id"));
-            mapFunc.put("func_id", jsonFunc.getString("func_id"));
+            // mapFunc.put("func_id", jsonFunc.getString("func_id"));  // func_id 自增长
             mapFunc.put("func_name", jsonFunc.getString("func_name"));
             mapFunc.put("func_desc", jsonFunc.getString("func_desc"));
-            mapFunc.put("func_url", jsonFunc.getString("func_url"));
-            mapFunc.put("program", jsonFunc.getString("program"));
+            mapFunc.put("func_type", jsonFunc.getString("func_type"));
+            mapFunc.put("func_db", jsonFunc.getString("func_db"));
+            // mapFunc.put("func_sql", jsonFunc.getString("func_sql"));
 
-            int num=sqlSession.insert("function.addFunctionName", mapFunc);
-            int func_id=0;
+            sqlSession.insert("function.createFunctionName", mapFunc);
 
-            return return func_id;
-
-
+            return mapFunc.get("id").toString();
     }
 
 
     public int updateFunctionName(SqlSession sqlSession, JSONObject jsonFunc)
     {
-
-
             Map<String, String> mapFunc = new HashMap<>();
 
             mapFunc.put("class_id", jsonFunc.getString("class_id"));
@@ -114,7 +104,7 @@ public class FunctionService {
             mapFunc.put("program", jsonFunc.getString("program"));
             return sqlSession.update("function.addFunctionName", mapFunc);
     }
-    public int deleteFunctionName(String aFunID) {
+  /*  public int deleteFunctionName(String aFunID) {
 
         //拿到sqlSerssion
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
@@ -137,8 +127,8 @@ public class FunctionService {
     }
     public  String getSqlTemplate(){
 
-    }
-    public String createSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) {
+    }*/
+    public void createSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) throws DocumentException, SAXException, IOException {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
@@ -155,7 +145,6 @@ public class FunctionService {
         try {
             userDoc = XmlUtil.parseXmlToDom(userSqlPath);
 
-
             Element root = (Element) userDoc.selectSingleNode("/mapper");
             Element newSql = root.addElement("select");
             newSql.addAttribute("id", sqlId);
@@ -170,11 +159,11 @@ public class FunctionService {
             writer.write(userDoc);
             writer.flush();
             writer.close();
-            return "";
         } catch (java.lang.Exception e) {
-            e.printStackTrace();
+           throw e;
         }
     }
+/*
     public String updateSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) {
 
         String namespace = TemplateName;
@@ -250,24 +239,29 @@ public class FunctionService {
             e.printStackTrace();
         }
     }
+*/
 
-    public int createFunctionIn(SqlSession sqlSession,JSONArray jsonArrayIn) {
-        // 事务管理 放在了controller层,return 0 意味着要进行事务回滚
+    public void createFunctionIn(SqlSession sqlSession,JSONArray jsonArrayIn,String func_id) {
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < jsonArrayIn.size(); i++) {
-            JSONObject aOut = jsonArrayIn.getJSONObject(i);
-            map.put("func_id", aOut.getString("func_id"));
-            map.put("func_id", aOut.getString("func_id"));
-            map.put("func_id", aOut.getString("func_id"));
-            map.put("func_id", aOut.getString("func_id"));
-            sqlSession.insert("function.addFunctionIn", aOut);
-
+            JSONObject jsonIn = jsonArrayIn.getJSONObject(i);
+            map.put("func_id",func_id);
+            map.put("in_id", jsonIn.getString("in_id"));
+            map.put("in_name", jsonIn.getString("in_name"));
+            map.put("datatype", jsonIn.getString("datatype"));
+            map.put("dict_id", jsonIn.getString("dict_id"));
+            map.put("validate", jsonIn.getString("validate"));
+            map.put("default_value", jsonIn.getString("default_value"));
+            map.put("isformula", jsonIn.getString("isformula"));
+            map.put("authtype_id", jsonIn.getString("authtype_id"));
+            sqlSession.insert("function.createFunctionIn", map);
         }
     }
+
     /**
      * 功能描述: 删除func_in表的记录
      */
-    public int updateFunctionIn(int funcId) {
+/*    public int updateFunctionIn(int funcId) {
 
         deleteFunctionIn(funcId);
 
@@ -281,41 +275,41 @@ public class FunctionService {
             sqlSession.update("function.addFunctionIn", aOut);
 
         }
-    }
+    }*/
     /**
      * 功能描述: 删除func_in表的记录
      */
-    public int deleteFunctionIn(int funcId) {
+/*    public int deleteFunctionIn(int funcId) {
         DbFactory.Open(DbFactory.FORM)
                 .delete("function.deleteFunctionIn", funcId);
-    }
+    }*/
 
-    public int createFunctionOut(SqlSession sqlSession,JSONArray jsonArray) {
+    public void createFunctionOut(SqlSession sqlSession,JSONArray jsonArray,String func_id) {
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < jsonArray.size(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
-            map.put("func_id", jsonObject.getString("func_id"));
-            map.put("func_id", jsonObject.getString("func_id"));
-            map.put("func_id", jsonObject.getString("func_id"));
-            map.put("func_id", jsonObject.getString("func_id"));
-            sqlSession.insert("function.addFunctionIn", jsonObject);
-
+            map.put("func_id", func_id);
+            map.put("out_id", jsonObject.getString("out_id"));
+            map.put("out_name", jsonObject.getString("out_name"));
+            map.put("datatype", jsonObject.getString("datatype"));
+            map.put("link", jsonObject.getString("link"));
+            sqlSession.insert("function.createFunctionOut", map);
         }
     }
     /**
      * 功能描述: 删除func_in表的记录
      */
-    public int updateFunctionOut(int funcId) {
+/*    public int updateFunctionOut(int funcId) {
         DbFactory.Open(DbFactory.FORM)
                 .delete("function.deleteFunctionIn", funcId);
-    }
+    }*/
     /**
      * 功能描述: 删除func_in表的记录
      */
-    public int deleteFunctionOut(int funcId) {
+/*    public int deleteFunctionOut(int funcId) {
         DbFactory.Open(DbFactory.FORM)
                 .delete("function.deleteFunctionIn", funcId);
-    }
+    }*/
 
 
     //查找func主表
@@ -360,18 +354,11 @@ public class FunctionService {
 
     public List<Map<String, String>> getAllFunctionName() {
         List<Map<String, String>> resultList = new ArrayList<Map<String, String>>();
-        try {
-            SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
-            resultList = sqlSession.selectList("function.getAllFunctionName");
-            return resultList;
 
-        } catch (Exception ex) {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        resultList = sqlSession.selectList("function.getAllFunctionName");
+        return resultList;
 
-            throw ex;
-        }
-
-
-        //JSONArray.toJSONString(resultList);
     }
 
     /**
@@ -419,7 +406,7 @@ public class FunctionService {
     /**
      * 功能描述: 根据传递过来的JSONObject，对其解析，然后往func_name表增加记录
      */
-    public int addFunctionInForJson(JSONObject jsonObject, String funcId) {
+/*    public int addFunctionInForJson(JSONObject jsonObject, String funcId) {
         JSONObject jsonParse = jsonObject.getJSONObject("comment");
         List<Map<String, String>> funcInMapList = new ArrayList<Map<String, String>>();
         JSONArray jsonArray = jsonParse.getJSONArray("in");
@@ -437,9 +424,9 @@ public class FunctionService {
             paramMap.put("isformula", String.valueOf(funcInMap.get("isformula")));
             funcInMapList.add(paramMap);
         }
-        addFuncInNumber = this.addFunctionIn(funcInMapList);
+        addFuncInNumber = this.createFunctionIn(funcInMapList);
         return addFuncInNumber;
-    }
+    }*/
 
 
 
@@ -487,51 +474,39 @@ public class FunctionService {
     /**
      * 功能描述: 删除func_out表的记录
      */
-    public void deleteFunctionOut(int funcId) {
+/*    public void deleteFunctionOut(int funcId) {
         DbFactory.Open(DbFactory.FORM).delete("function.deleteFunctionOut", funcId);
-    }
+    }*/
 
     // 往 func_name 、 func_in 、 fuc_out 3张表当中插入记录
-    public void insertRecordsToFunc(JSONObject jsonObject, SqlSession sqlSession) throws Exception {
+   /* public void insertRecordsToFunc(JSONObject jsonObject, SqlSession sqlSession) throws Exception {
         try {
-            int addFuncNumber = this.addFunctionNameForJson(jsonObject);
-
+            this.addFunctionNameForJson(jsonObject);
 
             HashMap<String, String> selectFuncNameMap = new HashMap<String, String>();
             selectFuncNameMap.put("name", jsonObject.getString("id"));
             Map funcNameResult = (Map) JSON.parse(this.getFunctionName(selectFuncNameMap));
             String insertResultFuncNameID = String.valueOf(funcNameResult.get("func_id"));
 
-            int addFuncInNumber = this.addFunctionInForJson(jsonObject, insertResultFuncNameID);
-            if (addFuncInNumber != 1) {
-                log.error("添加func_in记录失败");
-                throw new Exception("添加func_in记录失败");
-            }
-            log.info("增加func_in记录成功");
-
-            int addFuncOutNumber = this.addFunctionOutForJson(jsonObject, insertResultFuncNameID);
-            if (addFuncOutNumber != 1) {
-                log.error("添加func_out记录失败");
-                throw new Exception("添加func_out记录失败");
-            }
-            log.info("增加func_out记录成功");
+            this.addFunctionInForJson(jsonObject, insertResultFuncNameID);
+            this.addFunctionOutForJson(jsonObject, insertResultFuncNameID);
         } catch (Exception e) {
             throw e;
         }
-    }
+    }*/
 
     // 事务在controller层控制
-    public void insertRecordsToFunction(JSONObject jsonObject, SqlSession sqlSession) throws Exception {
+/*    public void insertRecordsToFunction(JSONObject jsonObject, SqlSession sqlSession) throws Exception {
         try {
             this.deleteRecordsToFunction(jsonObject, sqlSession);
             this.insertRecordsToFunc(jsonObject, sqlSession);
         } catch (Exception e) {
             throw e;
         }
-    }
+    }*/
 
     // 删除之前存在的信息
-    public void deleteRecordsToFunction(JSONObject jsonObject, SqlSession sqlSession) throws Exception {
+   /* public void deleteRecordsToFunction(JSONObject jsonObject, SqlSession sqlSession) throws Exception {
         try {
             // 先查询有没有记录
             HashMap<String, String> selectFuncNameMap = new HashMap<String, String>();
@@ -549,7 +524,7 @@ public class FunctionService {
         } catch (Exception e) {
             throw e;
         }
-    }
+    }*/
 
 
     // 取函数类别

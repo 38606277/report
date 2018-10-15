@@ -98,17 +98,23 @@
 
 	</select>
 
-	<insert id="addFunctionName" parameterType="Map">
+	<!-- 让此SQL能返回自增长主键 -->
+	<insert id="createFunctionName" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
 
-		INSERT INTO func_name(func_class,func_name,func_desc,func_type,func_file,func_url)
-		VALUES ('${class}', '${name}', '${desc}', '${type}',
-		<if  test="file == null">NULL</if>
-		<if  test="file != null">'${file}'</if>
+		INSERT INTO func_name(class_id,func_name,func_desc,func_type,func_db,func_sql)
+		VALUES ('${class_id}', '${func_name}',
+		<if  test="func_desc == null">NULL</if>
+		<if  test="func_desc != null">'${func_desc}'</if>
 		,
-		<if  test="url == null">NULL</if>
-		<if  test="url != null">'${url}'</if>
+		<if  test="func_type == null">NULL</if>
+		<if  test="func_type != null">'${func_type}'</if>
+		,
+		<if  test="func_db == null">NULL</if>
+		<if  test="func_db != null">'${func_db}'</if>
+		,
+		<if  test="func_sql == null">NULL</if>
+		<if  test="func_sql != null">'${func_sql}'</if>
 		)
-
     </insert>
 
     <!--删除函数名称-->
@@ -120,15 +126,24 @@
     </delete>
 
     <!--插入数据到函数输入参数表-->
-    <insert id="addFunctionIn" parameterType="Map">
+    <insert id="createFunctionIn" parameterType="Map">
 		INSERT INTO func_in
-		(func_id,in_id,in_name,datatype,dict,validate,default_value,isformula)
+		(func_id,in_id,in_name,datatype,dict_id,validate,default_value,isformula,authtype_id)
 		VALUES (
 		<if  test="func_id != null">#{func_id,jdbcType=INTEGER}</if>,
-		'${in_id}', '${in_name}', '${datatype}','${dict}',
+		'${in_id}', '${in_name}', '${datatype}',
+		<if  test="dict_id == null">NULL</if>
+		<if  test="dict_id != null">#{func_id,jdbcType=INTEGER}</if>
+		,
 		<if  test="validate == null">NULL</if>
 		<if  test="validate != null">'${validate}'</if>
-		,'${default_value}','${isformula}')
+		,
+		<if  test="default_value == null">NULL</if>
+		<if  test="default_value != null">'${default_value}'</if>
+		,'${isformula}',
+		<if  test="authtype_id == null">NULL</if>
+		<if  test="authtype_id != null">'${authtype_id}'</if>
+		)
     </insert>
 
     <!--删除函数输入参数表数据-->
@@ -140,15 +155,18 @@
     </delete>
 
     <!--查询函数输出参数表-->
-    <insert id="addFunctionOut" parameterType="Map">
+    <insert id="createFunctionOut" parameterType="Map">
 
 		INSERT INTO func_out
-		(func_id,out_id,out_name,link)
+		(func_id,out_id,out_name,datatype,link)
 		VALUES (
-
 		<if  test="func_id != null">#{func_id,jdbcType=INTEGER}</if>,
-		'${out_id}', '${out_name}', '${link}'
-
+		'${out_id}', '${out_name}',
+		<if  test="datatype == null">NULL</if>
+		<if  test="datatype != null">'${datatype}'</if>
+		,
+		<if  test="link == null">NULL</if>
+		<if  test="link != null">'${link}'</if>
 		)
 
     </insert>
