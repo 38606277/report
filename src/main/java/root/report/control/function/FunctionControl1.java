@@ -67,7 +67,7 @@ public class FunctionControl1 extends RO {
     }
 
 
-    @RequestMapping(value = "/CreateFunction", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/createFunction", produces = "text/plain;charset=UTF-8")
     public String createFunction(@RequestBody String pJson) throws Exception
     {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
@@ -94,7 +94,7 @@ public class FunctionControl1 extends RO {
 
     }
 
-    @RequestMapping(value = "/UpdateFunction", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/updateFunction", produces = "text/plain;charset=UTF-8")
     public String updateFunction(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
@@ -139,7 +139,7 @@ public class FunctionControl1 extends RO {
             return ExceptionMsg(ex.getMessage());
         }
 
-    }
+    }*/
 
     @RequestMapping(value = "/getAllFunctionClass", produces = "text/plain;charset=UTF-8")
     public String getAllFunctionClass() {
@@ -153,7 +153,7 @@ public class FunctionControl1 extends RO {
         }
 
     }
-*/
+
 
 
 }
