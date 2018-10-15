@@ -238,10 +238,14 @@ public class AuthController extends RO {
     public @ResponseBody  String getAllAuthTypeList() {
         try{
             List<Map> authTypeList = DbFactory.Open(DbFactory.FORM).selectList("authType.getAllAuthTypeList");
-            List<Map<String, Object>> list = new ArrayList<>();
+            List<Map<String, Object>> listss = new ArrayList<>();
             for (int s = 0; s <authTypeList.size() ; s++) {
+                List<Map<String, Object>> list = new ArrayList<>();
                 Map rule =authTypeList.get(s);
                 String aythTypeName =rule.get("value").toString();
+                Map m=new HashMap<>();
+                m.put("key",aythTypeName);
+                m.put("title",aythTypeName);
                 Map authType = DbFactory.Open(DbFactory.FORM).selectOne("authType.getAuthTypeByName",aythTypeName);
 
                 Statement stat = DbFactory.Open(authType.get("auth_db").toString()).getConnection().createStatement();
@@ -252,11 +256,18 @@ public class AuthController extends RO {
                     Map<String, Object> retMap = new LinkedHashMap<String, Object>(cc);
                     list.add(retMap);
                     for (int i = 1; i <= cc; i++) {
-                        retMap.put(rsmd.getColumnLabel(i).toLowerCase(), set.getObject(i));
+                        if(i==1){
+                            String   val =aythTypeName+"/"+ set.getObject(i);
+                            retMap.put(rsmd.getColumnLabel(i).toLowerCase(),val);
+                        }else {
+                            retMap.put(rsmd.getColumnLabel(i).toLowerCase(), set.getObject(i));
+                        }
                     }
                 }
+                m.put("children",list);
+                listss.add(m);
             }
-            return SuccessMsg("查询成功", list);
+            return SuccessMsg("查询成功", listss);
         }catch(Exception ex){
             ex.printStackTrace();
             return ErrorMsg("3000", ex.getMessage());
