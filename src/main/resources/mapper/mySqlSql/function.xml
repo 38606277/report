@@ -154,8 +154,8 @@
 		VALUES (
 		<if  test="func_id != null">#{func_id,jdbcType=INTEGER}</if>,
 		'${in_id}', '${in_name}', '${datatype}',
-		<if  test="dict_id == null">NULL</if>
-		<if  test="dict_id != null">#{dict_id,jdbcType=INTEGER}</if>
+		<if  test="dict_id == null or dict_id == ''">NULL</if>
+		<if  test="dict_id != null and dict_id != ''">#{dict_id,jdbcType=INTEGER}</if>
 		,
 		<if  test="validate == null">NULL</if>
 		<if  test="validate != null">'${validate}'</if>
@@ -169,11 +169,8 @@
     </insert>
 
     <!--删除函数输入参数表数据-->
-    <delete id="deleteFunctionIn" parameterType="int">
-
-		delete from  func_in
-		where func_id=#{func_id}
-
+    <delete id="deleteFunctionIn" parameterType="Map">
+		delete from func_in where func_id=#{func_id,jdbcType=INTEGER} and in_id='${in_id}'
     </delete>
 
     <!--查询函数输出参数表-->
