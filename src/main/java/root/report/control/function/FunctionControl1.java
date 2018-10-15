@@ -23,6 +23,7 @@ import root.report.util.XmlUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -93,26 +94,23 @@ public class FunctionControl1 extends RO {
 
     }
 
-  /*  @RequestMapping(value = "/UpdateFunction", produces = "text/plain;charset=UTF-8")
-    public String updateFunction(@RequestBody String pJson)
-    {
+    @RequestMapping(value = "/UpdateFunction", produces = "text/plain;charset=UTF-8")
+    public String updateFunction(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
-
         try{
             sqlSession.getConnection().setAutoCommit(false);
-
             JSONObject jsonFunc = JSONObject.parseObject(pJson);
 
             functionService.updateFunctionName(sqlSession,jsonFunc);
 
             functionService.updateFunctionIn(sqlSession,jsonFunc.getJSONArray("in"));
-            functionService.updateFunctionOut(sqlSession,jsonFunc.getJSONArray("out"));
+            // functionService.updateFunctionOut(sqlSession,jsonFunc.getJSONArray("out"));
             functionService.createSqlTemplate(jsonFunc.getString("class_id"),
                     jsonFunc.getString("func_id"),
                     jsonFunc.getString("func_sql"));
 
             sqlSession.commit();
-            return SuccessMsg("新增报表成功",func_id);
+            return SuccessMsg("新增报表成功","");
 
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -123,6 +121,7 @@ public class FunctionControl1 extends RO {
 
     }
 
+   /*
     @RequestMapping(value = "/UpdateFunction", produces = "text/plain;charset=UTF-8")
     public String deleteFunction(@RequestBody String pJson)
     {

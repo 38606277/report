@@ -117,6 +117,28 @@
 		)
     </insert>
 
+	<!-- 让此SQL能返回自增长主键 -->
+	<update id="updateFunctionName" parameterType="Map" >
+
+		update func_name set
+			class_id='${class_id}',func_name=
+			<if  test="func_name == null">NULL</if>
+			<if  test="func_name != null">'${func_name}'</if>
+			,func_desc=
+			<if  test="func_desc == null">NULL</if>
+			<if  test="func_desc != null">'${func_desc}'</if>
+			,func_type=
+			<if  test="func_type == null">NULL</if>
+			<if  test="func_type != null">'${func_type}'</if>
+			,func_db=
+			<if  test="func_db == null">NULL</if>
+			<if  test="func_db != null">'${func_db}'</if>
+			,func_sql=
+			<if  test="func_sql == null">NULL</if>
+			<if  test="func_sql != null">'${func_sql}'</if>
+		where func_id=#{func_id,jdbcType=INTEGER}
+	</update>
+
     <!--删除函数名称-->
     <delete id="deleteFunctionName" parameterType="int">
 
@@ -133,7 +155,7 @@
 		<if  test="func_id != null">#{func_id,jdbcType=INTEGER}</if>,
 		'${in_id}', '${in_name}', '${datatype}',
 		<if  test="dict_id == null">NULL</if>
-		<if  test="dict_id != null">#{func_id,jdbcType=INTEGER}</if>
+		<if  test="dict_id != null">#{dict_id,jdbcType=INTEGER}</if>
 		,
 		<if  test="validate == null">NULL</if>
 		<if  test="validate != null">'${validate}'</if>

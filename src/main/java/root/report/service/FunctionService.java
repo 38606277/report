@@ -10,9 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.common.i18n.Exception;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
+import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.springframework.stereotype.Component;
@@ -94,15 +92,14 @@ public class FunctionService {
 
     public int updateFunctionName(SqlSession sqlSession, JSONObject jsonFunc)
     {
-            Map<String, String> mapFunc = new HashMap<>();
-
-            mapFunc.put("class_id", jsonFunc.getString("class_id"));
-            mapFunc.put("func_id", jsonFunc.getString("func_id"));
-            mapFunc.put("func_name", jsonFunc.getString("func_name"));
-            mapFunc.put("func_desc", jsonFunc.getString("func_desc"));
-            mapFunc.put("func_url", jsonFunc.getString("func_url"));
-            mapFunc.put("program", jsonFunc.getString("program"));
-            return sqlSession.update("function.addFunctionName", mapFunc);
+        Map<String, String> mapFunc = new HashMap<>();
+        mapFunc.put("class_id", jsonFunc.getString("class_id"));
+        mapFunc.put("func_id", jsonFunc.getString("func_id"));
+        mapFunc.put("func_name", jsonFunc.getString("func_name"));
+        mapFunc.put("func_desc", jsonFunc.getString("func_desc"));
+        mapFunc.put("func_type", jsonFunc.getString("func_type"));
+        mapFunc.put("func_db", jsonFunc.getString("func_db"));
+        return sqlSession.update("function.updateFunctionName", mapFunc);
     }
   /*  public int deleteFunctionName(String aFunID) {
 
@@ -150,7 +147,8 @@ public class FunctionService {
             newSql.addAttribute("id", sqlId);
             newSql.addAttribute("resultType", "BigDecimal");
             newSql.addAttribute("parameterType", "Map");
-            newSql.addText(aSQLTemplate);
+            // newSql.addText(aSQLTemplate);
+            addSqlText(newSql,aSQLTemplate);
 
             log.debug("新增SQL:" + newSql.asXML());
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
@@ -163,6 +161,19 @@ public class FunctionService {
            throw e;
         }
     }
+
+    private void addSqlText(Element select, String sqlText) throws DocumentException{
+        String xmlText = "<sql>"+sqlText+"</sql>";
+        Document doc = DocumentHelper.parseText(xmlText);
+        //获取根节点    
+        Element root = doc.getRootElement();
+        List<Node> content = root.content();
+        for (int i = 0; i < content.size(); i++) {
+            Node node = content.get(i);
+            select.add((Node)node.clone());
+        }
+    }
+
 /*
     public String updateSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) {
 
@@ -261,10 +272,8 @@ public class FunctionService {
     /**
      * 功能描述: 删除func_in表的记录
      */
-/*    public int updateFunctionIn(int funcId) {
-
-        deleteFunctionIn(funcId);
-
+    public int updateFunctionIn(SqlSession sqlSession,JSONArray jsonArrayIn) {
+       //  deleteFunctionIn(sqlSession,jsonArrayIn);
         Map<String, String> map = new HashMap<>();
         for (int i = 0; i < jsonArrayIn.size(); i++) {
             JSONObject aOut = jsonArrayIn.getJSONObject(i);
@@ -273,16 +282,16 @@ public class FunctionService {
             map.put("func_id", aOut.getString("func_id"));
             map.put("func_id", aOut.getString("func_id"));
             sqlSession.update("function.addFunctionIn", aOut);
-
         }
-    }*/
+        return 1;
+    }
     /**
      * 功能描述: 删除func_in表的记录
      */
-/*    public int deleteFunctionIn(int funcId) {
-        DbFactory.Open(DbFactory.FORM)
-                .delete("function.deleteFunctionIn", funcId);
-    }*/
+    public int deleteFunctionIn(SqlSession sqlSession,JSONArray jsonArrayIn) {
+       // return sqlSession.delete("function.deleteFunctionIn", funcId);
+        return 1;
+    }
 
     public void createFunctionOut(SqlSession sqlSession,JSONArray jsonArray,String func_id) {
         Map<String, String> map = new HashMap<>();
