@@ -177,7 +177,7 @@ public class FormUserService
         // JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         JSONObject obj = JSONObject.parseObject(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
-        int currentPage=Integer.valueOf(obj.getString("pageNum"));
+        int currentPage=Integer.valueOf(obj.getString("pageNumr"));
         int perPage=Integer.valueOf(obj.getString("perPage"));
         if(1==currentPage|| 0==currentPage){
             currentPage=0;
@@ -187,6 +187,33 @@ public class FormUserService
         map.put("startIndex", currentPage);
         map.put("perPage",perPage);
         map.put("userName",  obj.get("keyword")==null?"":obj.getString("keyword"));
+        List<UserModel> userInfolist = DbFactory.Open(DbFactory.FORM).selectList("formUser.getUserList",map);
+        String total=DbFactory.Open(DbFactory.FORM).selectOne("formUser.countUser", map);
+        Map<String,Object> map2 =new HashMap<String,Object>();
+        Map<String,Object> map3 =new HashMap<String,Object>();
+        map3.put("list",userInfolist);
+        map3.put("total",Integer.valueOf(total));
+        map2.put("msg","查询成功");
+        map2.put("data",map3);
+        map2.put("status",0);
+        return JSON.toJSONString(map2);
+    }
+    @RequestMapping(value = "/getUserListRole", produces = "text/plain; charset=utf-8")
+    public String getUserListRole(@RequestBody String pJson)
+    {
+        // JSONArray obj = (JSONArray)JSONObject.parse(pJson);
+        JSONObject obj = JSONObject.parseObject(pJson);
+        Map<String,Object> map = new HashMap<String,Object>();
+        int currentPage=Integer.valueOf(obj.getString("pageNumUser"));
+        int perPage=Integer.valueOf(obj.getString("perPageUser"));
+        if(1==currentPage|| 0==currentPage){
+            currentPage=0;
+        }else{
+            currentPage=(currentPage-1)*perPage;
+        }
+        map.put("startIndex", currentPage);
+        map.put("perPage",perPage);
+        map.put("userName",  obj.get("userName")==null?"":obj.getString("userName"));
         List<UserModel> userInfolist = DbFactory.Open(DbFactory.FORM).selectList("formUser.getUserList",map);
         String total=DbFactory.Open(DbFactory.FORM).selectOne("formUser.countUser", map);
         Map<String,Object> map2 =new HashMap<String,Object>();

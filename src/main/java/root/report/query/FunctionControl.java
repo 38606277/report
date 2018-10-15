@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.*;
 
 @RestController
@@ -340,12 +341,11 @@ public class FunctionControl extends RO{
     }
 
 	@RequestMapping(value = "/saveUserSql/V2", produces = "text/plain;charset=UTF-8")
-	public String saveUserSqlV2(@RequestBody String pJson)
-	{
+	public String saveUserSqlV2(@RequestBody String pJson) throws SQLException {
 		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
 		try{
 			//写入fnc_name,写入func_in,func_out
-
+			sqlSession.getConnection().setAutoCommit(false);
 			//写入配置文件
 
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
@@ -391,39 +391,23 @@ public class FunctionControl extends RO{
 			writer.write(userDoc);
 			writer.flush();
 			writer.close();
-			//
-			functionService.insertRecordsToFunc(jsonObject,sqlSession);
 
+			functionService.insertRecordsToFunc(jsonObject,sqlSession);
+			sqlSession.getConnection().commit();
 			//重置该DB连接
 			DbFactory.init(commonObj.getString("db"));
 		}catch (Exception e){
-			Throwable cause = e;
-			String message = null;
-			while((message = cause.getMessage())==null){
-				cause = cause.getCause();
-			}
-
-			return ExceptionMsg(message);
-		}finally {
-			try {
-				sqlSession.getConnection().setAutoCommit(true);
-			}catch(Exception e) {
-				Throwable cause = e;
-				String message = null;
-				while((message = cause.getMessage())==null){
-					cause = cause.getCause();
-				}
-				return ExceptionMsg(message);
-			}
+			sqlSession.getConnection().rollback();
+			return ExceptionMsg(e.getMessage());
 		}
-
 		return SuccessMsg("新增报表成功",null);
 	}
 
 	@RequestMapping(value = "/modifyUserSql", produces = "text/plain;charset=UTF-8")
-    public String modifyUserSql(@RequestBody String pJson)
-    {
+    public String modifyUserSql(@RequestBody String pJson) throws SQLException {
+		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
+			sqlSession.getConnection().setAutoCommit(false);
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson,Feature.OrderedField);
             String namespace = jsonObject.getString("namespace");
             JSONObject commonObj = jsonObject.getJSONObject("comment");
@@ -451,24 +435,21 @@ public class FunctionControl extends RO{
             writer.flush();
             writer.close();
 			// 往func_name,func_in,func_out当中插入对应记录
-			functionService.insertRecordsToFunction(jsonObject);
-
+			functionService.insertRecordsToFunction(jsonObject,sqlSession);
+			sqlSession.getConnection().commit();
             DbFactory.init(commonObj.getString("db"));
-			return SuccessMsg("修改报表成功",null);
         }catch (Exception e){
-//			Throwable cause = e;
-//			String message = null;
-//			while((message = cause.getMessage())==null){
-//				cause = cause.getCause();
-//			}
+			sqlSession.getConnection().rollback();
 			return ExceptionMsg(e.getMessage());
         }
-
+        return SuccessMsg("修改报表成功",null);
     }
 	//删除报表
 	@RequestMapping(value = "/moveUserSql", produces = "text/plain;charset=UTF-8")
-	public String moveUserSql(@RequestBody String pJson){
+	public String moveUserSql(@RequestBody String pJson) throws SQLException {
+		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
 		try{
+			sqlSession.getConnection().setAutoCommit(false);
 			JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
 			String namespace = jsonObject.getString("namespace");
 			String sqlId = jsonObject.getString("id");
@@ -486,20 +467,10 @@ public class FunctionControl extends RO{
 			newObj.put("namespace", namespace);
 			newObj.put("sqlid", sqlId);
 
-			// 先查询有没有记录
-			HashMap<String,String> selectFuncNameMap = new HashMap<String,String>();
-			selectFuncNameMap.put("name",jsonObject.getString("id"));
-			Map  funcNameResult =  (Map)JSON.parse( functionService.getFunctionName(selectFuncNameMap));
-			if(funcNameResult!=null &&   StringUtils.isNotBlank(String.valueOf(funcNameResult.get("func_id")))){
-				String funcIdStr = String.valueOf(funcNameResult.get("func_id"));
-				// 不为空 ，先删除记录
-				int funcId = Integer.parseInt(funcIdStr);
-				functionService.deleteFunctionIn(funcId);
-				functionService.deleteFunctionOut(funcId);
-				functionService.deleteFunctionName(funcId);
-			}
+			this.functionService.deleteRecordsToFunction(jsonObject,sqlSession);
 
 			JSONObject selectObj = JSONObject.parseObject(this.qryFunctionDetail(newObj.toJSONString()));
+			sqlSession.getConnection().commit();
 			DbFactory.init(selectObj.getJSONObject("comment").getString("db"));
 
 			//删除该节点
@@ -515,17 +486,59 @@ public class FunctionControl extends RO{
 			writer.close();
 
 
-		}
-		catch (Exception e)
-		{
-			Throwable cause = e;
-			String message = null;
-			while((message = cause.getMessage())==null){
-				cause = cause.getCause();
-			}
-			ErrorMsg("3000", message);
+		} catch (Exception e) {
+			sqlSession.getConnection().rollback();
+			return ErrorMsg("3000", e.getMessage());
 		}
 		return SuccessMsg("操作成功", null);
+	}
+
+	// 查找所有func_class
+	@RequestMapping(value = "/getAllFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+	public String getAllFunctionClassInfo(){
+		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+		List<Map<String,String>> list = this.functionService.getAllFunctionClass(sqlSession);
+		return SuccessMsg("",JSONObject.toJSON(list));
+	}
+
+	// 往fucn_class这张表插入一条记录
+	@RequestMapping(value = "/addFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+	public String addFunctionClassInfo(@RequestBody String pJson){
+		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+		JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+		String class_name = jsonObject.getString("class_name");
+		int flag = this.functionService.addFunctionClass(class_name,sqlSession);
+		if(flag!=1){
+			return ErrorMsg("","插入数据失败");
+		}
+		return SuccessMsg("插入数据成功",null);
+	}
+
+    // 往fucn_class这张表删除一条记录
+    @RequestMapping(value = "/deleteFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+    public String deleteFunctionClassInfo(@RequestBody String pJson){
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        int class_id = jsonObject.getInteger("class_id");
+        int flag = this.functionService.deleteFunctionClass(class_id,sqlSession);
+        if(flag!=1){
+            return ErrorMsg("3000","删除数据失败");
+        }
+        return SuccessMsg("删除数据成功",null);
+    }
+
+	// 往fucn_class这张表修改一条记录
+	@RequestMapping(value = "/updateFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+	public String updateFunctionClassInfo(@RequestBody String pJson){
+		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+		JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+		String class_name = jsonObject.getString("class_name");
+		int class_id = jsonObject.getInteger("class_id");
+		int flag = this.functionService.updateFunctionClass(class_id,class_name,sqlSession);
+		if(flag!=1){
+			return ErrorMsg("3000","修改数据失败");
+		}
+		return SuccessMsg("修改数据成功",null);
 	}
 
 	private void addSqlText(Element select, String sqlText) throws DocumentException{
