@@ -312,7 +312,7 @@ public class FunctionControl extends RO{
             writer.flush();
             writer.close();
             //
-			functionService.insertRecordsToFunc(jsonObject,sqlSession);
+			// functionService.insertRecordsToFunc(jsonObject,sqlSession);
 
             //重置该DB连接
             DbFactory.init(commonObj.getString("db"));
@@ -392,7 +392,7 @@ public class FunctionControl extends RO{
 			writer.flush();
 			writer.close();
 
-			functionService.insertRecordsToFunc(jsonObject,sqlSession);
+			// functionService.insertRecordsToFunc(jsonObject,sqlSession);
 			sqlSession.getConnection().commit();
 			//重置该DB连接
 			DbFactory.init(commonObj.getString("db"));
@@ -435,7 +435,7 @@ public class FunctionControl extends RO{
             writer.flush();
             writer.close();
 			// 往func_name,func_in,func_out当中插入对应记录
-			functionService.insertRecordsToFunction(jsonObject,sqlSession);
+			// functionService.insertRecordsToFunction(jsonObject,sqlSession);
 			sqlSession.getConnection().commit();
             DbFactory.init(commonObj.getString("db"));
         }catch (Exception e){
@@ -467,7 +467,7 @@ public class FunctionControl extends RO{
 			newObj.put("namespace", namespace);
 			newObj.put("sqlid", sqlId);
 
-			this.functionService.deleteRecordsToFunction(jsonObject,sqlSession);
+			// this.functionService.deleteRecordsToFunction(jsonObject,sqlSession);
 
 			JSONObject selectObj = JSONObject.parseObject(this.qryFunctionDetail(newObj.toJSONString()));
 			sqlSession.getConnection().commit();
@@ -520,6 +520,7 @@ public class FunctionControl extends RO{
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
         int class_id = jsonObject.getInteger("class_id");
+        // TODO 先要关联查询func_name表，如果存在关联记录，则不允许删除此
         int flag = this.functionService.deleteFunctionClass(class_id,sqlSession);
         if(flag!=1){
             return ErrorMsg("3000","删除数据失败");

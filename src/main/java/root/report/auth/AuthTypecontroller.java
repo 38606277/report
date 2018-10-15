@@ -20,7 +20,8 @@ public class AuthTypecontroller extends RO {
     @RequestMapping(value = "/getAllAuthTypeList", produces = "text/plain;charset=UTF-8")
     public @ResponseBody String getAllAuthTypeList() {
         try{
-            List<Map> authTypeList = DbFactory.Open(DbFactory.FORM).selectList("authType.getAllAuthTypeList");
+            List<Map> authTypeList = DbFactory.Open(DbFactory.FORM)
+                    .selectList("authType.getAllAuthTypeList");
             return SuccessMsg("查询成功", authTypeList);
         }catch(Exception ex){
             ex.printStackTrace();
