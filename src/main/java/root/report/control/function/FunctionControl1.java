@@ -104,13 +104,13 @@ public class FunctionControl1 extends RO {
             functionService.updateFunctionName(sqlSession,jsonFunc);
 
             functionService.updateFunctionIn(sqlSession,jsonFunc.getJSONArray("in"));
-            // functionService.updateFunctionOut(sqlSession,jsonFunc.getJSONArray("out"));
-            functionService.createSqlTemplate(jsonFunc.getString("class_id"),
+            functionService.updateFunctionOut(sqlSession,jsonFunc.getJSONArray("out"));
+            functionService.updateSqlTemplate(jsonFunc.getString("class_id"),
                     jsonFunc.getString("func_id"),
                     jsonFunc.getString("func_sql"));
 
             sqlSession.commit();
-            return SuccessMsg("新增报表成功","");
+            return SuccessMsg("修改报表成功","");
 
         }catch (Exception ex){
             sqlSession.getConnection().rollback();

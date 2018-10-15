@@ -192,10 +192,7 @@
 
     <!--查询函数输出参数表-->
     <delete id="deleteFunctionOut" parameterType="int">
-
-		delete from  func_out
-		where func_id=#{func_id}
-
+		delete from func_out where func_id=#{func_id,jdbcType=INTEGER} and out_id='${out_id}'
     </delete>
 
 	<!--查我函数类别-->

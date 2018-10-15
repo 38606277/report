@@ -174,8 +174,8 @@ public class FunctionService {
         }
     }
 
-/*
-    public String updateSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) {
+
+    public String updateSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) throws DocumentException, SAXException, IOException {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
@@ -191,16 +191,11 @@ public class FunctionService {
         Document userDoc = null;
         try {
             userDoc = XmlUtil.parseXmlToDom(userSqlPath);
+            Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
+            select.clearContent();
+            this.addSqlText(select,aSQLTemplate);
 
-
-            Element root = (Element) userDoc.selectSingleNode("/mapper");
-            Element newSql = root.addElement("select");
-            newSql.addAttribute("id", sqlId);
-            newSql.addAttribute("resultType", "BigDecimal");
-            newSql.addAttribute("parameterType", "Map");
-            newSql.addText(aSQLTemplate);
-
-            log.debug("新增SQL:" + newSql.asXML());
+            log.debug("修改SQL:" + select.asXML());
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
             Element rootEle = userDoc.getRootElement();
@@ -209,10 +204,10 @@ public class FunctionService {
             writer.close();
             return "";
         } catch (java.lang.Exception e) {
-            e.printStackTrace();
+            throw e;
         }
     }
-
+    /*
     public String deleteSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) {
 
         String namespace = TemplateName;
@@ -272,25 +267,32 @@ public class FunctionService {
     /**
      * 功能描述: 删除func_in表的记录
      */
-    public int updateFunctionIn(SqlSession sqlSession,JSONArray jsonArrayIn) {
-       //  deleteFunctionIn(sqlSession,jsonArrayIn);
+    public void updateFunctionIn(SqlSession sqlSession,JSONArray jsonArrayIn) {
+
         Map<String, String> map = new HashMap<>();
+        Map<String, String> deleteMap = new HashMap<>();
         for (int i = 0; i < jsonArrayIn.size(); i++) {
-            JSONObject aOut = jsonArrayIn.getJSONObject(i);
-            map.put("func_id", aOut.getString("func_id"));
-            map.put("func_id", aOut.getString("func_id"));
-            map.put("func_id", aOut.getString("func_id"));
-            map.put("func_id", aOut.getString("func_id"));
-            sqlSession.update("function.addFunctionIn", aOut);
+            JSONObject jsonIn = jsonArrayIn.getJSONObject(i);
+            deleteMap.put("func_id",jsonIn.getString("func_id"));
+            deleteMap.put("in_id",jsonIn.getString("in_id"));
+            deleteFunctionIn(sqlSession,deleteMap);   // 先删除后插入
+            map.put("func_id",jsonIn.getString("func_id"));
+            map.put("in_id", jsonIn.getString("in_id"));
+            map.put("in_name", jsonIn.getString("in_name"));
+            map.put("datatype", jsonIn.getString("datatype"));
+            map.put("dict_id", jsonIn.getString("dict_id"));
+            map.put("validate", jsonIn.getString("validate"));
+            map.put("default_value", jsonIn.getString("default_value"));
+            map.put("isformula", jsonIn.getString("isformula"));
+            map.put("authtype_id", jsonIn.getString("authtype_id"));
+            sqlSession.insert("function.createFunctionIn", map);
         }
-        return 1;
     }
     /**
      * 功能描述: 删除func_in表的记录
      */
-    public int deleteFunctionIn(SqlSession sqlSession,JSONArray jsonArrayIn) {
-       // return sqlSession.delete("function.deleteFunctionIn", funcId);
-        return 1;
+    public int deleteFunctionIn(SqlSession sqlSession,Map map) {
+        return sqlSession.delete("function.deleteFunctionIn", map);
     }
 
     public void createFunctionOut(SqlSession sqlSession,JSONArray jsonArray,String func_id) {
@@ -306,19 +308,30 @@ public class FunctionService {
         }
     }
     /**
-     * 功能描述: 删除func_in表的记录
+     * 功能描述: 修改func_out表的记录
      */
-/*    public int updateFunctionOut(int funcId) {
-        DbFactory.Open(DbFactory.FORM)
-                .delete("function.deleteFunctionIn", funcId);
-    }*/
+    public void updateFunctionOut(SqlSession sqlSession,JSONArray jsonArrayIn) {
+        Map<String, String> map = new HashMap<>();
+        Map<String, String> deleteMap = new HashMap<>();
+        for (int i = 0; i < jsonArrayIn.size(); i++) {
+            JSONObject jsonOut = jsonArrayIn.getJSONObject(i);
+            deleteMap.put("func_id",jsonOut.getString("func_id"));
+            deleteMap.put("out_id",jsonOut.getString("out_id"));
+            deleteFunctionOut(sqlSession,deleteMap);   // 先删除后插入
+            map.put("func_id", jsonOut.getString("func_id"));
+            map.put("out_id", jsonOut.getString("out_id"));
+            map.put("out_name", jsonOut.getString("out_name"));
+            map.put("datatype", jsonOut.getString("datatype"));
+            map.put("link", jsonOut.getString("link"));
+            sqlSession.insert("function.createFunctionOut", map);
+        }
+    }
     /**
-     * 功能描述: 删除func_in表的记录
+     * 功能描述: 删除func_out表的记录
      */
-/*    public int deleteFunctionOut(int funcId) {
-        DbFactory.Open(DbFactory.FORM)
-                .delete("function.deleteFunctionIn", funcId);
-    }*/
+    public void deleteFunctionOut(SqlSession sqlSession,Map map) {
+        sqlSession.delete("function.deleteFunctionOut", map);
+    }
 
 
     //查找func主表
