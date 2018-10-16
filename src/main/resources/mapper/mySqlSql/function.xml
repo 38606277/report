@@ -117,7 +117,6 @@
 		)
     </insert>
 
-	<!-- 让此SQL能返回自增长主键 -->
 	<update id="updateFunctionName" parameterType="Map" >
 
 		update func_name set
@@ -173,6 +172,11 @@
 		delete from func_in where func_id=#{func_id,jdbcType=INTEGER} and in_id='${in_id}'
     </delete>
 
+    <!--删除函数输入参数表数据-->
+    <delete id="deleteFunctionInByFuncId" parameterType="int">
+		delete from func_in where func_id=#{func_id,jdbcType=INTEGER}
+    </delete>
+
     <!--查询函数输出参数表-->
     <insert id="createFunctionOut" parameterType="Map">
 
@@ -191,8 +195,13 @@
     </insert>
 
     <!--查询函数输出参数表-->
-    <delete id="deleteFunctionOut" parameterType="int">
+    <delete id="deleteFunctionOut" parameterType="Map">
 		delete from func_out where func_id=#{func_id,jdbcType=INTEGER} and out_id='${out_id}'
+    </delete>
+
+    <!--查询函数输出参数表-->
+    <delete id="deleteFunctionOutByFuncId" parameterType="int">
+		delete from func_out where func_id=#{func_id,jdbcType=INTEGER}
     </delete>
 
 	<!--查我函数类别-->

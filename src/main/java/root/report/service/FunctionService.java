@@ -208,7 +208,7 @@ public class FunctionService {
         }
     }
 
-    public void deleteSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) throws DocumentException, SAXException, IOException {
+    public void deleteSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException, IOException {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
@@ -334,14 +334,8 @@ public class FunctionService {
      *
      * 功能描述: 针对传递进来的JSONAarray进行批量删除func_in数据
      */
-    public void deleteFunctionInForJsonArray(SqlSession sqlSession,JSONArray jsonArrayIn) {
-        Map<String, String> deleteMap = new HashMap<>();
-        for (int i = 0; i < jsonArrayIn.size(); i++) {
-            JSONObject jsonIn = jsonArrayIn.getJSONObject(i);
-            deleteMap.put("func_id",jsonIn.getString("func_id"));
-            deleteMap.put("in_id",jsonIn.getString("in_id"));
-            deleteFunctionIn(sqlSession,deleteMap);
-        }
+    public void deleteFunctionInForJsonArray(SqlSession sqlSession,int funcId) {
+        sqlSession.delete("function.deleteFunctionInByFuncId",funcId);
     }
 
     /**
@@ -392,14 +386,8 @@ public class FunctionService {
     /**
      * 功能描述: 针对传递进来的JSONAarray进行批量删除func_out数据
      */
-    public void deleteFunctionOutForJsonArray(SqlSession sqlSession,JSONArray jsonArrayOut) {
-        Map<String, String> deleteMap = new HashMap<>();
-        for (int i = 0; i < jsonArrayOut.size(); i++) {
-            JSONObject jsonOut = jsonArrayOut.getJSONObject(i);
-            deleteMap.put("func_id",jsonOut.getString("func_id"));
-            deleteMap.put("out_id",jsonOut.getString("out_id"));
-            deleteFunctionOut(sqlSession,deleteMap);
-        }
+    public void deleteFunctionOutForJsonArray(SqlSession sqlSession,int funcId) {
+        sqlSession.delete("function.deleteFunctionOutByFuncId",funcId);
     }
 
     //查找func主表
