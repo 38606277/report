@@ -273,6 +273,22 @@ public class AuthController extends RO {
         List<Map> dataList = DbFactory.Open(DbFactory.FORM).selectList("role.getRoleList");
         return JSON.toJSONString(dataList);
     }
+    /**
+     * @author  gaoluo
+     * date 2018-10-16
+     * */
+    @RequestMapping(value="/getRoleListByUserId",produces = "text/plain;charset=utf-8")
+    public String getRoleListByUserId(@RequestBody String pJson) throws UnsupportedEncodingException{
+        JSONObject obj = JSONObject.parseObject(pJson);
+        List<Map> dataList = DbFactory.Open(DbFactory.FORM).selectList("role.getRoleList");
+        Map<String,Object> map =new HashMap<String,Object>();
+        map.put("userId",obj.get("userid").toString());
+        List rolelist = DbFactory.Open(DbFactory.FORM).selectList("role.getRoleListByUserId",map);
+        Map<String,Object> maps =new HashMap<String,Object>();
+        maps.put("roleList",dataList);
+        maps.put("userroleList",rolelist);
+        return JSON.toJSONString(maps);
+    }
     //数据权限合并
     @RequestMapping(value = "/getAllAuthTypeList", produces = "text/plain;charset=UTF-8")
     public @ResponseBody  String getAllAuthTypeList() {
