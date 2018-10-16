@@ -14,6 +14,12 @@
 		LEFT JOIN fnd_func f on a.func_id = f.func_id
 		where u.role_id = #{roleId} and a.auth_type =#{type}
     </select>
+    <select id="getAuthByConditionsTable" resultType="Map" parameterType="Map">
+        SELECT a.auth_id as authId,a.auth_type as authType, CONCAT_WS('/','${type}',a.func_id) as funcId,a.role_id as roleId,u.role_NAME as roleName,f.func_name as funcName,f.func_type as funcType
+        from fnd_auth a LEFT JOIN fnd_role u on a.role_id = u.role_ID
+        LEFT JOIN fnd_func f on a.func_id = f.func_id
+        where u.role_id = #{roleId} and a.auth_type =#{type}
+    </select>
     <select id="getAuthListByConditions" resultType="Map" parameterType="Map">
         SELECT a.auth_id as authId,a.auth_type as authType,a.func_id as funcId,a.role_id as roleId,u.role_NAME as roleName
 		from fnd_auth a LEFT JOIN fnd_role u on a.role_id = u.role_ID

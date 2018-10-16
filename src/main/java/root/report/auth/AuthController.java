@@ -28,6 +28,27 @@ public class AuthController extends RO {
         List<Map> authList = DbFactory.Open(DbFactory.FORM).selectList("auth.getAuthByConditions",map);
         return JSON.toJSONString(authList);
     }
+    @RequestMapping(value="/getAuthByConditionsTable",produces = "text/plain;charset=UTF-8")
+    public String getAuthByConditionsTable(@RequestBody String pJson) throws UnsupportedEncodingException {
+        JSONArray obj = (JSONArray) JSONObject.parse(pJson);
+        Map<String,String> map = new HashMap<String,String>();
+        List<Map> authTypeList = DbFactory.Open(DbFactory.FORM).selectList("authType.getAllAuthTypeList");
+        List<Map> listss = new ArrayList<>();
+        map.put("roleId", obj.get(0).toString());
+        for (int i = 0; i <authTypeList.size() ; i++) {
+            Map rule = authTypeList.get(i);
+            String aythTypeName = rule.get("value").toString();
+            map.put("type", aythTypeName);
+            List<Map> authList = DbFactory.Open(DbFactory.FORM).selectList("auth.getAuthByConditionsTable",map);
+//            String sql="SELECT a.auth_id as authId,a.auth_type as authType, CONCAT('"+aythTypeName+"/',a.func_id) as funcId,a.role_id as roleId,u.role_NAME as roleName,f.func_name as funcName,f.func_type as funcType"
+//                    +"from fnd_auth a LEFT JOIN fnd_role u on a.role_id = u.role_ID"
+//                    +" LEFT JOIN fnd_func f on a.func_id = f.func_id  where u.role_id = '"+roleId+"' and a.auth_type ='"+aythTypeName+"'";
+//            List<Map> authList = DbFactory.Open(DbFactory.FORM).selectList("authType.getAuthByConditionsTable", sql);
+            listss.addAll(authList);
+        }
+        return JSON.toJSONString(listss);
+    }
+
     @RequestMapping(value="/getAuthListByConditions",produces = "text/plain;charset=UTF-8")
     public String getAuthListByConditions(@RequestBody String pJson) throws UnsupportedEncodingException{
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
@@ -211,15 +232,34 @@ public class AuthController extends RO {
     public String saveAuthRules(@RequestBody String pJson) throws UnsupportedEncodingException{
         JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         JSONArray ruleArray = (JSONArray) obj.get(2);
-        JSONObject rule = new JSONObject();
         Map<String,String> map = new HashMap<String,String>();
+        String type= obj.get(1).toString();
         map.put("roleId",obj.get(0).toString());
-        map.put("type", (String) obj.get(1));
-        DbFactory.Open(DbFactory.FORM).delete("auth.deleteRules",map);
-        for (int i = 0; i < ruleArray.size(); i++) {
-            System.out.println(ruleArray.get(i).toString());
-            map.put("funcName", ruleArray.get(i).toString());
-            DbFactory.Open(DbFactory.FORM).insert("auth.addAuthRules",map);
+        map.put("type",type);
+        if(!type.equalsIgnoreCase("table")){
+            DbFactory.Open(DbFactory.FORM).delete("auth.deleteRules",map);
+            for (int i = 0; i < ruleArray.size(); i++) {
+                map.put("funcName", ruleArray.get(i).toString());
+                DbFactory.Open(DbFactory.FORM).insert("auth.addAuthRules",map);
+            }
+        }else{
+            List<Map> authTypeList = DbFactory.Open(DbFactory.FORM).selectList("authType.getAllAuthTypeList");
+            for (int i = 0; i <authTypeList.size();i++) {
+                Map rule = authTypeList.get(i);
+                String aythType = rule.get("value").toString();
+                map.put("type",aythType);
+                DbFactory.Open(DbFactory.FORM).delete("auth.deleteRules",map);
+            }
+            for (int ii = 0; ii < ruleArray.size(); ii++) {
+                String vals=ruleArray.get(ii).toString();
+                String[] arr=null;
+                arr=vals.split("/");
+                if(arr.length>0){
+                    map.put("type",arr[0]);
+                    map.put("funcName", arr[1]);
+                    DbFactory.Open(DbFactory.FORM).insert("auth.addAuthRules",map);
+                }
+            }
         }
         return JSON.toJSONString(null);
     }
@@ -244,7 +284,7 @@ public class AuthController extends RO {
                 Map rule =authTypeList.get(s);
                 String aythTypeName =rule.get("value").toString();
                 Map m=new HashMap<>();
-                m.put("key",aythTypeName);
+                m.put("key",aythTypeName+"/"+aythTypeName);
                 m.put("title",aythTypeName);
                 Map authType = DbFactory.Open(DbFactory.FORM).selectOne("authType.getAuthTypeByName",aythTypeName);
 
@@ -256,8 +296,9 @@ public class AuthController extends RO {
                     Map<String, Object> retMap = new LinkedHashMap<String, Object>(cc);
                     list.add(retMap);
                     for (int i = 1; i <= cc; i++) {
-                        if(i==1){
-                            String   val =aythTypeName+"/"+ set.getObject(i);
+                        String names=rsmd.getColumnLabel(i).toLowerCase();
+                        if(names.equalsIgnoreCase("key")){
+                            String  val =aythTypeName+"/"+ set.getObject(i);
                             retMap.put(rsmd.getColumnLabel(i).toLowerCase(),val);
                         }else {
                             retMap.put(rsmd.getColumnLabel(i).toLowerCase(), set.getObject(i));
