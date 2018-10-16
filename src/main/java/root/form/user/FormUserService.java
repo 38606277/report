@@ -109,7 +109,7 @@ public class FormUserService
             UserModel userModel = JSONObject.parseObject(pJson, UserModel.class);
             UserModel current_userModel = (UserModel)DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserInfoById",userModel.getId());
             map1.put("user_id",current_userModel.getId());
-            map1.put("role_id",current_userModel.getIsAdmin());
+            map1.put("role_id",null);
             if(!userModel.getRegisType().equals("erp"))
             {
                 String old_password = current_userModel.getEncryptPwd();
@@ -123,11 +123,19 @@ public class FormUserService
             DbFactory.Open(DbFactory.FORM).update("formUser.updateUser", userModel);
             //先刪除角色id
             DbFactory.Open(DbFactory.FORM).insert("role.deleteUserRole", map1);
+            String roleIdlist=userModel.getIsAdminText();
+           String[] arrRole= roleIdlist.split(",");
+
             Map<String,Object> map=new HashMap<String,Object>();
-            map.put("user_id",userModel.getId());
-            map.put("role_id",userModel.getIsAdmin());
-            //重新保存角色id
-            DbFactory.Open(DbFactory.FORM).insert("role.addUserRole", map);
+            if(arrRole.length>0) {
+                for (int i = 0; i < arrRole.length; i++) {
+                    map.put("user_id", userModel.getId());
+                    map.put("role_id", arrRole[i]);
+                    //重新保存角色id
+                    DbFactory.Open(DbFactory.FORM).insert("role.addUserRole", map);
+                }
+            }
+
 
             result = "success";
             obj.put("result", "success");
