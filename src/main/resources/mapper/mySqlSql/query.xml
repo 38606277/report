@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="query">
+
+    <!-- 让此SQL能返回自增长主键 -->
+    <insert id="createFunctionName" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO qry_name(class_id,qry_name,qry_desc,qry_type,qry_file,qry_db,qry_sql)
+        VALUES ('${class_id}', '${qry_name}',
+        <if  test="qry_desc == null">NULL</if>
+        <if  test="qry_desc != null">'${qry_desc}'</if>
+        ,
+        <if  test="qry_type == null">NULL</if>
+        <if  test="qry_type != null">'${qry_type}'</if>
+        ,
+        <if  test="qry_file == null">NULL</if>
+        <if  test="qry_file != null">'${qry_file}'</if>
+        ,
+        <if  test="qry_db == null">NULL</if>
+        <if  test="qry_db != null">'${qry_db}'</if>
+        ,
+        <if  test="qry_sql == null">NULL</if>
+        <if  test="qry_sql != null">'${qry_sql}'</if>
+        )
+    </insert>
+
+    <!--  插入数据到query_in表-->
+    <insert id="createFunctionIn" parameterType="Map">
+        INSERT INTO qry_in
+        (qry_id,in_id,in_name,datatype,dict_id,validate,default_value,authtype_id)
+        VALUES (
+        <if  test="qry_id != null">#{qry_id,jdbcType=INTEGER}</if>,
+        '${in_id}', '${in_name}', '${datatype}',
+        <if  test="dict_id == null or dict_id == ''">NULL</if>
+        <if  test="dict_id != null and dict_id != ''">#{dict_id,jdbcType=INTEGER}</if>
+        ,
+        <if  test="validate == null">NULL</if>
+        <if  test="validate != null">'${validate}'</if>
+        ,
+        <if  test="default_value == null">NULL</if>
+        <if  test="default_value != null">'${default_value}'</if>
+        ,
+        <if  test="authtype_id == null">NULL</if>
+        <if  test="authtype_id != null">'${authtype_id}'</if>
+        )
+    </insert>
+
+    <!-- 往 query_out表中插入数据 -->
+    <insert id="createFunctionOut" parameterType="Map">
+
+        INSERT INTO qry_out
+        (qry_id,out_id,out_name,datatype,link,width,render)
+        VALUES (
+        <if  test="qry_id != null">#{qry_id,jdbcType=INTEGER}</if>,
+        '${out_id}', '${out_name}',
+        <if  test="datatype == null">NULL</if>
+        <if  test="datatype != null">'${datatype}'</if>
+        ,
+        <if  test="link == null">NULL</if>
+        <if  test="link != null">'${link}'</if>
+        ,
+        <if  test="width == null">NULL</if>
+        <if  test="width != null">#{width,jdbcType=DOUBLE}</if>
+        ,
+        <if  test="render == null">NULL</if>
+        <if  test="render != null">'${render}'</if>
+        )
+
+    </insert>
+
+    <!-- 修改qry_name表当中的记录 -->
+    <update id="updateFunctionName" parameterType="Map" >
+        update qry_name set
+        class_id='${class_id}',qry_name=
+        <if  test="qry_name == null">NULL</if>
+        <if  test="qry_name != null">'${qry_name}'</if>
+        ,qry_desc=
+        <if  test="qry_desc == null">NULL</if>
+        <if  test="qry_desc != null">'${qry_desc}'</if>
+        ,qry_type=
+        <if  test="qry_type == null">NULL</if>
+        <if  test="qry_type != null">'${qry_type}'</if>
+        ,qry_db=
+        <if  test="qry_db == null">NULL</if>
+        <if  test="qry_db != null">'${qry_db}'</if>
+        ,qry_file=
+        <if  test="qry_file == null">NULL</if>
+        <if  test="qry_file != null">'${qry_file}'</if>
+        where qry_id=#{qry_id,jdbcType=INTEGER}
+    </update>
+
+    <!--  删除query_in表当中的一条数据 -->
+    <delete id="deleteFunctionIn" parameterType="Map">
+		delete from qry_in where qry_id=#{qry_id,jdbcType=INTEGER} and in_id='${in_id}'
+    </delete>
+
+    <!--查询函数输出参数表-->
+    <delete id="deleteFunctionOut" parameterType="int">
+		delete from qry_out where qry_id=#{qry_id,jdbcType=INTEGER} and out_id='${out_id}'
+    </delete>
+
+    <!--删除 qry_name -->
+    <delete id="deleteFunctionName" parameterType="int">
+		delete from  qry_name
+		where qry_id=#{qry_id,jdbcType=INTEGER}
+    </delete>
+
+    <!--删除函数输入参数表数据-->
+    <delete id="deleteFunctionInByFuncId" parameterType="int">
+		delete from qry_in where qry_id=#{qry_id,jdbcType=INTEGER}
+    </delete>
+
+    <!--查询函数输出参数表-->
+    <delete id="deleteFunctionOutByFuncId" parameterType="int">
+		delete from qry_out where qry_id=#{qry_id,jdbcType=INTEGER}
+    </delete>
+</mapper>

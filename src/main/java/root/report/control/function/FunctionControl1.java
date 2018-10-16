@@ -88,10 +88,7 @@ public class FunctionControl1 extends RO {
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
-        }finally {
-            sqlSession.getConnection().setAutoCommit(true);
         }
-
     }
 
     @RequestMapping(value = "/updateFunction", produces = "text/plain;charset=UTF-8")
@@ -115,10 +112,7 @@ public class FunctionControl1 extends RO {
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
-        }finally {
-            sqlSession.getConnection().setAutoCommit(true);
         }
-
     }
 
 
