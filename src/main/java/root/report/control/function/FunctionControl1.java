@@ -157,9 +157,44 @@ public class FunctionControl1 extends RO {
             return ExceptionMsg(ex.getMessage());
 
         }
-
     }
 
+    // 往fucn_class这张表插入一条记录
+    @RequestMapping(value = "/createFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+    public String createFunctionClassInfo(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        String class_name = jsonObject.getString("class_name");
+        int flag = this.functionService.createFunctionClass(class_name,sqlSession);
+        if(flag!=1){
+            return ErrorMsg("","插入数据失败");
+        }
+        return SuccessMsg("插入数据成功",null);
+    }
 
+    // 往fucn_class这张表删除一条记录
+    @RequestMapping(value = "/deleteFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+    public String deleteFunctionClassInfo(@RequestBody String pJson){
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        int class_id = jsonObject.getInteger("class_id");
+        int flag = this.functionService.deleteFunctionClassForRelation(class_id,sqlSession);
+        if(flag==2) return ErrorMsg("3000","此func_class正在被其他表关联引用,不能删除");
+        return SuccessMsg("删除数据成功",null);
+    }
+
+    // 往fucn_class这张表修改一条记录
+    @RequestMapping(value = "/updateFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+    public String updateFunctionClassInfo(@RequestBody String pJson){
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        String class_name = jsonObject.getString("class_name");
+        int class_id = jsonObject.getInteger("class_id");
+        int flag = this.functionService.updateFunctionClass(class_id,class_name,sqlSession);
+        if(flag!=1){
+            return ErrorMsg("3000","修改数据失败");
+        }
+        return SuccessMsg("修改数据成功",null);
+    }
 
 }

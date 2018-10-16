@@ -501,7 +501,7 @@ public class FunctionControl extends RO{
 		return SuccessMsg("",JSONObject.toJSON(list));
 	}
 
-	// 往fucn_class这张表插入一条记录
+	/*// 往fucn_class这张表插入一条记录
 	@RequestMapping(value = "/addFunctionClassInfo", produces = "text/plain;charset=UTF-8")
 	public String addFunctionClassInfo(@RequestBody String pJson){
 		SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
@@ -540,7 +540,7 @@ public class FunctionControl extends RO{
 			return ErrorMsg("3000","修改数据失败");
 		}
 		return SuccessMsg("修改数据成功",null);
-	}
+	}*/
 
 	private void addSqlText(Element select, String sqlText) throws DocumentException{
     	String xmlText = "<sql>"+sqlText+"</sql>";

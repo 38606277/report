@@ -205,7 +205,7 @@
 
 	</select>
 
-	<insert id="addFunctionClass" parameterType="String">
+	<insert id="createFunctionClass" parameterType="String">
 		insert into func_class(class_name) values('${_parameter}')
 	</insert>
 
@@ -216,4 +216,8 @@
 	<update id="updateFunctionClass"  parameterType="Map">
 		update func_class set class_name='${class_name}' where class_id=#{class_id};
 	</update>
+
+    <select id="getFuncInfoRelationClass" parameterType="int" resultType="int">
+        select count(1) from func_name where class_id=#{class_id,jdbcType=INTEGER}
+    </select>
 </mapper>
