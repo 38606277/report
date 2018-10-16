@@ -177,7 +177,7 @@ public class FormUserService
         // JSONArray obj = (JSONArray)JSONObject.parse(pJson);
         JSONObject obj = JSONObject.parseObject(pJson);
         Map<String,Object> map = new HashMap<String,Object>();
-        int currentPage=Integer.valueOf(obj.getString("pageNumr"));
+        int currentPage=Integer.valueOf(obj.getString("pageNum"));
         int perPage=Integer.valueOf(obj.getString("perPage"));
         if(1==currentPage|| 0==currentPage){
             currentPage=0;
