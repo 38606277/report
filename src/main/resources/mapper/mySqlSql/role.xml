@@ -41,6 +41,11 @@
         <if test="roleId != null and roleId!=''">  and u.role_id= '${roleId}' </if>
 
     </select>
+    <select id="getRoleListByUserId" resultType="String" parameterType="Map">
+        select u.role_id from fnd_user_role u  where 1=1
+        <if test="userId != null and userId!=''">  and u.user_id= '${userId}' </if>
+
+    </select>
 
     <select id="getRoleInfoById" resultMap="roleModel" parameterType="int">
         select t.role_id,t.role_name,t.enabled,DATE_FORMAT(t.created_date,'%Y-%m-%d') created_date,DATE_FORMAT(t.last_updated_date,'%Y-%m-%d') last_updated_date,t.created_by,
