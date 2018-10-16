@@ -132,11 +132,11 @@ public class FunctionControl1 extends RO {
             for(int i = 0; i < jsonArray.size(); i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 functionService.deleteFunctionName(sqlSession,jsonObject.getIntValue("func_id"));
-                functionService.deleteFunctionInForJsonArray(sqlSession,jsonObject.getJSONArray("in"));
-                functionService.deleteFunctionOutForJsonArray(sqlSession,jsonObject.getJSONArray("out"));
+                functionService.deleteFunctionInForJsonArray(sqlSession,jsonObject.getIntValue("func_id"));
+                functionService.deleteFunctionOutForJsonArray(sqlSession,jsonObject.getIntValue("func_id"));
                 functionService.deleteSqlTemplate(jsonObject.getString("class_id"),
-                        jsonObject.getString("func_id"),
-                        jsonObject.getString("func_sql"));
+                        jsonObject.getString("func_id")
+                        );
             }
             sqlSession.getConnection().commit();
             return SuccessMsg("删除报表成功",null);

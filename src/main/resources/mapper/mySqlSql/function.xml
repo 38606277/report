@@ -173,6 +173,11 @@
 		delete from func_in where func_id=#{func_id,jdbcType=INTEGER} and in_id='${in_id}'
     </delete>
 
+    <!--删除函数输入参数表数据-->
+    <delete id="deleteFunctionInByFuncId" parameterType="int">
+		delete from func_in where func_id=#{func_id,jdbcType=INTEGER}
+    </delete>
+
     <!--查询函数输出参数表-->
     <insert id="createFunctionOut" parameterType="Map">
 
@@ -193,6 +198,11 @@
     <!--查询函数输出参数表-->
     <delete id="deleteFunctionOut" parameterType="int">
 		delete from func_out where func_id=#{func_id,jdbcType=INTEGER} and out_id='${out_id}'
+    </delete>
+
+    <!--查询函数输出参数表-->
+    <delete id="deleteFunctionOutByFuncId" parameterType="int">
+		delete from func_out where func_id=#{func_id,jdbcType=INTEGER}
     </delete>
 
 	<!--查我函数类别-->
