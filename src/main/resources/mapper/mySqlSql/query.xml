@@ -4,7 +4,7 @@
 <mapper namespace="query">
 
     <!-- 让此SQL能返回自增长主键 -->
-    <insert id="createFunctionName" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
+    <insert id="createQueryName" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
         INSERT INTO qry_name(class_id,qry_name,qry_desc,qry_type,qry_file,qry_db,qry_sql)
         VALUES ('${class_id}', '${qry_name}',
         <if  test="qry_desc == null">NULL</if>
@@ -25,7 +25,7 @@
     </insert>
 
     <!--  插入数据到query_in表-->
-    <insert id="createFunctionIn" parameterType="Map">
+    <insert id="createQueryIn" parameterType="Map">
         INSERT INTO qry_in
         (qry_id,in_id,in_name,datatype,dict_id,validate,default_value,authtype_id)
         VALUES (
@@ -46,7 +46,7 @@
     </insert>
 
     <!-- 往 query_out表中插入数据 -->
-    <insert id="createFunctionOut" parameterType="Map">
+    <insert id="createQueryOut" parameterType="Map">
 
         INSERT INTO qry_out
         (qry_id,out_id,out_name,datatype,link,width,render)
@@ -69,7 +69,7 @@
     </insert>
 
     <!-- 修改qry_name表当中的记录 -->
-    <update id="updateFunctionName" parameterType="Map" >
+    <update id="updateQueryName" parameterType="Map" >
         update qry_name set
         class_id='${class_id}',qry_name=
         <if  test="qry_name == null">NULL</if>
@@ -90,28 +90,45 @@
     </update>
 
     <!--  删除query_in表当中的一条数据 -->
-    <delete id="deleteFunctionIn" parameterType="Map">
+    <delete id="deleteQueryIn" parameterType="Map">
 		delete from qry_in where qry_id=#{qry_id,jdbcType=INTEGER} and in_id='${in_id}'
     </delete>
 
     <!--查询函数输出参数表-->
-    <delete id="deleteFunctionOut" parameterType="int">
+    <delete id="deleteQueryOut" parameterType="int">
 		delete from qry_out where qry_id=#{qry_id,jdbcType=INTEGER} and out_id='${out_id}'
     </delete>
 
     <!--删除 qry_name -->
-    <delete id="deleteFunctionName" parameterType="int">
+    <delete id="deleteQueryName" parameterType="int">
 		delete from  qry_name
 		where qry_id=#{qry_id,jdbcType=INTEGER}
     </delete>
 
     <!--删除函数输入参数表数据-->
-    <delete id="deleteFunctionInByFuncId" parameterType="int">
+    <delete id="deleteQueryInByFuncId" parameterType="int">
 		delete from qry_in where qry_id=#{qry_id,jdbcType=INTEGER}
     </delete>
 
     <!--查询函数输出参数表-->
-    <delete id="deleteFunctionOutByFuncId" parameterType="int">
+    <delete id="deleteQueryOutByFuncId" parameterType="int">
 		delete from qry_out where qry_id=#{qry_id,jdbcType=INTEGER}
     </delete>
+
+    <!-- 往query_class表中新增一条记录 -->
+    <insert id="createQueryClass" parameterType="String">
+		insert into qry_class(class_name) values('${_parameter}')
+	</insert>
+
+    <select id="getQueryInfoRelationClass" parameterType="int" resultType="int">
+        select count(1) from qry_name where class_id=#{class_id,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteQueryClass"  parameterType="int">
+		delete from qry_class where class_id=#{class_id}
+	</delete>
+
+    <update id="updateQueryClass"  parameterType="Map">
+		update qry_class set class_name='${class_name}' where class_id=#{class_id};
+	</update>
 </mapper>

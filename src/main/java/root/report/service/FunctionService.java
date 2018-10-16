@@ -519,13 +519,12 @@ public class FunctionService {
     // 创建一个函数类别
     public int createFunctionClass(String class_name, SqlSession sqlSession) {
         return sqlSession.insert("function.createFunctionClass", class_name);
-
     }
 
     // 删除一个函数类别，但要判断是否有func_name 关联func_class的class_id
     // getFuncInfoRelationClass
     public int deleteFunctionClassForRelation(int class_id, SqlSession sqlSession) {
-        int i = sqlSession.selectOne("getFuncInfoRelationClass",class_id);
+        int i = sqlSession.selectOne("function.getFuncInfoRelationClass",class_id);
         if(i>0){
             return 2;  // 代表 存在关联关系,不能删除
         }

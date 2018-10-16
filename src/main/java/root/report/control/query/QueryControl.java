@@ -1,5 +1,6 @@
 package root.report.control.query;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.session.SqlSession;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/reportServer/queryControl")
+@RequestMapping("/reportServer/query")
 public class QueryControl extends RO {
 
     private static Logger log = Logger.getLogger(QueryControl.class);
@@ -61,17 +62,17 @@ public class QueryControl extends RO {
     }
 
 
-    @RequestMapping(value = "/createQryFunction", produces = "text/plain;charset=UTF-8")
-    public String createQryFunction(@RequestBody String pJson) throws Exception
+    @RequestMapping(value = "/createQuery", produces = "text/plain;charset=UTF-8")
+    public String createQuery(@RequestBody String pJson) throws Exception
     {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
             JSONObject jsonFunc = JSONObject.parseObject(pJson);
-            String qry_id = queryService.createFunctionName(sqlSession,jsonFunc);
+            String qry_id = queryService.createQueryName(sqlSession,jsonFunc);
 
-            queryService.createFunctionIn(sqlSession,jsonFunc.getJSONArray("in"),qry_id);
-            queryService.createFunctionOut(sqlSession,jsonFunc.getJSONArray("out"),qry_id);
+            queryService.createQueryIn(sqlSession,jsonFunc.getJSONArray("in"),qry_id);
+            queryService.createQueryOut(sqlSession,jsonFunc.getJSONArray("out"),qry_id);
             queryService.createSqlTemplate(jsonFunc.getString("class_id"),
                                                 qry_id,
                                               jsonFunc.getString("qry_sql"));
@@ -83,16 +84,16 @@ public class QueryControl extends RO {
         }
     }
 
-    @RequestMapping(value = "/updateQryFunction", produces = "text/plain;charset=UTF-8")
-    public String updateQryFunction(@RequestBody String pJson) throws SQLException {
+    @RequestMapping(value = "/updateQuery", produces = "text/plain;charset=UTF-8")
+    public String updateQuery(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
             JSONObject jsonFunc = JSONObject.parseObject(pJson);
 
-            queryService.updateFunctionName(sqlSession,jsonFunc);
-            queryService.updateFunctionIn(sqlSession,jsonFunc.getJSONArray("in"));
-            queryService.updateFunctionOut(sqlSession,jsonFunc.getJSONArray("out"));
+            queryService.updateQueryName(sqlSession,jsonFunc);
+            queryService.updateQueryIn(sqlSession,jsonFunc.getJSONArray("in"));
+            queryService.updateQueryOut(sqlSession,jsonFunc.getJSONArray("out"));
             queryService.updateSqlTemplate(jsonFunc.getString("class_id"),
                     jsonFunc.getString("qry_id"),
                     jsonFunc.getString("qry_sql"));
@@ -107,8 +108,8 @@ public class QueryControl extends RO {
     }
 
 
-    @RequestMapping(value = "/deleteQryFunction", produces = "text/plain;charset=UTF-8")
-    public String deleteQryFunction(@RequestBody String pJson) throws SQLException {
+    @RequestMapping(value = "/deleteQuery", produces = "text/plain;charset=UTF-8")
+    public String deleteQuery(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
@@ -117,9 +118,9 @@ public class QueryControl extends RO {
             for(int i = 0; i < jsonArray.size(); i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                queryService.deleteFunctionName(sqlSession,jsonObject.getIntValue("qry_id"));
-                queryService.deleteFunctionInForJsonArray(sqlSession,jsonObject.getIntValue("qry_id"));
-                queryService.deleteFunctionOutForJsonArray(sqlSession,jsonObject.getIntValue("qry_id"));
+                queryService.deleteQueryName(sqlSession,jsonObject.getIntValue("qry_id"));
+                queryService.deleteQueryInForJsonArray(sqlSession,jsonObject.getIntValue("qry_id"));
+                queryService.deleteQueryOutForJsonArray(sqlSession,jsonObject.getIntValue("qry_id"));
                 queryService.deleteSqlTemplate(jsonObject.getString("class_id"),
                         jsonObject.getString("qry_id")
                 );
@@ -132,6 +133,44 @@ public class QueryControl extends RO {
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
         }
+    }
+
+    // 往qry_class这张表插入一条记录
+    @RequestMapping(value = "/createQueryClassInfo", produces = "text/plain;charset=UTF-8")
+    public String createQueryClassInfo(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        String class_name = jsonObject.getString("class_name");
+        int flag = this.queryService.createQueryClass(class_name,sqlSession);
+        if(flag!=1){
+            return ErrorMsg("","插入数据失败");
+        }
+        return SuccessMsg("插入数据成功",null);
+    }
+
+    // 在 qry_class 这张表删除一条记录
+    @RequestMapping(value = "/deleteQueryClassInfo", produces = "text/plain;charset=UTF-8")
+    public String deleteQueryClassInfo(@RequestBody String pJson){
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        int class_id = jsonObject.getInteger("class_id");
+        int flag = this.queryService.deleteQueryClassForRelation(class_id,sqlSession);
+        if(flag==2) return ErrorMsg("3000","此func_class正在被其他表关联引用,不能删除");
+        return SuccessMsg("删除数据成功",null);
+    }
+
+    // 往fucn_class这张表修改一条记录
+    @RequestMapping(value = "/updateQueryClassInfo", produces = "text/plain;charset=UTF-8")
+    public String updateQueryClassInfo(@RequestBody String pJson){
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        String class_name = jsonObject.getString("class_name");
+        int class_id = jsonObject.getInteger("class_id");
+        int flag = this.queryService.updateQueryClass(class_id,class_name,sqlSession);
+        if(flag!=1){
+            return ErrorMsg("3000","修改数据失败");
+        }
+        return SuccessMsg("修改数据成功",null);
     }
 
     @RequestMapping(value = "/getAllFunctionClass", produces = "text/plain;charset=UTF-8")
