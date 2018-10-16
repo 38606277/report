@@ -80,9 +80,9 @@ public class FunctionControl1 extends RO {
             functionService.createFunctionIn(sqlSession,jsonFunc.getJSONArray("in"),func_id);
             functionService.createFunctionOut(sqlSession,jsonFunc.getJSONArray("out"),func_id);
             functionService.createSqlTemplate(jsonFunc.getString("class_id"),
-                                                func_id,
-                                              jsonFunc.getString("func_sql"));
-            sqlSession.commit();
+                    func_id,
+                    jsonFunc.getString("func_sql"));
+            sqlSession.getConnection().commit();
             return SuccessMsg("新增报表成功",func_id);
 
         }catch (Exception ex){
@@ -109,7 +109,7 @@ public class FunctionControl1 extends RO {
                     jsonFunc.getString("func_id"),
                     jsonFunc.getString("func_sql"));
 
-            sqlSession.commit();
+            sqlSession.getConnection().commit();
             return SuccessMsg("修改报表成功","");
 
         }catch (Exception ex){
@@ -121,25 +121,31 @@ public class FunctionControl1 extends RO {
 
     }
 
-   /*
-    @RequestMapping(value = "/UpdateFunction", produces = "text/plain;charset=UTF-8")
-    public String deleteFunction(@RequestBody String pJson)
-    {
+
+    @RequestMapping(value = "/deleteFunction", produces = "text/plain;charset=UTF-8")
+    public String deleteFunction(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
-            JSONObject jsonFunc = JSONObject.parseObject(pJson);
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONArray jsonArray =  JSONObject.parseArray(pJson);
 
-            functionService.deleteFunctionIn((sqlSession,jsonFunc.getJSONArray("in"));
-            functionService.deleteFunctionOut(sqlSession,jsonFunc.getJSONArray("out"));
-            functionService.deleteSqlTemplate();
-
-            return SuccessMsg("新增报表成功",null);
-
+            for(int i = 0; i < jsonArray.size(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                functionService.deleteFunctionName(sqlSession,jsonObject.getIntValue("func_id"));
+                functionService.deleteFunctionInForJsonArray(sqlSession,jsonObject.getJSONArray("in"));
+                functionService.deleteFunctionOutForJsonArray(sqlSession,jsonObject.getJSONArray("out"));
+                functionService.deleteSqlTemplate(jsonObject.getString("class_id"),
+                        jsonObject.getString("func_id"),
+                        jsonObject.getString("func_sql"));
+            }
+            sqlSession.getConnection().commit();
+            return SuccessMsg("删除报表成功",null);
         }catch (Exception ex){
+            sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
         }
+    }
 
-    }*/
 
     @RequestMapping(value = "/getAllFunctionClass", produces = "text/plain;charset=UTF-8")
     public String getAllFunctionClass() {
@@ -151,9 +157,44 @@ public class FunctionControl1 extends RO {
             return ExceptionMsg(ex.getMessage());
 
         }
-
     }
 
+    // 往fucn_class这张表插入一条记录
+    @RequestMapping(value = "/createFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+    public String createFunctionClassInfo(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        String class_name = jsonObject.getString("class_name");
+        int flag = this.functionService.createFunctionClass(class_name,sqlSession);
+        if(flag!=1){
+            return ErrorMsg("","插入数据失败");
+        }
+        return SuccessMsg("插入数据成功",null);
+    }
 
+    // 往fucn_class这张表删除一条记录
+    @RequestMapping(value = "/deleteFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+    public String deleteFunctionClassInfo(@RequestBody String pJson){
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        int class_id = jsonObject.getInteger("class_id");
+        int flag = this.functionService.deleteFunctionClassForRelation(class_id,sqlSession);
+        if(flag==2) return ErrorMsg("3000","此func_class正在被其他表关联引用,不能删除");
+        return SuccessMsg("删除数据成功",null);
+    }
+
+    // 往fucn_class这张表修改一条记录
+    @RequestMapping(value = "/updateFunctionClassInfo", produces = "text/plain;charset=UTF-8")
+    public String updateFunctionClassInfo(@RequestBody String pJson){
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        String class_name = jsonObject.getString("class_name");
+        int class_id = jsonObject.getInteger("class_id");
+        int flag = this.functionService.updateFunctionClass(class_id,class_name,sqlSession);
+        if(flag!=1){
+            return ErrorMsg("3000","修改数据失败");
+        }
+        return SuccessMsg("修改数据成功",null);
+    }
 
 }
