@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dict">
+
+    <!--查我函数名称-->
+    <select id="getAllDictName" parameterType="Map" resultType="Map">
+        SELECT
+            fd.dict_id ,
+            fd.dict_name
+        FROM
+            func_dict fd
+
+    </select>
+
+</mapper>
