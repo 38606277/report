@@ -16,6 +16,7 @@ import root.report.service.FunctionService;
 import root.report.service.QueryService;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,39 +27,31 @@ public class QueryControl extends RO {
     private static Logger log = Logger.getLogger(QueryControl.class);
 
     @Autowired
-    private FunctionService functionService;
-
-    @Autowired
     private QueryService queryService;
 
 
 
-    @RequestMapping(value = "/getAllFunctionName", produces = "text/plain;charset=UTF-8")
-    public String getAllFunctionName() {
-
-        List<Map<String, String>> listFunc ;
+    @RequestMapping(value = "/getAllQueryName", produces = "text/plain;charset=UTF-8")
+    public String getAllQueryName() {
+        List<Map<String, String>> listFunc = new ArrayList<>();
         try {
-            listFunc=functionService.getAllFunctionName();
+            listFunc = queryService.getAllQueryName();
             return SuccessMsg("", listFunc);
         } catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
-
-
     }
 
 
-    @RequestMapping(value = "/getFunctionByID/{func_id}", produces = "text/plain;charset=UTF-8")
-    public String getFunctionByID(@PathVariable("func_id") String func_id) {
-
+    @RequestMapping(value = "/getQueryByID/{qry_id}", produces = "text/plain;charset=UTF-8")
+    public String getQueryByID(@PathVariable("qry_id") String qry_id) {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
-            JSONObject jsonObject=functionService.getFunctionByID(func_id);
+            JSONObject jsonObject = queryService.getQueryByID(sqlSession,qry_id);
             return  SuccessMsg("",jsonObject);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
-
         }
-
     }
 
 
@@ -173,19 +166,14 @@ public class QueryControl extends RO {
         return SuccessMsg("修改数据成功",null);
     }
 
-    @RequestMapping(value = "/getAllFunctionClass", produces = "text/plain;charset=UTF-8")
-    public String getAllFunctionClass() {
-
+    @RequestMapping(value = "/getAllQueryClass", produces = "text/plain;charset=UTF-8")
+    public String getAllQueryClass() {
         try{
-            List<Map<String,String>> list=functionService.getAllFunctionClass(DbFactory.Open(DbFactory.FORM));
+            List<Map<String,String>> list = queryService.getAllQueryClass(DbFactory.Open(DbFactory.FORM));
             return  SuccessMsg("",list);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
-
         }
-
     }
-
-
 
 }

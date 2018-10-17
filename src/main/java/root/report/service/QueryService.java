@@ -1,5 +1,6 @@
 package root.report.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.session.SqlSession;
@@ -10,11 +11,14 @@ import org.dom4j.io.XMLWriter;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
+import root.report.db.DbFactory;
+import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -371,5 +375,46 @@ public class QueryService {
         map.put("class_name", class_name);
         // 修改一个函数，传递2个参数
         return sqlSession.update("query.updateQueryClass", map);
+    }
+
+    /**
+     * 功能描述:  根据qry_id 查找qry表相关的信息
+     */
+    public JSONObject getQueryByID(SqlSession sqlSession,String qry_id) {
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("qry_id", qry_id);
+        JSONObject jResult = new JSONObject();
+
+        // 查找qry_name
+        Map<String, String> mapFunc = new HashMap<String, String>();
+        mapFunc = sqlSession.selectOne("query.getNameByID", param);
+        jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
+
+        //查找函数定义输入参数 qry_in
+        List<Map<String, String>> inList = sqlSession.selectList("query.getInByID", param);
+        JSONArray inArray = JSONArray.parseArray(JSONArray.toJSONString(inList, JsonUtil.features));
+        jResult.put("in", inArray);
+
+        //查找函数定义输出参数 qry_out
+        List<Map<String, String>> outList = sqlSession.selectList("query.getOutByID", param);
+        JSONArray outArray = JSONArray.parseArray(JSONArray.toJSONString(outList, JsonUtil.features));
+        jResult.put("out", outArray);
+
+        return jResult;
+    }
+
+    /**
+     * 功能描述: 查找 qry_name所有记录
+     */
+    public List<Map<String, String>> getAllQueryName() {
+        List<Map<String, String>> resultList = new ArrayList<Map<String, String>>();
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        resultList = sqlSession.selectList("query.getAllQueryName");
+        return resultList;
+    }
+
+    // 取函数类别
+    public List<Map<String, String>> getAllQueryClass(SqlSession sqlSession) {
+        return sqlSession.selectList("query.getAllQueryClass");
     }
 }
