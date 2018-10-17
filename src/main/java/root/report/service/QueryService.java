@@ -3,6 +3,7 @@ package root.report.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.*;
@@ -217,6 +218,34 @@ public class QueryService {
     }
 
     /**
+     * 功能描述:  得到指定文件指定id的 sql内容
+     */
+    public String getSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException {
+
+        String namespace = TemplateName;
+        String sqlId = SelectID;
+        String userSqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
+
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setSuppressDeclaration(true);
+        format.setIndentSize(2);
+        format.setNewlines(true);
+        format.setTrimText(false);
+
+        XMLWriter writer = null;
+        Document userDoc = null;
+        try {
+            userDoc = XmlUtil.parseXmlToDom(userSqlPath);
+            Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
+            String tempStr = select.getTextTrim();
+            log.debug("获取到的SQL为:" +tempStr);
+            return tempStr;
+        } catch (java.lang.Exception e) {
+            throw e;
+        }
+    }
+
+    /**
      * 功能描述: 修改query包下的对应的mapper映射文件中的sql语句
      */
     public String updateSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) throws DocumentException, SAXException, IOException {
@@ -380,7 +409,7 @@ public class QueryService {
     /**
      * 功能描述:  根据qry_id 查找qry表相关的信息
      */
-    public JSONObject getQueryByID(SqlSession sqlSession,String qry_id) {
+    public JSONObject getQueryByID(SqlSession sqlSession,String qry_id) throws SAXException, DocumentException {
         Map<String, String> param = new HashMap<String, String>();
         param.put("qry_id", qry_id);
         JSONObject jResult = new JSONObject();
@@ -388,7 +417,15 @@ public class QueryService {
         // 查找qry_name
         Map<String, String> mapFunc = new HashMap<String, String>();
         mapFunc = sqlSession.selectOne("query.getNameByID", param);
-        jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
+        //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
+        if(mapFunc !=null && !mapFunc.isEmpty()){
+            String class_id = String.valueOf(mapFunc.get("class_id"));
+            String sql = getSqlTemplate(class_id,qry_id);
+            if(StringUtils.isNotBlank(sql)){
+                mapFunc.put("qry_sql",sql);
+            }
+            jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
+        }
 
         //查找函数定义输入参数 qry_in
         List<Map<String, String>> inList = sqlSession.selectList("query.getInByID", param);

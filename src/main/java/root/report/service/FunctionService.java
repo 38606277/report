@@ -38,7 +38,7 @@ public class FunctionService {
 
 
     //查找func主表
-    public JSONObject getFunctionByID(String func_id) {
+    public JSONObject getFunctionByID(String func_id) throws SAXException, DocumentException {
         Map<String, String> param = new HashMap<String, String>();
         param.put("func_id", func_id);
         JSONObject jResult = new JSONObject();
@@ -46,8 +46,16 @@ public class FunctionService {
         Map<String, String> mapFunc = new HashMap<String, String>();
         mapFunc = DbFactory.Open(DbFactory.FORM)
                 .selectOne("function.getNameByID", param);
-        jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
         //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
+        if(mapFunc !=null && !mapFunc.isEmpty()){
+            String class_id = String.valueOf(mapFunc.get("class_id"));
+            String sql = getSqlTemplate(class_id,func_id);
+            if(StringUtils.isNotBlank(sql)){
+                mapFunc.put("func_sql",sql);
+            }
+            jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
+        }
+
         //查找函数定义输入参数
         List<Map<String, String>> inList = DbFactory.Open(DbFactory.FORM)
                 .selectList("function.getInByID", param);
@@ -161,6 +169,34 @@ public class FunctionService {
         }
     }
 
+    /**
+     * 功能描述:  得到指定文件指定id的 sql内容
+     */
+    public String getSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException {
+
+        String namespace = TemplateName;
+        String sqlId = SelectID;
+        String userSqlPath = AppConstants.getUserFunctionPath() + File.separator + namespace + ".xml";
+
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setSuppressDeclaration(true);
+        format.setIndentSize(2);
+        format.setNewlines(true);
+        format.setTrimText(false);
+
+        XMLWriter writer = null;
+        Document userDoc = null;
+        try {
+            userDoc = XmlUtil.parseXmlToDom(userSqlPath);
+            Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
+            String tempStr = select.getTextTrim();
+
+            log.debug("获取到的SQL为:" +tempStr);
+            return tempStr;
+        } catch (java.lang.Exception e) {
+            throw e;
+        }
+    }
 
     public String updateSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) throws DocumentException, SAXException, IOException {
 
