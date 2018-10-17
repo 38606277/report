@@ -131,4 +131,90 @@
     <update id="updateQueryClass"  parameterType="Map">
 		update qry_class set class_name='${class_name}' where class_id=#{class_id};
 	</update>
+
+    <!-- 根据qry_id查询qry_name跟qry_class信息  -->
+    <select id="getNameByID" parameterType="Map" resultType="Map">
+		SELECT
+			qn.qry_id ,
+			qn.qry_name ,
+			qn.qry_desc ,
+		    qc.class_id,
+			qc.class_name ,
+			qn.qry_type ,
+			qn.qry_file,
+			qn.qry_db,
+		    qn.qry_sql
+		FROM
+			qry_name qn ,
+			qry_class qc
+		WHERE
+			qc.class_id = qn.class_id
+		and qn.qry_id = ${qry_id}
+	</select>
+
+    <!-- 根据qry_id查询qry_in信息 TODO:是否含有 func_dict qry_dict表 fnd_authtype qry_authtype表？ -->
+    <select id="getInByID" parameterType="Map" resultType="Map">
+		SELECT
+			qi.qry_id ,
+			qi.in_id ,
+			qi.in_name ,
+			qi.datatype ,
+			qi.dict_id ,
+			fd.dict_name ,
+			qi.validate ,
+			qi.authtype_id ,
+			fat.authtype_desc
+		FROM
+			qry_in qi
+			LEFT JOIN func_dict fd ON qi.dict_id = fd.dict_id
+			LEFT JOIN fnd_authtype fat ON qi.authtype_id = fat.authtype_id
+		WHERE
+			qi.qry_id =  ${qry_id}
+	</select>
+
+    <!--查我函数名称-->
+    <select id="getOutByID" parameterType="Map" resultType="Map">
+		SELECT
+			qo.qry_id ,
+			qo.out_id ,
+			qo.out_name ,
+		    qo.datatype,
+			qo.link,
+			qo.width,
+			qo.render
+		FROM
+			qry_out qo
+		WHERE
+			qo.qry_id =${qry_id}
+	</select>
+
+    <!--查我函数名称-->
+    <select id="getAllQueryName" parameterType="Map" resultType="Map">
+        SELECT
+            qry.qry_id,
+            qry.qry_name,
+            qry.qry_desc,
+            qc.class_id,
+            qc.class_name,
+            qry.qry_type,
+            qry.qry_file,
+            qry.qry_db,
+            qry.qry_sql
+        FROM
+            qry_name qry,
+            qry_class qc
+        WHERE
+            qc.class_id = qry.class_id
+    </select>
+
+    <!--查我函数名称-->
+    <!--查我函数类别-->
+    <select id="getAllQueryClass" parameterType="Map" resultType="Map">
+		SELECT
+		 qry.class_id ,
+		 qry.class_name
+		FROM
+		  qry_class qry
+	</select>
+
 </mapper>

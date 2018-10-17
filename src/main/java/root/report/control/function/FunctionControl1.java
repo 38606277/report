@@ -55,15 +55,12 @@ public class FunctionControl1 extends RO {
 
     @RequestMapping(value = "/getFunctionByID/{func_id}", produces = "text/plain;charset=UTF-8")
     public String getFunctionByID(@PathVariable("func_id") String func_id) {
-
         try{
-            JSONObject jsonObject=functionService.getFunctionByID(func_id);
+            JSONObject jsonObject = functionService.getFunctionByID(func_id);
             return  SuccessMsg("",jsonObject);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
-
         }
-
     }
 
 
