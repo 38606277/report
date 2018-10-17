@@ -454,12 +454,24 @@ public class SelectControl extends RO {
 			}
 			Map map = new HashMap();
 			if(jsonArray!=null){
-			    String value = null;
+			    String value = null,key=null;
 			    JSONObject aJsonObject = null;
     			for (int i = 0; i < jsonArray.size(); i++){
-    				aJsonObject = (JSONObject) jsonArray.get(i);
-    				value = aJsonObject.getString("value")!=null?aJsonObject.getString("value"):aJsonObject.getString("default");
-    				map.put(aJsonObject.getString("id"), value);
+                        aJsonObject = (JSONObject) jsonArray.get(i);
+                        System.err.println(aJsonObject);
+                    //Iterator<String> male_Iterator = aJsonObject.keys();
+                    java.util.Iterator it = aJsonObject.entrySet().iterator();
+
+                    while(it.hasNext()) {
+                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
+                        key=entry.getKey().toString(); //返回与此项对应的键
+                        System.err.println(entry.getKey());
+                        value=entry.getValue().toString(); //返回与此项对应的值
+                        System.err.println(entry.getValue());
+                    }
+                    //value = aJsonObject.getString("value")!=null?aJsonObject.getString("value"):aJsonObject.getString("default");
+                      map.put(key, value);
+
     			}
 			}
 			map.putAll(this.getSelectSqlDataFilter(selectClassName,selectID));
