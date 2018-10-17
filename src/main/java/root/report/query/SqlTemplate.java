@@ -15,8 +15,7 @@ public class SqlTemplate {
 	Document doc=null;
 	Element select=null;
 	JSONObject comment=null;
-	
-	
+
 	private String namespace;
 	private String id;
 	private String db;
@@ -24,8 +23,9 @@ public class SqlTemplate {
 	private JSONArray in;
 	private JSONArray out;
 	private String sql;
-	
-	
+
+	public  SqlTemplate() {}
+
 	public  SqlTemplate(String templateFileName,String selectId) {
 		try {
 			//解析xml文件
@@ -60,6 +60,7 @@ public class SqlTemplate {
 	public String getId() {
 		return id;
 	}
+
 	public String getDb() {
 		
 		return  comment.getString("db");
@@ -94,5 +95,43 @@ public class SqlTemplate {
 		return out;
 	}
 
+	// 开辟get set方法 供新接口能赋值对象
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
+	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setDb(String db) {
+		this.db = db;
+		if(comment == null ){
+			comment = new JSONObject();
+			comment.put("db",db);
+		}else {
+			comment.put("db",db);
+		}
+
+	}
+
+	public void setSelectType(String selectType) {
+		this.selectType = selectType;
+	}
+
+	public void setIn(JSONArray in) {
+		this.in = in;
+	}
+
+	public void setOut(JSONArray out) {
+		this.out = out;
+	}
+
+	public String getSql() {
+		return sql;
+	}
+
+	public void setSql(String sql) {
+		this.sql = sql;
+	}
 }

@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
 import root.report.db.DbFactory;
+import root.report.query.SqlTemplate;
 import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
 
@@ -34,8 +35,6 @@ import java.util.ArrayList;
 public class FunctionService {
 
     private static Logger log = Logger.getLogger(FunctionService.class);
-
-
 
     //查找func主表
     public JSONObject getFunctionByID(String func_id) throws SAXException, DocumentException {
@@ -566,6 +565,22 @@ public class FunctionService {
         // 修改一个函数，传递2个参数
         return sqlSession.update("function.updateFunctionClass", map);
     }
+
+    // 根据 func_id 查找func_name 记录， 组装 getIn,sql,getDb,getNamespace,getId ,getSelectType
+    public void assemblySqlTemplate(SqlTemplate sqlTemplate,String namespace,String func_id) throws DocumentException, SAXException {
+        JSONObject jsonObject = this.getFunctionByID(func_id);
+        JSONArray jsonArrayIn = jsonObject.getJSONArray("in");
+        if(jsonArrayIn!=null && !jsonArrayIn.isEmpty()){
+            sqlTemplate.setIn(jsonArrayIn);
+        }
+        sqlTemplate.setDb(jsonObject.containsKey("func_db")?jsonObject.getString("func_db"):"");
+        sqlTemplate.setId(func_id);
+        sqlTemplate.setSelectType(jsonObject.containsKey("func_type")?jsonObject.getString("func_type"):"");
+        // 组装sql
+        sqlTemplate.setSql(getSqlTemplate(namespace,func_id));
+        sqlTemplate.setNamespace(namespace);
+    }
+
 
 
 }
