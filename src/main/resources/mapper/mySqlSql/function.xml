@@ -40,6 +40,24 @@
 		and fn.func_id = ${func_id}
 
 	</select>
+	<!-- 根据class_id 查询func_name 当中的信息  -->
+	<select id="getFuncNameInfoByClassID" parameterType="int" resultType="Map">
+		SELECT
+			fn.func_id ,
+			fn.func_name ,
+			fn.func_desc ,
+		    fc.class_id,
+			fc.class_name ,
+			func_type ,
+			func_db,
+		    func_sql
+		FROM
+			func_name fn ,
+			func_class fc
+		WHERE
+		    fn.class_id = #{class_id,jdbcType=INTEGER}
+		and fc.class_id = fn.class_id
+	</select>
 	<!--查我函数名称-->
 	<select id="getInByID" parameterType="Map" resultType="Map">
 		SELECT
@@ -214,8 +232,8 @@
 
 	</select>
 
-	<insert id="createFunctionClass" parameterType="String">
-		insert into func_class(class_name) values('${_parameter}')
+	<insert id="createFunctionClass" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into func_class(class_name) values('${class_name}')
 	</insert>
 
 	<delete id="deleteFunctionClass"  parameterType="int">

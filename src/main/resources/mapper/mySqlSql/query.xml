@@ -116,8 +116,8 @@
     </delete>
 
     <!-- 往query_class表中新增一条记录 -->
-    <insert id="createQueryClass" parameterType="String">
-		insert into qry_class(class_name) values('${_parameter}')
+    <insert id="createQueryClass" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into qry_class(class_name) values('${class_name}')
 	</insert>
 
     <select id="getQueryInfoRelationClass" parameterType="int" resultType="int">
@@ -215,6 +215,26 @@
 		 qry.class_name
 		FROM
 		  qry_class qry
+	</select>
+
+    <!-- 根据 class_id 查询 func_name的所有信息 -->
+    <select id="getQueryNameInfoByClassID" parameterType="int" resultType="Map">
+		SELECT
+			qry.qry_id,
+			qry.qry_name,
+			qry.qry_desc,
+		    qc.class_id,
+			qc.class_name,
+			qry.qry_type,
+			qry.qry_db,
+		    qry.qry_sql,
+		    qry.qry_file
+		FROM
+			qry_name qry,
+			qry_class qc
+		WHERE
+		    qc.class_id = #{class_id,jdbcType=INTEGER}
+		and qc.class_id = qry.class_id
 	</select>
 
 </mapper>

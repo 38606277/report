@@ -9,6 +9,7 @@ import com.googlecode.aviator.Expression;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
 import root.configure.AppConstants;
 import root.report.common.RO;
 import root.report.db.DbFactory;
@@ -28,6 +30,7 @@ import root.report.util.XmlUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
@@ -42,10 +45,11 @@ public class FunctionControl1 extends RO {
     private FunctionService functionService;
 
 
-
+    /**
+     * 功能描述: 查询 func_name 表当中的所有记录
+     */
     @RequestMapping(value = "/getAllFunctionName", produces = "text/plain;charset=UTF-8")
     public String getAllFunctionName() {
-
         List<Map<String, String>> listFunc ;
         try {
             listFunc=functionService.getAllFunctionName();
@@ -53,10 +57,7 @@ public class FunctionControl1 extends RO {
         } catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
-
-
     }
-
 
     @RequestMapping(value = "/getFunctionByID/{func_id}", produces = "text/plain;charset=UTF-8")
     public String getFunctionByID(@PathVariable("func_id") String func_id) {
@@ -68,6 +69,19 @@ public class FunctionControl1 extends RO {
         }
     }
 
+    // 根据 class_id 查询所有的 func_name 表当中的信息
+    @RequestMapping(value = "/getFunctionByClassID/{class_id}", produces = "text/plain;charset=UTF-8")
+    public String getFunctionByClassID(@PathVariable("class_id") String class_id) throws DocumentException, SAXException {
+        int intClassId = Integer.parseInt(class_id);
+        return functionService.getFunctionByClassID(intClassId);
+    }
+
+    // 根据 func_id 查询出 func_in 跟func_out 表当中的数据
+    @RequestMapping(value = "/getFunctionParamByFuncID/{func_id}", produces = "text/plain;charset=UTF-8")
+    public String getFunctionParam(@PathVariable("func_id") String func_id) {
+        JSONObject jsonObject = functionService.getFunctionParam(func_id);
+        return JSON.toJSONString(jsonObject,JsonUtil.features);
+    }
 
     @RequestMapping(value = "/createFunction", produces = "text/plain;charset=UTF-8")
     public String createFunction(@RequestBody String pJson) throws Exception
@@ -142,16 +156,16 @@ public class FunctionControl1 extends RO {
         }
     }
 
-
+    /**
+     * 功能描述:  查询 func_class 表当中的所有记录
+     */
     @RequestMapping(value = "/getAllFunctionClass", produces = "text/plain;charset=UTF-8")
     public String getAllFunctionClass() {
-
         try{
             List<Map<String,String>> list=functionService.getAllFunctionClass(DbFactory.Open(DbFactory.FORM));
             return  SuccessMsg("",list);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
-
         }
     }
 
@@ -161,8 +175,11 @@ public class FunctionControl1 extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
         String class_name = jsonObject.getString("class_name");
-        int flag = this.functionService.createFunctionClass(class_name,sqlSession);
-        if(flag!=1){
+        try {
+            this.functionService.createFunctionClass(class_name,sqlSession);
+        } catch (IOException e) {
+            sqlSession.getConnection().rollback();
+            e.printStackTrace();
             return ErrorMsg("","插入数据失败");
         }
         return SuccessMsg("插入数据成功",null);
