@@ -116,8 +116,8 @@
     </delete>
 
     <!-- 往query_class表中新增一条记录 -->
-    <insert id="createQueryClass" parameterType="String">
-		insert into qry_class(class_name) values('${_parameter}')
+    <insert id="createQueryClass" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into qry_class(class_name) values('${class_name}')
 	</insert>
 
     <select id="getQueryInfoRelationClass" parameterType="int" resultType="int">

@@ -30,6 +30,7 @@ import root.report.util.XmlUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.*;
@@ -174,8 +175,11 @@ public class FunctionControl1 extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
         String class_name = jsonObject.getString("class_name");
-        int flag = this.functionService.createFunctionClass(class_name,sqlSession);
-        if(flag!=1){
+        try {
+            this.functionService.createFunctionClass(class_name,sqlSession);
+        } catch (IOException e) {
+            sqlSession.getConnection().rollback();
+            e.printStackTrace();
             return ErrorMsg("","插入数据失败");
         }
         return SuccessMsg("插入数据成功",null);

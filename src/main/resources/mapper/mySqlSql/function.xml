@@ -232,8 +232,8 @@
 
 	</select>
 
-	<insert id="createFunctionClass" parameterType="String">
-		insert into func_class(class_name) values('${_parameter}')
+	<insert id="createFunctionClass" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into func_class(class_name) values('${class_name}')
 	</insert>
 
 	<delete id="deleteFunctionClass"  parameterType="int">

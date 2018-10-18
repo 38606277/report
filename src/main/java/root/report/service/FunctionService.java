@@ -3,9 +3,7 @@ package root.report.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.mysql.cj.x.json.JsonArray;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.common.i18n.Exception;
 import org.apache.ibatis.session.SqlSession;
@@ -13,9 +11,7 @@ import org.apache.log4j.Logger;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
 import root.report.db.DbFactory;
@@ -23,9 +19,9 @@ import root.report.query.SqlTemplate;
 import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
 
-import javax.print.DocFlavor;
 import java.io.*;
 import java.lang.*;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +29,8 @@ import java.util.ArrayList;
 
 @Service
 public class FunctionService {
+
+    public static final String headModel = "-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd";
 
     private static Logger log = Logger.getLogger(FunctionService.class);
 
@@ -567,8 +565,50 @@ public class FunctionService {
     }
 
     // 创建一个函数类别
-    public int createFunctionClass(String class_name, SqlSession sqlSession) {
-        return sqlSession.insert("function.createFunctionClass", class_name);
+    public void createFunctionClass(String class_name, SqlSession sqlSession) throws IOException {
+        Map<String,Object> map = new HashMap<>();
+        map.put("class_name",class_name);
+        sqlSession.insert("function.createFunctionClass", map);
+        String class_id  = String.valueOf(map.get("id"));
+        // 生成 xml文件
+        String userSqlPath = AppConstants.getUserFunctionPath() + File.separator + class_id + ".xml";
+        File file = new File(userSqlPath);   // 自增長ID不會重名
+        file.createNewFile();
+        Document doc = DocumentHelper.createDocument();
+        Element mapper = DocumentHelper.createElement("mapper");
+        mapper.addAttribute("namespace",class_id);
+        doc.add(mapper);
+        doc.addDocType("mapper", headModel, null);
+        writeToXml(doc, file);
+    }
+
+    private void writeToXml(Document doc, File file) throws IOException {
+        //写入XML文件
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setEncoding("UTF-8");
+        format.setTrimText(false);
+        format.setIndent(false);
+        format.setExpandEmptyElements(true);  // 设置标签 mapper标签不闭合
+        XMLWriter writer = null;
+        try
+        {
+            writer = new XMLWriter(new FileOutputStream(file),format);
+            writer.write(doc);
+            writer.flush();
+            writer.close();
+        }catch (java.lang.Exception e){
+            log.error("写入XML异常!"+file.getAbsolutePath());
+            e.printStackTrace();
+        }finally {
+            if(writer!=null)
+            {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     // 删除一个函数类别，但要判断是否有func_name 关联func_class的class_id

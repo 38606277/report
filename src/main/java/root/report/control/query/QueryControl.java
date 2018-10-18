@@ -17,6 +17,7 @@ import root.report.db.DbFactory;
 import root.report.service.QueryService;
 import root.report.util.JsonUtil;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -143,14 +144,17 @@ public class QueryControl extends RO {
         }
     }
 
-    // 往qry_class这张表插入一条记录
+    // 往qry_class这张表插入一条记录 并生成mapper.xml文件
     @RequestMapping(value = "/createQueryClassInfo", produces = "text/plain;charset=UTF-8")
     public String createQueryClassInfo(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
         String class_name = jsonObject.getString("class_name");
-        int flag = this.queryService.createQueryClass(class_name,sqlSession);
-        if(flag!=1){
+        try {
+            this.queryService.createQueryClass(class_name,sqlSession);
+        } catch (IOException e) {
+            sqlSession.getConnection().rollback();
+            e.printStackTrace();
             return ErrorMsg("","插入数据失败");
         }
         return SuccessMsg("插入数据成功",null);
