@@ -200,13 +200,13 @@ public class DictionaryControl extends RO {
 	
 	@RequestMapping(value = "/execlDictionary/{DictionaryClassName}/{DictionaryID}", produces = "text/plain;charset=UTF-8")
     public String execlDictionary(@PathVariable("DictionaryClassName") String DictionaryClassName,
-            @PathVariable("DictionaryID") String DictionaryID) {
+            @PathVariable("DictionaryID") String DictionaryID,@RequestBody String pjson) {
 
         System.out.println("调用:" + "selectClassName:" + DictionaryClassName + "," + "selectID:" + DictionaryID);
         long t1 = System.nanoTime();
-
+		JSONObject obj=JSON.parseObject(pjson);
         List<Map> aResult = null;
-
+		int total=0;
         try {
             
             String usersqlPath = AppConstants.getUserDictionaryPath()
@@ -225,21 +225,33 @@ public class DictionaryControl extends RO {
             }
             
             if (template.getSelectType().equals("sql")) {
-                
+				int startIndex=Integer.valueOf(obj.getString("pageNumd"));
+				int perPage=Integer.valueOf(obj.getString("perPaged"));
+				if(1==startIndex|| 0==startIndex){
+					startIndex=0;
+				}else{
+					startIndex=(startIndex-1)*perPage;
+				}
+				map.put("startIndex",startIndex);
+				map.put("perPage",perPage);
                 String db=template.getDb();
                 String namespace=template.getNamespace();
                 String id=template.getId();
                 aResult = DbFactory.Open(db).selectList( namespace+"." +id, map);
+				total = DbFactory.Open(db).selectOne( namespace+"." +id+"total");
+				System.err.println(total);
             } 
             
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+		Map maps=new HashMap<>();
+		maps.put("data",aResult);
+		maps.put("totald",total);
         long t2 = System.nanoTime();
         System.out.println("结束调用:" + "DictionaryClassName:" + DictionaryClassName + "," + "selectID:" + DictionaryID + ","
                 + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));
-        return JSON.toJSONString(aResult);
+        return JSON.toJSONString(maps);
 
     }
 	

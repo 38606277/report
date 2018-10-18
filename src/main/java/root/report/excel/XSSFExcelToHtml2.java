@@ -288,7 +288,7 @@ public class XSSFExcelToHtml2
 	    		JSONObject obj = new JSONObject();
 	    		obj.put("db", getFieldInfo(lookup.split("/")[0]+"."+lookup.split("/")[1],"","dictionary").get("db"));
 	    		arr.add(obj);
-	    		map.put("value", JSONObject.parseArray(new DictionaryControl().execlDictionary(lookup.split("/")[0],lookup.split("/")[1])));
+	    		map.put("value", JSONObject.parseArray(new DictionaryControl().execlDictionary(lookup.split("/")[0],lookup.split("/")[1],null)));
 	    		result.add(map);
     		}
     	}

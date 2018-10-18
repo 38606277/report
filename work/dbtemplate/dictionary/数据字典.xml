@@ -191,7 +191,7 @@ ORDER  BY ffv.flex_value
 		order by ffv.flex_value
 	</select><select id="会计科目字典" resultType="Map" parameterType="Map">
 	<!--{
-        "db":"jlerp",
+        "db":"form",
         "desc":"取MIS生产会计科目值",
         "in":[],
         "out":[
@@ -222,7 +222,42 @@ ORDER  BY ffv.flex_value
 	and gsob.set_of_books_id = 2
 	and fifs.application_column_name = 'SEGMENT3'
 	order by ffv.flex_value
-</select><select id="品牌数据字典" resultType="Map" parameterType="Map">
+	limit #{startIndex},#{perPage}
+</select>
+	<select id="会计科目字典total" resultType="int" parameterType="Map">
+		<!--{
+            "db":"form",
+            "desc":"取MIS生产会计科目值",
+            "in":[],
+            "out":[
+                {
+                    "id":"value",
+                    "name":"科目编码",
+                    "datatype":"varchar"
+                },
+                {
+                    "id":"name",
+                    "name":"name",
+                    "datatype":"varchar"
+                }
+            ]
+        }-->select count(ffv.flex_value) as total
+		from fnd_id_flex_segments fifs,
+		gl_sets_of_books     gsob,
+		fnd_flex_values      ffv,
+		fnd_flex_values_tl   ffvt
+		where gsob.chart_of_accounts_id = fifs.id_flex_num
+		and id_flex_code = 'GL#'
+		and ffv.flex_value_id = ffvt.flex_value_id
+		and ffvt.language = 'ZHS'
+		and ffv.flex_value_set_id = fifs.flex_value_set_id
+		and ffv.enabled_flag = 'Y'
+		and ffv.end_date_active is null
+		and gsob.set_of_books_id = 2
+		and fifs.application_column_name = 'SEGMENT3'
+		order by ffv.flex_value
+	</select>
+	<select id="品牌数据字典" resultType="Map" parameterType="Map">
 
 	<!--{
         "db":"jlerp",

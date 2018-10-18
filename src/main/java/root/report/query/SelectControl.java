@@ -478,7 +478,7 @@ public class SelectControl extends RO {
 			List<Map> aResult = new ArrayList<Map>();
 			Long totalSize = 0L;
 			if (selectType.equals("sql")){
-				aResult = DbFactory.Open(db).selectList(selectClassName + "." + selectID, map, bounds);
+				aResult = DbFactory.Open(db).selectList(selectClassName + "." + selectID, map);
 				if(page!=null){
 					totalSize = ((PageRowBounds)bounds).getTotal();
 				}else{
