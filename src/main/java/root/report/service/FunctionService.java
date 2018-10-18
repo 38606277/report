@@ -36,7 +36,7 @@ public class FunctionService {
 
     private static Logger log = Logger.getLogger(FunctionService.class);
 
-    //查找func主表
+    //  根据 func_id 查找出所有的 func_name、func_class、func_in、func_out 表信息
     public JSONObject getFunctionByID(String func_id) throws SAXException, DocumentException {
         Map<String, String> param = new HashMap<String, String>();
         param.put("func_id", func_id);
@@ -67,6 +67,35 @@ public class FunctionService {
         jResult.put("out", outArray);
         return jResult;
     }
+
+    /**
+     * 功能描述: 根据  class_id 查询出 func_name 表当中的信息
+     */
+    public String getFunctionByClassID(int class_id) throws SAXException, DocumentException {
+        JSONObject jResult = new JSONObject();
+        List<Map<String,Object>> listFuncName = DbFactory.Open(DbFactory.FORM).
+                selectList("function.getFuncNameInfoByClassID",class_id);
+        return JSON.toJSONString(listFuncName, JsonUtil.features);
+    }
+
+    // 根据 func_id 查询出对应的  func_in 跟func_out 表当中的信息
+    public  JSONObject  getFunctionParam(String func_id){
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("func_id", func_id);
+        JSONObject jResult = new JSONObject();
+        //查找函数定义输入参数
+        List<Map<String, String>> inList = DbFactory.Open(DbFactory.FORM)
+                .selectList("function.getInByID", param);
+        JSONArray inArray = JSONArray.parseArray(JSONArray.toJSONString(inList, JsonUtil.features));
+        jResult.put("in", inArray);
+        //查找函数定义输出参数
+        List<Map<String, String>> outList = DbFactory.Open(DbFactory.FORM)
+                .selectList("function.getOutByID", param);
+        JSONArray outArray = JSONArray.parseArray(JSONArray.toJSONString(outList, JsonUtil.features));
+        jResult.put("out", outArray);
+        return jResult;
+    }
+
 
     public String createFunctionName(SqlSession sqlSession, JSONObject jsonFunc) throws Exception {
             Map<String, Object> mapFunc = new HashMap<>();   // 必须设定为Object,因为我们想要让其返回自增长类型值
@@ -455,7 +484,7 @@ public class FunctionService {
     public List<Map<String, String>> getAllFunctionName() {
         List<Map<String, String>> resultList = new ArrayList<Map<String, String>>();
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
-        resultList = sqlSession.selectList("query.getAllFunctionName");
+        resultList = sqlSession.selectList("function.getAllFunctionName");
         return resultList;
 
     }

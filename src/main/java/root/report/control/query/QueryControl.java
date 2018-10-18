@@ -5,15 +5,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.xml.sax.SAXException;
 import root.report.common.RO;
 import root.report.db.DbFactory;
-import root.report.service.FunctionService;
 import root.report.service.QueryService;
+import root.report.util.JsonUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,6 +56,19 @@ public class QueryControl extends RO {
         }
     }
 
+    // 根据 class_id 查询所有的 func_name 表当中的信息
+    @RequestMapping(value = "/getQueryByClassID/{class_id}", produces = "text/plain;charset=UTF-8")
+    public String getQueryByClassID(@PathVariable("class_id") String class_id) throws DocumentException, SAXException {
+        int intClassId = Integer.parseInt(class_id);
+        return queryService.getQueryByClassID(intClassId);
+    }
+
+    // 根据 func_id 查询出 func_in 跟func_out 表当中的数据
+    @RequestMapping(value = "/getQueryParamByFuncID/{qry_id}", produces = "text/plain;charset=UTF-8")
+    public String getQueryParam(@PathVariable("qry_id") String qry_id) {
+        JSONObject jsonObject = queryService.getQueryParam(qry_id);
+        return JSON.toJSONString(jsonObject,JsonUtil.features);
+    }
 
     @RequestMapping(value = "/createQuery", produces = "text/plain;charset=UTF-8")
     public String createQuery(@RequestBody String pJson) throws Exception

@@ -160,7 +160,7 @@ public class QueryService {
     /**
      * 功能描述: 删除 query_in表当中的一条记录 （map中包含主键信息)
      */
-    public int deleteFunctionIn(SqlSession sqlSession,Map map) {
+    public int deleteQueryIn(SqlSession sqlSession,Map map) {
         return sqlSession.delete("query.deleteQueryIn", map);
     }
 
@@ -174,7 +174,7 @@ public class QueryService {
             JSONObject jsonIn = jsonArrayIn.getJSONObject(i);
             deleteMap.put("qry_id",jsonIn.getString("qry_id"));
             deleteMap.put("in_id",jsonIn.getString("in_id"));
-            deleteFunctionIn(sqlSession,deleteMap);   // 先删除后插入
+            deleteQueryIn(sqlSession,deleteMap);   // 先删除后插入
             map.put("qry_id",jsonIn.getString("qry_id"));
             map.put("in_id", jsonIn.getString("in_id"));
             map.put("in_name", jsonIn.getString("in_name"));
@@ -191,7 +191,7 @@ public class QueryService {
     /**
      * 功能描述: 删除qry_out表的记录
      */
-    public void deleteFunctionOut(SqlSession sqlSession,Map map) {
+    public void deleteQueryOut(SqlSession sqlSession,Map map) {
         sqlSession.delete("query.deleteQueryOut", map);
     }
 
@@ -205,7 +205,7 @@ public class QueryService {
             JSONObject jsonOut = jsonArrayIn.getJSONObject(i);
             deleteMap.put("qry_id",jsonOut.getString("qry_id"));
             deleteMap.put("out_id",jsonOut.getString("out_id"));
-            deleteFunctionOut(sqlSession,deleteMap);   // 先删除后插入
+            deleteQueryOut(sqlSession,deleteMap);   // 先删除后插入
             map.put("qry_id", jsonOut.getString("qry_id"));
             map.put("out_id", jsonOut.getString("out_id"));
             map.put("out_name", jsonOut.getString("out_name"));
@@ -426,6 +426,36 @@ public class QueryService {
             }
             jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
         }
+
+        //查找函数定义输入参数 qry_in
+        List<Map<String, String>> inList = sqlSession.selectList("query.getInByID", param);
+        JSONArray inArray = JSONArray.parseArray(JSONArray.toJSONString(inList, JsonUtil.features));
+        jResult.put("in", inArray);
+
+        //查找函数定义输出参数 qry_out
+        List<Map<String, String>> outList = sqlSession.selectList("query.getOutByID", param);
+        JSONArray outArray = JSONArray.parseArray(JSONArray.toJSONString(outList, JsonUtil.features));
+        jResult.put("out", outArray);
+
+        return jResult;
+    }
+
+    /**
+     * 功能描述: 根据  class_id 查询出 func_name 表当中的信息
+     */
+    public String getQueryByClassID(int class_id) throws SAXException, DocumentException {
+        JSONObject jResult = new JSONObject();
+        List<Map<String,Object>> listQueryName = DbFactory.Open(DbFactory.FORM).
+                selectList("query.getQueryNameInfoByClassID",class_id);
+        return JSON.toJSONString(listQueryName, JsonUtil.features);
+    }
+
+    public JSONObject getQueryParam(String qry_id){
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("qry_id", qry_id);
+        JSONObject jResult = new JSONObject();
 
         //查找函数定义输入参数 qry_in
         List<Map<String, String>> inList = sqlSession.selectList("query.getInByID", param);
