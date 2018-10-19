@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.pagehelper.PageRowBounds;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.log4j.Logger;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
@@ -206,8 +208,8 @@ public class DictionaryControl extends RO {
         long t1 = System.nanoTime();
 		JSONObject obj=JSON.parseObject(pjson);
         List<Map> aResult = null;
-		int total=0;
-        try {
+		Long totalSize = 0L;
+		try {
             
             String usersqlPath = AppConstants.getUserDictionaryPath()
                                   + File.separator + DictionaryClassName + ".xml";
@@ -225,21 +227,32 @@ public class DictionaryControl extends RO {
             }
             
             if (template.getSelectType().equals("sql")) {
-				int startIndex=Integer.valueOf(obj.getString("pageNumd"));
-				int perPage=Integer.valueOf(obj.getString("perPaged"));
-				if(1==startIndex|| 0==startIndex){
-					startIndex=0;
+				RowBounds bounds = null;
+				if(obj==null){
+					bounds = RowBounds.DEFAULT;
 				}else{
-					startIndex=(startIndex-1)*perPage;
+					int startIndex=obj.getIntValue("pageNumd");
+					int perPage=obj.getIntValue("perPaged");
+					if(startIndex==1 || startIndex==0){
+						startIndex=0;
+					}else{
+						startIndex=(startIndex-1)*perPage;
+					}
+					bounds = new PageRowBounds(startIndex, perPage);
+					map.put("startIndex",startIndex);
+					map.put("perPage",perPage);
 				}
-				map.put("startIndex",startIndex);
-				map.put("perPage",perPage);
+
+				map.put("searchDictionary",obj.getString("searchDictionary"));
                 String db=template.getDb();
                 String namespace=template.getNamespace();
                 String id=template.getId();
-                aResult = DbFactory.Open(db).selectList( namespace+"." +id, map);
-				total = DbFactory.Open(db).selectOne( namespace+"." +id+"total");
-				System.err.println(total);
+				aResult = DbFactory.Open(db).selectList( namespace+"." +id, map,bounds);
+				if(obj!=null){
+					totalSize = ((PageRowBounds)bounds).getTotal();
+				}else{
+					totalSize = Long.valueOf(aResult.size());
+				}
             } 
             
         } catch (Exception e) {
@@ -247,7 +260,7 @@ public class DictionaryControl extends RO {
         }
 		Map maps=new HashMap<>();
 		maps.put("data",aResult);
-		maps.put("totald",total);
+		maps.put("totald",totalSize);
         long t2 = System.nanoTime();
         System.out.println("结束调用:" + "DictionaryClassName:" + DictionaryClassName + "," + "selectID:" + DictionaryID + ","
                 + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));

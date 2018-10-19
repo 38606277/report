@@ -450,7 +450,14 @@ public class SelectControl extends RO {
 			if(page==null){
 				bounds = RowBounds.DEFAULT;
 			}else{
-				bounds = new PageRowBounds(page.getIntValue("startIndex"), page.getIntValue("perPage"));
+                int startIndex=page.getIntValue("startIndex");
+                int perPage=page.getIntValue("perPage");
+                if(startIndex==1 || startIndex==0){
+                    startIndex=0;
+                }else{
+                    startIndex=(startIndex-1)*perPage;
+                }
+				bounds = new PageRowBounds(startIndex, perPage);
 			}
 			Map map = new HashMap();
 			if(jsonArray!=null){
@@ -474,11 +481,12 @@ public class SelectControl extends RO {
 
     			}
 			}
+            map.put("name",page.getString("searchResult"));
 			map.putAll(this.getSelectSqlDataFilter(selectClassName,selectID));
 			List<Map> aResult = new ArrayList<Map>();
 			Long totalSize = 0L;
 			if (selectType.equals("sql")){
-				aResult = DbFactory.Open(db).selectList(selectClassName + "." + selectID, map);
+				aResult = DbFactory.Open(db).selectList(selectClassName + "." + selectID, map, bounds);
 				if(page!=null){
 					totalSize = ((PageRowBounds)bounds).getTotal();
 				}else{
