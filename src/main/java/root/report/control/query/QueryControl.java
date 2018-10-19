@@ -150,14 +150,15 @@ public class QueryControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
         String class_name = jsonObject.getString("class_name");
+        String class_id = "";
         try {
-            this.queryService.createQueryClass(class_name,sqlSession);
+            class_id = this.queryService.createQueryClass(class_name,sqlSession);
         } catch (IOException e) {
             sqlSession.getConnection().rollback();
             e.printStackTrace();
             return ErrorMsg("","插入数据失败");
         }
-        return SuccessMsg("插入数据成功",null);
+        return SuccessMsg("插入数据成功",class_id);
     }
 
     // 在 qry_class 这张表删除一条记录

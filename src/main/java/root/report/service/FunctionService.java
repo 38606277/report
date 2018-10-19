@@ -46,7 +46,7 @@ public class FunctionService {
         //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
         if(mapFunc !=null && !mapFunc.isEmpty()){
             String class_id = String.valueOf(mapFunc.get("class_id"));
-            String sql = getSqlTemplate(class_id,func_id);
+            String sql = getSqlTemplate(class_id,func_id,true);
             if(StringUtils.isNotBlank(sql)){
                 mapFunc.put("func_sql",sql);
             }
@@ -196,9 +196,9 @@ public class FunctionService {
     }
 
     /**
-     * 功能描述:  得到指定文件指定id的 sql内容
+     * 功能描述:  得到指定文件指定id的 sql内容  ** bool 若为true则代表得到 原string内容，为false则代表只要转义好的sql
      */
-    public String getSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException {
+    public String getSqlTemplate(String TemplateName, String SelectID,Boolean bool) throws DocumentException, SAXException {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
@@ -215,8 +215,12 @@ public class FunctionService {
         try {
             userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
-            String tempStr = select.getTextTrim();
-
+            String tempStr = "";
+            if(bool){
+                tempStr = select.getStringValue();  // 得到原格式的数据
+            }else {
+                tempStr = select.getTextTrim();
+            }
             log.debug("获取到的SQL为:" +tempStr);
             return tempStr;
         } catch (java.lang.Exception e) {
@@ -646,7 +650,7 @@ public class FunctionService {
         sqlTemplate.setId(func_id);
         sqlTemplate.setSelectType(jsonObject.containsKey("func_type")?jsonObject.getString("func_type"):"");
         // 组装sql
-        sqlTemplate.setSql(getSqlTemplate(namespace,func_id));
+        sqlTemplate.setSql(getSqlTemplate(namespace,func_id,false));
         sqlTemplate.setNamespace(namespace);
     }
 
