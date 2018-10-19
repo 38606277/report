@@ -14,6 +14,7 @@ import org.dom4j.io.XMLWriter;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
+import root.configure.MybatisCacheConfiguration;
 import root.report.db.DbFactory;
 import root.report.query.SqlTemplate;
 import root.report.util.JsonUtil;
@@ -46,7 +47,7 @@ public class FunctionService {
         //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
         if(mapFunc !=null && !mapFunc.isEmpty()){
             String class_id = String.valueOf(mapFunc.get("class_id"));
-            String sql = getSqlTemplate(class_id,func_id);
+            String sql = getSqlTemplate(class_id,func_id,true);
             if(StringUtils.isNotBlank(sql)){
                 mapFunc.put("func_sql",sql);
             }
@@ -168,6 +169,8 @@ public class FunctionService {
             newSql.addAttribute("id", sqlId);
             newSql.addAttribute("resultType", "BigDecimal");
             newSql.addAttribute("parameterType", "Map");
+            //  设置2级缓存
+            newSql.addAttribute("useCache", MybatisCacheConfiguration.USE_CACHE_FALSE);
             // newSql.addText(aSQLTemplate);
             addSqlText(newSql,aSQLTemplate);
 
@@ -196,9 +199,9 @@ public class FunctionService {
     }
 
     /**
-     * 功能描述:  得到指定文件指定id的 sql内容
+     * 功能描述:  得到指定文件指定id的 sql内容  ** bool 若为true则代表得到 原string内容，为false则代表只要转义好的sql
      */
-    public String getSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException {
+    public String getSqlTemplate(String TemplateName, String SelectID,Boolean bool) throws DocumentException, SAXException {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
@@ -215,8 +218,12 @@ public class FunctionService {
         try {
             userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
-            String tempStr = select.getTextTrim();
-
+            String tempStr = "";
+            if(bool){
+                tempStr = select.getStringValue();  // 得到原格式的数据
+            }else {
+                tempStr = select.getTextTrim();
+            }
             log.debug("获取到的SQL为:" +tempStr);
             return tempStr;
         } catch (java.lang.Exception e) {
@@ -565,7 +572,7 @@ public class FunctionService {
     }
 
     // 创建一个函数类别
-    public void createFunctionClass(String class_name, SqlSession sqlSession) throws IOException {
+    public String createFunctionClass(String class_name, SqlSession sqlSession) throws IOException {
         Map<String,Object> map = new HashMap<>();
         map.put("class_name",class_name);
         sqlSession.insert("function.createFunctionClass", map);
@@ -577,9 +584,18 @@ public class FunctionService {
         Document doc = DocumentHelper.createDocument();
         Element mapper = DocumentHelper.createElement("mapper");
         mapper.addAttribute("namespace",class_id);
+        // 开启2级缓存
+        // 增加缓存信息  -> 每次sqlSession都会关闭掉，所以一级缓存不起作用，要开启二级缓存
+        Element cacheElement = mapper.addElement("cache");
+        // eviction="LRU" flushInterval="100000" size="1024" readOnly="true"
+        cacheElement.addAttribute("eviction", MybatisCacheConfiguration.EVICTION_VALUE);
+        cacheElement.addAttribute("flushInterval",MybatisCacheConfiguration.FLUSH_INTERVAL_VALUE);
+        cacheElement.addAttribute("size",MybatisCacheConfiguration.SIZE_VALUE);
+        cacheElement.addAttribute("readOnly", MybatisCacheConfiguration.READONLY_VALUE);
         doc.add(mapper);
         doc.addDocType("mapper", headModel, null);
         writeToXml(doc, file);
+        return class_id;
     }
 
     private void writeToXml(Document doc, File file) throws IOException {
@@ -646,7 +662,7 @@ public class FunctionService {
         sqlTemplate.setId(func_id);
         sqlTemplate.setSelectType(jsonObject.containsKey("func_type")?jsonObject.getString("func_type"):"");
         // 组装sql
-        sqlTemplate.setSql(getSqlTemplate(namespace,func_id));
+        sqlTemplate.setSql(getSqlTemplate(namespace,func_id,false));
         sqlTemplate.setNamespace(namespace);
     }
 

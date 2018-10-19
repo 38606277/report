@@ -12,6 +12,7 @@ import org.dom4j.io.XMLWriter;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
+import root.configure.MybatisCacheConfiguration;
 import root.report.db.DbFactory;
 import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
@@ -115,6 +116,8 @@ public class QueryService {
             newSql.addAttribute("id", sqlId);
             newSql.addAttribute("resultType", "BigDecimal");
             newSql.addAttribute("parameterType", "Map");
+            //  设置2级缓存
+            newSql.addAttribute("useCache", MybatisCacheConfiguration.USE_CACHE_FALSE);
             // newSql.addText(aSQLTemplate);
             addSqlText(newSql,aSQLTemplate);
 
@@ -220,9 +223,9 @@ public class QueryService {
     }
 
     /**
-     * 功能描述:  得到指定文件指定id的 sql内容
+     * 功能描述:  得到指定文件指定id的 sql内容  ,若bool为true则代表保留原格式，为false则代表只要sql不要转义
      */
-    public String getSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException {
+    public String getSqlTemplate(String TemplateName, String SelectID,Boolean bool) throws DocumentException, SAXException {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
@@ -239,7 +242,12 @@ public class QueryService {
         try {
             userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
-            String tempStr = select.getTextTrim();
+            String tempStr = "";
+            if(bool){
+                tempStr = select.getStringValue();   // 按照原格式取出
+            }else {
+                tempStr = select.getTextTrim();   // 编译了一些html代码，导致不是原格式了，输入无格式的sql
+            }
             log.debug("获取到的SQL为:" +tempStr);
             return tempStr;
         } catch (java.lang.Exception e) {
@@ -385,7 +393,7 @@ public class QueryService {
     }
 
     // 创建一个qry函数类别
-    public void createQueryClass(String class_name, SqlSession sqlSession) throws IOException {
+    public String createQueryClass(String class_name, SqlSession sqlSession) throws IOException {
         Map<String,Object> map = new HashMap<>();
         map.put("class_name",class_name);
         sqlSession.insert("query.createQueryClass", map);
@@ -397,9 +405,17 @@ public class QueryService {
         Document doc = DocumentHelper.createDocument();
         Element mapper = DocumentHelper.createElement("mapper");
         mapper.addAttribute("namespace",class_id);
+        // 增加缓存信息  -> 每次sqlSession都会关闭掉，所以一级缓存不起作用，要开启二级缓存
+        Element cacheElement = mapper.addElement("cache");
+        // eviction="LRU" flushInterval="100000" size="1024" readOnly="true"
+        cacheElement.addAttribute("eviction", MybatisCacheConfiguration.EVICTION_VALUE);
+        cacheElement.addAttribute("flushInterval",MybatisCacheConfiguration.FLUSH_INTERVAL_VALUE);
+        cacheElement.addAttribute("size",MybatisCacheConfiguration.SIZE_VALUE);
+        cacheElement.addAttribute("readOnly", MybatisCacheConfiguration.READONLY_VALUE);
         doc.add(mapper);
         doc.addDocType("mapper", headModel, null);
         writeToXml(doc, file);
+        return class_id;
     }
 
     // 把doc节点当中的信息写入到指定file文件当中去
@@ -467,7 +483,7 @@ public class QueryService {
         //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
         if(mapFunc !=null && !mapFunc.isEmpty()){
             String class_id = String.valueOf(mapFunc.get("class_id"));
-            String sql = getSqlTemplate(class_id,qry_id);
+            String sql = getSqlTemplate(class_id,qry_id,true);
             if(StringUtils.isNotBlank(sql)){
                 mapFunc.put("qry_sql",sql);
             }

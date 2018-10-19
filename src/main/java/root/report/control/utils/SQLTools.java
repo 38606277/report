@@ -31,7 +31,7 @@ public class SQLTools extends RO {
         try{
             JSONObject jsonObject=JSONObject.parseObject(pJson);
 
-            String aformatSQl=SQLUtils.formatOracle(jsonObject.getString("sql"));
+            String aformatSQl=SQLUtils.formatMySql(jsonObject.getString("sql"));
             return  SuccessMsg("",aformatSQl);
         }catch (Exception ex){
             return  ExceptionMsg(ex.getMessage());
