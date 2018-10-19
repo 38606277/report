@@ -84,9 +84,30 @@ public class QueryService {
             map.put("out_id", jsonObject.getString("out_id"));
             map.put("out_name", jsonObject.getString("out_name"));
             map.put("datatype", jsonObject.getString("datatype"));
-            map.put("link", jsonObject.getString("link"));
+            // map.put("link", jsonObject.getString("link"));
             map.put("width", jsonObject.getString("width"));    // double类型的数据，在xml文件要指定jdbc类型
             map.put("render", jsonObject.getString("render"));
+
+            JSONObject outJsonObject = jsonObject.getJSONObject("link");
+            Map<String,Object> outMap = new HashMap<>();
+            outMap.put("qry_id",qry_id);
+            outMap.put("out_id",jsonObject.getString("out_id"));
+            outMap.put("link_qry_id",outJsonObject.getString("link_qry_id"));
+            if(outJsonObject!=null && !outJsonObject.isEmpty()){
+                map.put("link",outJsonObject.getString("link_qry_id"));
+            }
+            JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
+            for(int j=0; j<linkIdJSONArray.size();j++){
+                if(outMap!=null && !outMap.isEmpty()){
+                    JSONObject tempJSONObject = linkIdJSONArray.getJSONObject(j);
+                    Map<String,Object> insertMap = new HashMap<>();
+                    insertMap.putAll(outMap);
+                    insertMap.put("link_in_id",tempJSONObject.getString("link_in_id"));
+                    insertMap.put("link_in_id_value_type",tempJSONObject.getString("link_in_id_value_type"));
+                    insertMap.put("link_in_id_value",tempJSONObject.getString("link_in_id_value"));
+                    sqlSession.insert("query.createFuncOutLink",insertMap);
+                }
+            }
             sqlSession.insert("query.createQueryOut", map);
         }
     }

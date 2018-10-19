@@ -409,7 +409,29 @@ public class FunctionService {
             map.put("out_id", jsonObject.getString("out_id"));
             map.put("out_name", jsonObject.getString("out_name"));
             map.put("datatype", jsonObject.getString("datatype"));
-            map.put("link", jsonObject.getString("link"));
+            // map.put("link", jsonObject.getString("link"));  // 不能存放前端所有数据 255个大小不够存储，仅存储 link_qry_id即可
+
+            // 往 func_out_link 当中插入对应记录
+            JSONObject outJsonObject = jsonObject.getJSONObject("link");
+            Map<String,Object> outMap = new HashMap<>();
+            outMap.put("func_id",func_id);
+            outMap.put("out_id",jsonObject.getString("out_id"));
+            outMap.put("link_qry_id",outJsonObject.getString("link_qry_id"));
+            if(outJsonObject!=null && !outJsonObject.isEmpty()){
+                map.put("link",outJsonObject.getString("link_qry_id"));
+            }
+            JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
+            for(int j=0; j<linkIdJSONArray.size();j++){
+                if(outMap!=null && !outMap.isEmpty()){
+                    JSONObject tempJSONObject = linkIdJSONArray.getJSONObject(j);
+                    Map<String,Object> insertMap = new HashMap<>();
+                    insertMap.putAll(outMap);
+                    insertMap.put("link_in_id",tempJSONObject.getString("link_in_id"));
+                    insertMap.put("link_in_id_value_type",tempJSONObject.getString("link_in_id_value_type"));
+                    insertMap.put("link_in_id_value",tempJSONObject.getString("link_in_id_value"));
+                    sqlSession.insert("function.createFuncOutLink",insertMap);
+                }
+            }
             sqlSession.insert("function.createFunctionOut", map);
         }
     }
