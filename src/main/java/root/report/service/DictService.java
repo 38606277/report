@@ -37,6 +37,21 @@ public class DictService {
         }
     }
 
+    public List<Map<String,String>> getDictValueByID(String dict_id){
+        List<Map<String,String>> resultList = new  ArrayList<Map<String,String>>();
+        try
+        {
+            SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+            Map<String,Object> map = new HashMap<>();
+            map.put("dict_id",dict_id);
+            resultList=sqlSession.selectList("dict.getDictValueByID");
+            return resultList;
+
+        }catch (Exception ex){
+
+            throw  ex;
+        }
+    }
 
 
 }
