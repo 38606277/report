@@ -445,8 +445,9 @@ public class FunctionService {
      */
     public void updateFunctionOut(SqlSession sqlSession,JSONArray jsonArrayIn) {
         Map<String, String> map = new HashMap<>();
-        Map<String, String> deleteMap = new HashMap<>();
+
         for (int i = 0; i < jsonArrayIn.size(); i++) {
+            Map<String, Object> deleteMap = new HashMap<>();
             JSONObject jsonOut = jsonArrayIn.getJSONObject(i);
             deleteMap.put("func_id",jsonOut.getString("func_id"));
             deleteMap.put("out_id",jsonOut.getString("out_id"));
@@ -455,7 +456,30 @@ public class FunctionService {
             map.put("out_id", jsonOut.getString("out_id"));
             map.put("out_name", jsonOut.getString("out_name"));
             map.put("datatype", jsonOut.getString("datatype"));
-            map.put("link", jsonOut.getString("link"));
+            // map.put("link", jsonOut.getString("link"));  // link这个将超过 255个字符，只对其保留 link_qry_id 即可
+            JSONObject outJsonObject = jsonOut.getJSONObject("link");
+            map.put("link",outJsonObject.getString("link_qry_id"));
+
+            deleteMap.put("link_qry_id",outJsonObject.getIntValue("link_qry_id"));
+            // 删除掉 func_out_link 表当中对应的记录
+            JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
+            if(linkIdJSONArray!=null && !linkIdJSONArray.isEmpty()){
+                for(int j=0; j<linkIdJSONArray.size();j++){
+                    if(deleteMap!=null && !deleteMap.isEmpty()){
+                        JSONObject tempJSONObject = linkIdJSONArray.getJSONObject(j);
+                        Map<String,Object> deleteOutLinkMap = new HashMap<>();
+                        deleteOutLinkMap.putAll(deleteMap);
+                        deleteOutLinkMap.put("link_in_id",tempJSONObject.getString("link_in_id"));
+                        sqlSession.delete("function.deleteFunctionOutLinkByPrimary",deleteOutLinkMap);
+
+                        // 增加 func_out_link 表当中对应的记录
+                        deleteOutLinkMap.put("link_in_id_value_type",tempJSONObject.getString("link_in_id_value_type"));
+                        deleteOutLinkMap.put("link_in_id_value",tempJSONObject.getString("link_in_id_value"));
+                        sqlSession.insert("function.createFuncOutLink",deleteOutLinkMap);
+                    }
+                }
+            }
+
             sqlSession.insert("function.createFunctionOut", map);
         }
     }
@@ -479,26 +503,6 @@ public class FunctionService {
         sqlSession.delete("function.deleteFunctionOutLinkByFuncId",func_id);
     }
 
-    /*
-            // 遍历 out_id ,删除掉  func_out_link 表当中的信息
-        for(int i=0; i<jsonArray.size();i++) {
-            JSONObject tempJSONObject = jsonArray.getJSONObject(i);
-            String out_id = tempJSONObject.getString("out_id");
-            if(StringUtils.isNotBlank(out_id)){
-                JSONObject linkJson = tempJSONObject.getJSONObject("link");
-                Map<String,Object>  outLinkParamMap = new HashMap<>();
-                outLinkParamMap.put("func_id",funcId);
-                outLinkParamMap.put("out_id",out_id);
-                outLinkParamMap.put("link_qry_id",linkJson.getIntValue("link_qry_id"));
-                JSONArray paramJsonArray = linkJson.getJSONArray("param");
-                for(int j=0;j<paramJsonArray.size();j++){
-                    JSONObject paramJson = paramJsonArray.getJSONObject(j);
-                    outLinkParamMap.put("link_in_id",paramJson.getString("link_in_id"));
-                }
-                this.deleteFunctionOutLinkByPrimary(sqlSession,outLinkParamMap);
-            }
-        }
-     */
     // 根据 func_out_link 的主键 删除掉 其记录
     public void deleteFunctionOutLinkByPrimary(SqlSession sqlSession,Map map){
         sqlSession.delete("function.deleteFunctionOutLinkByPrimary",map);

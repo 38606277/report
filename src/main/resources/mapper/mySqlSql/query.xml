@@ -217,7 +217,7 @@
 		  qry_class qry
 	</select>
 
-    <!-- 根据 class_id 查询 func_name的所有信息 -->
+    <!-- 根据 class_id 查询 qry_name的所有信息 -->
     <select id="getQueryNameInfoByClassID" parameterType="int" resultType="Map">
 		SELECT
 			qry.qry_id,
@@ -239,7 +239,7 @@
 
 
     <!-- 往query_out_lick表当中插入对应记录 -->
-    <insert id="createFuncOutLink" parameterType="Map">
+    <insert id="createQueryOutLink" parameterType="Map">
         insert into qry_out_link(qry_id,out_id,link_qry_id,link_in_id,link_in_id_value_type,link_in_id_value)
  		values (#{qry_id,jdbcType=INTEGER},'${out_id}',#{link_qry_id,jdbcType=INTEGER},'${link_in_id}','${link_in_id_value_type}',
  		'${link_in_id_value}')
@@ -249,4 +249,11 @@
     <delete id="deleteQueryOutLinkByQryId" parameterType="int">
         delete from qry_out_link where qry_id=#{qry_id,jdbcType=INTEGER}
     </delete>
+
+    <!--  根据 qry_out_link的主键 删除掉 qry_out_link 表关联的记录  -->
+    <delete id="deleteQueryOutLinkByPrimary" parameterType="Map">
+		delete from qry_out_link where qry_id=#{qry_id,jdbcType=INTEGER}
+		  and out_id='${out_id}' and link_qry_id=#{link_qry_id,jdbcType=INTEGER}
+		   and link_in_id='${link_in_id}'
+	</delete>
 </mapper>

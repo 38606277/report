@@ -107,7 +107,7 @@ public class QueryService {
                         insertMap.put("link_in_id",tempJSONObject.getString("link_in_id"));
                         insertMap.put("link_in_id_value_type",tempJSONObject.getString("link_in_id_value_type"));
                         insertMap.put("link_in_id_value",tempJSONObject.getString("link_in_id_value"));
-                        sqlSession.insert("query.createFuncOutLink",insertMap);
+                        sqlSession.insert("query.createQueryOutLink",insertMap);
                     }
                 }
             }
@@ -229,19 +229,43 @@ public class QueryService {
      */
     public void updateQueryOut(SqlSession sqlSession,JSONArray jsonArrayIn) {
         Map<String, String> map = new HashMap<>();
-        Map<String, String> deleteMap = new HashMap<>();
+        Map<String, Object> deleteMap = new HashMap<>();
         for (int i = 0; i < jsonArrayIn.size(); i++) {
             JSONObject jsonOut = jsonArrayIn.getJSONObject(i);
             deleteMap.put("qry_id",jsonOut.getString("qry_id"));
             deleteMap.put("out_id",jsonOut.getString("out_id"));
             deleteQueryOut(sqlSession,deleteMap);   // 先删除后插入
+
             map.put("qry_id", jsonOut.getString("qry_id"));
             map.put("out_id", jsonOut.getString("out_id"));
             map.put("out_name", jsonOut.getString("out_name"));
             map.put("datatype", jsonOut.getString("datatype"));
-            map.put("link", jsonOut.getString("link"));
+            // map.put("link", jsonOut.getString("link"));   // link 长度只有255，不能存放所有数据，存放  link_qry_id 即可
             map.put("width", jsonOut.getString("width"));    // double类型的数据，在xml文件要指定jdbc类型
             map.put("render", jsonOut.getString("render"));
+
+            JSONObject outJsonObject = jsonOut.getJSONObject("link");
+            map.put("link",outJsonObject.getString("link_qry_id"));
+            deleteMap.put("link_qry_id",outJsonObject.getIntValue("link_qry_id"));
+            // 删除掉 func_out_link 表当中对应的记录
+            JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
+            if(linkIdJSONArray!=null && !linkIdJSONArray.isEmpty()){
+                for(int j=0; j<linkIdJSONArray.size();j++){
+                    if(deleteMap!=null && !deleteMap.isEmpty()){
+                        JSONObject tempJSONObject = linkIdJSONArray.getJSONObject(j);
+                        Map<String,Object> deleteOutLinkMap = new HashMap<>();
+                        deleteOutLinkMap.putAll(deleteMap);
+                        deleteOutLinkMap.put("link_in_id",tempJSONObject.getString("link_in_id"));
+                        sqlSession.delete("query.deleteQueryOutLinkByPrimary",deleteOutLinkMap);
+
+                        // 增加 func_out_link 表当中对应的记录
+                        deleteOutLinkMap.put("link_in_id_value_type",tempJSONObject.getString("link_in_id_value_type"));
+                        deleteOutLinkMap.put("link_in_id_value",tempJSONObject.getString("link_in_id_value"));
+                        sqlSession.insert("query.createQueryOutLink",deleteOutLinkMap);
+                    }
+                }
+            }
+
             sqlSession.insert("query.createQueryOut", map);
         }
     }
