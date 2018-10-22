@@ -244,4 +244,9 @@
  		values (#{qry_id,jdbcType=INTEGER},'${out_id}',#{link_qry_id,jdbcType=INTEGER},'${link_in_id}','${link_in_id_value_type}',
  		'${link_in_id_value}')
     </insert>
+
+    <!-- 根据qry_id 删除掉  qry_out_link表当中的记录 -->
+    <delete id="deleteQueryOutLinkByQryId" parameterType="int">
+        delete from qry_out_link where qry_id=#{qry_id,jdbcType=INTEGER}
+    </delete>
 </mapper>

@@ -222,6 +222,17 @@
 		delete from func_out where func_id=#{func_id,jdbcType=INTEGER}
     </delete>
 
+	<!--  根据 func_out_link的主键 删除掉 func_out_link 表关联的记录  -->
+	<delete id="deleteFunctionOutLinkByPrimary" parameterType="String">
+		delete from func_out_link where func_id=#{func_id,jdbcType=INTEGER}
+		  and out_id='${out_id}' and link_qry_id=#{link_qry_id,jdbcType=INTEGER}
+		   and link_in_id='${link_in_id}'
+	</delete>
+
+	<delete id="deleteFunctionOutLinkByFuncId" parameterType="int">
+		delete from func_out_link where func_id=#{func_id,jdbcType=INTEGER}
+	</delete>
+
 	<!--查我函数类别-->
 	<select id="getAllFunctionClass" parameterType="Map" resultType="Map">
 		SELECT

@@ -98,15 +98,17 @@ public class QueryService {
                 map.put("link",outJsonObject.getString("link_qry_id"));
             }
             JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
-            for(int j=0; j<linkIdJSONArray.size();j++){
-                if(outMap!=null && !outMap.isEmpty()){
-                    JSONObject tempJSONObject = linkIdJSONArray.getJSONObject(j);
-                    Map<String,Object> insertMap = new HashMap<>();
-                    insertMap.putAll(outMap);
-                    insertMap.put("link_in_id",tempJSONObject.getString("link_in_id"));
-                    insertMap.put("link_in_id_value_type",tempJSONObject.getString("link_in_id_value_type"));
-                    insertMap.put("link_in_id_value",tempJSONObject.getString("link_in_id_value"));
-                    sqlSession.insert("query.createFuncOutLink",insertMap);
+            if(linkIdJSONArray!=null && !linkIdJSONArray.isEmpty()){
+                for(int j=0; j<linkIdJSONArray.size();j++){
+                    if(outMap!=null && !outMap.isEmpty()){
+                        JSONObject tempJSONObject = linkIdJSONArray.getJSONObject(j);
+                        Map<String,Object> insertMap = new HashMap<>();
+                        insertMap.putAll(outMap);
+                        insertMap.put("link_in_id",tempJSONObject.getString("link_in_id"));
+                        insertMap.put("link_in_id_value_type",tempJSONObject.getString("link_in_id_value_type"));
+                        insertMap.put("link_in_id_value",tempJSONObject.getString("link_in_id_value"));
+                        sqlSession.insert("query.createFuncOutLink",insertMap);
+                    }
                 }
             }
             sqlSession.insert("query.createQueryOut", map);
@@ -331,7 +333,13 @@ public class QueryService {
      * 功能描述: 针对传递进来的JSONAarray进行批量删除func_out数据
      */
     public void deleteQueryOutForJsonArray(SqlSession sqlSession,int qry_id) {
+        this.deleteQueryOutLinkByQryId(sqlSession,qry_id);
         sqlSession.delete("query.deleteQueryOutByFuncId",qry_id);
+    }
+
+    // 根据qry_id 删除掉 qry_out_link 表当在的记录
+    public void deleteQueryOutLinkByQryId(SqlSession sqlSession,int qry_id){
+        sqlSession.delete("query.deleteQueryOutLinkByQryId",qry_id);
     }
 
     public void deleteSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException, IOException {
