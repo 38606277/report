@@ -23,6 +23,9 @@ import root.report.util.XmlUtil;
 import java.io.*;
 import java.lang.*;
 import java.math.BigInteger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -464,7 +467,7 @@ public class FunctionService {
     /**
      * 功能描述: 针对传递进来的JSONAarray进行批量删除func_out数据
      */
-    public void deleteFunctionOutForJsonArray(SqlSession sqlSession,int funcId) {
+    public void deleteFunctionOutForJsonArray(SqlSession sqlSession,int funcId) throws SQLException {
         sqlSession.delete("function.deleteFunctionOutByFuncId",funcId);
     }
 

@@ -12,11 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
+import root.configure.AppConstants;
 import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.service.QueryService;
+import root.report.util.FileUtil;
 import root.report.util.JsonUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -168,7 +171,13 @@ public class QueryControl extends RO {
         JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
         int class_id = jsonObject.getInteger("class_id");
         int flag = this.queryService.deleteQueryClassForRelation(class_id,sqlSession);
-        if(flag==2) return ErrorMsg("3000","此func_class正在被其他表关联引用,不能删除");
+        if(flag==2){
+            return ErrorMsg("3000","此func_class正在被其他表关联引用,不能删除");
+        }else {
+            // 删除掉 xml文件
+            String userSqlPath = AppConstants.getUserSqlPath() + File.separator + class_id + ".xml";
+            FileUtil.deleteFile(userSqlPath);
+        }
         return SuccessMsg("删除数据成功",null);
     }
 
