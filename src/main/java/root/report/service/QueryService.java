@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import root.configure.AppConstants;
 import root.configure.MybatisCacheConfiguration;
 import root.report.db.DbFactory;
+import root.report.query.SqlTemplate;
 import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
 
@@ -567,5 +568,20 @@ public class QueryService {
     // 取函数类别
     public List<Map<String, String>> getAllQueryClass(SqlSession sqlSession) {
         return sqlSession.selectList("query.getAllQueryClass");
+    }
+
+    // 根据 qry_id 查找 qry_name 记录， 组装 getIn,sql,getDb,getNamespace,getId ,getSelectType
+    public void assemblySqlTemplate(SqlTemplate sqlTemplate, String namespace, String qry_id) throws DocumentException, SAXException {
+        JSONObject jsonObject = this.getQueryByID(DbFactory.Open(DbFactory.FORM),qry_id);
+        JSONArray jsonArrayIn = jsonObject.getJSONArray("in");
+        if(jsonArrayIn!=null && !jsonArrayIn.isEmpty()){
+            sqlTemplate.setIn(jsonArrayIn);
+        }
+        sqlTemplate.setDb(jsonObject.containsKey("qry_db")?jsonObject.getString("qry_db"):"");
+        sqlTemplate.setId(qry_id);
+        sqlTemplate.setSelectType(jsonObject.containsKey("qry_type")?jsonObject.getString("qry_type"):"");
+        // 组装sql
+        sqlTemplate.setSql(getSqlTemplate(namespace,qry_id,false));
+        sqlTemplate.setNamespace(namespace);
     }
 }

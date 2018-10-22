@@ -3,6 +3,8 @@ package root.report.control.query;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.googlecode.aviator.AviatorEvaluator;
+import com.googlecode.aviator.Expression;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
@@ -15,16 +17,17 @@ import org.xml.sax.SAXException;
 import root.configure.AppConstants;
 import root.report.common.RO;
 import root.report.db.DbFactory;
+import root.report.query.FuncMetaData;
+import root.report.query.SqlTemplate;
 import root.report.service.QueryService;
 import root.report.util.FileUtil;
 import root.report.util.JsonUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/reportServer/query")
@@ -205,4 +208,92 @@ public class QueryControl extends RO {
         }
     }
 
+    //获取函数的元数据
+    private void acquireFuncMetaData(List<FuncMetaData> list,Map<String,Object> map,Map<String,Object> funcParamMap){
+        Set<String> keys = map.keySet();
+        for (String key:keys) {
+            funcParamMap.put(key, map.get(key));
+        }
+    }
+
+    // 执行sql 得到结果
+    private BigDecimal excuteFunc(List<FuncMetaData> list, int index, Map<String,Object> paramMap, SqlTemplate template) throws Exception{
+        BigDecimal sum = null;
+        int size = list.size();
+        FuncMetaData meta = list.get(index);
+        String[] paramVal = meta.getParamVal();
+        String id = meta.getId();
+        String expression = meta.getFuncExpression();
+        for(String s:paramVal){
+            paramMap.put(id, s);
+            if(index<size-1){
+                sum = excuteFunc(list,index+1,paramMap,template);
+            }else{
+                if(template.getSelectType().equals("sql")) {
+                    String db = template.getDb();
+                    String namespace = template.getNamespace();
+                    String funcId = template.getId();
+                    sum = DbFactory.Open(db).selectOne(namespace + "." + funcId, paramMap);
+                }
+            }
+            expression = expression.replace(s, sum.toString());
+        }
+        Object result = null;
+        try{
+            Expression exp = AviatorEvaluator.compile(expression);
+            result = exp.execute();
+        }catch(Exception e){
+            throw new Exception("参数表达式不合法");
+        }
+        return new BigDecimal(result.toString()).setScale(2,BigDecimal.ROUND_HALF_UP);
+    }
+
+    // 执行excute的代码 ：
+    @RequestMapping(value = "/execQuery/{QueryClassName}/{QueryID}", produces = "text/plain;charset=UTF-8")
+    public String execFunction(@PathVariable("QueryClassName") String queryClassName,
+                               @PathVariable("QueryID") String queryID, @RequestBody String pJson) {
+        System.out.println("开始执行查询:" + "selectClassName:" + queryClassName + "," + "selectID:" + queryID + ","
+                + "pJson:" + pJson + ",");
+        long t1 = System.nanoTime();
+        Object aResult = null;
+        try {
+            String usersqlPath = AppConstants.getUserSqlPath() + File.separator + queryClassName + ".xml";
+            SqlTemplate template = new SqlTemplate();
+            queryService.assemblySqlTemplate(template,queryClassName,queryID);
+            // 输入参数放入map中
+            JSONArray inTemplate = template.getIn();
+            JSONArray inValue = JSONArray.parseArray(pJson);
+
+            Map<String,Object> map = new LinkedHashMap<String,Object>();
+            if (inTemplate != null) {
+                for (int i = 0; i < inTemplate.size(); i++) {
+                    JSONObject aJsonObject = (JSONObject) inTemplate.get(i);
+                    String id = aJsonObject.getString("in_id");
+                    map.put(id, inValue.getString(i));
+                }
+            }
+            Map<String,Object> qryParamMap = new HashMap<String,Object>();
+            List<FuncMetaData> list = new ArrayList<FuncMetaData>();
+            acquireFuncMetaData(list,map,qryParamMap);
+            if(list.size()!=0){
+                aResult = excuteFunc(list,0,qryParamMap,template);
+            }else{
+                if(template.getSelectType().equals("sql")) {
+                    String db = template.getDb();
+                    String namespace = template.getNamespace();
+                    String qryId = template.getId();
+                    aResult = DbFactory.Open(db).selectOne(namespace + "." + qryId, map);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            aResult=e.getMessage();
+        }
+
+        long t2 = System.nanoTime();
+        System.out.println("结束执行查询:" + "QueryClassName:" + queryClassName + "," + "selectID:" + queryID + ","
+                + "pJson:" + pJson + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));
+        return JSON.toJSONString(aResult, JsonUtil.features);
+
+    }
 }
