@@ -7,6 +7,7 @@ import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.DataBarFormatting;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,32 +56,72 @@ public class DictControl extends RO {
 
 
      //返回数据字典的定义头，out
-    @RequestMapping(value = "/getDictByID/{Dict_id}", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/getDictByID/{dict_id}", produces = "text/plain;charset=UTF-8")
     public String getDictByID(@PathVariable("dict_id") String dict_id) {
-        return "未实现";
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            JSONObject jsonObject = this.dictService.getFuncDictInfo(sqlSession,Integer.parseInt(dict_id));
+            return SuccessMsg("查询成功",jsonObject);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
     }
 
-
-
+    /**
+     * 功能描述: 接收JSON格式参数，往func_dict跟func_dict_out 中插入相关数据
+     */
     @RequestMapping(value = "/createDict", produces = "text/plain;charset=UTF-8")
     public String createDict(@RequestBody String pJson) throws Exception
     {
-        //
-
-        return "未实现";
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            String dict_id  = this.dictService.createFuncDict(sqlSession,jsonObject);
+            this.dictService.createFuncDictOut(sqlSession,jsonObject,dict_id);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("创建字典信息成功",dict_id);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
     }
 
     @RequestMapping(value = "/updateDict", produces = "text/plain;charset=UTF-8")
     public String updateDict(@RequestBody String pJson) throws SQLException {
-
-
-        return "未实现";
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.dictService.updateFuncDictOut(sqlSession,jsonObject);
+            this.dictService.updateFuncDict(sqlSession,jsonObject);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("修改字典信息成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
     }
 
-
+    // 从json数据当中解析 ，批量删除 func_dict 表跟 func_dict_out 表当中的数据
     @RequestMapping(value = "/deleteDict", produces = "text/plain;charset=UTF-8")
     public String deleteDict(@RequestBody String pJson) throws SQLException {
-        return "未实现";
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONArray jsonArray = JSON.parseArray(pJson);
+            this.dictService.deleteFuncDictOut(sqlSession,jsonArray);
+            this.dictService.deleteFuncDict(sqlSession,jsonArray);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("删除字典信息成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
     }
 
 

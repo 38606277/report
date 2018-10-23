@@ -9,7 +9,6 @@
             fd.dict_name
         FROM
             func_dict fd
-
     </select>
 
     <select id="getDictValueByID" parameterType="Map" resultType="Map">
@@ -21,7 +20,60 @@
           func_dict_value fdv
         where
           fdv.dict_id=${dict_id}
-
     </select>
 
+    <!--  创建func_dict信息  -->
+    <insert id="createFuncDict" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+        insert into func_dict(dict_name,dict_desc,dict_db,loaddata_mode,loaddata_state)
+        values ('${dict_name}','${dict_desc}','${dict_db}',
+        <if  test="loaddata_mode == null">NULL</if>
+        <if  test="loaddata_mode != null">'${loaddata_mode}'</if>,
+        <if  test="loaddata_state == null">NULL</if>
+        <if  test="loaddata_state != null">'${loaddata_state}'</if>
+        )
+    </insert>
+
+    <!-- 创建func_dict_out 信息 -->
+    <insert id="createFuncDictOut" parameterType="Map">
+        insert into func_dict_out(dict_id,out_id,out_name,datatype)
+        values (#{dict_id,jdbcType=INTEGER},'${out_id}',
+        <if  test="out_name == null">NULL</if>
+        <if  test="out_name != null">'${out_name}'</if>,
+        <if  test="datatype == null">NULL</if>
+        <if  test="datatype != null">'${datatype}'</if>
+        )
+    </insert>
+
+    <!-- 根据 dict_id 删除 func_dict 表的信息 -->
+    <delete id="deleteFuncDict" parameterType="int">
+        delete from func_dict where dict_id=#{dict_id,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
+    <delete id="deleteFuncDictOut" parameterType="Map">
+        delete from func_dict_out where dict_id=#{dict_id,jdbcType=INTEGER} and out_id='${out_id}'
+    </delete>
+
+    <!-- 修改 func_dict 表的信息 -->
+    <update id="updateFuncDict" parameterType="Map">
+		update func_dict set dict_name='${dict_name}',dict_desc='${dict_desc}',
+		dict_db='${dict_db}',
+		loaddata_mode=
+        <if  test="loaddata_mode == null">NULL</if>
+        <if  test="loaddata_mode != null">'${loaddata_mode}'</if>
+		,loaddata_state=
+        <if  test="loaddata_state == null">NULL</if>
+        <if  test="loaddata_state != null">'${loaddata_state}'</if>
+		 where dict_id=#{dict_id,jdbcType=INTEGER}
+	</update>
+
+    <!--  根据 dict_id 查询 func_dict表的信息  -->
+    <select id="getFuncDictInfoByDictId" parameterType="int" resultType="Map">
+        select dict_id,dict_name,dict_desc,dict_db,loaddata_mode,loaddata_state from func_dict where dict_id=#{dict_id,jdbcType=INTEGER}
+    </select>
+
+    <!-- 根据 dict_id 查询 func_dict_out 表的信息 -->
+    <select id="getFuncDictOutInfoByDicId" parameterType="int" resultType="Map">
+        select dict_id,out_id,out_name,datatype from func_dict_out where dict_id=#{dict_id,jdbcType=INTEGER}
+    </select>
 </mapper>
