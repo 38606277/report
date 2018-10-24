@@ -7,11 +7,23 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.xml.sax.SAXException;
+import root.configure.AppConstants;
 import root.report.db.DbFactory;
 import root.report.util.JsonUtil;
+import root.report.util.XmlUtil;
 
+import java.io.File;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +54,10 @@ public class DictService {
         try
         {
             SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+            int dictID = Integer.parseInt(dict_id);
             Map<String,Object> map = new HashMap<>();
-            map.put("dict_id",dict_id);
-            resultList=sqlSession.selectList("dict.getDictValueByID");
+            map.put("dict_id",dictID);
+            resultList=sqlSession.selectList("dict.getDictValueByID",map);
             return resultList;
 
         }catch (Exception ex){
@@ -145,4 +158,99 @@ public class DictService {
         return jsonObject;
     }
 
+    // 根据传递进来的 dict_id 查询 对应的namespace当中的sql并执行得到 结果插入到 func_dict_value表
+    public void createFuncDictValueByDictId(SqlSession sqlSession,int dict_id) throws SQLException, SAXException, DocumentException {
+        //
+        Statement st = null;
+        try{
+            // dict_id 关联查询到 func_dict 查找dict_db 这个
+            String dbName = sqlSession.selectOne("dict.getDictDbByDictId",dict_id);
+            if(StringUtils.isBlank(dbName)) throw new RuntimeException("此DictId所对应的数据库为空,无法操作!");
+
+            // 初始化对应的数据库
+            SqlSession sourceSqlSession = DbFactory.Open(dbName);
+            st = sourceSqlSession.getConnection().createStatement();
+            String sql = this.getSqlTemplate("数据字典",String.valueOf(dict_id),false);
+            if(StringUtils.isNotBlank(sql)){
+                List<Map<String,Object>> list = new ArrayList<>();
+                ResultSet rs = st.executeQuery(sql);
+                while(rs.next()){
+                    String code = rs.getString("code");
+                    String name = rs.getString("name");
+                    Map<String,Object> tempMap = new HashMap<>();
+                    tempMap.put("dict_id",dict_id);
+                    tempMap.put("value_code",code);
+                    tempMap.put("value_name",name);
+                    list.add(tempMap);
+                    // System.out.println(id+","+name);
+                }
+                if(list!=null && !list.isEmpty()){
+                    this.createFuncDictValue(sqlSession,list);
+                }
+            }
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    // 往 func_dict_value 表中插入记录
+    public void createFuncDictValue(SqlSession sqlSession,List<Map<String,Object>> list){
+        for(int i=0;i<list.size();i++){
+            Map<String,Object> map = list.get(i);
+            sqlSession.insert("dict.createFuncDictValue",map);
+        }
+    }
+
+    // 得到命名空间的SQL
+    public String getSqlTemplate(String TemplateName, String SelectID,Boolean bool) throws DocumentException, SAXException {
+
+        String namespace = TemplateName;
+        String sqlId = SelectID;
+        String userSqlPath = AppConstants.getUserDictionaryPath() + File.separator + namespace + ".xml";
+
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setSuppressDeclaration(true);
+        format.setIndentSize(2);
+        format.setNewlines(true);
+        format.setTrimText(false);
+
+        XMLWriter writer = null;
+        Document userDoc = null;
+
+        try {
+            userDoc = XmlUtil.parseXmlToDom(userSqlPath);
+            Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
+            String tempStr = "";
+            if(bool){
+                tempStr = select.getStringValue();   // 按照原格式取出
+            }else {
+                tempStr = select.getTextTrim();   // 编译了一些html代码，导致不是原格式了，输入无格式的sql
+            }
+            log.debug("获取到的SQL为:" +tempStr);
+            return tempStr;
+        } catch (java.lang.Exception e) {
+            throw e;
+        }
+    }
+
+    // 修改 func_dict_value 表当中的记录
+    public void updateFuncDictValue(SqlSession sqlSession,JSONObject jsonObject){
+        // 只更新  value_name 即可
+        Map<String,Object> map = new HashMap<>();
+        map.put("dict_id",jsonObject.getIntValue("dict_id"));
+        map.put("value_code",jsonObject.getString("value_code"));
+        map.put("value_name",jsonObject.getString("value_name"));
+        sqlSession.update("dict.updateFuncDictValue",map);
+    }
+
+    // 删除 func_dict_value 表当中的记录
+    public void deleteFuncDictValue(SqlSession sqlSession,JSONArray jsonArray){
+        Map<String,Object> map = new HashMap<>();
+        for(int i=0;i<jsonArray.size();i++){
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            map.put("dict_id",jsonObject.getIntValue("dict_id"));
+            map.put("value_code",jsonObject.getString("value_code"));
+            sqlSession.update("dict.deleteFuncDictValue",map);
+        }
+    }
 }
