@@ -160,44 +160,57 @@ public class DictControl extends RO {
         return "未实现";
     }
 
-    //新增字典值
+    //新增字典值  // TODO : 改写成长连接实现 进度条的 增长
     @RequestMapping(value = "/createDictValue", produces = "text/plain;charset=UTF-8")
-    public String createDictValue(@RequestBody String pJson) {
+    public String createDictValue(@RequestBody String pJson) throws SQLException{
         //源数据加载到内存
-
         //写入到func_dict_value，返回是进度给前端
-
-
-
-        return "未实现";
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            int dict_id = jsonObject.getIntValue("dict_id");
+            this.dictService.createFuncDictValueByDictId(sqlSession,dict_id);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("导入数据成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
     }
     //修改字典值
     @RequestMapping(value = "/updateDictValue", produces = "text/plain;charset=UTF-8")
-    public String updateDictValue(@RequestBody String pJson) {
-        //源数据加载到内存
-
-        //写入到func_dict_value，返回是进度给前端
-
-
-
-        return "未实现";
+    public String updateDictValue(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.dictService.updateFuncDictValue(sqlSession,jsonObject);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("修改数据成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
     }
 
-    /*
-    *参数格式为{dict_id:100,dict_value:['1','2','3']}
-    *
-    *
-    * */
+    // 删除 func_dict_value 信息
     @RequestMapping(value = "/deleteDictValue", produces = "text/plain;charset=UTF-8")
-    public String deleteDictValue(@RequestBody String pJson) {
-        //源数据加载到内存
-
-        //写入到func_dict_value，返回是进度给前端
-
-
-
-        return "未实现";
+    public String deleteDictValue(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONArray jsonArray = JSON.parseArray(pJson);
+            this.dictService.deleteFuncDictValue(sqlSession,jsonArray);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("删除数据成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
     }
-
 
 }
