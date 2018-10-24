@@ -29,7 +29,7 @@
         INSERT INTO qry_in
         (qry_id,in_id,in_name,datatype,dict_id,validate,default_value,authtype_id)
         VALUES (
-        <if  test="qry_id != null">#{qry_id,jdbcType=INTEGER}</if>,
+        <if  test="qry_id != null">${qry_id}</if>,
         '${in_id}', '${in_name}', '${datatype}',
         <if  test="dict_id == null or dict_id == ''">NULL</if>
         <if  test="dict_id != null and dict_id != ''">#{dict_id,jdbcType=INTEGER}</if>

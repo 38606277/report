@@ -140,7 +140,7 @@ public class ErpUtil {
 
 		ErpUtil tools = new ErpUtil();
 
-		System.out.println("加密:" + tools.encode("system"));
+		System.out.println("加密:" + tools.encode("root"));
 
 		System.out.println("解密:" + tools.decode("v600KuCLNBc="));
 
