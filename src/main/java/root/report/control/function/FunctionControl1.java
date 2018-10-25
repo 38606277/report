@@ -198,7 +198,7 @@ public class FunctionControl1 extends RO {
             return ErrorMsg("3000","此func_class正在被其他表关联引用,不能删除");
         }else {
             // 删除掉 xml文件
-            String userSqlPath = AppConstants.getUserFunctionPath() + File.separator + class_id + ".xml";
+            String userSqlPath = AppConstants.getUserFunctionPath() + File.separator + AppConstants.FunctionPrefix+ class_id + ".xml";
             FileUtil.deleteFile(userSqlPath);
         }
         return SuccessMsg("删除数据成功",null);
@@ -228,7 +228,7 @@ public class FunctionControl1 extends RO {
         long t1 = System.nanoTime();
         Object aResult = null;
         try {
-            String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + FunctionClassName + ".xml";
+            // String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + FunctionClassName + ".xml";
             // SqlTemplate template = new SqlTemplate(usersqlPath, FunctionID);   // 组装了 comment 跟 func_id
             SqlTemplate template = new SqlTemplate();
             functionService.assemblySqlTemplate(template,FunctionClassName,FunctionID);
