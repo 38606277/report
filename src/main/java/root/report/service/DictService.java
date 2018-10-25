@@ -153,7 +153,7 @@ public class DictService {
         jsonObject.put("loaddata_state",map.get("loaddata_state"));
 
         List<Map<String,Object>> listMap = sqlSession.selectList("dict.getFuncDictOutInfoByDicId",dict_id);
-        jsonObject.put("out",JSON.toJSONString(listMap));
+        jsonObject.put("out",listMap);
 
         return jsonObject;
     }

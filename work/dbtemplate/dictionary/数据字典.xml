@@ -72,7 +72,7 @@ ORDER  BY ffv.flex_value
 
 	 ]]>
 	</select>
-	<select id="公司信息" resultType="Map" parameterType="Map">
+	<select id="4" resultType="Map" parameterType="Map">
 
 		<!--{
             "db":"jlerp",
