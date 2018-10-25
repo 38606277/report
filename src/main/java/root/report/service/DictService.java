@@ -7,20 +7,21 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
+import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
+import root.configure.MybatisCacheConfiguration;
 import root.report.db.DbFactory;
 import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -74,6 +75,7 @@ public class DictService {
         map.put("dict_name",jsonObject.getString("dict_name"));
         map.put("dict_desc",jsonObject.getString("dict_desc"));
         map.put("dict_db",jsonObject.getString("dict_db"));
+        map.put("dict_sql",jsonObject.getString("dict_sql"));
         map.put("loaddata_mode",jsonObject.getString("loaddata_mode"));
         map.put("loaddata_state",jsonObject.getString("loaddata_state"));
         sqlSession.insert("dict.createFuncDict",map);
@@ -136,6 +138,7 @@ public class DictService {
         map.put("dict_name",jsonObject.getString("dict_name"));
         map.put("dict_desc",jsonObject.getString("dict_desc"));
         map.put("dict_db",jsonObject.getString("dict_db"));
+        map.put("dict_sql",jsonObject.getString("dict_sql"));
         map.put("loaddata_mode",jsonObject.getString("loaddata_mode"));
         map.put("loaddata_state",jsonObject.getString("loaddata_state"));
         sqlSession.update("dict.updateFuncDict",map);
@@ -251,6 +254,171 @@ public class DictService {
             map.put("dict_id",jsonObject.getIntValue("dict_id"));
             map.put("value_code",jsonObject.getString("value_code"));
             sqlSession.update("dict.deleteFuncDictValue",map);
+        }
+    }
+
+    public void createSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) throws DocumentException, SAXException, IOException {
+
+        String namespace = TemplateName;
+        String sqlId = SelectID;
+        String userSqlPath = AppConstants.getUserDictionaryPath() + File.separator + namespace + ".xml";
+
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setSuppressDeclaration(true);
+        format.setIndentSize(2);
+        format.setNewlines(true);
+        format.setTrimText(false);
+
+        XMLWriter writer = null;
+        Document userDoc = null;
+        try {
+            userDoc = XmlUtil.parseXmlToDom(userSqlPath);
+
+            Element root = (Element) userDoc.selectSingleNode("/mapper");
+            Element newSql = root.addElement("select");
+            newSql.addAttribute("id", sqlId);
+            newSql.addAttribute("resultType", "Map");
+            newSql.addAttribute("parameterType", "Map");
+            //  设置2级缓存
+            newSql.addAttribute("useCache", MybatisCacheConfiguration.USE_CACHE_FALSE);
+            // newSql.addText(aSQLTemplate);
+            addSqlText(newSql,aSQLTemplate);
+
+            log.debug("新增SQL:" + newSql.asXML());
+            writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
+            //删除空白行
+            Element rootEle = userDoc.getRootElement();
+            writer.write(userDoc);
+            writer.flush();
+            writer.close();
+        } catch (java.lang.Exception e) {
+            throw e;
+        }
+    }
+
+    // 往指定节点当中增加内容
+    private void addSqlText(Element select, String sqlText) throws DocumentException{
+        String xmlText = "<sql>"+sqlText+"</sql>";
+        Document doc = DocumentHelper.parseText(xmlText);
+        //获取根节点    
+        Element root = doc.getRootElement();
+        List<Node> content = root.content();
+        for (int i = 0; i < content.size(); i++) {
+            Node node = content.get(i);
+            select.add((Node)node.clone());
+        }
+    }
+
+    public String updateSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) throws DocumentException, SAXException, IOException {
+
+        String namespace = TemplateName;
+        String sqlId = SelectID;
+        String userSqlPath = AppConstants.getUserDictionaryPath() + File.separator + namespace + ".xml";
+
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setSuppressDeclaration(true);
+        format.setIndentSize(2);
+        format.setNewlines(true);
+        format.setTrimText(false);
+
+        XMLWriter writer = null;
+        Document userDoc = null;
+        try {
+            userDoc = XmlUtil.parseXmlToDom(userSqlPath);
+            Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
+            select.clearContent();
+            this.addSqlText(select,aSQLTemplate);
+
+            log.debug("修改SQL:" + select.asXML());
+            writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
+            //删除空白行
+            Element rootEle = userDoc.getRootElement();
+            writer.write(userDoc);
+            writer.flush();
+            writer.close();
+            return "";
+        } catch (java.lang.Exception e) {
+            throw e;
+        }
+    }
+
+    public void deleteSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException, IOException {
+
+        String namespace = TemplateName;
+        String sqlId = SelectID;
+        String userSqlPath = AppConstants.getUserDictionaryPath() + File.separator +namespace + ".xml";
+
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setSuppressDeclaration(true);
+        format.setIndentSize(2);
+        format.setNewlines(true);
+        format.setTrimText(false);
+
+        Document userDoc = null;
+        XMLWriter writer = null;
+        try {
+            userDoc = XmlUtil.parseXmlToDom(userSqlPath);
+            moveSqlId(userDoc,sqlId);
+            log.debug("删除SQL,其id为:" +userSqlPath+"-"+sqlId);
+            writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
+            //删除空白行
+            Element root = userDoc.getRootElement();
+            removeBlankNewLine(root);
+            writer.write(userDoc);
+            writer.flush();
+            writer.close();
+        } catch (java.lang.Exception e) {
+            throw e;
+        }
+    }
+
+    //移除某个节点
+    protected void moveSqlId(Document userDoc, String sqlId)
+    {
+        List<Element> list = userDoc.selectNodes("//select[@id='"+sqlId+"']");
+        for (int i = 0; i < list.size(); i++)
+        {
+            list.get(i).getParent().remove(list.get(i));
+        }
+    }
+
+    private void removeBlankNewLine(Node node){
+        List<Node> list = ((Element)node).content();
+        boolean textOnly = true;
+        if(node.getNodeType()==Node.ELEMENT_NODE){
+            for(Node temp:list){
+                if(temp.getNodeType()!=Node.TEXT_NODE){
+                    textOnly = false;
+                    break;
+                }
+            }
+        }
+        for(Node temp:list){
+            int nodeType = temp.getNodeType();
+            switch (nodeType) {
+                case Node.ELEMENT_NODE:
+                    removeBlankNewLine(temp);
+                    break;
+                case Node.CDATA_SECTION_NODE:
+                    break;
+                case Node.COMMENT_NODE:
+                    break;
+                case Node.TEXT_NODE:
+                    Text text =  (Text)temp;
+                    String value = text.getText();
+                    if(!value.trim().equals("")){
+                        //清空右边空白
+                        value = value.substring(0,value.indexOf(value.trim().substring(0, 1))+value.trim().length());
+                        if(textOnly){
+                            value+="\n";
+                        }
+                    }else{
+                        value = value.trim()+"\n";
+                    }
+                    text.setText(value);
+                    break;
+                default:break;
+            }
         }
     }
 }

@@ -154,7 +154,7 @@ public class FunctionService {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
-        String userSqlPath = AppConstants.getUserFunctionPath() + File.separator + namespace + ".xml";
+        String userSqlPath = AppConstants.getUserFunctionPath() + File.separator +AppConstants.FunctionPrefix+ namespace + ".xml";
 
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setSuppressDeclaration(true);

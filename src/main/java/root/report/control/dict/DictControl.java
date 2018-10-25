@@ -80,6 +80,9 @@ public class DictControl extends RO {
             JSONObject jsonObject = JSON.parseObject(pJson);
             String dict_id  = this.dictService.createFuncDict(sqlSession,jsonObject);
             this.dictService.createFuncDictOut(sqlSession,jsonObject,dict_id);
+            // 往 数据字典.xml 当中 插入 指定SQL
+            this.dictService.createSqlTemplate("数据字典",dict_id,jsonObject.getString("dict_sql"));
+
             sqlSession.getConnection().commit();
             return SuccessMsg("创建字典信息成功",dict_id);
         }catch (Exception ex){
@@ -97,6 +100,10 @@ public class DictControl extends RO {
             JSONObject jsonObject = JSON.parseObject(pJson);
             this.dictService.updateFuncDictOut(sqlSession,jsonObject);
             this.dictService.updateFuncDict(sqlSession,jsonObject);
+
+            // 往 数据字典.xml 当中修改 指定SQL
+            this.dictService.updateSqlTemplate("数据字典",String.valueOf(jsonObject.getIntValue("dict_id")),jsonObject.getString("dict_sql"));
+
             sqlSession.getConnection().commit();
             return SuccessMsg("修改字典信息成功",null);
         }catch (Exception ex){
@@ -115,6 +122,13 @@ public class DictControl extends RO {
             JSONArray jsonArray = JSON.parseArray(pJson);
             this.dictService.deleteFuncDictOut(sqlSession,jsonArray);
             this.dictService.deleteFuncDict(sqlSession,jsonArray);
+
+            for(int i=0;i<jsonArray.size();i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                // 往 数据字典.xml 当中删除 指定SQL
+                this.dictService.deleteSqlTemplate("数据字典",String.valueOf(jsonObject.getIntValue("dict_id")));
+            }
+
             sqlSession.getConnection().commit();
             return SuccessMsg("删除字典信息成功",null);
         }catch (Exception ex){

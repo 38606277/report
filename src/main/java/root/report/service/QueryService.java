@@ -161,7 +161,7 @@ public class QueryService {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
-        String userSqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
+        String userSqlPath = AppConstants.getUserSqlPath() + File.separator +AppConstants.QueryPrefix+ namespace + ".xml";
 
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setSuppressDeclaration(true);
