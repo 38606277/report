@@ -138,14 +138,14 @@ public class DictService {
         map.put("dict_name",jsonObject.getString("dict_name"));
         map.put("dict_desc",jsonObject.getString("dict_desc"));
         map.put("dict_db",jsonObject.getString("dict_db"));
-        map.put("dict_sql",jsonObject.getString("dict_sql"));
+       //  map.put("dict_sql",jsonObject.getString("dict_sql"));
         map.put("loaddata_mode",jsonObject.getString("loaddata_mode"));
         map.put("loaddata_state",jsonObject.getString("loaddata_state"));
         sqlSession.update("dict.updateFuncDict",map);
     }
 
     // 功能描述 : 根据dict_id 查询 func_dict信息
-    public JSONObject getFuncDictInfo(SqlSession sqlSession,int dict_id){
+    public JSONObject getFuncDictInfo(SqlSession sqlSession,int dict_id) throws SAXException, DocumentException {
         Map<String,Object>  map =   sqlSession.selectOne("dict.getFuncDictInfoByDictId",dict_id);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("dict_id",map.get("dict_id"));
@@ -154,6 +154,8 @@ public class DictService {
         jsonObject.put("dict_db",map.get("dict_db"));
         jsonObject.put("loaddata_mode",map.get("loaddata_mode"));
         jsonObject.put("loaddata_state",map.get("loaddata_state"));
+        jsonObject.put("dict_sql",this.getSqlTemplate("数据字典",String.valueOf(map.get("dict_id")),true));
+
 
         List<Map<String,Object>> listMap = sqlSession.selectList("dict.getFuncDictOutInfoByDicId",dict_id);
         jsonObject.put("out",listMap);
