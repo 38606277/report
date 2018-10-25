@@ -322,7 +322,7 @@ public class QueryService {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
-        String userSqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
+        String userSqlPath = AppConstants.getUserSqlPath() + File.separator +AppConstants.QueryPrefix+ namespace + ".xml";
 
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setSuppressDeclaration(true);
@@ -355,7 +355,7 @@ public class QueryService {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
-        String userSqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
+        String userSqlPath = AppConstants.getUserSqlPath() + File.separator +AppConstants.QueryPrefix+ namespace + ".xml";
 
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setSuppressDeclaration(true);
@@ -415,7 +415,7 @@ public class QueryService {
 
         String namespace = TemplateName;
         String sqlId = SelectID;
-        String userSqlPath = AppConstants.getUserSqlPath() + File.separator + namespace + ".xml";
+        String userSqlPath = AppConstants.getUserSqlPath() + File.separator + AppConstants.QueryPrefix+namespace + ".xml";
 
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setSuppressDeclaration(true);
@@ -498,12 +498,12 @@ public class QueryService {
         sqlSession.insert("query.createQueryClass", map);
         String class_id  = String.valueOf(map.get("id"));
         // 生成 xml文件
-        String userSqlPath = AppConstants.getUserSqlPath() + File.separator + class_id + ".xml";
+        String userSqlPath = AppConstants.getUserSqlPath() + File.separator +AppConstants.QueryPrefix +class_id + ".xml";
         File file = new File(userSqlPath);   // 自增長ID不會重名
         file.createNewFile();
         Document doc = DocumentHelper.createDocument();
         Element mapper = DocumentHelper.createElement("mapper");
-        mapper.addAttribute("namespace",class_id);
+        mapper.addAttribute("namespace",AppConstants.QueryPrefix+class_id);
         // 增加缓存信息  -> 每次sqlSession都会关闭掉，所以一级缓存不起作用，要开启二级缓存
         Element cacheElement = mapper.addElement("cache");
         // eviction="LRU" flushInterval="100000" size="1024" readOnly="true"
@@ -514,7 +514,7 @@ public class QueryService {
         doc.add(mapper);
         doc.addDocType("mapper", headModel, null);
         writeToXml(doc, file);
-        return class_id;
+        return AppConstants.QueryPrefix+class_id;
     }
 
     // 把doc节点当中的信息写入到指定file文件当中去

@@ -178,7 +178,7 @@ public class QueryControl extends RO {
             return ErrorMsg("3000","此func_class正在被其他表关联引用,不能删除");
         }else {
             // 删除掉 xml文件
-            String userSqlPath = AppConstants.getUserSqlPath() + File.separator + class_id + ".xml";
+            String userSqlPath = AppConstants.getUserSqlPath() + File.separator + AppConstants.QueryPrefix+ class_id + ".xml";
             FileUtil.deleteFile(userSqlPath);
         }
         return SuccessMsg("删除数据成功",null);
@@ -257,7 +257,7 @@ public class QueryControl extends RO {
         long t1 = System.nanoTime();
         Object aResult = null;
         try {
-            String usersqlPath = AppConstants.getUserSqlPath() + File.separator + queryClassName + ".xml";
+            // String usersqlPath = AppConstants.getUserSqlPath() + File.separator + queryClassName + ".xml";
             SqlTemplate template = new SqlTemplate();
             queryService.assemblySqlTemplate(template,queryClassName,queryID);
             // 输入参数放入map中

@@ -96,4 +96,10 @@ public class AppConstants {
     public static String getPhoneapp() {
         return appPath + File.separator + "app";
     }
+
+    // function 默认文件前缀名称
+    public static String FunctionPrefix = "func_";
+
+    // query 默认文件前缀名称
+    public static String QueryPrefix = "qry_";
 }
