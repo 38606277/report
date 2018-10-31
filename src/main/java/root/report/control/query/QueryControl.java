@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Array;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -412,5 +413,110 @@ public class QueryControl extends RO {
                 + "pJson:" + pJson + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));
         return JSON.toJSONString(aResult, JsonUtil.features);
 
+    }
+    /**
+     * gaoluo
+     * */
+    @RequestMapping(value = "/getQueryClassTree", produces = "text/plain;charset=UTF-8")
+    public String getQueryClassTree() {
+        List<Map<String,String>> fileList = queryService.getAllQueryClass(DbFactory.Open(DbFactory.FORM));
+        List<Map> list = new ArrayList<Map>();
+        for (int i = 0; i < fileList.size(); i++) {
+            JSONObject authNode = new JSONObject(true);
+            String name = fileList.get(i).get("class_name").toString();
+            Integer key =  Integer.parseInt(String.valueOf(fileList.get(i).get("class_id")));
+            authNode.put("title", name);
+            authNode.put("key", key);
+            try {
+                List<Map<String,Object>> chiledList = DbFactory.Open(DbFactory.FORM).
+                        selectList("query.getQueryNameInfoByClassID",key);
+                if(chiledList.size()>0) {
+                    List<Map> childlist = new ArrayList<Map>();
+                    for (int j = 0; j < chiledList.size(); j++) {
+                        Map<String, Object> childl = chiledList.get(j);
+                        Map<String, Object> childmap = new HashMap<String, Object>();
+                        childmap.put("title", childl.get("qry_name").toString());
+                        childmap.put("key", childl.get("qry_id").toString());
+                        childlist.add(childmap);
+                    }
+                    authNode.put("children", childlist);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            list.add(authNode);
+
+        }
+        return JSON.toJSONString(list);
+    }
+
+
+    /**
+     * gaoluo
+     * */
+    @RequestMapping(value = "/getAuthTree", produces = "text/plain;charset=UTF-8")
+    public String getAuthTree(@RequestBody String pjson) {
+        JSONObject obj=JSONObject.parseObject(pjson);
+        int userId=obj.getInteger("userId");
+        List<Map<String,String>> fileList = queryService.getAuthTree(DbFactory.Open(DbFactory.FORM),userId);
+        List<String> f=new ArrayList<String>();
+        List<String> pid=new ArrayList<String>();
+        List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+        for (int i = 0; i < fileList.size(); i++) {
+            String auth_type=fileList.get(i).get("auth_type");
+            String func_id=fileList.get(i).get("func_id");
+            if(auth_type.equals("select")){
+                try {
+                    List<Map<String,String>> childId=new ArrayList<Map<String,String>>();
+                    Map<String,Object> parMap = queryService.getAllQueryClassByClassId(Integer.parseInt(func_id));
+                    if(null!=parMap){
+                        for (int ii = 0; ii < fileList.size(); ii++) {
+                            String auth_typetwo=fileList.get(ii).get("auth_type");
+                            String qry_id=fileList.get(ii).get("func_id");
+                            if(auth_typetwo.equals("select")) {
+                                Map<String, String> map = queryService.getQueryNameByClassIdQryId(Integer.parseInt(func_id), Integer.parseInt(qry_id));
+                                if(null!=map) {
+                                    childId.add(map);
+                                }
+                            }
+                        }
+                        parMap.put("children",childId);
+                        list.add(parMap);
+                    }
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(auth_type.equals("function")){
+                try {
+
+                    Map<String,Object> parMap = queryService.getFunctionClassByClassId(Integer.parseInt(func_id));
+                    List<Map<String,String>> childId=new ArrayList<Map<String,String>>();
+                    if(null!=parMap){
+                        for (int iii = 0; iii < fileList.size(); iii++) {
+                            String auth_typeFunc=fileList.get(iii).get("auth_type");
+                            String function_id=fileList.get(iii).get("func_id");
+                            if(auth_typeFunc.equals("function")) {
+                                Map<String, String> map = queryService.getFunctionNameByClassIdPId(Integer.parseInt(func_id), Integer.parseInt(function_id));
+                                if(null!=map) {
+                                    childId.add(map);
+                                }
+                            }
+                        }
+                        parMap.put("children",childId);
+                        list.add(parMap);
+                    }
+
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return JSON.toJSONString(list);
     }
 }

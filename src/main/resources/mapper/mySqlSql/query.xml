@@ -256,4 +256,36 @@
 		  and out_id='${out_id}' and link_qry_id=#{link_qry_id,jdbcType=INTEGER}
 		   and link_in_id='${link_in_id}'
 	</delete>
+
+    <!--获取角色分配的权限-->
+    <select id="getAuthTree" parameterType="int" resultType="Map">
+		select a.auth_type,a.func_id from fnd_auth a
+        INNER join (select r.role_id from fnd_user_role r where r.user_id=#{user_id,jdbcType=INTEGER}) as role
+        on a.role_id=role.role_id;
+    </select>
+
+    <!--select  根据一级ID查询-->
+    <select id="getAllQueryClassByClassId" parameterType="int" resultType="Map">
+        SELECT qry.class_id as 'value', qry.class_name as 'name'
+        FROM  qry_class qry where qry.class_id=#{class_id,jdbcType=INTEGER}
+
+    </select>
+    <!--select  根据一级ID与二级ID一起查询-->
+    <select id="getQueryNameByClassIdQryId" parameterType="Map" resultType="Map">
+        SELECT  qry.qry_id as 'value', qry.qry_name as 'name'
+        FROM  qry_name qry where qry.class_id=#{class_id,jdbcType=INTEGER} and qry.qry_id=#{qry_id,jdbcType=INTEGER}
+    </select>
+
+    <!--select  根据一级ID查询-->
+    <select id="getAllFunctionClassByClassId" parameterType="int" resultType="Map">
+        SELECT func.class_id as 'value', func.class_name as 'name'
+        FROM  func_class func where func.class_id=#{class_id,jdbcType=INTEGER}
+
+    </select>
+    <!--select  根据一级ID与二级ID一起查询-->
+    <select id="getFunctionNameByClassIdPId" parameterType="Map" resultType="Map">
+        SELECT  func.func_id as 'value', func.func_name as 'name'
+        FROM  func_name func where func.class_id=#{class_id,jdbcType=INTEGER} and func.func_id=#{func_id,jdbcType=INTEGER}
+    </select>
+
 </mapper>

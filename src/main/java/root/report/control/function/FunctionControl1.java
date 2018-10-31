@@ -328,4 +328,37 @@ public class FunctionControl1 extends RO {
             }
         }
     }
+
+    @RequestMapping(value = "/getFunctionClass", produces = "text/plain;charset=UTF-8")
+    public String getFunctionClass() {
+            List<Map<String,String>> fileList=functionService.getAllFunctionClass(DbFactory.Open(DbFactory.FORM));
+            List<Map> list = new ArrayList<Map>();
+            for (int i = 0; i < fileList.size(); i++) {
+                JSONObject authNode = new JSONObject(true);
+                String name = fileList.get(i).get("class_name").toString();
+                Integer key =  Integer.parseInt(String.valueOf(fileList.get(i).get("class_id")));
+                authNode.put("title", name);
+                authNode.put("key", key);
+                try {
+                    List<Map<String,Object>> chiledList = DbFactory.Open(DbFactory.FORM).
+                            selectList("function.getFuncNameInfoByClassID",key);
+                    if(chiledList.size()>0) {
+                        List<Map> childlist = new ArrayList<Map>();
+                        for (int j = 0; j < chiledList.size(); j++) {
+                            Map<String, Object> childl = chiledList.get(j);
+                            Map<String, Object> childmap = new HashMap<String, Object>();
+                            childmap.put("title", childl.get("func_name").toString());
+                            childmap.put("key", childl.get("func_id").toString());
+                            childlist.add(childmap);
+                        }
+                        authNode.put("children", childlist);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                list.add(authNode);
+
+            }
+            return JSON.toJSONString(list);
+        }
 }
