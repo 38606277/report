@@ -99,22 +99,20 @@ public class DictService {
     }
 
     // 功能描述: 根据 dict_id 批量删除 func_dict的信息
-    public void deleteFuncDict(SqlSession sqlSession,JSONArray jsonArray){
-       for(int i=0;i<jsonArray.size();i++){
-           JSONObject jsonObject = jsonArray.getJSONObject(i);
-           sqlSession.delete("dict.deleteFuncDict",jsonObject.getIntValue("dict_id"));
-       }
+    public void deleteFuncDict(SqlSession sqlSession,int dict_id){
+           sqlSession.delete("dict.deleteFuncDict",dict_id);
+    }
+
+    // 功能描述: 根据 dict_id删除了字典值
+    public void deleteDictValueByDictID(SqlSession sqlSession,int dict_id){
+        sqlSession.delete("dict.deleteDictValueByDictID",dict_id);
     }
 
     // 功能描述: 根据 dict_id 和 out_id 批量删除 func_dict的信息
-    public void deleteFuncDictOut(SqlSession sqlSession,JSONArray jsonArray){
-        for(int i=0;i<jsonArray.size();i++){
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            Map<String,Object> map  = new HashMap<>();
-            map.put("dict_id",jsonObject.getIntValue("dict_id"));
-            map.put("out_id",jsonObject.getString("out_id"));
+    public void deleteFuncDictOut(SqlSession sqlSession,int dict_id){
+            Map<String,Object> map=new HashMap();
+            map.put("dict_id",dict_id);
             sqlSession.delete("dict.deleteFuncDictOut",map);
-        }
     }
 
     // 功能描述 : 修改 func_dict_out 表的信息

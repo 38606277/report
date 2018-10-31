@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="数据字典">
-	<cache/>
-	<select id="查询公司信息" parameterType="Map" resultType="Map">
-
-		<!--{
+   <cache/>
+   <select id="查询公司信息" parameterType="Map" resultType="Map">
+ 
+    <!--{
             "db":"jlerp",
             "desc":"公司信息字典",
             "in":[],
@@ -37,10 +36,10 @@
 		and gsob.set_of_books_id = 2
 		and fifs.application_column_name = 'SEGMENT1'
 		order by ffv.flex_value
-	</select>
-	<select id="查询值集信息" parameterType="Map" resultType="Map">
-
-		<!--{
+  </select>
+   <select id="查询值集信息" parameterType="Map" resultType="Map">
+ 
+    <!--{
                  db:"jlerp",
                  desc:"查询值集信息",
                    in:[
@@ -54,7 +53,7 @@
                         {id:"end_date",name:"结束日期",datatype:"varchar"}
                        ]
                  }-->
-		<![CDATA[
+ <![CDATA[
 	  SELECT ffv.flex_value code,
        to_char(ffv.flex_value) || ' ' || ffvt.description description,
        ffv.enabled_flag flag,
@@ -71,33 +70,10 @@ AND    ffvs.flex_value_set_name = nvl(#{value_set_name},ffvs.flex_value_set_name
 ORDER  BY ffv.flex_value
 
 	 ]]>
-	</select>
-	<select id="4" resultType="Map" parameterType="Map">
-
-		<!--{
-            "db":"jlerp",
-            "desc":"",
-            "in":[],
-            "out":[
-                {
-                    "id":"value",
-                    "name":"value",
-                    "datatype":"varchar"
-                },
-                {
-                    "id":"name",
-                    "name":"name",
-                    "datatype":"varchar"
-                }
-            ]
-        }-->SELECT
-		hou.INTERNAL_ADDRESS_LINE value,hou.NAME
-		from
-		hr_organization_units hou where hou.NAME like '%OU%'
-	</select>
-	<select id="会计期间" resultType="Map" parameterType="Map">
-
-		<!--{
+  </select>
+   <select id="会计期间" resultType="Map" parameterType="Map">
+ 
+    <!--{
             "db":"system",
             "desc":"",
             "in":[],
@@ -118,10 +94,10 @@ ORDER  BY ffv.flex_value
   from gl_period_statuses gps
  where gps.set_of_books_id = 2 and gps.application_id=201
  order by gps.period_year desc, gps.period_num ]]>
-	</select>
-	<select id="会计科目" resultType="Map" parameterType="Map" useCache="true">
-
-		<!--{
+  </select>
+   <select id="会计科目" resultType="Map" parameterType="Map" useCache="true">
+ 
+    <!--{
             "db":"jlerp",
             "desc":"",
             "in":[],
@@ -153,10 +129,10 @@ ORDER  BY ffv.flex_value
 		and gsob.set_of_books_id = 2
 		and fifs.application_column_name = 'SEGMENT3'
 		order by ffv.flex_value
-	</select>
-	<select id="部门字典" resultType="Map" parameterType="Map">
-
-		<!--{
+  </select>
+   <select id="部门字典" resultType="Map" parameterType="Map">
+ 
+    <!--{
             "db":"jlerp",
             "desc":"",
             "in":[],
@@ -189,8 +165,10 @@ ORDER  BY ffv.flex_value
 		and gsob.set_of_books_id = 2
 		and fifs.application_column_name = 'SEGMENT2'
 		order by ffv.flex_value
-	</select><select id="会计科目字典" resultType="Map" parameterType="Map">
-	<!--{
+  </select>
+   <select id="会计科目字典" resultType="Map" parameterType="Map">
+ 
+    <!--{
         "db":"form",
         "desc":"取MIS生产会计科目值",
         "in":[],
@@ -221,13 +199,13 @@ ORDER  BY ffv.flex_value
 	and ffv.end_date_active is null
 	and gsob.set_of_books_id = 2
 	and fifs.application_column_name = 'SEGMENT3'
-	<if test="null!=searchDictionary and ''!=searchDictionary">and ffvt.description like '%${searchDictionary}%'</if>
+    <if test="null!=searchDictionary and ''!=searchDictionary">and ffvt.description like '%${searchDictionary}%'
+</if>
 	order by ffv.flex_value
-</select>
-
-	<select id="品牌数据字典" resultType="Map" parameterType="Map">
-
-	<!--{
+  </select>
+   <select id="品牌数据字典" resultType="Map" parameterType="Map">
+ 
+    <!--{
         "db":"jlerp",
         "desc":"",
         "in":[],
@@ -260,9 +238,10 @@ ORDER  BY ffv.flex_value
 	and gsob.set_of_books_id = 2
 	and fifs.application_column_name = 'SEGMENT4'
 	order by ffv.flex_value
-</select><select id="项目字典" resultType="Map" parameterType="Map">
-
-	<!--{
+  </select>
+   <select id="项目字典" resultType="Map" parameterType="Map">
+ 
+    <!--{
         "db":"jlerp",
         "desc":"",
         "in":[],
@@ -294,4 +273,62 @@ ORDER  BY ffv.flex_value
 	and gsob.set_of_books_id = 2
 	and fifs.application_column_name = 'SEGMENT5'
 	order by ffv.flex_value
-</select></mapper>
+  </select>
+   <select id="9" resultType="Map" parameterType="Map" useCache="false">null
+</select>
+   <select id="10" resultType="Map" parameterType="Map" useCache="false">null
+</select>
+   <select id="11" resultType="Map" parameterType="Map" useCache="false">select ffv.flex_value value ,
+	ffvt.description name
+
+
+
+
+
+	from fnd_id_flex_segments fifs,
+	gl_sets_of_books     gsob,
+
+
+
+
+
+	fnd_flex_values      ffv,
+	fnd_flex_values_tl   ffvt
+
+
+
+
+
+	where gsob.chart_of_accounts_id = fifs.id_flex_num
+	and id_flex_code = 'GL#'
+
+
+
+
+
+	and ffv.flex_value_id = ffvt.flex_value_id
+	and ffvt.language = 'ZHS'
+
+
+
+
+
+	and ffv.flex_value_set_id = fifs.flex_value_set_id
+	and ffv.enabled_flag = 'Y'
+
+
+
+
+
+	and ffv.end_date_active is null
+	and gsob.set_of_books_id = 2
+
+
+
+
+
+	and fifs.application_column_name = 'SEGMENT4'
+	order by ffv.flex_value
+
+</select>
+</mapper>

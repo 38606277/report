@@ -120,13 +120,14 @@ public class DictControl extends RO {
         try{
             sqlSession.getConnection().setAutoCommit(false);
             JSONArray jsonArray = JSON.parseArray(pJson);
-            this.dictService.deleteFuncDictOut(sqlSession,jsonArray);
-            this.dictService.deleteFuncDict(sqlSession,jsonArray);
-
             for(int i=0;i<jsonArray.size();i++){
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                // 往 数据字典.xml 当中删除 指定SQL
-                this.dictService.deleteSqlTemplate("数据字典",String.valueOf(jsonObject.getIntValue("dict_id")));
+                int dict_id = jsonArray.getInteger(i);
+                //删除值表，删除out表，删除模板,删除主表，
+                this.dictService.deleteDictValueByDictID(sqlSession,dict_id);
+                this.dictService.deleteFuncDictOut(sqlSession,dict_id);
+                this.dictService.deleteFuncDict(sqlSession,dict_id);
+                // 往数据字典.xml 当中删除 指定SQL
+                this.dictService.deleteSqlTemplate("数据字典",String.valueOf(dict_id));
             }
 
             sqlSession.getConnection().commit();
@@ -135,6 +136,8 @@ public class DictControl extends RO {
             sqlSession.getConnection().rollback();
             ex.printStackTrace();
             return ExceptionMsg(ex.getMessage());
+        }finally {
+            sqlSession.getConnection().setAutoCommit(true);
         }
     }
 

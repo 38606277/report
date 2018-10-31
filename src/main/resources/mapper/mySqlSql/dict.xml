@@ -6,7 +6,8 @@
     <select id="getAllDictName" parameterType="Map" resultType="Map">
         SELECT
             fd.dict_id ,
-            fd.dict_name
+            fd.dict_name,
+            fd.dict_desc
         FROM
             func_dict fd
     </select>
@@ -51,7 +52,12 @@
 
     <!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
     <delete id="deleteFuncDictOut" parameterType="Map">
-        delete from func_dict_out where dict_id=#{dict_id,jdbcType=INTEGER} and out_id='${out_id}'
+        delete from func_dict_out where dict_id=#{dict_id,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
+    <delete id="deleteDictValueByDictID" parameterType="int">
+        delete from func_dict_value where dict_id=#{dict_id,jdbcType=INTEGER}
     </delete>
 
     <!-- 修改 func_dict 表的信息 -->
