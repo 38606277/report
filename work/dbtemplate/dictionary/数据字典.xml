@@ -2,6 +2,9 @@
 
 <mapper namespace="数据字典">
    <cache/>
+	<select id="3" >
+		select code,name from test_dict
+	</select>
    <select id="查询公司信息" parameterType="Map" resultType="Map">
  
     <!--{

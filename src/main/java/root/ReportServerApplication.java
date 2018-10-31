@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import root.report.db.DbFactory;
 import root.report.db.DbManager;
 import root.report.util.ErpUtil;
+import root.websocket.ImportDictValueSocket;
 
 import javax.sql.DataSource;
 
@@ -26,7 +28,9 @@ import javax.sql.DataSource;
 public class ReportServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ReportServerApplication.class, args);
+		ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(ReportServerApplication.class, args);
+		// 解决websocket 当中无法注入bean的方法
+		ImportDictValueSocket.setApplicationContext(configurableApplicationContext);
 	}
 
 }
