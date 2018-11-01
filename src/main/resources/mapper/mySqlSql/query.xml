@@ -259,7 +259,7 @@
 
     <!--获取角色分配的权限-->
     <select id="getAuthTree" parameterType="int" resultType="Map">
-		select a.auth_type,a.func_id from fnd_auth a
+		select DISTINCT a.auth_type,a.func_id from fnd_auth a
         INNER join (select r.role_id from fnd_user_role r where r.user_id=#{user_id,jdbcType=INTEGER}) as role
         on a.role_id=role.role_id;
     </select>

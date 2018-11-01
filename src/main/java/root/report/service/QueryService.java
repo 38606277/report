@@ -643,8 +643,8 @@ public class QueryService {
         sqlTemplate.setNamespace(namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
-            return sqlSession.selectList("query.getAuthTree",user_id);
-     }
+        return sqlSession.selectList("query.getAuthTree",user_id);
+    }
 
 
     public Map<String, Object> getAllQueryClassByClassId(int class_id) throws SAXException, DocumentException {
@@ -652,11 +652,11 @@ public class QueryService {
                 selectOne("query.getAllQueryClassByClassId", class_id);
         return listQueryName;
     }
-    public Map<String, String> getQueryNameByClassIdQryId(int class_id,int qry_id) throws SAXException, DocumentException {
+    public Map<String, Object> getQueryNameByClassIdQryId(int class_id,int qry_id) throws SAXException, DocumentException {
         Map<String,Integer> param=new HashMap<String,Integer>();
         param.put("class_id",class_id);
         param.put("qry_id",qry_id);
-        Map<String, String> listQueryName = DbFactory.Open(DbFactory.FORM).
+        Map<String, Object> listQueryName = DbFactory.Open(DbFactory.FORM).
                 selectOne("query.getQueryNameByClassIdQryId", param);
         return listQueryName;
     }
@@ -666,11 +666,11 @@ public class QueryService {
                 selectOne("query.getAllFunctionClassByClassId", class_id);
         return listQueryName;
     }
-    public Map<String, String> getFunctionNameByClassIdPId(int class_id,int func_id) throws SAXException, DocumentException {
+    public Map<String, Object> getFunctionNameByClassIdPId(int class_id,int func_id) throws SAXException, DocumentException {
         Map<String,Integer> param=new HashMap<String,Integer>();
         param.put("class_id",class_id);
         param.put("func_id",func_id);
-        Map<String, String> listQueryName = DbFactory.Open(DbFactory.FORM).
+        Map<String, Object> listQueryName = DbFactory.Open(DbFactory.FORM).
                 selectOne("query.getFunctionNameByClassIdPId", param);
         return listQueryName;
     }

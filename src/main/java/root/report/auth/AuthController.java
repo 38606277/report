@@ -3,10 +3,14 @@ package root.report.auth;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.dom4j.DocumentException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.xml.sax.SAXException;
 import root.form.user.UserModel;
 import root.report.common.RO;
 import root.report.db.DbFactory;
+import root.report.service.QueryService;
 import root.report.sys.SysContext;
 
 import java.io.UnsupportedEncodingException;
@@ -18,6 +22,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/reportServer/auth")
 public class AuthController extends RO {
+    @Autowired
+    private QueryService queryService;
 
     @RequestMapping(value="/getAuthByConditions",produces = "text/plain;charset=UTF-8")
     public String getAuthByConditions(@RequestBody String pJson) throws UnsupportedEncodingException {
@@ -331,4 +337,151 @@ public class AuthController extends RO {
         }
     }
 
+    @RequestMapping(value="/getMenuList",produces = "text/plain;charset=UTF-8")
+    public String getMenuList(@RequestBody String pJson) throws UnsupportedEncodingException{
+        JSONObject obj = JSONObject.parseObject(pJson);
+        Map m=new HashMap<>();
+        int userId=obj.getInteger("userId");
+        m.put("userId",userId);
+        m.put("pid",0);
+        List<Map<String,Object>> dataList = DbFactory.Open(DbFactory.FORM).selectList("auth.getMenuByUserId",m);
+        for(int i=0;i<dataList.size();i++){
+            m.put("pid",dataList.get(i).get("func_id"));
+            List<Map<String,Object>> subList = DbFactory.Open(DbFactory.FORM).selectList("auth.getMenuByUserId",m);
+            List<Map<String,Object>> subListtwo=new ArrayList<Map<String,Object>>();
+            String func=dataList.get(i).get("func_id").toString();
+            if(func.equals("1001")){
+                subListtwo=this.getSubMenuList(userId);
+            }
+            subList.addAll(subListtwo);
+            dataList.get(i).put("children",subList);
+        }
+        return JSON.toJSONString(dataList);
+    }
+
+    public List<Map<String,Object>> getSubMenuList(int userId){
+        List<Map<String,String>> fileList = queryService.getAuthTree(DbFactory.Open(DbFactory.FORM),userId);
+
+        List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+        List<Map<String,String>> mycopy=new ArrayList<Map<String,String>>(fileList);
+
+//        for (Map<String,String> newMap:mycopy) {
+//            String auth_type=newMap.get("auth_type");
+//            String func_id=newMap.get("func_id");
+//            fileList.remove(newMap);
+//            if(auth_type.equals("select")){
+//                try {
+//                    List<Map<String,Object>> childId=new ArrayList<Map<String,Object>>();
+//                    Map<String,Object> parMap = queryService.getAllQueryClassByClassId(Integer.parseInt(func_id));
+//                    if(null!=parMap){
+//                        for (Map<String,String> newMaptwo:fileList) {
+//                            String auth_typetwo=newMaptwo.get("auth_type");
+//                            String qry_id=newMaptwo.get("func_id");
+//                            if(auth_typetwo.equals("select")) {
+//                                Map<String, Object> map = queryService.getQueryNameByClassIdQryId(Integer.parseInt(func_id), Integer.parseInt(qry_id));
+//                                if(null!=map) {
+//                                    fileList.remove(newMaptwo);
+//                                    childId.add(map);
+//                                }
+//                            }
+//                        }
+//                        if(null!=childId){
+//                            parMap.put("children",childId);
+//                        }
+//                        list.add(parMap);
+//                    }
+//                } catch (SAXException e) {
+//                    e.printStackTrace();
+//                } catch (DocumentException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            if(auth_type.equals("function")){
+//                try {
+//                    List<Map<String,Object>> childId=new ArrayList<Map<String,Object>>();
+//                    Map<String,Object> parMap = queryService.getFunctionClassByClassId(Integer.parseInt(func_id));
+//                    if(null!=parMap){
+//                        for (Map<String,String> newMaptwo:fileList) {
+//                            String auth_typetwo=newMaptwo.get("auth_type");
+//                            String qry_id=newMaptwo.get("func_id");
+//                            if(auth_typetwo.equals("function")) {
+//                                Map<String, Object> map = queryService.getFunctionNameByClassIdPId(Integer.parseInt(func_id), Integer.parseInt(qry_id));
+//                                if(null!=map) {
+//                                    childId.add(map);
+//                                    fileList.remove(newMaptwo);
+//                                }
+//                            }
+//                        }
+//                        if(null!=childId){
+//                            parMap.put("children",childId);
+//                        }
+//
+//                        list.add(parMap);
+//                    }
+//                } catch (SAXException e) {
+//                    e.printStackTrace();
+//                } catch (DocumentException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+
+
+        for (int i = 0; i < fileList.size(); i++) {
+            String auth_type=fileList.get(i).get("auth_type");
+            String func_id=fileList.get(i).get("func_id");
+            if(auth_type.equals("select")){
+                try {
+                    List<Map<String,Object>> childId=new ArrayList<Map<String,Object>>();
+                    Map<String,Object> parMap = queryService.getAllQueryClassByClassId(Integer.parseInt(func_id));
+                    if(null!=parMap){
+                        for (int ii = 0; ii < fileList.size(); ii++) {
+                            String auth_typetwo=fileList.get(ii).get("auth_type");
+                            String qry_id=fileList.get(ii).get("func_id");
+                            if(auth_typetwo.equals("select")) {
+                                Map<String, Object> map = queryService.getQueryNameByClassIdQryId(Integer.parseInt(func_id), Integer.parseInt(qry_id));
+                                if(null!=map) {
+                                    childId.add(map);
+                                }
+                            }
+                        }
+                        parMap.put("children",childId);
+                        list.add(parMap);
+                    }
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(auth_type.equals("function")){
+                try {
+
+                    Map<String,Object> parMap = queryService.getFunctionClassByClassId(Integer.parseInt(func_id));
+                    List<Map<String,Object>> childId=new ArrayList<Map<String,Object>>();
+                    if(null!=parMap){
+                        for (int iii = 0; iii < fileList.size(); iii++) {
+                            String auth_typeFunc=fileList.get(iii).get("auth_type");
+                            String function_id=fileList.get(iii).get("func_id");
+                            if(auth_typeFunc.equals("function")) {
+                                Map<String, Object> map = queryService.getFunctionNameByClassIdPId(Integer.parseInt(func_id), Integer.parseInt(function_id));
+                                if(null!=map) {
+                                    childId.add(map);
+                                }
+                            }
+                        }
+                        parMap.put("children",childId);
+                        list.add(parMap);
+                    }
+
+                } catch (SAXException e) {
+                    e.printStackTrace();
+                } catch (DocumentException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return list;
+    }
 }

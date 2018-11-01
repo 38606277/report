@@ -467,14 +467,14 @@ public class QueryControl extends RO {
             String func_id=fileList.get(i).get("func_id");
             if(auth_type.equals("select")){
                 try {
-                    List<Map<String,String>> childId=new ArrayList<Map<String,String>>();
+                    List<Map<String,Object>> childId=new ArrayList<Map<String,Object>>();
                     Map<String,Object> parMap = queryService.getAllQueryClassByClassId(Integer.parseInt(func_id));
                     if(null!=parMap){
                         for (int ii = 0; ii < fileList.size(); ii++) {
                             String auth_typetwo=fileList.get(ii).get("auth_type");
                             String qry_id=fileList.get(ii).get("func_id");
                             if(auth_typetwo.equals("select")) {
-                                Map<String, String> map = queryService.getQueryNameByClassIdQryId(Integer.parseInt(func_id), Integer.parseInt(qry_id));
+                                Map<String, Object> map = queryService.getQueryNameByClassIdQryId(Integer.parseInt(func_id), Integer.parseInt(qry_id));
                                 if(null!=map) {
                                     childId.add(map);
                                 }
@@ -493,13 +493,13 @@ public class QueryControl extends RO {
                 try {
 
                     Map<String,Object> parMap = queryService.getFunctionClassByClassId(Integer.parseInt(func_id));
-                    List<Map<String,String>> childId=new ArrayList<Map<String,String>>();
+                    List<Map<String,Object>> childId=new ArrayList<Map<String,Object>>();
                     if(null!=parMap){
                         for (int iii = 0; iii < fileList.size(); iii++) {
                             String auth_typeFunc=fileList.get(iii).get("auth_type");
                             String function_id=fileList.get(iii).get("func_id");
                             if(auth_typeFunc.equals("function")) {
-                                Map<String, String> map = queryService.getFunctionNameByClassIdPId(Integer.parseInt(func_id), Integer.parseInt(function_id));
+                                Map<String, Object> map = queryService.getFunctionNameByClassIdPId(Integer.parseInt(func_id), Integer.parseInt(function_id));
                                 if(null!=map) {
                                     childId.add(map);
                                 }
