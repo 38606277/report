@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import root.report.control.dict.TestTwo;
 import root.report.db.DbFactory;
 import root.report.service.DictService;
 
