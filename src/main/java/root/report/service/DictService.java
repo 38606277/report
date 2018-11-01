@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.dom4j.tree.DefaultCDATA;
+import org.dom4j.tree.DefaultComment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
@@ -225,7 +227,20 @@ public class DictService {
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
             String tempStr = "";
             if(bool){
-                tempStr = select.getStringValue();   // 按照原格式取出
+                // tempStr = select.getStringValue();   // 按照原格式取出
+                List<Object> list = select.content();
+                Object object = null;
+                DefaultComment selContent = null;
+                DefaultCDATA selCdata = null;
+                for (int i = 0; i < list.size(); i++) {
+                    object = list.get(i);
+                    if (object instanceof DefaultComment) {
+                        selContent = (DefaultComment) object;
+                        // obj.put("comment", JSON.parse(selContent.getText()));
+                    }else{
+                        tempStr+=((Node)object).asXML();
+                    }
+                }
             }else {
                 tempStr = select.getTextTrim();   // 编译了一些html代码，导致不是原格式了，输入无格式的sql
             }

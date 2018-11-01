@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 import org.dom4j.*;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.dom4j.tree.DefaultCDATA;
+import org.dom4j.tree.DefaultComment;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
@@ -176,7 +178,6 @@ public class FunctionService {
             newSql.addAttribute("useCache", MybatisCacheConfiguration.USE_CACHE_FALSE);
             // newSql.addText(aSQLTemplate);
             addSqlText(newSql,aSQLTemplate);
-
             log.debug("新增SQL:" + newSql.asXML());
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
@@ -223,7 +224,20 @@ public class FunctionService {
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
             String tempStr = "";
             if(bool){
-                tempStr = select.getStringValue();  // 得到原格式的数据
+                // tempStr = select.getStringValue();  // 得到原格式的数据
+                List<Object> list = select.content();
+                Object object = null;
+                DefaultComment selContent = null;
+                DefaultCDATA selCdata = null;
+                for (int i = 0; i < list.size(); i++) {
+                    object = list.get(i);
+                    if (object instanceof DefaultComment) {
+                        selContent = (DefaultComment) object;
+                        // obj.put("comment", JSON.parse(selContent.getText()));
+                    }else{
+                        tempStr+=((Node)object).asXML();
+                    }
+                }
             }else {
                 tempStr = select.getTextTrim();
             }
