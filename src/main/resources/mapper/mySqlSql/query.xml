@@ -95,7 +95,7 @@
     </delete>
 
     <!--查询函数输出参数表-->
-    <delete id="deleteQueryOut" parameterType="Map">
+    <delete id="deleteQueryOut" parameterType="int">
 		delete from qry_out where qry_id=#{qry_id,jdbcType=INTEGER} and out_id='${out_id}'
     </delete>
 
@@ -186,22 +186,6 @@
 			qry_out qo
 		WHERE
 			qo.qry_id =${qry_id}
-	</select>
-
-    <!--查我函数名称-->
-    <select id="getOutByMap" parameterType="Map" resultType="Map">
-		SELECT
-			qo.qry_id ,
-			qo.out_id ,
-			qo.out_name ,
-		    qo.datatype,
-			qo.link,
-			qo.width,
-			qo.render
-		FROM
-			qry_out qo
-		WHERE
-			qo.qry_id =${qry_id} and qo.out_id='${out_id}'
 	</select>
 
     <!--查我函数名称-->

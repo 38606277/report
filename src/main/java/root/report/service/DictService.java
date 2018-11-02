@@ -79,8 +79,7 @@ public class DictService {
         map.put("dict_db",jsonObject.getString("dict_db"));
         map.put("dict_sql",jsonObject.getString("dict_sql"));
         map.put("loaddata_mode",jsonObject.getString("loaddata_mode"));
-        // map.put("loaddata_state",jsonObject.getString("loaddata_state")); // 默认给0 ： 表示未同步
-        map.put("loaddata_state","0");
+        map.put("loaddata_state",jsonObject.getString("loaddata_state"));
         sqlSession.insert("dict.createFuncDict",map);
         return String.valueOf(map.get("id"));
     }
@@ -142,13 +141,6 @@ public class DictService {
        //  map.put("dict_sql",jsonObject.getString("dict_sql"));
         map.put("loaddata_mode",jsonObject.getString("loaddata_mode"));
         map.put("loaddata_state",jsonObject.getString("loaddata_state"));
-        sqlSession.update("dict.updateFuncDict",map);
-    }
-
-    // 功能描述 : 修改 func_dict 表的信息 :主要修改掉 loaddata_state 的状态 1 : 正在导入. 2 导入完毕，3: 导入失败
-    public  void updateFuncDictForState(SqlSession sqlSession,int dict_id,String state){
-        Map<String,Object>  map =   sqlSession.selectOne("dict.getFuncDictInfoByDictId",dict_id);
-        map.put("loaddata_state",state);
         sqlSession.update("dict.updateFuncDict",map);
     }
 
@@ -445,7 +437,7 @@ public class DictService {
         }
     }
 
-    //  websocekt 版本
+
     public String importFuncDictValueByDictId(Session session, int dict_id){
 
         // 先决条件 ： 根据 dict_id 得到 sourceSql
@@ -610,123 +602,4 @@ public class DictService {
         }
     }
 
-    public String importFuncDictValueByDictId(int dict_id){
-
-        // 先决条件 ： 根据 dict_id 得到 sourceSql
-        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
-        this.updateFuncDictForState(sqlSession,dict_id,"1");  // 正在导入
-        String dbName = sqlSession.selectOne("dict.getDictDbByDictId",dict_id);
-        if(StringUtils.isBlank(dbName)) return("此DictId所对应的数据库为空,无法操作!");
-        final int countRow = 1000;
-        final List<Map<String, Object>> list = new ArrayList<>();
-
-        // 初始化对应的数据库
-        SqlSession sourceSqlSession = DbFactory.Open(dbName);
-        if(sourceSqlSession==null)  return("数据库无法连接,无法操作!");
-        String sourceSql = null;
-        try {
-            sourceSql = this.getSqlTemplate("数据字典",String.valueOf(dict_id),false);
-        } catch (Exception e){
-            log.info(e.getMessage());
-            return "无法从xml文件得到对应的sql,无法查询!";
-        }
-
-        Long begin = new Date().getTime();
-        Connection conn  = sqlSession.getConnection();
-        final int poolSize = 5;
-        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(poolSize);
-        fetchBySql(sourceSqlSession,sourceSql,rs -> {
-            try {
-                String prefix = "INSERT INTO func_dict_value (dict_id,value_code,value_name) VALUES ";
-                final StringBuffer suffix = new StringBuffer();
-                // 设置事务为非自动提交
-                conn.setAutoCommit(false);   //  非提交能减少日志的生成,从而加快执行速度
-                PreparedStatement pst = (PreparedStatement) conn.prepareStatement("");
-                List<Map> mapList = new ArrayList<>();
-                if (rs != null) {
-                    while (rs.next()) {
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("code",rs.getInt("code"));
-                        map.put("name",rs.getString("name"));
-                        mapList.add(map);
-                        if(rs.getRow()%5000==0){
-                            //  执行批量插入操作
-                            List<Map> finalMapList = mapList;
-                            final StringBuffer sb = new StringBuffer();
-                            Future<String> stringFuture = fixedThreadPool.submit(
-                                    new Callable<String>() {
-                                        @Override
-                                        public String call() throws Exception {
-                                            String name = Thread.currentThread().getName();
-                                            long threadId = Thread.currentThread().getId();
-                                            log.info("thread name: "+name+",id为"+threadId+"执行了一次");
-                                            for (Map tempMap : finalMapList) {
-                                                // 构建SQL后缀
-                                                sb.append("(" +dict_id+",'"+ tempMap.get("code") + "'," + "'" + tempMap.get("name") + "'),");
-                                            }
-                                            return "success";
-                                        }
-                                    }
-                            );
-                            mapList = new ArrayList<>();
-                            try {
-                                String s = stringFuture.get();
-                                if ("success".equals(s)) {
-                                    String sql = prefix + sb.substring(0, sb.length() - 1);  // 构建完整SQL
-                                    pst.addBatch(sql);   // 添加执行SQL
-                                    pst.executeBatch();  // 执行操作
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (ExecutionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                    // 执行完之后 mapList 是个 不足5000个的，这个时候我们再去执行一次 添加操作
-                    List<Map> finalMapList = mapList;
-                    log.info("mapList大小为:"+mapList.size());
-                    log.info("finalMapList:"+finalMapList.size());
-                    final StringBuffer sb = new StringBuffer();
-                    Future<String> stringFuture = fixedThreadPool.submit(
-                            new Callable<String>() {
-                                @Override
-                                public String call() throws Exception {
-                                    String name = Thread.currentThread().getName();
-                                    long threadId = Thread.currentThread().getId();
-                                    log.info("thread name: "+name+"id为"+threadId+"执行了一次");
-                                    for (Map tempMap : finalMapList) {
-                                        // 构建SQL后缀
-                                        sb.append("(" +dict_id+",'"+ tempMap.get("code") + "'," + "'" + tempMap.get("name") + "'),");
-                                    }
-                                    return "success";
-                                }
-                            }
-                    );
-                    try {
-                        String s = stringFuture.get();
-                        if ("success".equals(s)) {
-                            String sql = prefix + sb.substring(0, sb.length() - 1);  // 构建完整SQL
-                            pst.addBatch(sql);   // 添加执行SQL
-                            pst.executeBatch();  // 执行操作
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                    conn.commit();
-                    pst.close();
-                }
-                Long end = new Date().getTime();
-                log.info("条数据从远程库导入到本地花费时间 : " + (end - begin)  + " ms");
-            } catch (SQLException e) {
-                // e.printStackTrace();  // 批量执行遇到异常直接 用log打印，不要中断
-                log.info(e.getMessage());
-            }finally {
-                fixedThreadPool.shutdown();   // 一定要shutdown  否则线程只是被回收到了线程池
-            }
-        });
-        return "1";
-    }
 }

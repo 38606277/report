@@ -3,10 +3,8 @@ package root.report.control.query;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageRowBounds;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
-import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.DocumentException;
@@ -22,7 +20,6 @@ import root.report.db.DbFactory;
 import root.report.query.FuncMetaData;
 import root.report.query.SqlTemplate;
 import root.report.service.QueryService;
-import root.report.service.SelectService;
 import root.report.util.FileUtil;
 import root.report.util.JsonUtil;
 
@@ -191,10 +188,17 @@ public class QueryControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONObject jsonObject = JSON.parseObject(pJson);
-            this.queryService.createQueryOutLink(sqlSession,jsonObject);
+            JSONObject jsonFunc = JSONObject.parseObject(pJson);
+            String qry_id = queryService.createQueryName(sqlSession,jsonFunc);
+
+
+            queryService.createQueryIn(sqlSession,jsonFunc.getJSONArray("in"),qry_id);
+            queryService.createQueryOut(sqlSession,jsonFunc.getJSONArray("out"),qry_id);
+            queryService.createSqlTemplate(jsonFunc.getString("class_id"),
+                    String.valueOf(qry_id),
+                    jsonFunc.getString("qry_sql"));
             sqlSession.getConnection().commit();
-            return SuccessMsg("新增Out_Link记录成功","");
+            return SuccessMsg("新增报表成功",qry_id);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
@@ -206,11 +210,28 @@ public class QueryControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONObject jsonObject = JSON.parseObject(pJson);
-            this.queryService.deleteQueryOutLinkByPrimary(sqlSession,jsonObject);
-            this.queryService.createQueryOutLink(sqlSession,jsonObject);
+            JSONObject jsonQuery = JSONObject.parseObject(pJson);
+            int qry_id=jsonQuery.getInteger("qry_id");
+
+            //删除并创建IN表
+            queryService.deleteQueryInForJsonArray(sqlSession,qry_id);
+            queryService.createQueryIn(sqlSession,jsonQuery.getJSONArray("in"),String.valueOf(qry_id));
+
+            //先删除后创建Out表
+            queryService.deleteQueryOutForJsonArray(sqlSession,qry_id);
+            queryService.createQueryOut(sqlSession,jsonQuery.getJSONArray("out"),String.valueOf(qry_id));
+
+            //更新主表
+            queryService.updateQueryName(sqlSession,jsonQuery);
+
+            //更新SQL文件
+            queryService.updateSqlTemplate(jsonQuery.getString("class_id"),
+                    jsonQuery.getString("qry_id"),
+                    jsonQuery.getString("qry_sql"));
+
             sqlSession.getConnection().commit();
-            return SuccessMsg("修改Out_Link成功","");
+            return SuccessMsg("修改报表成功","");
+
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
@@ -225,10 +246,22 @@ public class QueryControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONObject jsonObject = JSON.parseObject(pJson);
-            this.queryService.deleteQueryOutLinkByPrimary(sqlSession,jsonObject);
+            JSONArray jsonArray =  JSONObject.parseArray(pJson);
+
+            for(int i = 0; i < jsonArray.size(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                int qry_id=jsonObject.getInteger("qry_id");
+                queryService.deleteQueryName(sqlSession,qry_id);
+                queryService.deleteQueryInForJsonArray(sqlSession,qry_id);
+                queryService.deleteQueryOutForJsonArray(sqlSession,qry_id);
+                queryService.deleteSqlTemplate(jsonObject.getString("class_id"),
+                        jsonObject.getString("qry_id")
+                );
+            }
+
             sqlSession.getConnection().commit();
-            return SuccessMsg("删除Out_Link成功",null);
+            return SuccessMsg("删除报表成功",null);
+
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
@@ -340,105 +373,45 @@ public class QueryControl extends RO {
         System.out.println("开始执行查询:" + "selectClassName:" + queryClassName + "," + "selectID:" + queryID + ","
                 + "pJson:" + pJson + ",");
         long t1 = System.nanoTime();
-
-        JSONObject result = new JSONObject();
-        try{
-            JSONArray arr = JSON.parseArray(pJson);
-            JSONObject params = arr.getJSONObject(0);//查询参数
-            JSONObject page = null;
-            if(arr.size()>1){
-                page = arr.getJSONObject(1);  //分页对象
-            }
+        Object aResult = null;
+        try {
+            // String usersqlPath = AppConstants.getUserSqlPath() + File.separator + queryClassName + ".xml";
             SqlTemplate template = new SqlTemplate();
             queryService.assemblySqlTemplate(template,queryClassName,queryID);
             // 输入参数放入map中
-           // JSONArray inTemplate = template.getIn();
-            JSONArray jsonArray = params.getJSONArray("in");
-            RowBounds bounds = null;
-            if(page==null){
-                bounds = RowBounds.DEFAULT;
-            }else{
-                int startIndex=page.getIntValue("startIndex");
-                int perPage=page.getIntValue("perPage");
-                if(startIndex==1 || startIndex==0){
-                    startIndex=0;
-                }else{
-                    startIndex=(startIndex-1)*perPage;
-                }
-                bounds = new PageRowBounds(startIndex, perPage);
-            }
-            Map map = new HashMap();
-            if(jsonArray!=null){
-                String value = null,key=null;
-                JSONObject aJsonObject = null;
-                for (int i = 0; i < jsonArray.size(); i++){
-                    aJsonObject = (JSONObject) jsonArray.get(i);
-                    java.util.Iterator it = aJsonObject.entrySet().iterator();
-                    while(it.hasNext()) {
-                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
-                        key=entry.getKey().toString(); //返回与此项对应的键
-                        value=entry.getValue().toString(); //返回与此项对应的值
-                    }
-                    map.put(key, value);
-                }
-            }
-            map.put("name",page.getString("searchResult"));
-            List<Map> aResult = new ArrayList<Map>();
-            Long totalSize = 0L;
-            String db = template.getDb();
-            String namespace = template.getNamespace();
-            String qryId = template.getId();
-            aResult = DbFactory.Open(db).selectList(namespace + "." + qryId, map, bounds);
-            if(page!=null){
-                totalSize = ((PageRowBounds)bounds).getTotal();
-            }else{
-                totalSize = Long.valueOf(aResult.size());
-            }
-            result.put("list", aResult);
-            result.put("totalSize", totalSize);
-        }catch (Exception e){
-            e.printStackTrace();
-            return ExceptionMsg(e.getCause().getMessage());
-        }
+            JSONArray inTemplate = template.getIn();
+            JSONArray inValue = JSONArray.parseArray(pJson);
 
-//            Object aResult = null;
-//        try {
-//            // String usersqlPath = AppConstants.getUserSqlPath() + File.separator + queryClassName + ".xml";
-//            SqlTemplate template = new SqlTemplate();
-//            queryService.assemblySqlTemplate(template,queryClassName,queryID);
-//            // 输入参数放入map中
-//            JSONArray inTemplate = template.getIn();
-//            JSONArray inValue = JSONArray.parseArray(pJson);
-//
-//            Map<String,Object> map = new LinkedHashMap<String,Object>();
-//            if (inTemplate != null) {
-//                for (int i = 0; i < inTemplate.size(); i++) {
-//                    JSONObject aJsonObject = (JSONObject) inTemplate.get(i);
-//                    String id = aJsonObject.getString("in_id");
-//                    map.put(id, inValue.getString(i));
-//                }
-//            }
-//            Map<String,Object> qryParamMap = new HashMap<String,Object>();
-//            List<FuncMetaData> list = new ArrayList<FuncMetaData>();
-//            acquireFuncMetaData(list,map,qryParamMap);
-//            if(list.size()!=0){
-//                aResult = excuteFunc(list,0,qryParamMap,template);
-//            }else{
-//                    String db = template.getDb();
-//                    String namespace = template.getNamespace();
-//                    String qryId = template.getId();
-//                    aResult = DbFactory.Open(db).selectOne("qry_"+namespace + "." + qryId, map);
-//
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            aResult=e.getMessage();
-//        }
+            Map<String,Object> map = new LinkedHashMap<String,Object>();
+            if (inTemplate != null) {
+                for (int i = 0; i < inTemplate.size(); i++) {
+                    JSONObject aJsonObject = (JSONObject) inTemplate.get(i);
+                    String id = aJsonObject.getString("in_id");
+                    map.put(id, inValue.getString(i));
+                }
+            }
+            Map<String,Object> qryParamMap = new HashMap<String,Object>();
+            List<FuncMetaData> list = new ArrayList<FuncMetaData>();
+            acquireFuncMetaData(list,map,qryParamMap);
+            if(list.size()!=0){
+                aResult = excuteFunc(list,0,qryParamMap,template);
+            }else{
+                if(template.getSelectType().equals("sql")) {
+                    String db = template.getDb();
+                    String namespace = template.getNamespace();
+                    String qryId = template.getId();
+                    aResult = DbFactory.Open(db).selectOne(namespace + "." + qryId, map);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            aResult=e.getMessage();
+        }
 
         long t2 = System.nanoTime();
         System.out.println("结束执行查询:" + "QueryClassName:" + queryClassName + "," + "selectID:" + queryID + ","
                 + "pJson:" + pJson + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));
-        return JSON.toJSONString(result);
+        return JSON.toJSONString(aResult, JsonUtil.features);
 
     }
     /**

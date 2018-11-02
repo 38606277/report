@@ -55,7 +55,7 @@ public class DictControl extends RO {
     }
 
 
-     //返回数据字典的定义头，out
+    //返回数据字典的定义头，out
     @RequestMapping(value = "/getDictByID/{dict_id}", produces = "text/plain;charset=UTF-8")
     public String getDictByID(@PathVariable("dict_id") String dict_id) {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
@@ -157,23 +157,13 @@ public class DictControl extends RO {
     //初始化导入  代码注释行
     @RequestMapping(value = "/initImportDictValue/{dict_id}", produces = "text/plain;charset=UTF-8")
     public String importDictValue(@PathVariable("dict_id") String dict_id) {
-        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
-        try{
-            sqlSession.getConnection().setAutoCommit(false);
-            int dictId = Integer.parseInt(dict_id);
-            String result = this.dictService.importFuncDictValueByDictId(dictId);
-            if("1".equals(result)){
-                this.dictService.updateFuncDictForState(sqlSession,dictId,"2");
-                sqlSession.getConnection().commit();
-                return  SuccessMsg("导入成功",null);
-            }else {
-                this.dictService.updateFuncDictForState(sqlSession,dictId,"3");
-                sqlSession.getConnection().rollback();
-                return ErrorMsg("3000",result);
-            }
-        }catch (Exception ex){
-            return ExceptionMsg(ex.getMessage());
-        }
+        //源数据加载到内存
+
+        //写入到func_dict_value，返回是进度给前端
+
+
+
+        return "未实现";
     }
     //增量数据导入
     @RequestMapping(value = "/changeImportDictValue/{dict_id}", produces = "text/plain;charset=UTF-8")

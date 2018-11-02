@@ -1,41 +1,88 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="qry_11">
+<mapper namespace="qry_1">
+
     
    
    
    
    
    
-   
-   
-  <cache eviction="LRU" flushInterval="100000" size="1024" readOnly="true"/>
+  <select id="36" resultType="Map" parameterType="Map">       select ffv.flex_value,
+        ffvt.description
+
+
+
+
+
+
+        from fnd_id_flex_segments fifs,
+        gl_sets_of_books     gsob,
+
+
+
+
+
+
+        fnd_flex_values      ffv,
+        fnd_flex_values_tl   ffvt
+
+
+
+
+
+
+        where gsob.chart_of_accounts_id = fifs.id_flex_num
+        and id_flex_code = 'GL#'
+
+
+
+
+
+
+        and ffv.flex_value_id = ffvt.flex_value_id
+        and ffvt.language = 'ZHS'
+
+
+
+
+
+
+        and ffv.flex_value_set_id = fifs.flex_value_set_id
+        and ffv.enabled_flag = 'Y'
+
+
+
+
+
+
+        and ffv.end_date_active is null
+        and gsob.set_of_books_id = 2
+
+
+
+
+
+
+        and fifs.application_column_name = 'SEGMENT3'
+            and ffvt.description like '${name}%'
+
+
+
+
+
+
+            and length(ffv.flex_value)=${code_length}
+        order by ffv.flex_value
+
+</select>
+
     
    
    
    
    
-   
-   
-   
-  <select id="71" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
-	fu.USER_ID ,
-	fu.USER_NAME ,
-	fu.CREATION_DATE ,
-	fu.ISADMIN
-FROM
-	fnd_user fu
-WHERE
-	fu.USER_NAME = '${user_name}'
-AND fu.ISADMIN = '${is_admin}'</select>
-    
-   
-   
-   
-   
-   
-   
-  <select id="72" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
+  <select id="67" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
 	ppa.PROJECT_ID ,
 	ppa. NAME ,
 	ppa.SEGMENT1 ,
@@ -55,56 +102,7 @@ AND ppa.START_DATE &gt;= ${start_Date}</select>
    
    
    
-  <select id="73" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
-	ppa.PROJECT_ID ,
-	ppa. NAME ,
-	ppa.SEGMENT1 ,
-	ppa.PROJECT_TYPE ,
-	ppa.START_DATE ,
-	ppa.COMPLETION_DATE,
-        ppa.CLOSED_DATE,
-	ppa.PROJECT_STATUS_CODE
-FROM
-	pa_projects_all ppa
-WHERE
-	ppa.SEGMENT1 = ${project_code}
-AND ppa.PROJECT_TYPE = ${project_type}
-AND ppa.PROJECT_STATUS_CODE = ${project_state}
-  
-     
-     
-     
-     
-    <if test="start_Date!='' ">
-   AND ppa.START_DATE &gt;= ${start_Date}
-</if>
-  
-  
-  
-  
-  </select>
-   
-   
-   
-  <select id="74" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
-	ppa.PROJECT_ID ,
-	ppa. NAME ,
-	ppa.SEGMENT1 ,
-	ppa.PROJECT_TYPE ,
-	ppa.START_DATE ,
-	ppa.COMPLETION_DATE,
-        ppa.CLOSED_DATE,
-	ppa.PROJECT_STATUS_CODE
-FROM
-	pa_projects_all ppa
-WHERE
-	ppa.SEGMENT1 = ${project_code}
-AND ppa.PROJECT_TYPE = ${project_type}
-AND ppa.PROJECT_STATUS_CODE = ${project_state}
-AND ppa.START_DATE &gt;= ${start_Date}
- </select>
-    
-  <select id="75" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
+  <select id="68" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
 	ppa.PROJECT_ID ,
 	ppa. NAME ,
 	ppa.SEGMENT1 ,
@@ -120,7 +118,28 @@ WHERE
 AND ppa.PROJECT_TYPE = ${project_type}
 AND ppa.PROJECT_STATUS_CODE = ${project_state}
 AND ppa.START_DATE &gt;= ${start_Date}</select>
-   <select id="77" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
+    
+   
+   
+  <select id="69" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
+	ppa.PROJECT_ID ,
+	ppa. NAME ,
+	ppa.SEGMENT1 ,
+	ppa.PROJECT_TYPE ,
+	ppa.START_DATE ,
+	ppa.COMPLETION_DATE,
+        ppa.CLOSED_DATE,
+	ppa.PROJECT_STATUS_CODE
+FROM
+	pa_projects_all ppa
+WHERE
+	ppa.SEGMENT1 = ${project_code}
+AND ppa.PROJECT_TYPE = ${project_type}
+AND ppa.PROJECT_STATUS_CODE = ${project_state}
+AND ppa.START_DATE &gt;= ${start_Date}</select>
+    
+   
+  <select id="70" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
 	ppa.PROJECT_ID ,
 	ppa. NAME ,
 	ppa.SEGMENT1 ,
