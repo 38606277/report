@@ -699,7 +699,7 @@ public class QueryService {
         sqlTemplate.setSelectType(jsonObject.containsKey("qry_type") ? jsonObject.getString("qry_type") : "");
         // 组装sql
         sqlTemplate.setSql(jsonObject.getString("qry_sql"));
-        sqlTemplate.setNamespace("qry_"+namespace);
+        sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
         if(user_id==1){
