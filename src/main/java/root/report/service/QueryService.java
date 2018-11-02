@@ -639,8 +639,9 @@ public class QueryService {
         sqlTemplate.setId(qry_id);
         sqlTemplate.setSelectType(jsonObject.containsKey("qry_type") ? jsonObject.getString("qry_type") : "");
         // 组装sql
-        sqlTemplate.setSql(getSqlTemplate(namespace, qry_id, false));
-        sqlTemplate.setNamespace(namespace);
+        sqlTemplate.setSql(jsonObject.containsKey("qry_sql") ? jsonObject.getString("qry_sql") : "");
+       // sqlTemplate.setSql(getSqlTemplate(namespace, qry_id, false));
+        sqlTemplate.setNamespace(AppConstants.QueryPrefix+namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
         return sqlSession.selectList("query.getAuthTree",user_id);
