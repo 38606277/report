@@ -99,34 +99,42 @@ public class QueryService {
     /**
      * 功能描述: 往 query_link表插入数据
      */
-    public void createQueryOutLink(SqlSession sqlSession, JSONArray jsonArray, String qry_id) {
-
+    public void createQueryOutLink(SqlSession sqlSession, JSONObject jsonObject) {
         //保存到qry_out_link表
         //更新qry_out表的link字段
-
-//        JSONObject outJsonObject = jsonObject.getJSONObject("link");
-//
-//        Map<String, Object> outMap = new HashMap<>();
-//        outMap.put("qry_id", qry_id);
-//        outMap.put("out_id", jsonObject.getString("out_id"));
-//        outMap.put("link_qry_id", outJsonObject.getString("link_qry_id"));
-//        if (outJsonObject != null && !outJsonObject.isEmpty()) {
-//            map.put("link", outJsonObject.getString("link_qry_id"));
-//        }
-//        JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
-//        if (linkIdJSONArray != null && !linkIdJSONArray.isEmpty()) {
-//            for (int j = 0; j < linkIdJSONArray.size(); j++) {
-//                if (outMap != null && !outMap.isEmpty()) {
-//                    JSONObject tempJSONObject = linkIdJSONArray.getJSONObject(j);
-//                    Map<String, Object> insertMap = new HashMap<>();
-//                    insertMap.putAll(outMap);
-//                    insertMap.put("link_in_id", tempJSONObject.getString("link_in_id"));
-//                    insertMap.put("link_in_id_value_type", tempJSONObject.getString("link_in_id_value_type"));
-//                    insertMap.put("link_in_id_value", tempJSONObject.getString("link_in_id_value"));
-//                    sqlSession.insert("query.createQueryOutLink", insertMap);
-//                }
-//            }
-//        }
+        int qry_id = jsonObject.getIntValue("qry_id");
+        int link_qry_id = jsonObject.getIntValue("link_qry_id");
+        String out_id = jsonObject.getString("out_id");
+        JSONArray jsonArray = jsonObject.getJSONArray("param");
+        if (StringUtils.isNotBlank(qry_id+"") && StringUtils.isNotBlank(link_qry_id+"")
+                && jsonArray!=null) {
+            for (int j = 0; j < jsonArray.size(); j++) {
+                JSONObject tempJSONObject = jsonArray.getJSONObject(j);
+                Map<String, Object> insertMap = new HashMap<>();
+                insertMap.put("qry_id",qry_id);
+                insertMap.put("out_id",out_id);
+                insertMap.put("link_qry_id",link_qry_id);
+                insertMap.put("link_in_id", tempJSONObject.getString("link_in_id"));
+                insertMap.put("link_in_id_value_type", tempJSONObject.getString("link_in_id_value_type"));
+                insertMap.put("link_in_id_value", tempJSONObject.getString("link_in_id_value"));
+                sqlSession.insert("query.createQueryOutLink", insertMap);
+            }
+        }
+        // 更新qry_out表的link字段
+        Map<String,Object> tempMap = new HashMap<>();
+        tempMap.put("qry_id",qry_id);
+        tempMap.put("out_id",out_id);
+        Map<String,Object> qryOutMap = sqlSession.selectOne("query.getOutByMap",tempMap);
+        String link = String.valueOf(qryOutMap.get("link"));
+        if(StringUtils.isNotBlank(link) && "null"!=link){
+            link += ",";
+            link += link_qry_id;
+        }else {
+            link = link_qry_id+"";
+        }
+        qryOutMap.put("link",link);
+        sqlSession.delete("query.deleteQueryOut",qryOutMap);
+        sqlSession.insert("query.createQueryOut",qryOutMap);
     }
 
     /**
@@ -394,6 +402,57 @@ public class QueryService {
         sqlSession.delete("query.deleteQueryOutLinkByQryId", qry_id);
     }
 
+    // 根据qry_id 删除掉 qry_out_link 表当在的记录
+    public void deleteQueryOutLinkByPrimary(SqlSession sqlSession, JSONObject jsonObject) {
+        int qry_id = jsonObject.getIntValue("qry_id");
+        int link_qry_id = jsonObject.getIntValue("link_qry_id");
+        String out_id = jsonObject.getString("out_id");
+        JSONArray jsonArray = jsonObject.getJSONArray("param");
+        if (StringUtils.isNotBlank(qry_id+"") && StringUtils.isNotBlank(link_qry_id+"")
+                && jsonArray!=null) {
+            String linkFinal = "";
+            Map<String,Object>  qryOutFinalMap = new HashMap<>();
+            qryOutFinalMap.put("qry_id",qry_id);
+            qryOutFinalMap.put("out_id",out_id);
+            Map<String,Object> qryOutMap = sqlSession.selectOne("query.getOutByMap",qryOutFinalMap);
+            linkFinal = String.valueOf(qryOutMap.get("link"));
+            for (int j = 0; j < jsonArray.size(); j++) {
+                JSONObject tempJSONObject = jsonArray.getJSONObject(j);
+                Map<String, Object> deleteMap = new HashMap<>();
+                deleteMap.put("qry_id",qry_id);
+                deleteMap.put("out_id",out_id);
+                deleteMap.put("link_qry_id",link_qry_id);
+                deleteMap.put("link_in_id", tempJSONObject.getString("link_in_id"));
+                sqlSession.delete("query.deleteQueryOutLinkByPrimary", deleteMap);
+
+                if(StringUtils.isNotBlank(linkFinal) && "null"!=linkFinal){
+                    // 以逗号分隔，删除掉匹配到的那个
+                    String[] a = linkFinal.split(",");
+                    String b = link_qry_id+"";
+                    String result = "";
+                    for(String temp : a){
+                        if(b.equals(temp)){
+                            continue;
+                        }else {
+                            result += (temp+",");
+                        }
+                    }
+                    if(result.length()>0){
+                        linkFinal = result.substring(0,result.length()-1);
+                    }else {
+                        linkFinal = "";
+                    }
+                }
+
+            }
+            // 还需要把 qry_out 表的 link的 跟本次记录关联的删除掉
+            qryOutFinalMap = qryOutMap;
+            qryOutFinalMap.put("link",linkFinal);
+            sqlSession.delete("query.deleteQueryOut",qryOutFinalMap);
+            sqlSession.insert("query.createQueryOut",qryOutFinalMap);
+        }
+    }
+
     public void deleteSqlTemplate(String TemplateName, String SelectID) throws DocumentException, SAXException, IOException {
 
         String namespace = TemplateName;
@@ -639,9 +698,8 @@ public class QueryService {
         sqlTemplate.setId(qry_id);
         sqlTemplate.setSelectType(jsonObject.containsKey("qry_type") ? jsonObject.getString("qry_type") : "");
         // 组装sql
-        sqlTemplate.setSql(jsonObject.containsKey("qry_sql") ? jsonObject.getString("qry_sql") : "");
-       // sqlTemplate.setSql(getSqlTemplate(namespace, qry_id, false));
-        sqlTemplate.setNamespace(AppConstants.QueryPrefix+namespace);
+        sqlTemplate.setSql(getSqlTemplate(namespace, qry_id, false));
+        sqlTemplate.setNamespace(namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
         if(user_id==1){

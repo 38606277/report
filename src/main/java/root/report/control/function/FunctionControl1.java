@@ -157,6 +157,55 @@ public class FunctionControl1 extends RO {
         }
     }
 
+    @RequestMapping(value = "/createQueryOutLink", produces = "text/plain;charset=UTF-8")
+    public String createQueryOutLink(@RequestBody String pJson) throws Exception
+    {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.functionService.createFuncOutLink(sqlSession,jsonObject);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("新增Func_Out_Link记录成功","");
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/deleteQueryOutLink", produces = "text/plain;charset=UTF-8")
+    public String deleteQueryOutLink(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.functionService.deleteFuncOutLinkByPrimary(sqlSession,jsonObject);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("删除Func_Out_Link成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/updateQueryOutLink", produces = "text/plain;charset=UTF-8")
+    public String updateQueryOutLink(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.functionService.deleteFuncOutLinkByPrimary(sqlSession,jsonObject);
+            this.functionService.createFuncOutLink(sqlSession,jsonObject);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("修改Func_Out_Link成功","");
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            return ExceptionMsg(ex.getMessage());
+        }finally {
+            sqlSession.getConnection().setAutoCommit(true);
+        }
+    }
+
     /**
      * 功能描述:  查询 func_class 表当中的所有记录
      */

@@ -191,17 +191,10 @@ public class QueryControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONObject jsonFunc = JSONObject.parseObject(pJson);
-            String qry_id = queryService.createQueryName(sqlSession,jsonFunc);
-
-
-            queryService.createQueryIn(sqlSession,jsonFunc.getJSONArray("in"),qry_id);
-            queryService.createQueryOut(sqlSession,jsonFunc.getJSONArray("out"),qry_id);
-            queryService.createSqlTemplate(jsonFunc.getString("class_id"),
-                    String.valueOf(qry_id),
-                    jsonFunc.getString("qry_sql"));
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.queryService.createQueryOutLink(sqlSession,jsonObject);
             sqlSession.getConnection().commit();
-            return SuccessMsg("新增报表成功",qry_id);
+            return SuccessMsg("新增Out_Link记录成功","");
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
@@ -213,28 +206,11 @@ public class QueryControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONObject jsonQuery = JSONObject.parseObject(pJson);
-            int qry_id=jsonQuery.getInteger("qry_id");
-
-            //删除并创建IN表
-            queryService.deleteQueryInForJsonArray(sqlSession,qry_id);
-            queryService.createQueryIn(sqlSession,jsonQuery.getJSONArray("in"),String.valueOf(qry_id));
-
-            //先删除后创建Out表
-            queryService.deleteQueryOutForJsonArray(sqlSession,qry_id);
-            queryService.createQueryOut(sqlSession,jsonQuery.getJSONArray("out"),String.valueOf(qry_id));
-
-            //更新主表
-            queryService.updateQueryName(sqlSession,jsonQuery);
-
-            //更新SQL文件
-            queryService.updateSqlTemplate(jsonQuery.getString("class_id"),
-                    jsonQuery.getString("qry_id"),
-                    jsonQuery.getString("qry_sql"));
-
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.queryService.deleteQueryOutLinkByPrimary(sqlSession,jsonObject);
+            this.queryService.createQueryOutLink(sqlSession,jsonObject);
             sqlSession.getConnection().commit();
-            return SuccessMsg("修改报表成功","");
-
+            return SuccessMsg("修改Out_Link成功","");
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
@@ -249,22 +225,10 @@ public class QueryControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONArray jsonArray =  JSONObject.parseArray(pJson);
-
-            for(int i = 0; i < jsonArray.size(); i++){
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                int qry_id=jsonObject.getInteger("qry_id");
-                queryService.deleteQueryName(sqlSession,qry_id);
-                queryService.deleteQueryInForJsonArray(sqlSession,qry_id);
-                queryService.deleteQueryOutForJsonArray(sqlSession,qry_id);
-                queryService.deleteSqlTemplate(jsonObject.getString("class_id"),
-                        jsonObject.getString("qry_id")
-                );
-            }
-
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.queryService.deleteQueryOutLinkByPrimary(sqlSession,jsonObject);
             sqlSession.getConnection().commit();
-            return SuccessMsg("删除报表成功",null);
-
+            return SuccessMsg("删除Out_Link成功",null);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
