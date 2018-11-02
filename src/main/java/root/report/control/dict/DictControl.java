@@ -55,7 +55,7 @@ public class DictControl extends RO {
     }
 
 
-     //返回数据字典的定义头，out
+    //返回数据字典的定义头，out
     @RequestMapping(value = "/getDictByID/{dict_id}", produces = "text/plain;charset=UTF-8")
     public String getDictByID(@PathVariable("dict_id") String dict_id) {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
