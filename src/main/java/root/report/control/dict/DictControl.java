@@ -154,7 +154,7 @@ public class DictControl extends RO {
     }
 
 
-    //初始化导入
+    //初始化导入  代码注释行
     @RequestMapping(value = "/initImportDictValue/{dict_id}", produces = "text/plain;charset=UTF-8")
     public String importDictValue(@PathVariable("dict_id") String dict_id) {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
