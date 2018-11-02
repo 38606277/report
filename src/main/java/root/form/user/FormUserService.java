@@ -247,4 +247,39 @@ public class FormUserService
         map2.put("status",0);
         return JSON.toJSONString(map2);
     }
+
+    @RequestMapping(value = "/updatePwd", produces = "text/plain; charset=utf-8")
+    public String updatePwd(@RequestBody String pJson)
+    {
+        String result = "false";
+        JSONObject obj = JSONObject.parseObject(pJson);
+        try{
+            UserModel current_userModel = (UserModel)DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserInfoById",obj.getInteger("_id"));
+            String oldP=obj.getString("oldPwd");
+            String newPassword=obj.getString("encryptPwd");
+            ErpUtil erpUtil = new ErpUtil();
+            String webOldpasswd = erpUtil.encode(oldP);
+            String webNewpasswd = erpUtil.encode(newPassword);
+
+            String old_password = current_userModel.getEncryptPwd();
+            if(old_password!=null) {
+                if (webOldpasswd.equals(current_userModel.getEncryptPwd())) {
+                    current_userModel.setEncryptPwd(webNewpasswd);
+                    //修改數據
+                    DbFactory.Open(DbFactory.FORM).update("formUser.updateUser", current_userModel);
+                   result="success";
+                }else{
+                    result="faile";
+            }
+            }else{
+                result="faile";
+            }
+
+        }catch(Exception e){
+            log.error("修改用户失败!");
+            result="error";
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(result);
+    }
 }
