@@ -644,10 +644,18 @@ public class QueryService {
         sqlTemplate.setNamespace(AppConstants.QueryPrefix+namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
-        return sqlSession.selectList("query.getAuthTree",user_id);
+        if(user_id==1){
+            return sqlSession.selectList("query.getAuthTreeAll");
+        }else{
+            return sqlSession.selectList("query.getAuthTree",user_id);
+        }
     }
 
-
+    public Map<String, Object> getAllFuncClassByClassId(int class_id) throws SAXException, DocumentException {
+        Map<String, Object> listQueryName = DbFactory.Open(DbFactory.FORM).
+                selectOne("query.getAllFuncClassByClassId", class_id);
+        return listQueryName;
+    }
     public Map<String, Object> getAllQueryClassByClassId(int class_id) throws SAXException, DocumentException {
         Map<String, Object> listQueryName = DbFactory.Open(DbFactory.FORM).
                 selectOne("query.getAllQueryClassByClassId", class_id);

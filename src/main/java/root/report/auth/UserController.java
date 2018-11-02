@@ -120,9 +120,15 @@ public class UserController extends RO{
 				return JSON.toJSONString(map);
 			}//如果是erp用户，则到Erp中验证密码
 			else if(userModel!=null&&"erp".equals(userModel.getRegisType())){
+				String encryptPwd = erpUtil.encode(passWord);
+				if(encryptPwd.equals(userModel.getEncryptPwd())) {
+					map.put("LOGINRESULT", "Y");
+				} else {
+					map.put("LOGINRESULT", "N");
+				}
 				map.put("userCode", userCode);
 				map.put("pwd", passWord);
-				map = DbFactory.Open(DbFactory.SYSTEM).selectOne("role.loginUser", map);
+				//map = DbFactory.Open(DbFactory.SYSTEM).selectOne("role.loginUser", map);
 			}
 			//如果是本地用户，则验证密码
 			else if(userModel!=null&&"local".equals(userModel.getRegisType())){

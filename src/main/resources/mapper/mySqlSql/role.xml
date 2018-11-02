@@ -30,7 +30,7 @@
         select t.role_id,t.role_name,t.created_date,t.created_by,t.last_updated_date,t.enabled,
         case when t.enabled='1' then '启用' else '禁用' end enabledText,t.last_updated_by
         from fnd_role t
-        where 1=1
+        where 1=1 and t.role_id!='1'
         <if test="roleName != null and roleName!=''">  and t.role_name like '%${roleName}%' </if>
         <if test="roleId != null and roleId!=''">  and t.role_id= '${roleId}' </if>
         limit #{startIndex},#{perPage}

@@ -263,7 +263,10 @@
         INNER join (select r.role_id from fnd_user_role r where r.user_id=#{user_id,jdbcType=INTEGER}) as role
         on a.role_id=role.role_id;
     </select>
-
+    <!--获取角色分配的权限-->
+    <select id="getAuthTreeAll"  resultType="Map">
+        select DISTINCT a.auth_type,a.func_id from fnd_auth a
+    </select>
     <!--select  根据一级ID查询-->
     <select id="getAllQueryClassByClassId" parameterType="int" resultType="Map">
         SELECT qry.class_id as 'value', qry.class_name as 'name'
