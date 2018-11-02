@@ -424,7 +424,7 @@ public class QueryControl extends RO {
             String db = template.getDb();
             String namespace = template.getNamespace();
             String qryId = template.getId();
-            aResult = DbFactory.Open(db).selectList( AppConstants.QueryPrefix+namespace + "." + qryId, map, bounds);
+            aResult = DbFactory.Open(db).selectList(namespace + "." + qryId, map, bounds);
             if(page!=null){
                 totalSize = ((PageRowBounds)bounds).getTotal();
             }else{

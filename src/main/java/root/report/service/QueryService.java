@@ -641,7 +641,7 @@ public class QueryService {
         // 组装sql
         sqlTemplate.setSql(jsonObject.containsKey("qry_sql") ? jsonObject.getString("qry_sql") : "");
        // sqlTemplate.setSql(getSqlTemplate(namespace, qry_id, false));
-        sqlTemplate.setNamespace(namespace);
+        sqlTemplate.setNamespace(AppConstants.QueryPrefix+namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
         return sqlSession.selectList("query.getAuthTree",user_id);
