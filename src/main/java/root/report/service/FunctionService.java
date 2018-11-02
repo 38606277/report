@@ -429,12 +429,12 @@ public class FunctionService {
             // map.put("link", jsonObject.getString("link"));  // 不能存放前端所有数据 255个大小不够存储，仅存储 link_qry_id即可
 
             // 往 func_out_link 当中插入对应记录
-            JSONObject outJsonObject = jsonObject.getJSONObject("link");
+           /* JSONObject outJsonObject = jsonObject.getJSONObject("link");
             Map<String,Object> outMap = new HashMap<>();
             outMap.put("func_id",func_id);
             outMap.put("out_id",jsonObject.getString("out_id"));
             outMap.put("link_qry_id",outJsonObject.getString("link_qry_id"));
-            if(outJsonObject!=null && !outJsonObject.isEmpty()){
+           if(outJsonObject!=null && !outJsonObject.isEmpty()){
                 map.put("link",outJsonObject.getString("link_qry_id"));
             }
             JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
@@ -450,10 +450,103 @@ public class FunctionService {
                         sqlSession.insert("function.createFuncOutLink",insertMap);
                     }
                 }
-            }
+            }*/
             sqlSession.insert("function.createFunctionOut", map);
         }
     }
+
+    /**
+     * 功能描述: 往 func_out_link 表插入数据
+     */
+    public void createFuncOutLink(SqlSession sqlSession, JSONObject jsonObject) {
+        //保存到 func_out_link 表
+        //更新 func_out 表的link字段
+        int qry_id = jsonObject.getIntValue("func_id");
+        int link_qry_id = jsonObject.getIntValue("link_qry_id");
+        String out_id = jsonObject.getString("out_id");
+        JSONArray jsonArray = jsonObject.getJSONArray("param");
+        if (StringUtils.isNotBlank(qry_id+"") && StringUtils.isNotBlank(link_qry_id+"")
+                && jsonArray!=null) {
+            for (int j = 0; j < jsonArray.size(); j++) {
+                JSONObject tempJSONObject = jsonArray.getJSONObject(j);
+                Map<String, Object> insertMap = new HashMap<>();
+                insertMap.put("func_id",qry_id);
+                insertMap.put("out_id",out_id);
+                insertMap.put("link_qry_id",link_qry_id);
+                insertMap.put("link_in_id", tempJSONObject.getString("link_in_id"));
+                insertMap.put("link_in_id_value_type", tempJSONObject.getString("link_in_id_value_type"));
+                insertMap.put("link_in_id_value", tempJSONObject.getString("link_in_id_value"));
+                sqlSession.insert("function.createFuncOutLink", insertMap);
+            }
+        }
+        // 更新qry_out表的link字段
+        Map<String,Object> tempMap = new HashMap<>();
+        tempMap.put("func_id",qry_id);
+        tempMap.put("out_id",out_id);
+        Map<String,Object> qryOutMap = sqlSession.selectOne("function.getOutByMap",tempMap);
+        String link = String.valueOf(qryOutMap.get("link"));
+        if(StringUtils.isNotBlank(link) && "null"!=link){
+            link += ",";
+            link += link_qry_id;
+        }else {
+            link = link_qry_id+"";
+        }
+        qryOutMap.put("link",link);
+        sqlSession.delete("function.deleteFunctionOut",qryOutMap);
+        sqlSession.insert("function.createFunctionOut",qryOutMap);
+    }
+
+    // 根据qry_id 删除掉 qry_out_link 表当在的记录
+    public void deleteFuncOutLinkByPrimary(SqlSession sqlSession, JSONObject jsonObject) {
+        int qry_id = jsonObject.getIntValue("func_id");
+        int link_qry_id = jsonObject.getIntValue("link_qry_id");
+        String out_id = jsonObject.getString("out_id");
+        JSONArray jsonArray = jsonObject.getJSONArray("param");
+        if (StringUtils.isNotBlank(qry_id+"") && StringUtils.isNotBlank(link_qry_id+"")
+                && jsonArray!=null) {
+            String linkFinal = "";
+            Map<String,Object>  qryOutFinalMap = new HashMap<>();
+            qryOutFinalMap.put("func_id",qry_id);
+            qryOutFinalMap.put("out_id",out_id);
+            Map<String,Object> qryOutMap = sqlSession.selectOne("function.getOutByMap",qryOutFinalMap);
+            linkFinal = String.valueOf(qryOutMap.get("link"));
+            for (int j = 0; j < jsonArray.size(); j++) {
+                JSONObject tempJSONObject = jsonArray.getJSONObject(j);
+                Map<String, Object> deleteMap = new HashMap<>();
+                deleteMap.put("func_id",qry_id);
+                deleteMap.put("out_id",out_id);
+                deleteMap.put("link_qry_id",link_qry_id);
+                deleteMap.put("link_in_id", tempJSONObject.getString("link_in_id"));
+                sqlSession.delete("function.deleteFunctionOutLinkByPrimary", deleteMap);
+
+                if(StringUtils.isNotBlank(linkFinal) && "null"!=linkFinal){
+                    // 以逗号分隔，删除掉匹配到的那个
+                    String[] a = linkFinal.split(",");
+                    String b = link_qry_id+"";
+                    String result = "";
+                    for(String temp : a){
+                        if(b.equals(temp)){
+                            continue;
+                        }else {
+                            result += (temp+",");
+                        }
+                    }
+                    if(result.length()>0){
+                        linkFinal = result.substring(0,result.length()-1);
+                    }else {
+                        linkFinal = "";
+                    }
+                }
+
+            }
+            // 还需要把 qry_out 表的 link的 跟本次记录关联的删除掉
+            qryOutFinalMap = qryOutMap;
+            qryOutFinalMap.put("link",linkFinal);
+            sqlSession.delete("function.deleteFunctionOut",qryOutFinalMap);
+            sqlSession.insert("function.createFunctionOut",qryOutFinalMap);
+        }
+    }
+
     /**
      * 功能描述: 修改func_out表的记录
      */
@@ -476,7 +569,7 @@ public class FunctionService {
 
             deleteMap.put("link_qry_id",outJsonObject.getIntValue("link_qry_id"));
             // 删除掉 func_out_link 表当中对应的记录
-            JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
+           /* JSONArray linkIdJSONArray = outJsonObject.getJSONArray("param");
             if(linkIdJSONArray!=null && !linkIdJSONArray.isEmpty()){
                 for(int j=0; j<linkIdJSONArray.size();j++){
                     if(deleteMap!=null && !deleteMap.isEmpty()){
@@ -492,7 +585,7 @@ public class FunctionService {
                         sqlSession.insert("function.createFuncOutLink",deleteOutLinkMap);
                     }
                 }
-            }
+            }*/
 
             sqlSession.insert("function.createFunctionOut", map);
         }
@@ -508,7 +601,7 @@ public class FunctionService {
      * 功能描述: 针对传递进来的JSONAarray进行批量删除func_out数据
      */
     public void deleteFunctionOutForJsonArray(SqlSession sqlSession,int func_id) throws SQLException {
-        this.deleteFunctionOutLinkByFuncId(sqlSession,func_id);  // 删除掉 func_out_link 表当中的信息
+        // this.deleteFunctionOutLinkByFuncId(sqlSession,func_id);  // 删除掉 func_out_link 表当中的信息
         sqlSession.delete("function.deleteFunctionOutByFuncId",func_id);
     }
 

@@ -96,6 +96,19 @@
 
 	</select>
 
+	<select id="getOutByMap" parameterType="Map" resultType="Map">
+		SELECT
+			fo.func_id ,
+			fo.out_id ,
+			fo.out_name ,
+		    fo.datatype,
+			fo.link
+		FROM
+			func_out fo
+		WHERE
+			fo.func_id =${func_id} and fo.out_id='${out_id}'
+	</select>
+
 	<!--查我函数名称-->
 	<select id="getFunctionName" parameterType="Map" resultType="Map">
 
