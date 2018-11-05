@@ -20,6 +20,7 @@ import root.configure.AppConstants;
 import root.configure.MybatisCacheConfiguration;
 import root.report.db.DbFactory;
 import root.report.util.JsonUtil;
+import root.report.util.ThreadPoolExecutorUtil;
 import root.report.util.XmlUtil;
 
 import javax.websocket.Session;
@@ -739,4 +740,68 @@ public class DictService {
         });
         return "1";
     }
+
+    // 第三版 改写成使用ThreadPoolExecutor  完成线程调用
+    public String importFuncDictValue(int dict_id){
+        // 先决条件 ： 根据 dict_id 得到 sourceSql
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        this.updateFuncDictForState(sqlSession,dict_id,"1");  // 正在导入
+        String dbName = sqlSession.selectOne("dict.getDictDbByDictId",dict_id);
+        if(StringUtils.isBlank(dbName)) return("此DictId所对应的数据库为空,无法操作!");
+        // 初始化对应的数据库
+        SqlSession sourceSqlSession = DbFactory.Open(dbName);
+        if(sourceSqlSession==null)  return("数据库无法连接,无法操作!");
+        String sourceSql = null;
+        try {
+            sourceSql = this.getSqlTemplate("数据字典",String.valueOf(dict_id),false);
+        } catch (Exception e){
+            log.info(e.getMessage());
+            return "无法从xml文件得到对应的sql,无法查询!";
+        }
+        Long begin = new Date().getTime();
+        Connection conn  = sqlSession.getConnection();
+        try {
+            conn.setAutoCommit(false);   //  非提交能减少日志的生成,从而加快执行速度
+            PreparedStatement pst = (PreparedStatement) conn.prepareStatement("");
+            fetchBySql(sourceSqlSession,sourceSql,rs -> {
+                // String prefix = "INSERT INTO func_dict_value (dict_id,value_code,value_name) VALUES ";
+                String prefix = "INSERT INTO test_import (dict_id,code,name) VALUES ";
+                List<Map> mapList = new ArrayList<>();
+                try {
+                    if (rs != null) {
+                        while (rs.next()) {
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("code", rs.getInt("code"));
+                            map.put("name", rs.getString("name"));
+                            mapList.add(map);
+                            if (rs.getRow() % 5000 == 0) {
+                                //  执行批量插入操作
+                                List<Map> finalMapList = mapList;
+                                // 也可以使用 getInstance().execute  ,但是使用submit 可以返回 Future ,可以为后面的 websocket服务
+                                ThreadPoolExecutorUtil.getInstance().submit(new DictInsertTask(finalMapList, String.valueOf(dict_id), pst, prefix));
+                                mapList = new ArrayList<>();
+                            }
+                        }
+                        // 执行完之后 mapList 是个 不足5000个的，这个时候我们再去执行一次 添加操作
+                        List<Map> finalMapList = mapList;
+                        log.info("mapList大小为:" + mapList.size());
+                        log.info("finalMapList:" + finalMapList.size());
+                        ThreadPoolExecutorUtil.getInstance().submit(new DictInsertTask(finalMapList, String.valueOf(dict_id), pst, prefix));
+                        conn.commit();
+                    }
+                    Long end = new Date().getTime();
+                    log.info("条数据从远程库导入到本地花费时间 : " + (end - begin) + " ms");
+                } catch (SQLException e) {
+                    log.info(e.getMessage());   // 传输过程出错-》不处理，让其继续导入，因为可能是导入了重复的数据
+                }
+            });
+            if( pst!=null && !pst.isClosed()){
+                pst.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "1";
+    }
+
 }

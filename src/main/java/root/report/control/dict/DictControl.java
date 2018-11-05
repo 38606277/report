@@ -161,7 +161,8 @@ public class DictControl extends RO {
         try{
             sqlSession.getConnection().setAutoCommit(false);
             int dictId = Integer.parseInt(dict_id);
-            String result = this.dictService.importFuncDictValueByDictId(dictId);
+            // String result = this.dictService.importFuncDictValueByDictId(dictId);
+            String result = this.dictService.importFuncDictValue(dictId);
             if("1".equals(result)){
                 this.dictService.updateFuncDictForState(sqlSession,dictId,"2");
                 sqlSession.getConnection().commit();

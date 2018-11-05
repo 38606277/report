@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import root.report.db.DbFactory;
 import root.report.db.DbManager;
 import root.report.util.ErpUtil;
+import root.report.util.ThreadPoolExecutorUtil;
 import root.websocket.ImportDictValueSocket;
 
 import javax.sql.DataSource;
@@ -31,6 +32,7 @@ public class ReportServerApplication {
 		ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(ReportServerApplication.class, args);
 		// 解决websocket 当中无法注入bean的方法
 		ImportDictValueSocket.setApplicationContext(configurableApplicationContext);
+		ThreadPoolExecutorUtil.getInstance();
 	}
 
 }
