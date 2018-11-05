@@ -11,6 +11,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultCDATA;
 import org.dom4j.tree.DefaultComment;
+import org.dom4j.tree.DefaultElement;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
@@ -133,8 +134,7 @@ public class QueryService {
             link = link_qry_id+"";
         }
         qryOutMap.put("link",link);
-        sqlSession.delete("query.deleteQueryOut",qryOutMap);
-        sqlSession.insert("query.createQueryOut",qryOutMap);
+        sqlSession.update("query.updateQueryOutForLink",qryOutMap);
     }
 
     /**
@@ -160,7 +160,7 @@ public class QueryService {
             Element root = (Element) userDoc.selectSingleNode("/mapper");
             Element newSql = root.addElement("select");
             newSql.addAttribute("id", sqlId);
-            newSql.addAttribute("resultType", "BigDecimal");
+            newSql.addAttribute("resultType", "Map");
             newSql.addAttribute("parameterType", "Map");
             //  设置2级缓存
             newSql.addAttribute("useCache", MybatisCacheConfiguration.USE_CACHE_FALSE);
@@ -171,6 +171,7 @@ public class QueryService {
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
             Element rootEle = userDoc.getRootElement();
+            this.removeBlankNewLine(rootEle);
             writer.write(userDoc);
             writer.flush();
             writer.close();
@@ -313,7 +314,7 @@ public class QueryService {
         try {
             userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             Element select = (Element) userDoc.selectSingleNode("//select[@id='" + sqlId + "']");
-            String tempStr = "";
+            StringBuffer tempStr = new StringBuffer();
             if (bool) {
                 // tempStr = select.getStringValue();   // 按照原格式取出
                 List<Object> list = select.content();
@@ -322,18 +323,25 @@ public class QueryService {
                 DefaultCDATA selCdata = null;
                 for (int i = 0; i < list.size(); i++) {
                     object = list.get(i);
-                    if (object instanceof DefaultComment) {
-                        selContent = (DefaultComment) object;
-                        // obj.put("comment", JSON.parse(selContent.getText()));
+                    if (object instanceof DefaultElement){
+                        // 解析element当中的 内容
+                        // object.
+                        String text = ((Node)object).asXML();
+                        // 转义回去
+                        text = text.replaceAll("&lt;","<");
+                        text = text.replaceAll("&gt;",">");
+                        text = text.replaceAll("&apos;","'");
+                        text = text.replaceAll("&quot;","\"");
+                        tempStr.append(text);
                     }else{
-                        tempStr+=((Node)object).asXML();
+                        tempStr.append(((Node)object).asXML());
                     }
                 }
             } else {
-                tempStr = select.getTextTrim();   // 编译了一些html代码，导致不是原格式了，输入无格式的sql
+                tempStr.append(select.getTextTrim());   // 编译了一些html代码，导致不是原格式了，输入无格式的sql
             }
             log.debug("获取到的SQL为:" + tempStr);
-            return tempStr;
+            return tempStr.toString();
         } catch (java.lang.Exception e) {
             throw e;
         }
@@ -366,6 +374,7 @@ public class QueryService {
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
             Element rootEle = userDoc.getRootElement();
+            this.removeBlankNewLine(rootEle);
             writer.write(userDoc);
             writer.flush();
             writer.close();

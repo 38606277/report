@@ -12,6 +12,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultCDATA;
 import org.dom4j.tree.DefaultComment;
+import org.dom4j.tree.DefaultElement;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
@@ -233,7 +234,7 @@ public class DictService {
         try {
             userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
-            String tempStr = "";
+            StringBuffer tempStr = new StringBuffer();
             if(bool){
                 // tempStr = select.getStringValue();   // 按照原格式取出
                 List<Object> list = select.content();
@@ -242,18 +243,25 @@ public class DictService {
                 DefaultCDATA selCdata = null;
                 for (int i = 0; i < list.size(); i++) {
                     object = list.get(i);
-                    if (object instanceof DefaultComment) {
-                        selContent = (DefaultComment) object;
-                        // obj.put("comment", JSON.parse(selContent.getText()));
+                    if (object instanceof DefaultElement){
+                        // 解析element当中的 内容
+                        // object.
+                        String text = ((Node)object).asXML();
+                        // 转义回去
+                        text = text.replaceAll("&lt;","<");
+                        text = text.replaceAll("&gt;",">");
+                        text = text.replaceAll("&apos;","'");
+                        text = text.replaceAll("&quot;","\"");
+                        tempStr.append(text);
                     }else{
-                        tempStr+=((Node)object).asXML();
+                        tempStr.append(((Node)object).asXML());
                     }
                 }
             }else {
-                tempStr = select.getTextTrim();   // 编译了一些html代码，导致不是原格式了，输入无格式的sql
+                tempStr.append(select.getTextTrim());   // 编译了一些html代码，导致不是原格式了，输入无格式的sql
             }
             log.debug("获取到的SQL为:" +tempStr);
-            return tempStr;
+            return tempStr.toString();
         } catch (java.lang.Exception e) {
             throw e;
         }
@@ -311,6 +319,7 @@ public class DictService {
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
             Element rootEle = userDoc.getRootElement();
+            this.removeBlankNewLine(rootEle);
             writer.write(userDoc);
             writer.flush();
             writer.close();
@@ -356,6 +365,7 @@ public class DictService {
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
             Element rootEle = userDoc.getRootElement();
+            this.removeBlankNewLine(rootEle);
             writer.write(userDoc);
             writer.flush();
             writer.close();

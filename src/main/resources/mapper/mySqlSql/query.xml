@@ -68,6 +68,8 @@
 
     </insert>
 
+
+
     <!-- 修改qry_name表当中的记录 -->
     <update id="updateQueryName" parameterType="Map" >
         update qry_name set
@@ -98,6 +100,10 @@
     <delete id="deleteQueryOut" parameterType="Map">
 		delete from qry_out where qry_id=#{qry_id,jdbcType=INTEGER} and out_id='${out_id}'
     </delete>
+
+    <update id="updateQueryOutForLink" parameterType="Map">
+        update qry_out set link='${link}' where qry_id=#{qry_id,jdbcType=INTEGER} and out_id='${out_id}'
+    </update>
 
     <!--删除 qry_name -->
     <delete id="deleteQueryName" parameterType="int">

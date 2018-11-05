@@ -225,6 +225,11 @@
 
     </insert>
 
+	<!-- 修改 func_out表当中的link字段 -->
+	<update id="updateFuncOutForLink" parameterType="Map">
+		update func_out set link='${link}' where func_id=#{func_id,jdbcType=INTEGER} and out_id='${out_id}'
+	</update>
+
     <!--查询函数输出参数表-->
     <delete id="deleteFunctionOut" parameterType="Map">
 		delete from func_out where func_id=#{func_id,jdbcType=INTEGER} and out_id='${out_id}'

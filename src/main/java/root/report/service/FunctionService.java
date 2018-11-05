@@ -13,6 +13,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultCDATA;
 import org.dom4j.tree.DefaultComment;
+import org.dom4j.tree.DefaultElement;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
@@ -182,6 +183,7 @@ public class FunctionService {
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
             Element rootEle = userDoc.getRootElement();
+            this.removeBlankNewLine(rootEle);
             writer.write(userDoc);
             writer.flush();
             writer.close();
@@ -222,27 +224,29 @@ public class FunctionService {
         try {
             userDoc = XmlUtil.parseXmlToDom(userSqlPath);
             Element select = (Element)userDoc.selectSingleNode("//select[@id='"+sqlId+"']");
-            String tempStr = "";
+            StringBuffer tempStr = new StringBuffer();
             if(bool){
-                // tempStr = select.getStringValue();  // 得到原格式的数据
                 List<Object> list = select.content();
                 Object object = null;
-                DefaultComment selContent = null;
-                DefaultCDATA selCdata = null;
                 for (int i = 0; i < list.size(); i++) {
                     object = list.get(i);
-                    if (object instanceof DefaultComment) {
-                        selContent = (DefaultComment) object;
-                        // obj.put("comment", JSON.parse(selContent.getText()));
-                    }else{
-                        tempStr+=((Node)object).asXML();
+                    if (object instanceof DefaultElement){
+                        // 解析element当中的 内容
+                        String text = ((Node)object).asXML();
+                        text = text.replaceAll("&lt;","<");
+                        text = text.replaceAll("&gt;",">");
+                        text = text.replaceAll("&apos;","'");
+                        text = text.replaceAll("&quot;","\"");
+                        tempStr.append(text);
+                    } else{
+                        tempStr.append(((Node)object).asXML());
                     }
                 }
             }else {
-                tempStr = select.getTextTrim();
+                tempStr.append(select.getTextTrim());
             }
             log.debug("获取到的SQL为:" +tempStr);
-            return tempStr;
+            return tempStr.toString();
         } catch (java.lang.Exception e) {
             throw e;
         }
@@ -272,6 +276,7 @@ public class FunctionService {
             writer = new XMLWriter(new FileOutputStream(userSqlPath), format);
             //删除空白行
             Element rootEle = userDoc.getRootElement();
+            this.removeBlankNewLine(rootEle);
             writer.write(userDoc);
             writer.flush();
             writer.close();
@@ -492,8 +497,7 @@ public class FunctionService {
             link = link_qry_id+"";
         }
         qryOutMap.put("link",link);
-        sqlSession.delete("function.deleteFunctionOut",qryOutMap);
-        sqlSession.insert("function.createFunctionOut",qryOutMap);
+        sqlSession.update("function.updateFuncOutForLink",qryOutMap);
     }
 
     // 根据qry_id 删除掉 qry_out_link 表当在的记录
