@@ -764,8 +764,8 @@ public class DictService {
             conn.setAutoCommit(false);   //  非提交能减少日志的生成,从而加快执行速度
             PreparedStatement pst = (PreparedStatement) conn.prepareStatement("");
             fetchBySql(sourceSqlSession,sourceSql,rs -> {
-                // String prefix = "INSERT INTO func_dict_value (dict_id,value_code,value_name) VALUES ";
-                String prefix = "INSERT INTO test_import (dict_id,code,name) VALUES ";
+                String prefix = "INSERT INTO func_dict_value (dict_id,value_code,value_name) VALUES ";
+                // String prefix = "INSERT INTO test_import (dict_id,code,name) VALUES ";
                 List<Map> mapList = new ArrayList<>();
                 try {
                     if (rs != null) {
