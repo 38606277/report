@@ -2,9 +2,9 @@
 
 <mapper namespace="数据字典">
    <cache/>
-	<select id="3" >
+   <select id="3">
 		select code,name from test_dict
-	</select>
+</select>
    <select id="查询公司信息" parameterType="Map" resultType="Map">
  
     <!--{
@@ -288,8 +288,12 @@ ORDER  BY ffv.flex_value
 
 
 
+
+
 	from fnd_id_flex_segments fifs,
 	gl_sets_of_books     gsob,
+
+
 
 
 
@@ -302,8 +306,12 @@ ORDER  BY ffv.flex_value
 
 
 
+
+
 	where gsob.chart_of_accounts_id = fifs.id_flex_num
 	and id_flex_code = 'GL#'
+
+
 
 
 
@@ -316,8 +324,12 @@ ORDER  BY ffv.flex_value
 
 
 
+
+
 	and ffv.flex_value_set_id = fifs.flex_value_set_id
 	and ffv.enabled_flag = 'Y'
+
+
 
 
 
@@ -330,8 +342,40 @@ ORDER  BY ffv.flex_value
 
 
 
+
+
 	and fifs.application_column_name = 'SEGMENT4'
 	order by ffv.flex_value
 
 </select>
-</mapper>
+   <select id="12" resultType="Map" parameterType="Map" useCache="false">SELECT
+	@rownum :=@rownum + 1 AS rownum ,
+
+
+	ppa.PROJECT_TYPE
+
+
+FROM
+
+	pa_projects_all ppa ,
+
+	(SELECT @rownum := 0) tmp_row_number
+
+GROUP BY
+
+	ppa.PROJECT_TYPE
+
+</select>  <select id="13" resultType="Map" parameterType="Map" useCache="false">SELECT
+	@rownum :=@rownum + 1 AS rownum ,
+
+	ppa.PROJECT_TYPE
+
+
+FROM
+	pa_projects_all ppa ,
+
+	(SELECT @rownum := 0) tmp_row_number
+GROUP BY
+
+	ppa.PROJECT_TYPE
+</select></mapper>

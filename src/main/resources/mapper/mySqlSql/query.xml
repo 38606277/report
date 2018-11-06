@@ -27,7 +27,7 @@
     <!--  插入数据到query_in表-->
     <insert id="createQueryIn" parameterType="Map">
         INSERT INTO qry_in
-        (qry_id,in_id,in_name,datatype,dict_id,validate,default_value,authtype_id)
+        (qry_id,in_id,in_name,datatype,dict_id,validate,default_value,authtype_id,render)
         VALUES (
         <if  test="qry_id != null">${qry_id}</if>,
         '${in_id}', '${in_name}', '${datatype}',
@@ -42,6 +42,9 @@
         ,
         <if  test="authtype_id == null">NULL</if>
         <if  test="authtype_id != null">'${authtype_id}'</if>
+        ,
+        <if  test="render == null">NULL</if>
+        <if  test="render != null">'${render}'</if>
         )
     </insert>
 
@@ -169,6 +172,7 @@
 			fd.dict_name ,
 			qi.validate ,
 			qi.authtype_id ,
+            qi.render,
 			fat.authtype_desc
 		FROM
 			qry_in qi

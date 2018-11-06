@@ -71,6 +71,7 @@ public class QueryService {
             map.put("validate", jsonIn.getString("validate"));
             map.put("default_value", jsonIn.getString("default_value"));
             map.put("authtype_id", jsonIn.getString("authtype_id"));
+            map.put("render", jsonIn.getString("render"));
             sqlSession.insert("query.createQueryIn", map);
         }
     }

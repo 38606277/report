@@ -1,15 +1,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="qry_1">
-
-    
-   
-   
-   
-   
-   
-  <select id="36" resultType="Map" parameterType="Map">       select ffv.flex_value,
+   <select id="36" resultType="Map" parameterType="Map">       select ffv.flex_value,
         ffvt.description
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -24,8 +28,30 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
         fnd_flex_values      ffv,
         fnd_flex_values_tl   ffvt
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -40,8 +66,30 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
         and ffv.flex_value_id = ffvt.flex_value_id
         and ffvt.language = 'ZHS'
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -56,8 +104,30 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
         and ffv.end_date_active is null
         and gsob.set_of_books_id = 2
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -72,17 +142,22 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
             and length(ffv.flex_value)=${code_length}
         order by ffv.flex_value
 
 </select>
-
-    
-   
-   
-   
-   
-  <select id="67" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
+   <select id="80" resultType="Map" parameterType="Map" useCache="false">SELECT
 	ppa.PROJECT_ID ,
 	ppa. NAME ,
 	ppa.SEGMENT1 ,
@@ -94,65 +169,37 @@
 FROM
 	pa_projects_all ppa
 WHERE
-	ppa.SEGMENT1 = ${project_code}
-AND ppa.PROJECT_TYPE = ${project_type}
-AND ppa.PROJECT_STATUS_CODE = ${project_state}
-AND ppa.START_DATE &gt;= ${start_Date}</select>
-    
-   
-   
-   
-  <select id="68" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
+1=1
+    <if test="project_code!='' and  project_code!=null">
+and	ppa.SEGMENT1 = #{project_code}
+</if>
+     <if test="project_type!='' and  project_type!=null">
+AND ppa.PROJECT_TYPE = #{project_type}
+</if>
+     <if test="project_state!='' and  project_state!=null">
+AND ppa.PROJECT_STATUS_CODE= #{project_state}
+</if>
+  </select>
+   <select id="81" resultType="Map" parameterType="Map" useCache="false">SELECT
 	ppa.PROJECT_ID ,
 	ppa. NAME ,
 	ppa.SEGMENT1 ,
 	ppa.PROJECT_TYPE ,
 	ppa.START_DATE ,
 	ppa.COMPLETION_DATE,
-        ppa.CLOSED_DATE,
+    ppa.CLOSED_DATE,
 	ppa.PROJECT_STATUS_CODE
 FROM
 	pa_projects_all ppa
 WHERE
-	ppa.SEGMENT1 = ${project_code}
-AND ppa.PROJECT_TYPE = ${project_type}
-AND ppa.PROJECT_STATUS_CODE = ${project_state}
-AND ppa.START_DATE &gt;= ${start_Date}</select>
-    
-   
-   
-  <select id="69" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
-	ppa.PROJECT_ID ,
-	ppa. NAME ,
-	ppa.SEGMENT1 ,
-	ppa.PROJECT_TYPE ,
-	ppa.START_DATE ,
-	ppa.COMPLETION_DATE,
-        ppa.CLOSED_DATE,
-	ppa.PROJECT_STATUS_CODE
-FROM
-	pa_projects_all ppa
-WHERE
-	ppa.SEGMENT1 = ${project_code}
-AND ppa.PROJECT_TYPE = ${project_type}
-AND ppa.PROJECT_STATUS_CODE = ${project_state}
-AND ppa.START_DATE &gt;= ${start_Date}</select>
-    
-   
-  <select id="70" resultType="BigDecimal" parameterType="Map" useCache="false">SELECT
-	ppa.PROJECT_ID ,
-	ppa. NAME ,
-	ppa.SEGMENT1 ,
-	ppa.PROJECT_TYPE ,
-	ppa.START_DATE ,
-	ppa.COMPLETION_DATE,
-        ppa.CLOSED_DATE,
-	ppa.PROJECT_STATUS_CODE
-FROM
-	pa_projects_all ppa
-WHERE
-	ppa.SEGMENT1 = ${project_code}
-AND ppa.PROJECT_TYPE = ${project_type}
-AND ppa.PROJECT_STATUS_CODE = ${project_state}
-AND ppa.START_DATE &gt;= ${start_Date}</select>
-</mapper>
+1=1
+     <if test="project_code!='' and  project_code!=null">
+and	ppa.SEGMENT1 = #{project_code}
+</if>
+     <if test="project_type!='' and  project_type!=null">
+AND ppa.PROJECT_TYPE = #{project_type}
+</if>
+     <if test="project_state!='' and  project_state!=null">
+AND ppa.PROJECT_STATUS_CODE= #{project_state}
+</if>
+  </select></mapper>
