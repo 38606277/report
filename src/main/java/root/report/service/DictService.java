@@ -285,7 +285,7 @@ public class DictService {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             map.put("dict_id",jsonObject.getIntValue("dict_id"));
             map.put("value_code",jsonObject.getString("value_code"));
-            sqlSession.update("dict.deleteFuncDictValue",map);
+            sqlSession.delete("dict.deleteFuncDictValue",map);
         }
     }
 
