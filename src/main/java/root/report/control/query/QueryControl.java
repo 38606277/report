@@ -382,7 +382,7 @@ public class QueryControl extends RO {
                     map.put(key, value);
                 }
             }
-            map.put("name",page.getString("searchResult"));
+//            map.put("name",page.getString("searchResult"));
             List<Map> aResult = new ArrayList<Map>();
             Long totalSize = 0L;
             String db = template.getDb();
