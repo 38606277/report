@@ -3,8 +3,16 @@
 <mapper namespace="数据字典">
    <cache/>
 	<select id="3" >
-		select code,name from test_dict
+ SELECT
+	CONVERT((@rownum :=@rownum + 1),char) value_code,
+	ppa.PROJECT_TYPE  value_name
+FROM
+	pa_projects_all ppa ,
+	(SELECT @rownum := 0) tmp_row_number
+GROUP BY
+	ppa.PROJECT_TYPE
 	</select>
+	<!--  select code,name from test_dict -->
    <select id="查询公司信息" parameterType="Map" resultType="Map">
  
     <!--{
@@ -334,4 +342,17 @@ ORDER  BY ffv.flex_value
 	order by ffv.flex_value
 
 </select>
+	<select id="99" resultType="BigDecimal" parameterType="Map" useCache="false">select nvl(sum(gb.period_net_dr),0)   period_net_dr
+		from gl_balances gb,
+		gl_code_combinations gcc
+		where gb.code_combination_id = gcc.code_combination_id
+		and gcc.summary_flag = 'N'
+		and gb.set_of_books_id = 2
+		and gb.period_name = #{period}
+		and &gt;=gcc.segment1 like '${segment1}%'
+		<if test="segment2!=''">
+			and gcc.segment2 &gt;=gcc.segment1 and gcc.segment2=#{segment2}
+		</if>
+		and gcc.segment3 like '${segment3}%'
+	</select>
 </mapper>

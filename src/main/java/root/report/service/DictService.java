@@ -771,8 +771,8 @@ public class DictService {
                     if (rs != null) {
                         while (rs.next()) {
                             Map<String, Object> map = new HashMap<>();
-                            map.put("code", rs.getInt("code"));
-                            map.put("name", rs.getString("name"));
+                            map.put("code", rs.getString("value_code"));
+                            map.put("name", rs.getString("value_name"));
                             mapList.add(map);
                             if (rs.getRow() % 5000 == 0) {
                                 //  执行批量插入操作
