@@ -45,7 +45,8 @@ AND ppa.PROJECT_STATUS_CODE
 = #{project_state}
 </if>
   </select>
-   <select id="78" resultType="Map" parameterType="Map" useCache="false">SELECT
+   <select id="78" resultType="Map" parameterType="Map" useCache="false">
+	   SELECT
 	ppa.PROJECT_ID ,
 	ppa. NAME ,
 	ppa.SEGMENT1 ,
