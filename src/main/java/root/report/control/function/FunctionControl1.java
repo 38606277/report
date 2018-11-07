@@ -100,6 +100,7 @@ public class FunctionControl1 extends RO {
                     func_id,
                     jsonFunc.getString("func_sql"));
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("新增报表成功",func_id);
 
         }catch (Exception ex){
@@ -124,6 +125,7 @@ public class FunctionControl1 extends RO {
                     jsonFunc.getString("func_sql"));
 
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("修改报表成功","");
 
         }catch (Exception ex){
@@ -150,6 +152,7 @@ public class FunctionControl1 extends RO {
                         );
             }
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("删除报表成功",null);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -228,6 +231,7 @@ public class FunctionControl1 extends RO {
         String class_id = "";
         try {
             class_id = this.functionService.createFunctionClass(class_name,sqlSession);
+            DbFactory.init(DbFactory.FORM);
         } catch (IOException e) {
             sqlSession.getConnection().rollback();
             e.printStackTrace();
@@ -249,6 +253,7 @@ public class FunctionControl1 extends RO {
             // 删除掉 xml文件
             String userSqlPath = AppConstants.getUserFunctionPath() + File.separator + AppConstants.FunctionPrefix+ class_id + ".xml";
             FileUtil.deleteFile(userSqlPath);
+            DbFactory.init(DbFactory.FORM);
         }
         return SuccessMsg("删除数据成功",null);
     }

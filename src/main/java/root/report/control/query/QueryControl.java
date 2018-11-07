@@ -114,6 +114,7 @@ public class QueryControl extends RO {
                                                 String.valueOf(qry_id),
                                               jsonFunc.getString("qry_sql"));
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("新增报表成功",qry_id);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -146,6 +147,7 @@ public class QueryControl extends RO {
                     jsonQuery.getString("qry_sql"));
 
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("修改报表成功","");
 
         }catch (Exception ex){
@@ -176,6 +178,7 @@ public class QueryControl extends RO {
             }
 
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("删除报表成功",null);
 
         }catch (Exception ex){
@@ -244,6 +247,7 @@ public class QueryControl extends RO {
         String class_id = "";
         try {
             class_id = this.queryService.createQueryClass(class_name,sqlSession);
+            DbFactory.init(DbFactory.FORM);
         } catch (IOException e) {
             sqlSession.getConnection().rollback();
             e.printStackTrace();
@@ -265,6 +269,7 @@ public class QueryControl extends RO {
             // 删除掉 xml文件
             String userSqlPath = AppConstants.getUserSqlPath() + File.separator + AppConstants.QueryPrefix+ class_id + ".xml";
             FileUtil.deleteFile(userSqlPath);
+            DbFactory.init(DbFactory.FORM);
         }
         return SuccessMsg("删除数据成功",null);
     }
