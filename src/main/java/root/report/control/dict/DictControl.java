@@ -84,6 +84,7 @@ public class DictControl extends RO {
             this.dictService.createSqlTemplate("数据字典",dict_id,jsonObject.getString("dict_sql"));
 
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("创建字典信息成功",dict_id);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -105,6 +106,7 @@ public class DictControl extends RO {
             this.dictService.updateSqlTemplate("数据字典",String.valueOf(jsonObject.getIntValue("dict_id")),jsonObject.getString("dict_sql"));
 
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("修改字典信息成功",null);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -119,9 +121,11 @@ public class DictControl extends RO {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONArray jsonArray = JSON.parseArray(pJson);
-            for(int i=0;i<jsonArray.size();i++){
-                int dict_id = jsonArray.getInteger(i);
+            JSONArray jsonArray =  JSONObject.parseArray(pJson);
+
+            for(int i = 0; i < jsonArray.size(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                int dict_id=jsonObject.getInteger("dict_id");
                 //删除值表，删除out表，删除模板,删除主表，
                 this.dictService.deleteDictValueByDictID(sqlSession,dict_id);
                 this.dictService.deleteFuncDictOut(sqlSession,dict_id);
@@ -131,6 +135,7 @@ public class DictControl extends RO {
             }
 
             sqlSession.getConnection().commit();
+            DbFactory.init(DbFactory.FORM);
             return SuccessMsg("删除字典信息成功",null);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
