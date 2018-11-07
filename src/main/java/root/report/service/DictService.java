@@ -443,9 +443,9 @@ public class DictService {
                     if(!value.trim().equals("")){
                         //清空右边空白
                         value = value.substring(0,value.indexOf(value.trim().substring(0, 1))+value.trim().length());
-                        if(textOnly){
-                            value+="\n";
-                        }
+                       /* if(textOnly){
+                            // value+="\n";   // 历史版本可能字符串里面没有\n 而现在又有了
+                        }*/
                     }else{
                         value = value.trim()+"\n";
                     }
