@@ -353,9 +353,9 @@ public class FunctionService {
                     if(!value.trim().equals("")){
                         //清空右边空白
                         value = value.substring(0,value.indexOf(value.trim().substring(0, 1))+value.trim().length());
-                        if(textOnly){
+                       /* if(textOnly){
                             value+="\n";
-                        }
+                        }*/
                     }else{
                         value = value.trim()+"\n";
                     }
