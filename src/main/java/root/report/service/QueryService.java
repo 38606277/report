@@ -619,6 +619,37 @@ public class QueryService {
     /**
      * 功能描述:  根据qry_id 查找qry表相关的信息
      */
+    public JSONObject getQueryByIDVerTwo(SqlSession sqlSession, String qry_id) throws SAXException, DocumentException {
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("qry_id", qry_id);
+        JSONObject jResult = new JSONObject();
+
+        // 查找qry_name
+        Map<String, String> mapFunc = new HashMap<String, String>();
+        mapFunc = sqlSession.selectOne("query.getNameByID", param);
+        //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
+        if (mapFunc != null && !mapFunc.isEmpty()) {
+            jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
+        }
+
+        //查找函数定义输入参数 qry_in
+        List<Map<String, String>> inList = sqlSession.selectList("query.getInByID", param);
+        JSONArray inArray = JSONArray.parseArray(JSONArray.toJSONString(inList, JsonUtil.features));
+        jResult.put("in", inArray);
+
+        //查找函数定义输出参数 qry_out
+        List<Map<String, String>> outList = sqlSession.selectList("query.getOutByID", param);
+        JSONArray outArray = JSONArray.parseArray(JSONArray.toJSONString(outList, JsonUtil.features));
+        jResult.put("out", outArray);
+
+        return jResult;
+    }
+
+
+
+    /**
+     * 功能描述:  根据qry_id 查找qry表相关的信息
+     */
     public JSONObject getQueryByID(SqlSession sqlSession, String qry_id) throws SAXException, DocumentException {
         Map<String, String> param = new HashMap<String, String>();
         param.put("qry_id", qry_id);
@@ -695,6 +726,21 @@ public class QueryService {
     // 取函数类别
     public List<Map<String, String>> getAllQueryClass(SqlSession sqlSession) {
         return sqlSession.selectList("query.getAllQueryClass");
+    }
+
+    // 根据 qry_id 查找 qry_name 记录， 组装 getIn,sql,getDb,getNamespace,getId ,getSelectType
+    public void assemblySqlTemplateTwo(SqlTemplate sqlTemplate, String namespace, String qry_id) throws DocumentException, SAXException {
+        JSONObject jsonObject = this.getQueryByIDVerTwo(DbFactory.Open(DbFactory.FORM), qry_id);
+        JSONArray jsonArrayIn = jsonObject.getJSONArray("in");
+        if (jsonArrayIn != null && !jsonArrayIn.isEmpty()) {
+            sqlTemplate.setIn(jsonArrayIn);
+        }
+        sqlTemplate.setDb(jsonObject.containsKey("qry_db") ? jsonObject.getString("qry_db") : "");
+        sqlTemplate.setId(qry_id);
+        sqlTemplate.setSelectType(jsonObject.containsKey("qry_type") ? jsonObject.getString("qry_type") : "");
+        // 组装sql
+        sqlTemplate.setSql(jsonObject.getString("qry_sql"));
+        sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
 
     // 根据 qry_id 查找 qry_name 记录， 组装 getIn,sql,getDb,getNamespace,getId ,getSelectType
