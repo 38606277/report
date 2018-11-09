@@ -3,8 +3,10 @@ package root.report.control.dict;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageRowBounds;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.DataBarFormatting;
@@ -149,10 +151,44 @@ public class DictControl extends RO {
 
     //查询数据字典的值
     @RequestMapping(value = "/getDictValueByID/{dict_id}", produces = "text/plain;charset=UTF-8")
-    public String getDictValueByID(@PathVariable("dict_id") String dict_id) {
+    public String getDictValueByID(@PathVariable("dict_id") String dict_id,@RequestBody String pjson) {
         try{
-            List<Map<String, String>> list  = dictService.getDictValueByID(dict_id);
-            return  SuccessMsg("查询成功",list);
+            JSONObject obj=JSON.parseObject(pjson);
+            List<Map> aResult = null;
+            Long totalSize = 0L;
+            try {
+                 Map map = new HashMap();
+                RowBounds bounds = null;
+                if(obj==null){
+                    bounds = RowBounds.DEFAULT;
+                }else{
+                    int startIndex=obj.getIntValue("pageNumd");
+                    int perPage=obj.getIntValue("perPaged");
+                    if(startIndex==1 || startIndex==0){
+                        startIndex=0;
+                    }else{
+                        startIndex=(startIndex-1)*perPage;
+                    }
+                    bounds = new PageRowBounds(startIndex, perPage);
+                    map.put("startIndex",startIndex);
+                    map.put("perPage",perPage);
+                }
+                map.put("dict_id",dict_id);
+                map.put("searchDictionary",obj.getString("searchDictionary"));
+                aResult = DbFactory.Open(DbFactory.FORM).selectList("dict.getDictValueByID", map,bounds);
+                if(obj!=null){
+                    totalSize = ((PageRowBounds)bounds).getTotal();
+                }else{
+                    totalSize = Long.valueOf(aResult.size());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Map maps=new HashMap<>();
+            maps.put("data",aResult);
+            maps.put("totald",totalSize);
+//            List<Map<String, String>> list  = dictService.getDictValueByID(dict_id);
+            return JSON.toJSONString(maps);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
