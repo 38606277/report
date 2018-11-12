@@ -42,7 +42,7 @@ public class ExecuteSqlUtil {
         LanguageDriver languageDriver = configuration.getDefaultScriptingLanguageInstance();  // 2. languageDriver 是帮助我们实现dynamicSQL的关键
         SqlSource sqlSource = languageDriver.createSqlSource(configuration,sb.toString(),clazz);  //  泛型化入参
         newSelectMappedStatement(configuration,namespace+"."+mapper_id,sqlSource,clazz);
-        List<?> list = sqlSession.selectList(namespace+"."+mapper_id,param);
+        List<?> list = sqlSession.selectList(namespace+"."+mapper_id,param,bounds);
         return list;
     }
 
