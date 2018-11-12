@@ -51,7 +51,7 @@ public class QueryService {
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
         mapFunc.put("qry_file", jsonFunc.getString("qry_file"));
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
-        // mapFunc.put("func_sql", jsonFunc.getString("func_sql"));
+        mapFunc.put("qry_sql", jsonFunc.getString("qry_sql"));
         sqlSession.insert("query.createQueryName", mapFunc);
         return mapFunc.get("id").toString();
     }
@@ -206,6 +206,7 @@ public class QueryService {
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
         mapFunc.put("qry_file", jsonFunc.getString("qry_file"));
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
+        mapFunc.put("qry_sql", jsonFunc.getString("qry_sql"));
         return sqlSession.update("query.updateQueryName", mapFunc);
     }
 
@@ -660,11 +661,6 @@ public class QueryService {
         mapFunc = sqlSession.selectOne("query.getNameByID", param);
         //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
         if (mapFunc != null && !mapFunc.isEmpty()) {
-            String class_id = String.valueOf(mapFunc.get("class_id"));
-            String sql = getSqlTemplate(class_id, qry_id, true);
-            if (StringUtils.isNotBlank(sql)) {
-                mapFunc.put("qry_sql", sql);
-            }
             jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
         }
 

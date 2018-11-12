@@ -113,11 +113,11 @@ public class QueryControl extends RO {
 
             queryService.createQueryIn(sqlSession,jsonFunc.getJSONArray("in"),qry_id);
             queryService.createQueryOut(sqlSession,jsonFunc.getJSONArray("out"),qry_id);
-            queryService.createSqlTemplate(jsonFunc.getString("class_id"),
+            /*queryService.createSqlTemplate(jsonFunc.getString("class_id"),
                                                 String.valueOf(qry_id),
-                                              jsonFunc.getString("qry_sql"));
+                                              jsonFunc.getString("qry_sql"));*/
             sqlSession.getConnection().commit();
-            DbFactory.init(DbFactory.FORM);
+           //  DbFactory.init(DbFactory.FORM);
             return SuccessMsg("新增报表成功",qry_id);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -145,12 +145,12 @@ public class QueryControl extends RO {
             queryService.updateQueryName(sqlSession,jsonQuery);
 
             //更新SQL文件
-            queryService.updateSqlTemplate(jsonQuery.getString("class_id"),
+          /*  queryService.updateSqlTemplate(jsonQuery.getString("class_id"),
                     jsonQuery.getString("qry_id"),
-                    jsonQuery.getString("qry_sql"));
+                    jsonQuery.getString("qry_sql"));*/
 
             sqlSession.getConnection().commit();
-            DbFactory.init(DbFactory.FORM);
+           //  DbFactory.init(DbFactory.FORM);
             return SuccessMsg("修改报表成功","");
 
         }catch (Exception ex){
@@ -175,13 +175,13 @@ public class QueryControl extends RO {
                 queryService.deleteQueryName(sqlSession,qry_id);
                 queryService.deleteQueryInForJsonArray(sqlSession,qry_id);
                 queryService.deleteQueryOutForJsonArray(sqlSession,qry_id);
-                queryService.deleteSqlTemplate(jsonObject.getString("class_id"),
+                /*queryService.deleteSqlTemplate(jsonObject.getString("class_id"),
                         jsonObject.getString("qry_id")
-                );
+                );*/
             }
 
             sqlSession.getConnection().commit();
-            DbFactory.init(DbFactory.FORM);
+            // DbFactory.init(DbFactory.FORM);
             return SuccessMsg("删除报表成功",null);
 
         }catch (Exception ex){

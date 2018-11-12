@@ -83,10 +83,10 @@ public class DictControl extends RO {
             String dict_id  = this.dictService.createFuncDict(sqlSession,jsonObject);
             this.dictService.createFuncDictOut(sqlSession,jsonObject,dict_id);
             // 往 数据字典.xml 当中 插入 指定SQL
-            this.dictService.createSqlTemplate("数据字典",dict_id,jsonObject.getString("dict_sql"));
+            // this.dictService.createSqlTemplate("数据字典",dict_id,jsonObject.getString("dict_sql"));
 
             sqlSession.getConnection().commit();
-            DbFactory.init(DbFactory.FORM);
+            // DbFactory.init(DbFactory.FORM);
             return SuccessMsg("创建字典信息成功",dict_id);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -105,10 +105,10 @@ public class DictControl extends RO {
             this.dictService.updateFuncDict(sqlSession,jsonObject);
 
             // 往 数据字典.xml 当中修改 指定SQL
-            this.dictService.updateSqlTemplate("数据字典",String.valueOf(jsonObject.getIntValue("dict_id")),jsonObject.getString("dict_sql"));
+           //  this.dictService.updateSqlTemplate("数据字典",String.valueOf(jsonObject.getIntValue("dict_id")),jsonObject.getString("dict_sql"));
 
             sqlSession.getConnection().commit();
-            DbFactory.init(DbFactory.FORM);
+            // DbFactory.init(DbFactory.FORM);
             return SuccessMsg("修改字典信息成功",null);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -133,11 +133,11 @@ public class DictControl extends RO {
                 this.dictService.deleteFuncDictOut(sqlSession,dict_id);
                 this.dictService.deleteFuncDict(sqlSession,dict_id);
                 // 往数据字典.xml 当中删除 指定SQL
-                this.dictService.deleteSqlTemplate("数据字典",String.valueOf(dict_id));
+                // this.dictService.deleteSqlTemplate("数据字典",String.valueOf(dict_id));
             }
 
             sqlSession.getConnection().commit();
-            DbFactory.init(DbFactory.FORM);
+            // DbFactory.init(DbFactory.FORM);
             return SuccessMsg("删除字典信息成功",null);
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
@@ -229,7 +229,7 @@ public class DictControl extends RO {
         return "未实现";
     }
 
-    //新增字典值  // TODO : 改写成长连接实现 进度条的 增长
+    //新增字典值
     @RequestMapping(value = "/createDictValue", produces = "text/plain;charset=UTF-8")
     public String createDictValue(@RequestBody String pJson) throws SQLException{
         //源数据加载到内存

@@ -25,12 +25,14 @@
 
     <!--  创建func_dict信息  -->
     <insert id="createFuncDict" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-        insert into func_dict(dict_name,dict_desc,dict_db,loaddata_mode,loaddata_state)
+        insert into func_dict(dict_name,dict_desc,dict_db,loaddata_mode,loaddata_state,dict_sql)
         values ('${dict_name}','${dict_desc}','${dict_db}',
         <if  test="loaddata_mode == null">NULL</if>
         <if  test="loaddata_mode != null">'${loaddata_mode}'</if>,
         <if  test="loaddata_state == null">NULL</if>
-        <if  test="loaddata_state != null">'${loaddata_state}'</if>
+        <if  test="loaddata_state != null">'${loaddata_state}'</if>,
+        <if  test="dict_sql == null">NULL</if>
+        <if  test="dict_sql != null">'${dict_sql}'</if>
         )
     </insert>
 
@@ -70,12 +72,15 @@
 		,loaddata_state=
         <if  test="loaddata_state == null">NULL</if>
         <if  test="loaddata_state != null">'${loaddata_state}'</if>
+        ,dict_sql=
+        <if  test="dict_sql == null">NULL</if>
+        <if  test="dict_sql != null">'${dict_sql}'</if>
 		 where dict_id=#{dict_id,jdbcType=INTEGER}
 	</update>
 
     <!--  根据 dict_id 查询 func_dict表的信息  -->
     <select id="getFuncDictInfoByDictId" parameterType="int" resultType="Map">
-        select dict_id,dict_name,dict_desc,dict_db,loaddata_mode,loaddata_state from func_dict where dict_id=#{dict_id,jdbcType=INTEGER}
+        select dict_id,dict_name,dict_desc,dict_db,loaddata_mode,loaddata_state,dict_sql from func_dict where dict_id=#{dict_id,jdbcType=INTEGER}
     </select>
 
     <!-- 根据 dict_id 查询 func_dict_out 表的信息 -->

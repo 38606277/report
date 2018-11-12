@@ -91,6 +91,9 @@
         ,qry_file=
         <if  test="qry_file == null">NULL</if>
         <if  test="qry_file != null">'${qry_file}'</if>
+        ,qry_sql=
+        <if  test="qry_sql == null">NULL</if>
+        <if  test="qry_sql != null">'${qry_sql}'</if>
         where qry_id=#{qry_id,jdbcType=INTEGER}
     </update>
 

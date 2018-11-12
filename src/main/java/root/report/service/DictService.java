@@ -141,7 +141,7 @@ public class DictService {
         map.put("dict_name",jsonObject.getString("dict_name"));
         map.put("dict_desc",jsonObject.getString("dict_desc"));
         map.put("dict_db",jsonObject.getString("dict_db"));
-       //  map.put("dict_sql",jsonObject.getString("dict_sql"));
+        map.put("dict_sql",jsonObject.getString("dict_sql"));
         map.put("loaddata_mode",jsonObject.getString("loaddata_mode"));
         map.put("loaddata_state",jsonObject.getString("loaddata_state"));
         sqlSession.update("dict.updateFuncDict",map);
@@ -164,8 +164,8 @@ public class DictService {
         jsonObject.put("dict_db",map.get("dict_db"));
         jsonObject.put("loaddata_mode",map.get("loaddata_mode"));
         jsonObject.put("loaddata_state",map.get("loaddata_state"));
-        jsonObject.put("dict_sql",this.getSqlTemplate("数据字典",String.valueOf(map.get("dict_id")),true));
-
+        // jsonObject.put("dict_sql",this.getSqlTemplate("数据字典",String.valueOf(map.get("dict_id")),true));
+        jsonObject.put("dict_sql",map.get("dict_sql"));
 
         List<Map<String,Object>> listMap = sqlSession.selectList("dict.getFuncDictOutInfoByDicId",dict_id);
         jsonObject.put("out",listMap);
