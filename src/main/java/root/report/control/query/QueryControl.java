@@ -341,8 +341,8 @@ public class QueryControl extends RO {
     }
 
     // 执行excute的代码 ： 版本2
-    @RequestMapping(value = "/execQueryVerTwo/{QueryClassName}/{QueryID}", produces = "text/plain;charset=UTF-8")
-    public String execQueryVerTwo(@PathVariable("QueryClassName") String queryClassName,
+    @RequestMapping(value = "/execQuery/{QueryClassName}/{QueryID}", produces = "text/plain;charset=UTF-8")
+    public String execQuery(@PathVariable("QueryClassName") String queryClassName,
                                @PathVariable("QueryID") String queryID, @RequestBody String pJson) {
         System.out.println("开始执行查询:" + "selectClassName:" + queryClassName + "," + "selectID:" + queryID + ","
                 + "pJson:" + pJson + ",");
@@ -457,8 +457,8 @@ public class QueryControl extends RO {
     }
 
     // 执行excute的代码 ：
-    @RequestMapping(value = "/execQuery/{QueryClassName}/{QueryID}", produces = "text/plain;charset=UTF-8")
-    public String execQuery(@PathVariable("QueryClassName") String queryClassName,
+    @RequestMapping(value = "/execQueryOld/{QueryClassName}/{QueryID}", produces = "text/plain;charset=UTF-8")
+    public String execQueryOld(@PathVariable("QueryClassName") String queryClassName,
                                @PathVariable("QueryID") String queryID, @RequestBody String pJson) {
         System.out.println("开始执行查询:" + "selectClassName:" + queryClassName + "," + "selectID:" + queryID + ","
                 + "pJson:" + pJson + ",");
