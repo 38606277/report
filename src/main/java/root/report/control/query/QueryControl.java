@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageRowBounds;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -357,6 +358,9 @@ public class QueryControl extends RO {
             }
             SqlTemplate template = new SqlTemplate();
             queryService.assemblySqlTemplateTwo(template,queryClassName,queryID);
+            if(StringUtils.isBlank(template.getSql())){
+                return ErrorMsg("3000","数据库查询SQL为空,无法继续操作");
+            }
             // 输入参数放入map中
             // JSONArray inTemplate = template.getIn();
             JSONArray jsonArray = params.getJSONArray("in");
