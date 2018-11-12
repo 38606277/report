@@ -7,6 +7,7 @@ import com.github.pagehelper.PageRowBounds;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -402,7 +403,7 @@ public class QueryControl extends RO {
             // aResult = DbFactory.Open(db).selectList(namespace + "." + qryId, map, bounds);
             SqlSession targetSqlSession = DbFactory.Open(db);
             // 强转成自己想要的类型
-            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,Map.class,map);
+            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,Map.class,map,StatementType.PREPARED);
             if(page!=null){
                 totalSize = ((PageRowBounds)bounds).getTotal();
             }else{
