@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageRowBounds;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.RowBounds;
@@ -108,6 +109,10 @@ public class QueryControl extends RO {
         try{
             sqlSession.getConnection().setAutoCommit(false);
             JSONObject jsonFunc = JSONObject.parseObject(pJson);
+
+            String escapeSQL = jsonFunc.getString("qry_sql");
+            escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+            jsonFunc.put("qry_sql",escapeSQL);
             String qry_id = queryService.createQueryName(sqlSession,jsonFunc);
 
 
@@ -142,6 +147,9 @@ public class QueryControl extends RO {
             queryService.createQueryOut(sqlSession,jsonQuery.getJSONArray("out"),String.valueOf(qry_id));
 
             //更新主表
+            String escapeSQL = jsonQuery.getString("qry_sql");
+            escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+            jsonQuery.put("qry_sql",escapeSQL);
             queryService.updateQueryName(sqlSession,jsonQuery);
 
             //更新SQL文件
