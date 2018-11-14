@@ -407,7 +407,7 @@ public class QueryControl extends RO {
             List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
             //将集合遍历
             for(int i=0;i<aResult.size();i++) {
-                //循环new  map集合，
+                //循环new  map集合
                 Map<String, Object> obdmap = new HashMap<String, Object>();
                 Set<String> se = aResult.get(i).keySet();
                 for (String set : se) {
