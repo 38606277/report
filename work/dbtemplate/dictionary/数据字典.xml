@@ -2,6 +2,9 @@
 
 <mapper namespace="数据字典">
    <cache/>
+   <select id="3">
+		select code,name from test_dict
+</select>
    <select id="查询公司信息" parameterType="Map" resultType="Map">
  
     <!--{
@@ -199,7 +202,8 @@ ORDER  BY ffv.flex_value
 	and ffv.end_date_active is null
 	and gsob.set_of_books_id = 2
 	and fifs.application_column_name = 'SEGMENT3'
-    <if test="null!=searchDictionary and ''!=searchDictionary">and ffvt.description like '%${searchDictionary}%'</if>
+    <if test="null!=searchDictionary and ''!=searchDictionary">and ffvt.description like '%${searchDictionary}%'
+</if>
 	order by ffv.flex_value
   </select>
    <select id="品牌数据字典" resultType="Map" parameterType="Map">
@@ -261,7 +265,7 @@ ORDER  BY ffv.flex_value
 	from fnd_id_flex_segments fifs,
 	gl_sets_of_books     gsob,
 	fnd_flex_values      ffv,
-	fnd_flex_values_tlffvt
+	fnd_flex_values_tl   ffvt
 	where gsob.chart_of_accounts_id = fifs.id_flex_num
 	and id_flex_code = 'GL#'
 	and ffv.flex_value_id = ffvt.flex_value_id
@@ -273,8 +277,12 @@ ORDER  BY ffv.flex_value
 	and fifs.application_column_name = 'SEGMENT5'
 	order by ffv.flex_value
   </select>
-   <select id="13" resultType="Map" parameterType="Map" useCache="false">SELECT
-	ppa.PROJECT_TYPE  value_code ,
+   <select id="9" resultType="Map" parameterType="Map" useCache="false">null
+</select>
+   <select id="10" resultType="Map" parameterType="Map" useCache="false">null
+</select>
+   <select id="11" resultType="Map" parameterType="Map" useCache="false">select ffv.flex_value value ,
+	ffvt.description name
 
 
 
@@ -286,6 +294,8 @@ ORDER  BY ffv.flex_value
 
 
 
+	from fnd_id_flex_segments fifs,
+	gl_sets_of_books     gsob,
 
 
 
@@ -297,6 +307,8 @@ ORDER  BY ffv.flex_value
 
 
 
+	fnd_flex_values      ffv,
+	fnd_flex_values_tl   ffvt
 
 
 
@@ -308,46 +320,74 @@ ORDER  BY ffv.flex_value
 
 
 
+	where gsob.chart_of_accounts_id = fifs.id_flex_num
+	and id_flex_code = 'GL#'
 
 
 
-	ppa.PROJECT_TYPE  value_name
 
 
+
+
+
+
+
+
+	and ffv.flex_value_id = ffvt.flex_value_id
+	and ffvt.language = 'ZHS'
+
+
+
+
+
+
+
+
+
+
+
+	and ffv.flex_value_set_id = fifs.flex_value_set_id
+	and ffv.enabled_flag = 'Y'
+
+
+
+
+
+
+
+
+
+
+
+	and ffv.end_date_active is null
+	and gsob.set_of_books_id = 2
+
+
+
+
+
+
+
+
+
+
+
+	and fifs.application_column_name = 'SEGMENT4'
+	order by ffv.flex_value
+
+</select>
+   <select id="12" resultType="Map" parameterType="Map" useCache="false">SELECT
+	@rownum :=@rownum + 1 AS rownum ,
+
+
+
+
+
+
+	ppa.PROJECT_TYPE
 
 
 FROM
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -355,543 +395,38 @@ FROM
 
 	pa_projects_all ppa ,
 
-
-
-
 	(SELECT @rownum := 0) tmp_row_number
 
 
 
 
 
+GROUP BY
+
+	ppa.PROJECT_TYPE
+
+</select>
+   <select id="13" resultType="Map" parameterType="Map" useCache="false">SELECT
+	@rownum :=@rownum + 1 code ,
 
 
 
 
+	ppa.PROJECT_TYPE  name
 
 
+FROM
 
 
+	pa_projects_all ppa ,
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	(SELECT @rownum := 0) tmp_row_number
 
 
 GROUP BY
-
-
 
 
 	ppa.PROJECT_TYPE
-</select>
-   <select id="14" resultType="Map" parameterType="Map" useCache="false">SELECT 
-    pv.SEGMENT1 value_code,
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   pv.VENDOR_NAME value_name
-
-from po_vendors pv
-</select>
-   <select id="15" resultType="Map" parameterType="Map" useCache="false">SELECT
-	ppa.PROJECT_STATUS_CODE  value_code ,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	ppa.PROJECT_STATUS_CODE  value_name
-
-FROM
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	pa_projects_all ppa
-
-GROUP BY ppa.PROJECT_STATUS_CODE
-</select>
-   <select id="16" resultType="Map" parameterType="Map" useCache="false">select ffv.flex_value value_code,ffvt.description value_name
-
- from fnd_id_flex_segments fifs,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       gl_sets_of_books     gsob,
-
-       fnd_flex_values      ffv,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-       fnd_flex_values_tl   ffvt
-
- where gsob.chart_of_accounts_id = fifs.id_flex_num
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   and id_flex_code = 'GL#'
-
-   and ffv.flex_value_id = ffvt.flex_value_id
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   and ffvt.language = 'ZHS'
-
-   and ffv.flex_value_set_id = fifs.flex_value_set_id
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   and ffv.enabled_flag = 'Y'
-
-   and ffv.end_date_active is null
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   and gsob.set_of_books_id = 2
-
-   and fifs.application_column_name = 'SEGMENT1'
-</select>
-   <select id="17" resultType="Map" parameterType="Map" useCache="false">SELECT
-	gps.PERIOD_NAME  value_code,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	CONCAT(
-		gps.PERIOD_
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-YEAR ,
-		'-' ,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		gps.PERIOD_NUM
-	) value_name
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-FROM
-	gl_period_statuses gps
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-WHERE
-	gps.SET_OF_BOOKS_ID = 2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-AND gps.APPLICATION_ID = 101
-AND gps.PERIOD_YEAR = 2016
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-ORDER BY
-	gps.PERIOD_YEAR ,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	gps.PERIOD_NUM</select>
-   <select id="25" resultType="Map" parameterType="Map" useCache="false">
-	   SELECT
-	ppa.PROJECT_TYPE 1 value_code ,
-    ppa.PROJECT_TYPE  value_name
-
-
-
-FROM
-	pa_projects_all ppa
-GROUP BY
-	ppa.PROJECT_TYPE
-   </select>
-   <select id="26" resultType="Map" parameterType="Map" useCache="false">SELECT
-	ppa.PROJECT_TYPE  value_code ,
-    ppa.PROJECT_TYPE  value_name
-
-
-
-FROM
-	pa_projects_all ppa
-GROUP BY
-	ppa.PROJECT_TYPE</select>
-</mapper>
+</select></mapper>

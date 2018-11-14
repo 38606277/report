@@ -108,10 +108,6 @@ public class QueryControl extends RO {
         try{
             sqlSession.getConnection().setAutoCommit(false);
             JSONObject jsonFunc = JSONObject.parseObject(pJson);
-
-            String escapeSQL = jsonFunc.getString("qry_sql");
-            escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
-            jsonFunc.put("qry_sql",escapeSQL);
             String qry_id = queryService.createQueryName(sqlSession,jsonFunc);
 
 
@@ -146,9 +142,6 @@ public class QueryControl extends RO {
             queryService.createQueryOut(sqlSession,jsonQuery.getJSONArray("out"),String.valueOf(qry_id));
 
             //更新主表
-            String escapeSQL = jsonQuery.getString("qry_sql");
-            escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
-            jsonQuery.put("qry_sql",escapeSQL);
             queryService.updateQueryName(sqlSession,jsonQuery);
 
             //更新SQL文件
@@ -411,18 +404,65 @@ public class QueryControl extends RO {
             SqlSession targetSqlSession = DbFactory.Open(db);
             // 强转成自己想要的类型
             aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,Map.class,map,StatementType.PREPARED);
-            aResult = JsonUtil.transfListMap(aResult);   // 转换key为大写的
+            List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
+            //将集合遍历
+            for(int i=0;i<aResult.size();i++) {
+                //循环new  map集合
+                Map<String, Object> obdmap = new HashMap<String, Object>();
+                Set<String> se = aResult.get(i).keySet();
+                for (String set : se) {
+                    //在循环将大写的KEY和VALUE 放到新的Map
+                    obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                }
+                //将Map放进List集合里
+                newList.add(obdmap);
+            }
             if(page!=null){
                 totalSize = ((PageRowBounds)bounds).getTotal();
             }else{
-                totalSize = Long.valueOf(aResult.size());
+                totalSize = Long.valueOf(newList.size());
             }
-            result.put("list", aResult);
+            result.put("list", newList);
             result.put("totalSize", totalSize);
         }catch (Exception e){
             e.printStackTrace();
             return ExceptionMsg(e.getCause().getMessage());
         }
+
+//            Object aResult = null;
+//        try {
+//            // String usersqlPath = AppConstants.getUserSqlPath() + File.separator + queryClassName + ".xml";
+//            SqlTemplate template = new SqlTemplate();
+//            queryService.assemblySqlTemplate(template,queryClassName,queryID);
+//            // 输入参数放入map中
+//            JSONArray inTemplate = template.getIn();
+//            JSONArray inValue = JSONArray.parseArray(pJson);
+//
+//            Map<String,Object> map = new LinkedHashMap<String,Object>();
+//            if (inTemplate != null) {
+//                for (int i = 0; i < inTemplate.size(); i++) {
+//                    JSONObject aJsonObject = (JSONObject) inTemplate.get(i);
+//                    String id = aJsonObject.getString("in_id");
+//                    map.put(id, inValue.getString(i));
+//                }
+//            }
+//            Map<String,Object> qryParamMap = new HashMap<String,Object>();
+//            List<FuncMetaData> list = new ArrayList<FuncMetaData>();
+//            acquireFuncMetaData(list,map,qryParamMap);
+//            if(list.size()!=0){
+//                aResult = excuteFunc(list,0,qryParamMap,template);
+//            }else{
+//                    String db = template.getDb();
+//                    String namespace = template.getNamespace();
+//                    String qryId = template.getId();
+//                    aResult = DbFactory.Open(db).selectOne("qry_"+namespace + "." + qryId, map);
+//
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            aResult=e.getMessage();
+//        }
+
         long t2 = System.nanoTime();
         System.out.println("结束执行查询:" + "QueryClassName:" + queryClassName + "," + "selectID:" + queryID + ","
                 + "pJson:" + pJson + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));

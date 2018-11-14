@@ -3,15 +3,10 @@ package root.report.util;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class JsonUtil {
 
@@ -44,32 +39,5 @@ public class JsonUtil {
 	    }  
 	    
 	   return array.toString();  
-	}
-
-	// 把查询出来的Map的key 变为大写的
-	private static Map genChildParamMap(Object object) {
-		if (object instanceof Map) {
-			Map<String, Object> paramMap = (Map<String, Object>) JSONObject.toJSON(object);
-			Map<String, Object> newMap = Maps.newHashMapWithExpectedSize(paramMap.size());
-			paramMap.entrySet().stream().filter(me -> me.getValue() != null).forEach(me ->
-					newMap.put(me.getKey().toUpperCase(), genChildParamMap(me.getValue())));
-			return newMap;
-		}else {
-			return null;
-		}
-	}
-
-	/**
-	 *
-	 * 功能描述:
-	 *		把传递进来的List<Map> 结果集中的每一条Map的key变为大写的
-	 * @param:  List<Map<String,Object>>
-	 * @return:	List<Map<String,Object>>
-	 * @date: 2018/11/13 14:12
-	 */
-	 public static List<Map> transfListMap(List<Map> sourceList){
-		 List<Map> resultList = new ArrayList<>(Lists.newArrayListWithExpectedSize(sourceList.size()));
-		 sourceList.forEach( tranObj -> resultList.add(genChildParamMap(tranObj)));
-		 return resultList;
-	 }
+	}  
 }
