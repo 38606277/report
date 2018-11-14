@@ -111,6 +111,9 @@ public class FunctionService {
             mapFunc.put("func_type", jsonFunc.getString("func_type"));
             mapFunc.put("func_db", jsonFunc.getString("func_db"));
             // mapFunc.put("func_sql", jsonFunc.getString("func_sql"));
+            String escapeSQL=jsonFunc.getString("func_sql");
+            escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+            mapFunc.put("func_sql", escapeSQL);
 
             sqlSession.insert("function.createFunctionName", mapFunc);
 
@@ -127,6 +130,9 @@ public class FunctionService {
         mapFunc.put("func_desc", jsonFunc.getString("func_desc"));
         mapFunc.put("func_type", jsonFunc.getString("func_type"));
         mapFunc.put("func_db", jsonFunc.getString("func_db"));
+        String escapeSQL=jsonFunc.getString("func_sql");
+        escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        mapFunc.put("func_sql", escapeSQL);
         return sqlSession.update("function.updateFunctionName", mapFunc);
     }
   /*  public int deleteFunctionName(String aFunID) {

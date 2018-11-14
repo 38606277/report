@@ -51,7 +51,9 @@ public class QueryService {
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
         mapFunc.put("qry_file", jsonFunc.getString("qry_file"));
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
-        mapFunc.put("qry_sql", jsonFunc.getString("qry_sql"));
+        String escapeSQL=jsonFunc.getString("qry_sql");
+        escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        mapFunc.put("qry_sql", escapeSQL);
         sqlSession.insert("query.createQueryName", mapFunc);
         return mapFunc.get("id").toString();
     }
@@ -206,7 +208,9 @@ public class QueryService {
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
         mapFunc.put("qry_file", jsonFunc.getString("qry_file"));
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
-        mapFunc.put("qry_sql", jsonFunc.getString("qry_sql"));
+        String escapeSQL=jsonFunc.getString("qry_sql");
+        escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        mapFunc.put("qry_sql", escapeSQL);
         return sqlSession.update("query.updateQueryName", mapFunc);
     }
 
