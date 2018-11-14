@@ -404,12 +404,25 @@ public class QueryControl extends RO {
             SqlSession targetSqlSession = DbFactory.Open(db);
             // 强转成自己想要的类型
             aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,Map.class,map,StatementType.PREPARED);
+            List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
+            //将集合遍历
+            for(int i=0;i<aResult.size();i++) {
+                //循环new  map集合，
+                Map<String, Object> obdmap = new HashMap<String, Object>();
+                Set<String> se = aResult.get(i).keySet();
+                for (String set : se) {
+                    //在循环将大写的KEY和VALUE 放到新的Map
+                    obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                }
+                //将Map放进List集合里
+                newList.add(obdmap);
+            }
             if(page!=null){
                 totalSize = ((PageRowBounds)bounds).getTotal();
             }else{
-                totalSize = Long.valueOf(aResult.size());
+                totalSize = Long.valueOf(newList.size());
             }
-            result.put("list", aResult);
+            result.put("list", newList);
             result.put("totalSize", totalSize);
         }catch (Exception e){
             e.printStackTrace();
