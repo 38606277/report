@@ -708,6 +708,18 @@ public class QueryService {
 
         return jResult;
     }
+    public List<Map<String, String>> getQueryOutLink(String qry_id,String out_id) {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("qry_id", qry_id);
+        param.put("out_id", out_id);
+        //查找函数定义输出参数 qry_out
+        List<Map<String, String>> outList = sqlSession.selectList("query.getQueryOutLink", param);
+
+        return outList;
+    }
+
 
     /**
      * 功能描述: 查找 qry_name所有记录
