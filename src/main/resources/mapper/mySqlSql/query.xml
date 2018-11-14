@@ -265,6 +265,21 @@
 		    qc.class_id = #{class_id,jdbcType=INTEGER}
 		and qc.class_id = qry.class_id
 	</select>
+    <!-- 根据 class_id 查询 qry_name的所有信息 -->
+    <select id="getQueryOutLink" parameterType="Map" resultType="Map">
+        SELECT
+            qol.qry_id ,
+            qol.out_id ,
+            qol.link_qry_id ,
+            qol.link_in_id ,
+            qol.link_in_id_value_type ,
+            qol.link_in_id_value
+        FROM
+            qry_out_link qol
+        WHERE
+            qol.qry_id = ${qry_id}
+        AND out_id = #{out_id}
+    </select>
 
 
     <!-- 往query_out_lick表当中插入对应记录 -->
