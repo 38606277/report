@@ -191,7 +191,7 @@ public class QueryControl extends RO {
     }
     // 根据 class_id 查询所有的 func_name 表当中的信息
     @RequestMapping(value = "/getQueryOutLink/{qry_id}/{out_id}", produces = "text/plain;charset=UTF-8")
-    public String getQueryByClassID(@PathVariable("qry_id") String qry_id,
+    public String getQueryOutLink(@PathVariable("qry_id") String qry_id,
                                     @PathVariable("out_id") String out_id) throws DocumentException, SAXException {
 
         List<Map<String, String>> listFunc = new ArrayList<>();
