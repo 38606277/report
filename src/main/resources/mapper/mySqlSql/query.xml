@@ -267,15 +267,18 @@
 	</select>
     <!-- 根据 class_id 查询 qry_name的所有信息 -->
     <select id="getQueryOutLink" parameterType="Map" resultType="Map">
-        SELECT
+         SELECT
             qol.qry_id ,
             qol.out_id ,
             qol.link_qry_id ,
             qol.link_in_id ,
             qol.link_in_id_value_type ,
-            qol.link_in_id_value
+            qol.link_in_id_value,
+            qn.class_id,
+            qn.qry_name
         FROM
             qry_out_link qol
+		INNER join qry_name qn on qol.link_qry_id=qn.qry_id
         WHERE
             qol.qry_id = ${qry_id}
         AND out_id = #{out_id}
