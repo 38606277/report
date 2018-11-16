@@ -554,7 +554,7 @@ public class QueryService {
         sqlSession.insert("query.createQueryClass", map);
         String class_id = String.valueOf(map.get("id"));
         // 生成 xml文件
-        String userSqlPath = AppConstants.getUserSqlPath() + File.separator + AppConstants.QueryPrefix + class_id + ".xml";
+       /* String userSqlPath = AppConstants.getUserSqlPath() + File.separator + AppConstants.QueryPrefix + class_id + ".xml";
         File file = new File(userSqlPath);   // 自增長ID不會重名
         file.createNewFile();
         Document doc = DocumentHelper.createDocument();
@@ -569,7 +569,7 @@ public class QueryService {
         cacheElement.addAttribute("readOnly", MybatisCacheConfiguration.READONLY_VALUE);
         doc.add(mapper);
         doc.addDocType("mapper", headModel, null);
-        writeToXml(doc, file);
+        writeToXml(doc, file);*/
         return AppConstants.QueryPrefix + class_id;
     }
 

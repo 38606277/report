@@ -264,7 +264,7 @@ public class QueryControl extends RO {
         String class_id = "";
         try {
             class_id = this.queryService.createQueryClass(class_name,sqlSession);
-            DbFactory.init(DbFactory.FORM);
+            // DbFactory.init(DbFactory.FORM);
         } catch (IOException e) {
             sqlSession.getConnection().rollback();
             e.printStackTrace();
@@ -282,12 +282,12 @@ public class QueryControl extends RO {
         int flag = this.queryService.deleteQueryClassForRelation(class_id,sqlSession);
         if(flag==2){
             return ErrorMsg("3000","此func_class正在被其他表关联引用,不能删除");
-        }else {
+        }/*else {
             // 删除掉 xml文件
             String userSqlPath = AppConstants.getUserSqlPath() + File.separator + AppConstants.QueryPrefix+ class_id + ".xml";
             FileUtil.deleteFile(userSqlPath);
             DbFactory.init(DbFactory.FORM);
-        }
+        }*/
         return SuccessMsg("删除数据成功",null);
     }
 

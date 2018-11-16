@@ -79,7 +79,9 @@ public class DictService {
         map.put("dict_name",jsonObject.getString("dict_name"));
         map.put("dict_desc",jsonObject.getString("dict_desc"));
         map.put("dict_db",jsonObject.getString("dict_db"));
-        map.put("dict_sql",jsonObject.getString("dict_sql"));
+        String escapeSQL = jsonObject.getString("dict_sql");
+        escapeSQL = escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        map.put("dict_sql",escapeSQL);
         map.put("loaddata_mode",jsonObject.getString("loaddata_mode"));
         // map.put("loaddata_state",jsonObject.getString("loaddata_state")); // 默认给0 ： 表示未同步
         map.put("loaddata_state","0");
@@ -141,7 +143,9 @@ public class DictService {
         map.put("dict_name",jsonObject.getString("dict_name"));
         map.put("dict_desc",jsonObject.getString("dict_desc"));
         map.put("dict_db",jsonObject.getString("dict_db"));
-        map.put("dict_sql",jsonObject.getString("dict_sql"));
+        String escapeSQL = jsonObject.getString("dict_sql");
+        escapeSQL = escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        map.put("dict_sql",escapeSQL);
         map.put("loaddata_mode",jsonObject.getString("loaddata_mode"));
         map.put("loaddata_state",jsonObject.getString("loaddata_state"));
         sqlSession.update("dict.updateFuncDict",map);

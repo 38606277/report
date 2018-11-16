@@ -52,14 +52,8 @@ public class FunctionService {
                 .selectOne("function.getNameByID", param);
         //查找定义的SQL语句，先找到对应的类别，然后打开类别对应的文件，找到相的SQL
         if(mapFunc !=null && !mapFunc.isEmpty()){
-            String class_id = String.valueOf(mapFunc.get("class_id"));
-            String sql = getSqlTemplate(class_id,func_id,true);
-            if(StringUtils.isNotBlank(sql)){
-                mapFunc.put("func_sql",sql);
-            }
             jResult = JSONObject.parseObject(JSON.toJSONString(mapFunc, JsonUtil.features));
         }
-
         //查找函数定义输入参数
         List<Map<String, String>> inList = DbFactory.Open(DbFactory.FORM)
                 .selectList("function.getInByID", param);
@@ -111,8 +105,8 @@ public class FunctionService {
             mapFunc.put("func_type", jsonFunc.getString("func_type"));
             mapFunc.put("func_db", jsonFunc.getString("func_db"));
             // mapFunc.put("func_sql", jsonFunc.getString("func_sql"));
-            String escapeSQL=jsonFunc.getString("func_sql");
-            escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+            String escapeSQL = jsonFunc.getString("func_sql");
+            escapeSQL = escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
             mapFunc.put("func_sql", escapeSQL);
 
             sqlSession.insert("function.createFunctionName", mapFunc);
@@ -130,8 +124,8 @@ public class FunctionService {
         mapFunc.put("func_desc", jsonFunc.getString("func_desc"));
         mapFunc.put("func_type", jsonFunc.getString("func_type"));
         mapFunc.put("func_db", jsonFunc.getString("func_db"));
-        String escapeSQL=jsonFunc.getString("func_sql");
-        escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        String escapeSQL = jsonFunc.getString("func_sql");
+        escapeSQL = escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
         mapFunc.put("func_sql", escapeSQL);
         return sqlSession.update("function.updateFunctionName", mapFunc);
     }
@@ -757,7 +751,7 @@ public class FunctionService {
         sqlSession.insert("function.createFunctionClass", map);
         String class_id  = String.valueOf(map.get("id"));
         // 生成 xml文件
-        String userSqlPath = AppConstants.getUserFunctionPath() + File.separator + AppConstants.FunctionPrefix+class_id + ".xml";
+       /* String userSqlPath = AppConstants.getUserFunctionPath() + File.separator + AppConstants.FunctionPrefix+class_id + ".xml";
         File file = new File(userSqlPath);   // 自增長ID不會重名
         file.createNewFile();
         Document doc = DocumentHelper.createDocument();
@@ -773,7 +767,7 @@ public class FunctionService {
         cacheElement.addAttribute("readOnly", MybatisCacheConfiguration.READONLY_VALUE);
         doc.add(mapper);
         doc.addDocType("mapper", headModel, null);
-        writeToXml(doc, file);
+        writeToXml(doc, file);*/
         return AppConstants.FunctionPrefix+class_id;
     }
 
