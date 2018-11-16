@@ -173,6 +173,7 @@
 			qi.datatype ,
 			qi.dict_id ,
 			fd.dict_name ,
+            qi.dict_multiple,
 			qi.validate ,
 			qi.authtype_id ,
             qi.render,

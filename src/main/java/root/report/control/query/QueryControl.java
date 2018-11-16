@@ -480,7 +480,7 @@ public class QueryControl extends RO {
         long t2 = System.nanoTime();
         System.out.println("结束执行查询:" + "QueryClassName:" + queryClassName + "," + "selectID:" + queryID + ","
                 + "pJson:" + pJson + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));
-        return JSON.toJSONString(result);
+        return SuccessMsg("",result);
 
     }
 
