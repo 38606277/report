@@ -1,8 +1,8 @@
 package root.report.util;
 
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import org.apache.ibatis.annotations.CacheNamespace;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cache.TransactionalCacheManager;
 import org.apache.ibatis.cache.decorators.TransactionalCache;
@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.formula.functions.T;
 import org.mybatis.caches.ehcache.LoggingEhcache;
 import root.report.db.DbFactory;
+import root.report.util.cache.EhcacheManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -46,9 +47,12 @@ public class ExecuteSqlUtil {
      * @date: 2018/11/9 16:17
      */
     public static List<?> executeDataBaseSql(String executeSql, SqlSession sqlSession, String namespace, String mapper_id, RowBounds bounds,
-                                               Class<?> clazz,Object param,StatementType statementType){
+                                               Class<?> clazz,Object param,StatementType statementType,Boolean cacheFlag){
         if(statementType==null){
             statementType = StatementType.PREPARED; // 默认为 prepared
+        }
+        if(cacheFlag==null){
+            cacheFlag = false;  // 默认为false 默认不开启缓存
         }
 
         List<?> list = null;
@@ -71,44 +75,20 @@ public class ExecuteSqlUtil {
         SqlSource sqlSource = languageDriver.createSqlSource(configuration,sb.toString(),clazz);  //  泛型化入参
       //  configuration.getCaches().forEach(e -> System.out.print(e.getId()));
         MappedStatement ms = null;
+
         // 如果我们从 configuration 当中可以取得到的话，则看缓存当中是否存在
         if(configuration.getMappedStatementNames().contains(namespace+"."+mapper_id)){
             ms = configuration.getMappedStatement(namespace+"."+mapper_id);
         }else {
-            log.info("======不存在此mappedStatment=====");
+            log.info("======不存在此mappedStatment,可以构建=====");
         }
         if(ms == null){
-            ms =  newSelectMappedStatement(configuration,namespace+"."+mapper_id,sqlSource,clazz,statementType);
+            // 构建ms，这个时候 configuration 当中是一定存在ms了
+            ms =  newSelectMappedStatement(configuration,namespace+"."+mapper_id,sqlSource,clazz,statementType,cacheFlag);
         }
-        // 组装cache
-        cacheKey = sqlSession.getConfiguration().newExecutor(new Transaction() {
-            @Override
-            public Connection getConnection() throws SQLException {
-                return this.getConnection();
-            }
-            @Override
-            public void commit() throws SQLException {
-                this.getConnection().commit();
-            }
-            @Override
-            public void rollback() throws SQLException {
-                this.getConnection().rollback();
-            }
-            @Override
-            public void close() throws SQLException {
-                this.getConnection().close();
-            }
-            @Override
-            public Integer getTimeout() throws SQLException {
-                return 5000;
-            }
-        }, ExecutorType.SIMPLE).createCacheKey(ms,param,bounds,ms.getBoundSql(param));
-        cacheList = (List<?>)tcm.getObject(ms.getCache(),cacheKey);
 
-        if(cacheList!=null && cacheList.size()>0){
-            log.info("cache hit  缓存命中,命中率为:");
-            return cacheList;
-        }else {
+        if(!cacheFlag){
+            // 如果不需要缓存  那么直接查询就行 ,并且也不需要装入到缓存当中去
             if(bounds!=null){
                 list = sqlSession.selectList(namespace+"."+mapper_id,param,bounds);
                 log.info("执行了一次查询");
@@ -116,16 +96,66 @@ public class ExecuteSqlUtil {
                 list = sqlSession.selectList(namespace+"."+mapper_id,param);
                 log.info("执行了一次查询");
             }
-            // 装入缓存
-            if(cacheKey!=null){
-                tcm.putObject(ms.getCache(),cacheKey,list);
+            return list;
+        }else {
+            // 组装cache
+            cacheKey = sqlSession.getConfiguration().newExecutor(new Transaction() {
+                @Override
+                public Connection getConnection() throws SQLException {
+                    return this.getConnection();
+                }
+                @Override
+                public void commit() throws SQLException {
+                    this.getConnection().commit();
+                }
+                @Override
+                public void rollback() throws SQLException {
+                    this.getConnection().rollback();
+                }
+                @Override
+                public void close() throws SQLException {
+                    this.getConnection().close();
+                }
+                @Override
+                public Integer getTimeout() throws SQLException {
+                    return 5000;
+                }
+            }, ExecutorType.SIMPLE).createCacheKey(ms,param,bounds,ms.getBoundSql(param));
+
+            // 从 ehcache 当中去缓存的值，如果存在则返回不存在 则 查询并装入到缓存
+            Element ehcacheElement  = EhcacheManager.getCache().get(cacheKey.toString());
+            if(ehcacheElement!=null && ehcacheElement.getObjectValue()!=null){
+                cacheList = (List<?>) ehcacheElement.getObjectValue();   // 强转
+                log.info("cache hit  缓存命中,命中率为:");
+                return cacheList;
+            }else {
+                if(bounds!=null){
+                    list = sqlSession.selectList(namespace+"."+mapper_id,param,bounds);
+                    log.info("执行了一次查询,并把结果集装入到缓存当中");
+                }else {
+                    list = sqlSession.selectList(namespace+"."+mapper_id,param);
+                    log.info("执行了一次查询,并把结果集装入到缓存当中");
+                }
+                // 装入缓存
+               /* if(cacheKey!=null){
+                    tcm.putObject(ms.getCache(),cacheKey,list);
+                }*/
+                log.info("#############=>测试cacheKey呗重写了没有"+cacheKey.toString());
+                // VERSION 3 切到 ehcache 缓存当中 ，cacheKey 的toString 方法已经被重写
+                //  默认都配置到 mybatis-ys-cache 这个当中去了
+                //  Ehcache ehcache = new Cache(cacheKey.toString(),5000,false,false,10,2);
+                Element resultElement = new Element(cacheKey.toString(), list);
+                EhcacheManager.getCache().put(resultElement);
             }
+            // cacheList = (List<?>)tcm.getObject(ms.getCache(),cacheKey);
         }
+
         return list;
     }
 
-    //
-    private  static MappedStatement newSelectMappedStatement(Configuration configuration,String msId, SqlSource sqlSource, final Class<?> resultType,StatementType statementType) {
+    // cacheFlag 是否开启缓存标志位
+    private  static MappedStatement newSelectMappedStatement(Configuration configuration,String msId, SqlSource sqlSource,
+                                                             final Class<?> resultType,StatementType statementType,Boolean cacheFlag) {
         // 加强逻辑 ： 一定要防止 MappedStatement 重复问题
         MappedStatement msTest = null;
         try{
@@ -139,12 +169,12 @@ public class ExecuteSqlUtil {
         }catch (IllegalArgumentException e){
             log.info("没有此mappedStatment,可以注入此mappedStatement到configuration当中");
         }
+        MappedStatement ms = null;
         // 构建一个 select 类型的ms ，通过制定SqlCommandType.SELECT
-        MappedStatement ms = new MappedStatement.Builder(
+        ms = new MappedStatement.Builder(
                 configuration, msId, sqlSource, SqlCommandType.SELECT)
                 .statementType(statementType)
-                .cache(new LoggingEhcache(msId))
-                .useCache(true)
+                .useCache(false)      // 切断掉 二级缓存 切换到 ehcache 当中去
                 .resultMaps(new ArrayList<ResultMap>() {
                     {
                         add(new ResultMap.Builder(configuration,
