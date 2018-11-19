@@ -80,6 +80,28 @@
 
 
 	</select>
+	<!--查我函数名称-->
+	<select id="getInByName" parameterType="Map" resultType="Map">
+		SELECT
+		fi.func_id ,
+		fi.in_id ,
+		fi.in_name ,
+		fi.datatype ,
+		fi.dict_id ,
+		fd.dict_name ,
+		fi.validate ,
+		IF(fi.isformula , 1 , 0) isformula ,
+		fi.authtype_id ,
+		fat.authtype_desc
+		FROM
+		func_in fi
+		JOIN func_name  fn on  fn.func_id=fi.func_id
+		LEFT JOIN func_dict fd ON fi.dict_id = fd.dict_id
+		LEFT JOIN fnd_authtype fat ON fi.authtype_id = fat.authtype_id
+		WHERE
+		fn.func_name = #{func_name}
+
+	</select>
 
 	<!--查我函数名称-->
 	<select id="getOutByID" parameterType="Map" resultType="Map">

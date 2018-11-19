@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import com.mysql.cj.x.json.JsonArray;
+import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -25,6 +27,7 @@ import root.report.db.DbFactory;
 import root.report.query.FuncMetaData;
 import root.report.query.SqlTemplate;
 import root.report.service.FunctionService;
+import root.report.util.ExecuteSqlUtil;
 import root.report.util.FileUtil;
 import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
@@ -73,15 +76,26 @@ public class FunctionControl1 extends RO {
     // 根据 class_id 查询所有的 func_name 表当中的信息
     @RequestMapping(value = "/getFunctionByClassID/{class_id}", produces = "text/plain;charset=UTF-8")
     public String getFunctionByClassID(@PathVariable("class_id") String class_id) throws DocumentException, SAXException {
-        int intClassId = Integer.parseInt(class_id);
-        return functionService.getFunctionByClassID(intClassId);
+        List<Map<String, Object>> listFunc ;
+        try{
+            int intClassId = Integer.parseInt(class_id);
+            listFunc = functionService.getFunctionByClassID(intClassId);
+            return  SuccessMsg("",listFunc);
+        }catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
     }
 
     // 根据 func_id 查询出 func_in 跟func_out 表当中的数据
-    @RequestMapping(value = "/getFunctionParamByFuncID/{func_id}", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/getFunctionParam/{func_id}", produces = "text/plain;charset=UTF-8")
     public String getFunctionParam(@PathVariable("func_id") String func_id) {
-        JSONObject jsonObject = functionService.getFunctionParam(func_id);
-        return JSON.toJSONString(jsonObject,JsonUtil.features);
+
+        try{
+            JSONObject jParam = functionService.getFunctionParam(func_id);
+            return  SuccessMsg("",jParam);
+        }catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
     }
 
     @RequestMapping(value = "/createFunction", produces = "text/plain;charset=UTF-8")
@@ -116,10 +130,18 @@ public class FunctionControl1 extends RO {
             sqlSession.getConnection().setAutoCommit(false);
             JSONObject jsonFunc = JSONObject.parseObject(pJson);
 
-            functionService.updateFunctionName(sqlSession,jsonFunc);
+            int func_id=jsonFunc.getInteger("func_id");
 
-            functionService.updateFunctionIn(sqlSession,jsonFunc.getJSONArray("in"));
-            functionService.updateFunctionOut(sqlSession,jsonFunc.getJSONArray("out"));
+            //删除并创建IN表
+            functionService.deleteFunctionInForJsonArray(sqlSession,func_id);
+            functionService.createFunctionIn(sqlSession,jsonFunc.getJSONArray("in"),String.valueOf(func_id));
+
+            //先删除后创建Out表
+            functionService.deleteFunctionOutForJsonArray(sqlSession,func_id);
+            functionService.createFunctionOut(sqlSession,jsonFunc.getJSONArray("out"),String.valueOf(func_id));
+
+            //更新主表
+            functionService.updateFunctionName(sqlSession,jsonFunc);
            /* functionService.updateSqlTemplate(jsonFunc.getString("class_id"),
                     jsonFunc.getString("func_id"),
                     jsonFunc.getString("func_sql"));*/
@@ -274,56 +296,47 @@ public class FunctionControl1 extends RO {
 
 
     // 执行excute的代码 ：
-    @RequestMapping(value = "/execFunction/{FunctionClassName}/{FunctionID}", produces = "text/plain;charset=UTF-8")
-    public String execFunction(@PathVariable("FunctionClassName") String FunctionClassName,
-                               @PathVariable("FunctionID") String FunctionID, @RequestBody String pJson) {
-        System.out.println("开始执行查询:" + "selectClassName:" + FunctionClassName + "," + "selectID:" + FunctionID + ","
+    @RequestMapping(value = "/execFunction/{FunctionName}", produces = "text/plain;charset=UTF-8")
+    public Object execFunction(@PathVariable("FunctionName") String FunctionName, @RequestBody String pJson) {
+        System.out.println("开始执行查询:" + "FunctionName:" + FunctionName + ","
                 + "pJson:" + pJson + ",");
         long t1 = System.nanoTime();
         Object aResult = null;
         try {
-            // String usersqlPath = AppConstants.getUserFunctionPath() + File.separator + FunctionClassName + ".xml";
-            // SqlTemplate template = new SqlTemplate(usersqlPath, FunctionID);   // 组装了 comment 跟 func_id
-            SqlTemplate template = new SqlTemplate();
-            functionService.assemblySqlTemplate(template,FunctionClassName,FunctionID);
-            // 输入参数放入map中
-            JSONArray inTemplate = template.getIn();
-            JSONArray inValue = JSONArray.parseArray(pJson);
 
-            Map<String,Object> map = new LinkedHashMap<String,Object>();
-            Map<String,Boolean> dataParam = new HashMap<String,Boolean>();
-            if (inTemplate != null) {
-                for (int i = 0; i < inTemplate.size(); i++) {
-                    JSONObject aJsonObject = (JSONObject) inTemplate.get(i);
-                    String id = aJsonObject.getString("in_id");
-                    map.put(id, inValue.getString(i));
-                    Boolean inFormula = aJsonObject.getBoolean("isformula");
-                    dataParam.put(id, inFormula);
-                }
+            String FunctionClassName = "function";
+            //查找函数定义输入参数
+            Map param = new HashMap();
+            param.put("func_name", FunctionName);
+            List<Map<String, String>> inParam = DbFactory.Open(DbFactory.FORM)
+                    .selectList("function.getInByName", param);
+
+            //生成输入参数
+            param.clear();
+            JSONArray paramValue = JSONArray.parseArray(pJson);
+            for (int i = 0; i < inParam.size(); i++) {
+                Map<String, String> aInParam = inParam.get(i);
+                param.put(aInParam.get("in_id"), paramValue.getString(i));
             }
-            Map<String,Object> funcParamMap = new HashMap<String,Object>();
-            List<FuncMetaData> list = new ArrayList<FuncMetaData>();
-            acquireFuncMetaData(list,map,funcParamMap,dataParam);
-            if(list.size()!=0){
-                aResult = excuteFunc(list,0,funcParamMap,template);
-            }else{
-                if(template.getSelectType().equals("sql")) {
-                    String db = template.getDb();
-                    String namespace = template.getNamespace();
-                    String funcId = template.getId();
-                    aResult = DbFactory.Open(db).selectOne(namespace + "." + funcId, map);
-                }
-            }
+            //执行查询
+            aResult=param.toString();
+//            Long totalSize = 0L;
+////            String db = template.getDb();
+////            String namespace = template.getNamespace();
+////            String qryId = template.getId();
+//            // 改写掉  用新的方式 VERSION TWO 版本
+//            // aResult = DbFactory.Open(db).selectList(namespace + "." + qryId, map, bounds);
+//            SqlSession targetSqlSession = DbFactory.Open(db);
+//            // 强转成自己想要的类型
+//            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql("",targetSqlSession,namespace,qryId,bounds,Map.class,map,StatementType.PREPARED,true);
+
+
         } catch (Exception e) {
             e.printStackTrace();
-            aResult=e.getMessage();
+            aResult = e.getMessage();
+
         }
-
-        long t2 = System.nanoTime();
-        System.out.println("结束执行查询:" + "FunctionClassName:" + FunctionClassName + "," + "selectID:" + FunctionID + ","
-                + "pJson:" + pJson + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));
-        return JSON.toJSONString(aResult, JsonUtil.features);
-
+        return aResult;
     }
 
     private BigDecimal excuteFunc(List<FuncMetaData> list, int index, Map<String,Object> paramMap, SqlTemplate template) throws Exception{

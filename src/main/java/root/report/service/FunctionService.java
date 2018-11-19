@@ -70,11 +70,10 @@ public class FunctionService {
     /**
      * 功能描述: 根据  class_id 查询出 func_name 表当中的信息
      */
-    public String getFunctionByClassID(int class_id) throws SAXException, DocumentException {
-        JSONObject jResult = new JSONObject();
+    public List<Map<String,Object>>  getFunctionByClassID(int class_id) throws SAXException, DocumentException {
         List<Map<String,Object>> listFuncName = DbFactory.Open(DbFactory.FORM).
                 selectList("function.getFuncNameInfoByClassID",class_id);
-        return JSON.toJSONString(listFuncName, JsonUtil.features);
+        return listFuncName;
     }
 
     // 根据 func_id 查询出对应的  func_in 跟func_out 表当中的信息

@@ -64,6 +64,19 @@ public class FunctionControl extends RO{
 		}
 
 	}
+	@RequestMapping(value = "/getFunctionByName/{func_Name}", produces = "text/plain;charset=UTF-8")
+	public String getFunctionByName(@PathVariable("func_Name") String func_Name) {
+
+
+		try{
+			JSONObject jsonObject=functionService.getFunctionByID(func_Name);
+			return  SuccessMsg("",jsonObject);
+		}catch (Exception ex){
+			return ExceptionMsg(ex.getMessage());
+
+		}
+
+	}
 
 	@RequestMapping(value = "/getFunctionClass", produces = "text/plain;charset=UTF-8")
 	public String getFunctionClass() {
