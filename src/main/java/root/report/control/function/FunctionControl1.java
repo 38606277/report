@@ -4,10 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
+import com.github.pagehelper.PageRowBounds;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
 import com.mysql.cj.x.json.JsonArray;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
@@ -296,30 +299,81 @@ public class FunctionControl1 extends RO {
 
 
     // 执行excute的代码 ：
-    @RequestMapping(value = "/execFunction/{FunctionName}", produces = "text/plain;charset=UTF-8")
-    public Object execFunction(@PathVariable("FunctionName") String FunctionName, @RequestBody String pJson) {
+    @RequestMapping(value = "/execFunction/{FunctionName}/{FunctionID}", produces = "text/plain;charset=UTF-8")
+    public Object execFunction(@PathVariable("FunctionName") String FunctionName,
+                               @PathVariable("FunctionID") String FunctionID,
+                               @RequestBody String pJson) {
         System.out.println("开始执行查询:" + "FunctionName:" + FunctionName + ","
                 + "pJson:" + pJson + ",");
         long t1 = System.nanoTime();
         Object aResult = null;
         try {
+            // 检查函数名是否存在、参数是否存在
+            // 组装 SqlTemplcat
 
-            String FunctionClassName = "function";
-            //查找函数定义输入参数
-            Map param = new HashMap();
-            param.put("func_name", FunctionName);
-            List<Map<String, String>> inParam = DbFactory.Open(DbFactory.FORM)
-                    .selectList("function.getInByName", param);
-
-            //生成输入参数
-            param.clear();
-            JSONArray paramValue = JSONArray.parseArray(pJson);
-            for (int i = 0; i < inParam.size(); i++) {
-                Map<String, String> aInParam = inParam.get(i);
-                param.put(aInParam.get("in_id"), paramValue.getString(i));
+            // step1:  解析 json参数，得到 分页对象跟执行入参对象
+            JSONArray arr = JSON.parseArray(pJson);
+            JSONObject params = arr.getJSONObject(0);//查询参数
+            JSONObject page = null;
+            if(arr.size()>1){
+                page = arr.getJSONObject(1);  //分页对象
             }
-            //执行查询
-            aResult=param.toString();
+
+            // step2: 从数据库组装 sql 值等
+            SqlTemplate template = new SqlTemplate();
+            functionService.assemblySqlTemplate(template,FunctionName,FunctionID);   // 填充sql值，数据库入参
+            if(StringUtils.isBlank(template.getSql())){
+                return ErrorMsg("3000","数据库查询SQL为空,无法继续操作");
+            }
+
+            // step3: 组装分页对象
+            RowBounds bounds = null;
+            if(page==null){
+                bounds = RowBounds.DEFAULT;
+            }else{
+                int startIndex=page.getIntValue("startIndex");
+                int perPage=page.getIntValue("perPage");
+                if(startIndex==1 || startIndex==0){
+                    startIndex=0;
+                }else{
+                    startIndex=(startIndex-1)*perPage;
+                }
+                bounds = new PageRowBounds(startIndex, perPage);
+            }
+
+            // step4: 对 in 参数进行解析话，若为 formula 表达式类型则要进行多次计算
+            JSONArray inTemplate = template.getIn();
+            JSONArray inValue = JSONArray.parseArray(pJson);
+            Map<String,Object> map = new LinkedHashMap<String,Object>();   // 映射  in_id <---> 值
+            Map<String,Boolean> dataParam = new HashMap<String,Boolean>();  // 映射  in_id <---> formula 是否是表达式
+            if (inTemplate != null) {
+                //  step 4.1 对 数据库的in 跟前台传进来的 pJosn进行映射
+                for (int i = 0; i < inTemplate.size(); i++) {
+                    JSONObject aJsonObject = (JSONObject) inTemplate.get(i);
+                    String id = aJsonObject.getString("id");
+                    map.put(id, inValue.getString(i));
+                    Boolean inFormula = aJsonObject.getBoolean("in_formula");
+                    dataParam.put(id, inFormula);
+                }
+            }
+
+            // step5. 执行每一步骤的 in 映射集，并将其结果相加
+            Map<String,Object> funcParamMap = new HashMap<String,Object>();
+            List<FuncMetaData> list = new ArrayList<FuncMetaData>();
+            acquireFuncMetaData(list,map,funcParamMap,dataParam);
+            // step5.1 执行
+            if(list.size()!=0){
+                aResult = excuteFunc(list,0,funcParamMap,template);
+            }else{
+                if(template.getSelectType().equals("sql")) {
+                    String db = template.getDb();
+                    String namespace = template.getNamespace();
+                    String funcId = template.getId();
+                    // 直接执行
+                    aResult = ExecuteSqlUtil.executeDataBaseSql(template.getSql(),DbFactory.Open(db),namespace,funcId,bounds,
+                            Map.class,map,StatementType.PREPARED,Boolean.TRUE);
+                }
+            }
 //            Long totalSize = 0L;
 ////            String db = template.getDb();
 ////            String namespace = template.getNamespace();
@@ -330,12 +384,13 @@ public class FunctionControl1 extends RO {
 //            // 强转成自己想要的类型
 //            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql("",targetSqlSession,namespace,qryId,bounds,Map.class,map,StatementType.PREPARED,true);
 
-
         } catch (Exception e) {
             e.printStackTrace();
             aResult = e.getMessage();
-
         }
+        long t2 = System.nanoTime();
+        System.out.println("结束执行查询:" + "FunctionClassName:" + FunctionName + "," + "selectID:" + FunctionID + ","
+                + "pJson:" + pJson + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));
         return aResult;
     }
 
@@ -355,7 +410,10 @@ public class FunctionControl1 extends RO {
                     String db = template.getDb();
                     String namespace = template.getNamespace();
                     String funcId = template.getId();
-                    sum = DbFactory.Open(db).selectOne(namespace + "." + funcId, paramMap);
+                    // 转换成新执行方法
+                    // sum = DbFactory.Open(db).selectOne(namespace + "." + funcId, paramMap);
+                    sum = (BigDecimal) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),DbFactory.Open(db),namespace,funcId,null,Map.class,
+                            paramMap,StatementType.PREPARED,Boolean.TRUE);  // 注意到没传入 bounds 分页参数
                 }
             }
             expression = expression.replace(s, sum.toString());

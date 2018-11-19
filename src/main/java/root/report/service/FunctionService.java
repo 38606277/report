@@ -833,8 +833,9 @@ public class FunctionService {
         sqlTemplate.setDb(jsonObject.containsKey("func_db")?jsonObject.getString("func_db"):"");
         sqlTemplate.setId(func_id);
         sqlTemplate.setSelectType(jsonObject.containsKey("func_type")?jsonObject.getString("func_type"):"");
-        // 组装sql
-        sqlTemplate.setSql(getSqlTemplate(namespace,func_id,false));
+        // 组装sql -> 改到从 数据库当中去  func_sql
+        // sqlTemplate.setSql(getSqlTemplate(namespace,func_id,false));
+        sqlTemplate.setSql(jsonObject.containsKey("func_sql")?jsonObject.getString("func_sql"):"");
         sqlTemplate.setNamespace(namespace);
     }
 
