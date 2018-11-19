@@ -378,7 +378,8 @@ public class QueryControl extends RO {
             }
             // 输入参数放入map中
             // JSONArray inTemplate = template.getIn();
-            JSONArray jsonArray = params.getJSONArray("in");
+
+            JSONObject objin=params.getJSONObject("in");
             RowBounds bounds = null;
             if(page==null){
                 bounds = RowBounds.DEFAULT;
@@ -393,20 +394,32 @@ public class QueryControl extends RO {
                 bounds = new PageRowBounds(startIndex, perPage);
             }
             Map map = new HashMap();
-            if(jsonArray!=null){
+            if(objin!=null){
                 String value = null,key=null;
-                JSONObject aJsonObject = null;
-                for (int i = 0; i < jsonArray.size(); i++){
-                    aJsonObject = (JSONObject) jsonArray.get(i);
-                    java.util.Iterator it = aJsonObject.entrySet().iterator();
-                    while(it.hasNext()) {
-                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
-                        key=entry.getKey().toString(); //返回与此项对应的键
-                        value=entry.getValue().toString(); //返回与此项对应的值
-                    }
+                java.util.Iterator it = objin.entrySet().iterator();
+                while(it.hasNext()) {
+                    java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
+                    key=entry.getKey().toString(); //返回与此项对应的键
+                    value=entry.getValue().toString(); //返回与此项对应的值
                     map.put(key, value);
                 }
+               System.err.println(map);
             }
+//            JSONArray jsonArray = params.getJSONArray("in");
+//            if(jsonArray!=null){
+//                String value = null,key=null;
+//                JSONObject aJsonObject = null;
+//                for (int i = 0; i < jsonArray.size(); i++){
+//                    aJsonObject = (JSONObject) jsonArray.get(i);
+//                    java.util.Iterator it = aJsonObject.entrySet().iterator();
+//                    while(it.hasNext()) {
+//                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
+//                        key=entry.getKey().toString(); //返回与此项对应的键
+//                        value=entry.getValue().toString(); //返回与此项对应的值
+//                    }
+//                    map.put(key, value);
+//                }
+//            }
 //            map.put("name",page.getString("searchResult"));
             List<Map> aResult = new ArrayList<Map>();
             Long totalSize = 0L;
