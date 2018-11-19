@@ -299,9 +299,8 @@ public class FunctionControl1 extends RO {
 
 
     // 执行excute的代码 ：
-    @RequestMapping(value = "/execFunction/{FunctionName}/{FunctionID}", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/execFunction/{FunctionName}", produces = "text/plain;charset=UTF-8")
     public Object execFunction(@PathVariable("FunctionName") String FunctionName,
-                               @PathVariable("FunctionID") String FunctionID,
                                @RequestBody String pJson) {
         System.out.println("开始执行查询:" + "FunctionName:" + FunctionName + ","
                 + "pJson:" + pJson + ",");
@@ -314,31 +313,14 @@ public class FunctionControl1 extends RO {
             // step1:  解析 json参数，得到 分页对象跟执行入参对象
             JSONArray arr = JSON.parseArray(pJson);
             JSONObject params = arr.getJSONObject(0);//查询参数
-            JSONObject page = null;
-            if(arr.size()>1){
-                page = arr.getJSONObject(1);  //分页对象
-            }
 
             // step2: 从数据库组装 sql 值等
             SqlTemplate template = new SqlTemplate();
-            functionService.assemblySqlTemplate(template,FunctionName,FunctionID);   // 填充sql值，数据库入参
+            // 实例化 FunctionID
+            String functionId = DbFactory.Open(DbFactory.FORM).selectOne("function.getFuncIdByName",FunctionName);
+            functionService.assemblySqlTemplate(template,FunctionName,functionId);   // 填充sql值，数据库入参
             if(StringUtils.isBlank(template.getSql())){
                 return ErrorMsg("3000","数据库查询SQL为空,无法继续操作");
-            }
-
-            // step3: 组装分页对象
-            RowBounds bounds = null;
-            if(page==null){
-                bounds = RowBounds.DEFAULT;
-            }else{
-                int startIndex=page.getIntValue("startIndex");
-                int perPage=page.getIntValue("perPage");
-                if(startIndex==1 || startIndex==0){
-                    startIndex=0;
-                }else{
-                    startIndex=(startIndex-1)*perPage;
-                }
-                bounds = new PageRowBounds(startIndex, perPage);
             }
 
             // step4: 对 in 参数进行解析话，若为 formula 表达式类型则要进行多次计算
@@ -370,26 +352,19 @@ public class FunctionControl1 extends RO {
                     String namespace = template.getNamespace();
                     String funcId = template.getId();
                     // 直接执行
-                    aResult = ExecuteSqlUtil.executeDataBaseSql(template.getSql(),DbFactory.Open(db),namespace,funcId,bounds,
-                            Map.class,map,StatementType.PREPARED,Boolean.TRUE);
+                    List<BigDecimal> resultBigDecimal = (List<BigDecimal>)ExecuteSqlUtil.executeDataBaseSql(template.getSql(),DbFactory.Open(db),namespace,funcId,null,
+                            Map.class,BigDecimal.class,map,StatementType.PREPARED,Boolean.TRUE);
+                    if(resultBigDecimal!=null && resultBigDecimal.size()>0){
+                        aResult = resultBigDecimal.get(0);
+                    }
                 }
             }
-//            Long totalSize = 0L;
-////            String db = template.getDb();
-////            String namespace = template.getNamespace();
-////            String qryId = template.getId();
-//            // 改写掉  用新的方式 VERSION TWO 版本
-//            // aResult = DbFactory.Open(db).selectList(namespace + "." + qryId, map, bounds);
-//            SqlSession targetSqlSession = DbFactory.Open(db);
-//            // 强转成自己想要的类型
-//            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql("",targetSqlSession,namespace,qryId,bounds,Map.class,map,StatementType.PREPARED,true);
-
         } catch (Exception e) {
             e.printStackTrace();
             aResult = e.getMessage();
         }
         long t2 = System.nanoTime();
-        System.out.println("结束执行查询:" + "FunctionClassName:" + FunctionName + "," + "selectID:" + FunctionID + ","
+        System.out.println("结束执行查询:" + "FunctionClassName:" + FunctionName+ ","
                 + "pJson:" + pJson + ",\n" + "time:" + String.format("%.4fs", (t2 - t1) * 1e-9));
         return aResult;
     }
@@ -412,8 +387,12 @@ public class FunctionControl1 extends RO {
                     String funcId = template.getId();
                     // 转换成新执行方法
                     // sum = DbFactory.Open(db).selectOne(namespace + "." + funcId, paramMap);
-                    sum = (BigDecimal) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),DbFactory.Open(db),namespace,funcId,null,Map.class,
-                            paramMap,StatementType.PREPARED,Boolean.TRUE);  // 注意到没传入 bounds 分页参数
+
+                    List<BigDecimal> resultBigDecimal = (List<BigDecimal>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),DbFactory.Open(db),namespace,funcId,null,
+                            Map.class, BigDecimal.class,paramMap,StatementType.PREPARED,Boolean.TRUE);  // 注意到没传入 bounds 分页参数
+                    if(resultBigDecimal!=null && resultBigDecimal.size()>0){
+                        sum = resultBigDecimal.get(0);
+                    }
                 }
             }
             expression = expression.replace(s, sum.toString());

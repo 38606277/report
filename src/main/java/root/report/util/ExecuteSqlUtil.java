@@ -47,7 +47,7 @@ public class ExecuteSqlUtil {
      * @date: 2018/11/9 16:17
      */
     public static List<?> executeDataBaseSql(String executeSql, SqlSession sqlSession, String namespace, String mapper_id, RowBounds bounds,
-                                               Class<?> clazz,Object param,StatementType statementType,Boolean cacheFlag){
+                                               Class<?> inClazz,Class<?> outClazz,Object param,StatementType statementType,Boolean cacheFlag){
         if(statementType==null){
             statementType = StatementType.PREPARED; // 默认为 prepared
         }
@@ -72,7 +72,7 @@ public class ExecuteSqlUtil {
         configuration.setCacheEnabled(true);  // 开启二级缓存?
 
         LanguageDriver languageDriver = configuration.getDefaultScriptingLanguageInstance();  // 2. languageDriver 是帮助我们实现dynamicSQL的关键
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration,sb.toString(),clazz);  //  泛型化入参
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration,sb.toString(),inClazz);  //  泛型化入参
       //  configuration.getCaches().forEach(e -> System.out.print(e.getId()));
         MappedStatement ms = null;
 
@@ -84,7 +84,7 @@ public class ExecuteSqlUtil {
         }
         if(ms == null){
             // 构建ms，这个时候 configuration 当中是一定存在ms了
-            ms =  newSelectMappedStatement(configuration,namespace+"."+mapper_id,sqlSource,clazz,statementType,cacheFlag);
+            ms =  newSelectMappedStatement(configuration,namespace+"."+mapper_id,sqlSource,outClazz,statementType,cacheFlag);
         }
 
         if(!cacheFlag){
@@ -174,7 +174,7 @@ public class ExecuteSqlUtil {
         ms = new MappedStatement.Builder(
                 configuration, msId, sqlSource, SqlCommandType.SELECT)
                 .statementType(statementType)
-                .useCache(false)      // 切断掉 二级缓存 切换到 ehcache 当中去
+                .useCache(false)      // 切断掉 二级缓存 切换到 ehcache 当中去，即是保证执行的时候不去二级缓存找了，直接查询
                 .resultMaps(new ArrayList<ResultMap>() {
                     {
                         add(new ResultMap.Builder(configuration,

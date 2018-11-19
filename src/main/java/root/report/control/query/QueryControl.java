@@ -430,7 +430,8 @@ public class QueryControl extends RO {
             // aResult = DbFactory.Open(db).selectList(namespace + "." + qryId, map, bounds);
             SqlSession targetSqlSession = DbFactory.Open(db);
             // 强转成自己想要的类型
-            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,Map.class,map,StatementType.PREPARED,true);
+            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,
+                    Map.class,Map.class,map,StatementType.PREPARED,true);
             List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
             //将集合遍历
             for(int i=0;i<aResult.size();i++) {
