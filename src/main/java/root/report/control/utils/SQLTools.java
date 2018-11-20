@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import root.report.util.SQLFormatUtil;
 import root.report.util.SQLUtils;
 
 @RestController
@@ -31,7 +32,11 @@ public class SQLTools extends RO {
         try{
             JSONObject jsonObject=JSONObject.parseObject(pJson);
 
-            String aformatSQl=SQLUtils.formatMySql(jsonObject.getString("sql"));
+            // String aformatSQl=SQLUtils.formatMySql(jsonObject.getString("sql"));
+            // System.out.println(aformatSQl);
+            //  新的format方法
+            String aformatSQl = new SQLFormatUtil().format(jsonObject.getString("sql"));
+            // System.out.println(aformatSQl);
             return  SuccessMsg("",aformatSQl);
         }catch (Exception ex){
             return  ExceptionMsg(ex.getMessage());

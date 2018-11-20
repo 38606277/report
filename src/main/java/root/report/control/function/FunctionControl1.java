@@ -310,14 +310,11 @@ public class FunctionControl1 extends RO {
             // 检查函数名是否存在、参数是否存在
             // 组装 SqlTemplcat
 
-            // step1:  解析 json参数，得到 分页对象跟执行入参对象
-            JSONArray arr = JSON.parseArray(pJson);
-            JSONObject params = arr.getJSONObject(0);//查询参数
-
             // step2: 从数据库组装 sql 值等
             SqlTemplate template = new SqlTemplate();
             // 实例化 FunctionID
-            String functionId = DbFactory.Open(DbFactory.FORM).selectOne("function.getFuncIdByName",FunctionName);
+            String functionName  = FunctionName;
+            String functionId = DbFactory.Open(DbFactory.FORM).selectOne("function.getFuncIdByName",functionName);
             functionService.assemblySqlTemplate(template,FunctionName,functionId);   // 填充sql值，数据库入参
             if(StringUtils.isBlank(template.getSql())){
                 return ErrorMsg("3000","数据库查询SQL为空,无法继续操作");
@@ -332,9 +329,9 @@ public class FunctionControl1 extends RO {
                 //  step 4.1 对 数据库的in 跟前台传进来的 pJosn进行映射
                 for (int i = 0; i < inTemplate.size(); i++) {
                     JSONObject aJsonObject = (JSONObject) inTemplate.get(i);
-                    String id = aJsonObject.getString("id");
+                    String id = aJsonObject.getString("in_id");
                     map.put(id, inValue.getString(i));
-                    Boolean inFormula = aJsonObject.getBoolean("in_formula");
+                    Boolean inFormula = aJsonObject.getIntValue("isformula")==1?true:false;
                     dataParam.put(id, inFormula);
                 }
             }
