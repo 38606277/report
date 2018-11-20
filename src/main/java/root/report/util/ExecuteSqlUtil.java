@@ -1,5 +1,7 @@
 package root.report.util;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageRowBounds;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -127,6 +129,10 @@ public class ExecuteSqlUtil {
             if(ehcacheElement!=null && ehcacheElement.getObjectValue()!=null){
                 cacheList = (List<?>) ehcacheElement.getObjectValue();   // 强转
                 log.info("cache hit  缓存命中,命中率为:");
+                Element ehcacheElementTotal =  EhcacheManager.getCache().get(cacheKey.toString()+":totalSize");
+                if(bounds instanceof  PageRowBounds && ehcacheElementTotal!=null){
+                    ((PageRowBounds) bounds).setTotal((Long) ehcacheElementTotal.getObjectValue());
+                }
                 return cacheList;
             }else {
                 if(bounds!=null){
@@ -135,6 +141,11 @@ public class ExecuteSqlUtil {
                 }else {
                     list = sqlSession.selectList(namespace+"."+mapper_id,param);
                     log.info("执行了一次查询,并把结果集装入到缓存当中");
+                }
+                // 设置缓存分页对象的 total 数量
+                Long totalResult = 0L;
+                if(bounds instanceof PageRowBounds){
+                    totalResult = ((PageRowBounds) bounds).getTotal();
                 }
                 // 装入缓存
                /* if(cacheKey!=null){
@@ -146,6 +157,9 @@ public class ExecuteSqlUtil {
                 //  Ehcache ehcache = new Cache(cacheKey.toString(),5000,false,false,10,2);
                 Element resultElement = new Element(cacheKey.toString(), list);
                 EhcacheManager.getCache().put(resultElement);
+                // 设置 总条数
+                Element resultElementTotal = new Element(cacheKey.toString()+":totalSize", totalResult);
+                EhcacheManager.getCache().put(resultElementTotal);
             }
             // cacheList = (List<?>)tcm.getObject(ms.getCache(),cacheKey);
         }
