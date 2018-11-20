@@ -148,7 +148,8 @@ public class FunctionControl1 extends RO {
            /* functionService.updateSqlTemplate(jsonFunc.getString("class_id"),
                     jsonFunc.getString("func_id"),
                     jsonFunc.getString("func_sql"));*/
-
+           // 移除掉 configuraiton 当中的 mapper
+            ExecuteSqlUtil.removeMapperStatement(sqlSession,jsonFunc.getString("func_name"),jsonFunc.getString("func_id"));
             sqlSession.getConnection().commit();
             // DbFactory.init(DbFactory.FORM);
             return SuccessMsg("修改报表成功","");
@@ -166,15 +167,17 @@ public class FunctionControl1 extends RO {
         try{
             sqlSession.getConnection().setAutoCommit(false);
             JSONArray jsonArray =  JSONObject.parseArray(pJson);
-
+            String namespace = "";
             for(int i = 0; i < jsonArray.size(); i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+                namespace = sqlSession.selectOne("function.getFuncNameById",jsonObject.getIntValue("func_id"));
                 functionService.deleteFunctionName(sqlSession,jsonObject.getIntValue("func_id"));
                 functionService.deleteFunctionInForJsonArray(sqlSession,jsonObject.getIntValue("func_id"));
                 functionService.deleteFunctionOutForJsonArray(sqlSession,jsonObject.getIntValue("func_id"));
               /*  functionService.deleteSqlTemplate(jsonObject.getString("class_id"),
                         jsonObject.getString("func_id")
                         );*/
+                ExecuteSqlUtil.removeMapperStatement(sqlSession,namespace,String.valueOf(jsonObject.getIntValue("func_id")));
             }
             sqlSession.getConnection().commit();
             // DbFactory.init(DbFactory.FORM);

@@ -148,7 +148,7 @@ public class QueryControl extends RO {
           /*  queryService.updateSqlTemplate(jsonQuery.getString("class_id"),
                     jsonQuery.getString("qry_id"),
                     jsonQuery.getString("qry_sql"));*/
-
+            ExecuteSqlUtil.removeMapperStatement(sqlSession,jsonQuery.getString("qry_name"),jsonQuery.getString("qry_id"));
             sqlSession.getConnection().commit();
            //  DbFactory.init(DbFactory.FORM);
             return SuccessMsg("修改报表成功","");
@@ -168,16 +168,18 @@ public class QueryControl extends RO {
         try{
             sqlSession.getConnection().setAutoCommit(false);
             JSONArray jsonArray =  JSONObject.parseArray(pJson);
-
+            String namespace = "";
             for(int i = 0; i < jsonArray.size(); i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 int qry_id=jsonObject.getInteger("qry_id");
+                namespace = sqlSession.selectOne("query.getQueryNameById",jsonObject.getIntValue("qry_id"));
                 queryService.deleteQueryName(sqlSession,qry_id);
                 queryService.deleteQueryInForJsonArray(sqlSession,qry_id);
                 queryService.deleteQueryOutForJsonArray(sqlSession,qry_id);
                 /*queryService.deleteSqlTemplate(jsonObject.getString("class_id"),
                         jsonObject.getString("qry_id")
                 );*/
+                ExecuteSqlUtil.removeMapperStatement(sqlSession,namespace,String.valueOf(jsonObject.getIntValue("qry_id")));
             }
 
             sqlSession.getConnection().commit();

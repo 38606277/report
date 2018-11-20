@@ -190,6 +190,12 @@ public class ExecuteSqlUtil {
         return ms;
     }
 
-
+    // 移除 config 当中的 MapperStatement 对象
+    public static void removeMapperStatement(SqlSession sqlSession,String namespace,String mapperId){
+        Configuration configuration = sqlSession.getConfiguration();
+        if(configuration.getMappedStatementNames().contains(namespace+"."+mapperId)){
+            configuration.getMappedStatementNames().remove(namespace+"."+mapperId);
+        }
+    }
 
 }

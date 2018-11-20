@@ -144,6 +144,14 @@
 		update qry_class set class_name='${class_name}' where class_id=#{class_id};
 	</update>
 
+    <select id="getQueryNameById" parameterType="int" resultType="String">
+        SELECT
+          qn.qry_name
+        FROM
+          qry_name qn
+        WHERE
+          qn.qry_id = #{_parameter}
+    </select>
     <!-- 根据qry_id查询qry_name跟qry_class信息  -->
     <select id="getNameByID" parameterType="Map" resultType="Map">
 		SELECT
