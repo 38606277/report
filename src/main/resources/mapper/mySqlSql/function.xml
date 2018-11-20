@@ -40,6 +40,15 @@
 		and fn.func_id = ${func_id}
 
 	</select>
+	<!--查我函数名称-->
+	<select id="getFuncIdByName" parameterType="String" resultType="String">
+		SELECT
+			fn.func_id
+		FROM
+			func_name fn
+		WHERE
+			func_name = '${_parameter}'
+	</select>
 	<!-- 根据class_id 查询func_name 当中的信息  -->
 	<select id="getFuncNameInfoByClassID" parameterType="int" resultType="Map">
 		SELECT
