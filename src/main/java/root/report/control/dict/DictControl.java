@@ -6,6 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageRowBounds;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -24,6 +26,7 @@ import root.report.query.FuncMetaData;
 import root.report.query.SqlTemplate;
 import root.report.service.DictService;
 import root.report.service.FunctionService;
+import root.report.util.ExecuteSqlUtil;
 import root.report.util.JsonUtil;
 
 import java.io.File;
@@ -175,7 +178,27 @@ public class DictControl extends RO {
                 }
                 map.put("dict_id",dict_id);
                 map.put("searchDictionary",obj.getString("searchDictionary"));
-                aResult = DbFactory.Open(DbFactory.FORM).selectList("dict.getDictValueByID", map,bounds);
+
+                //  在 func_dict 当中 查找  loaddate_mode 如果是  remote -》 执行sql
+                int dictId = Integer.parseInt(dict_id);
+                Map<String,Object> funcDictResult = DbFactory.Open(DbFactory.FORM).
+                        selectOne("dict.getFuncDictInfoByDictId",dictId);
+                String model = String.valueOf(funcDictResult.get("loaddata_mode"));
+                if(StringUtils.isNotBlank(model)){
+                    if("remote".equals(model)){
+                        // 得到sql 执行
+                        if(funcDictResult.get("dict_sql")!=null){
+                            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(funcDictResult.get("dict_sql").toString(),
+                                    DbFactory.Open(funcDictResult.get("dict_db").toString()),
+                                    funcDictResult.get("dict_name").toString(),funcDictResult.get("dict_id").toString(),bounds,
+                                    null,Map.class,null,
+                                    StatementType.PREPARED,Boolean.TRUE);
+                        }
+                    }else {
+                        aResult = DbFactory.Open(DbFactory.FORM).selectList("dict.getDictValueByID", map,bounds);
+                    }
+                }
+
                 if(obj!=null){
                     totalSize = ((PageRowBounds)bounds).getTotal();
                 }else{
