@@ -347,4 +347,19 @@
         FROM  func_name func where func.class_id=#{class_id,jdbcType=INTEGER} and func.func_id=#{func_id,jdbcType=INTEGER}
     </select>
 
+    <select id="getClassId" parameterType="Map" resultType="Map">
+        select DISTINCT q.class_id, q.class_name,a.auth_type from fnd_auth a
+            INNER JOIN qry_class q on a.func_id=q.class_id and a.auth_type='select'
+           <if  test="user_id != null and user_id!=1">
+                INNER join (select r.role_id from fnd_user_role r where r.user_id=#{user_id,jdbcType=INTEGER}) as role
+                on a.role_id=role.role_id
+           </if>
+            UNION
+            select DISTINCT f.class_id, f.class_name,a.auth_type from fnd_auth a
+            INNER JOIN func_class f on a.func_id=f.class_id and a.auth_type='function'
+            <if  test="user_id != null and user_id!=1">
+                INNER join (select r.role_id from fnd_user_role r where r.user_id=#{user_id,jdbcType=INTEGER}) as role
+                on a.role_id=role.role_id
+            </if>
+    </select>
 </mapper>
