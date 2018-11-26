@@ -56,9 +56,9 @@ public class CubeControl extends RO {
             }
             map.put("startIndex", currentPage);
             map.put("perPage",perPage);
-            map.put("roleName",  obj.get("roleName")==null?"":obj.getString("roleName"));
+            map.put("cube_name",  obj.get("cube_name")==null?"":obj.getString("cube_name"));
             List<Map<String,Object>> list = DbFactory.Open(DbFactory.FORM).selectList("cube.getAllCube",map);
-            int total=DbFactory.Open(DbFactory.FORM).selectOne("role.countRole", map);
+            int total=DbFactory.Open(DbFactory.FORM).selectOne("cube.countCube", map);
             Map<String,Object> map3 =new HashMap<String,Object>();
             map3.put("list",list);
             map3.put("total",total);
