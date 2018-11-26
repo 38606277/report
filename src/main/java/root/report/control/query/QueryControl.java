@@ -713,4 +713,31 @@ public class QueryControl extends RO {
 
         return JSON.toJSONString(list);
     }
+
+    //查询所有的cube 记录
+    @RequestMapping(value = "/getAllQueryNameList", produces = "text/plain;charset=UTF-8")
+    public String getAllQueryNameList(@RequestBody String pJson) {
+        try {
+            JSONObject obj = (JSONObject) JSON.parse(pJson);
+            Map<String,Object> map = new HashMap<String,Object>();
+            int currentPage=Integer.valueOf(obj.getIntValue("pageNum"));
+            int perPage=Integer.valueOf(obj.getIntValue("perPage"));
+            if(1==currentPage|| 0==currentPage){
+                currentPage=0;
+            }else{
+                currentPage=(currentPage-1)*perPage;
+            }
+            map.put("startIndex", currentPage);
+            map.put("perPage",perPage);
+            map.put("qry_name",  obj.get("qry_name")==null?"":obj.getString("qry_name"));
+            List<Map<String,Object>> list = DbFactory.Open(DbFactory.FORM).selectList("query.getAllQueryNameList",map);
+            int total=DbFactory.Open(DbFactory.FORM).selectOne("query.countQueryName", map);
+            Map<String,Object> map3 =new HashMap<String,Object>();
+            map3.put("list",list);
+            map3.put("total",total);
+            return SuccessMsg("",map3);
+        }catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
 }

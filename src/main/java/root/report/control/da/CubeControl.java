@@ -75,7 +75,7 @@ public class CubeControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try {
             Map map = sqlSession.selectOne("cube.getCubeById",Integer.parseInt(cube_id));
-            return SuccessMsg("",JSON.toJSONString(map,JsonUtil.features));
+            return SuccessMsg("",map);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }

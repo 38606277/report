@@ -362,4 +362,13 @@
                 on a.role_id=role.role_id
             </if>
     </select>
+    <!-- 查找cube 表当中的所有记录  -->
+    <select id="getAllQueryNameList" resultType="Map" parameterType="map">
+        select * from qry_name where  1=1
+        <if test="qry_name != null and qry_name!=''">  and qry_name like '%${qry_name}%' </if>
+    </select>
+    <select id="countQueryName" resultType="int" parameterType="map">
+        select count(1) from qry_name where  1=1
+        <if test="qry_name != null and qry_name!=''">  and qry_name like '%${qry_name}%' </if>
+    </select>
 </mapper>

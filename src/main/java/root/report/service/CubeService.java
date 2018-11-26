@@ -39,7 +39,9 @@ public class CubeService {
 
         // 2. 对 sql 进行编译
         String sql = jsonObject.getString("cube_sql");
-        sql = sql.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        if(null!=sql && !"".equals(sql)){
+            sql = sql.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        }
         map.put("cube_sql",sql);
 
         // 3. 插入到数据库
@@ -70,7 +72,9 @@ public class CubeService {
 
         // 2. 对 sql 进行编译
         String sql = jsonObject.getString("cube_sql");
-        sql = sql.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        if(null!=sql && !"".equals(sql)){
+            sql = sql.replace("'","\\'").replace("{","\\{").replace("}","\\}");
+        }
         map.put("cube_sql",sql);
 
         // 3. 插入到数据库
