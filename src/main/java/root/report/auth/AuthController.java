@@ -559,4 +559,22 @@ public class AuthController extends RO {
             return ExceptionMsg(e.getMessage());
         }
     }
+    //根据数据查询获取数据classId
+    @RequestMapping(value="/getCubeListInAuth",produces = "text/plain;charset=UTF-8")
+    public String getCubeListInAuth(@RequestBody String pJson)  {
+        JSONObject obj = JSONObject.parseObject(pJson);
+        Map param=new HashMap<>();
+        param.put("user_id",obj.getInteger("userId"));
+        List<Map<String, Object>> listQueryName = DbFactory.Open(DbFactory.FORM).selectList("auth.getCubeListInAuth",param);
+        return SuccessMsg("",listQueryName);
+    }
+    //根据数据查询获取数据classId
+    @RequestMapping(value="/getDashboardListInAuth",produces = "text/plain;charset=UTF-8")
+    public String getDashboardListInAuth(@RequestBody String pJson)  {
+        JSONObject obj = JSONObject.parseObject(pJson);
+        Map param=new HashMap<>();
+        param.put("user_id",obj.getInteger("userId"));
+        List<Map<String, Object>> listQueryName = DbFactory.Open(DbFactory.FORM).selectList("auth.getDashboardListInAuth",param);
+        return SuccessMsg("",listQueryName);
+    }
 }

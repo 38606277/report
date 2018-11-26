@@ -95,4 +95,20 @@
          select f.* from fnd_func f inner join (SELECT DISTINCT a.func_id from fnd_auth a
         where a.auth_type='webFunc')as r on f.func_id=r.func_id where f.func_type='reactWeb' and f.func_pid=#{pid,jdbcType=INTEGER} order by f.order,f.func_id asc
     </select>
+    <select id="getCubeListInAuth" resultType="Map" parameterType="map">
+        select DISTINCT f.cube_id, f.cube_name,a.auth_type from fnd_auth a
+        INNER JOIN da_cube f on a.func_id=f.cube_id and a.auth_type='cube'
+        <if  test="user_id != null and user_id!=1">
+            INNER join (select r.role_id from fnd_user_role r where r.user_id=#{user_id,jdbcType=INTEGER}) as role
+            on a.role_id=role.role_id
+        </if>
+    </select>
+    <select id="getDashboardListInAuth" resultType="Map" parameterType="map">
+        select DISTINCT f.dashboard_id, f.dashboard_name,a.auth_type from fnd_auth a
+        INNER JOIN dashboard f on a.func_id=f.dashboard_id and a.auth_type='dashboard'
+        <if  test="user_id != null and user_id!=1">
+            INNER join (select r.role_id from fnd_user_role r where r.user_id=#{user_id,jdbcType=INTEGER}) as role
+            on a.role_id=role.role_id
+        </if>
+    </select>
 </mapper>
