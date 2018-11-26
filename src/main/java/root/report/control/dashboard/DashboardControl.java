@@ -3,6 +3,8 @@ package root.report.control.dashboard;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageRowBounds;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +38,27 @@ public class DashboardControl extends RO {
         try {
             JSONObject obj = (JSONObject) JSON.parse(pJson);
             Map<String,Object> map = new HashMap<String,Object>();
-            int currentPage=Integer.valueOf(obj.getIntValue("pageNum"));
-            int perPage=Integer.valueOf(obj.getIntValue("perPage"));
-            if(1==currentPage|| 0==currentPage){
-                currentPage=0;
-            }else{
-                currentPage=(currentPage-1)*perPage;
+            Long total = 0L;
+            RowBounds bounds = null;
+            if(obj==null){
+                bounds = RowBounds.DEFAULT;
+            }else {
+                int currentPage = Integer.valueOf(obj.getIntValue("pageNum"));
+                int perPage = Integer.valueOf(obj.getIntValue("perPage"));
+                if (1 == currentPage || 0 == currentPage) {
+                    currentPage = 0;
+                } else {
+                    currentPage = (currentPage - 1) * perPage;
+                }
+                bounds = new PageRowBounds(currentPage, perPage);
+                map.put("dashboard_name", obj.get("dashboard_name") == null ? "" : obj.getString("dashboard_name"));
             }
-            map.put("startIndex", currentPage);
-            map.put("perPage",perPage);
-            List<Map> mapList = sqlSession.selectList("dashboard.getAllDashboard",map);
-            int total = sqlSession.selectOne("dashboard.countAllDashboard");
+            List<Map> mapList = sqlSession.selectList("dashboard.getAllDashboard",map,bounds);
+            if(obj!=null){
+                total = ((PageRowBounds)bounds).getTotal();
+            }else{
+                total = Long.valueOf(mapList.size());
+            }
             Map<String,Object> map3 =new HashMap<String,Object>();
             map3.put("list",mapList);
             map3.put("total",total);
@@ -63,7 +75,7 @@ public class DashboardControl extends RO {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try {
             Map map = sqlSession.selectOne("dashboard.getDashBoardById",Integer.parseInt(dashboard_id));
-            return SuccessMsg("",JSON.toJSONString(map,JsonUtil.features));
+            return SuccessMsg("",map);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }

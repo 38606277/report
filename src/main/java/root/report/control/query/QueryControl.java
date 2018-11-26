@@ -720,18 +720,27 @@ public class QueryControl extends RO {
         try {
             JSONObject obj = (JSONObject) JSON.parse(pJson);
             Map<String,Object> map = new HashMap<String,Object>();
-            int currentPage=Integer.valueOf(obj.getIntValue("pageNum"));
-            int perPage=Integer.valueOf(obj.getIntValue("perPage"));
-            if(1==currentPage|| 0==currentPage){
-                currentPage=0;
-            }else{
-                currentPage=(currentPage-1)*perPage;
+            Long total = 0L;
+            RowBounds bounds = null;
+            if(obj==null){
+                bounds = RowBounds.DEFAULT;
+            }else {
+                int currentPage = Integer.valueOf(obj.getIntValue("pageNum"));
+                int perPage = Integer.valueOf(obj.getIntValue("perPage"));
+                if (1 == currentPage || 0 == currentPage) {
+                    currentPage = 0;
+                } else {
+                    currentPage = (currentPage - 1) * perPage;
+                }
+                bounds = new PageRowBounds(currentPage, perPage);
             }
-            map.put("startIndex", currentPage);
-            map.put("perPage",perPage);
             map.put("qry_name",  obj.get("qry_name")==null?"":obj.getString("qry_name"));
-            List<Map<String,Object>> list = DbFactory.Open(DbFactory.FORM).selectList("query.getAllQueryNameList",map);
-            int total=DbFactory.Open(DbFactory.FORM).selectOne("query.countQueryName", map);
+            List<Map<String,Object>> list = DbFactory.Open(DbFactory.FORM).selectList("query.getAllQueryNameList",map,bounds);
+            if(obj!=null){
+                total = ((PageRowBounds)bounds).getTotal();
+            }else{
+                total = Long.valueOf(list.size());
+            }
             Map<String,Object> map3 =new HashMap<String,Object>();
             map3.put("list",list);
             map3.put("total",total);

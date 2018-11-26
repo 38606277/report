@@ -47,11 +47,13 @@
     </select>
 
     <select id="getAllDashboard" parameterType="Map" resultType="Map">
-        select dashboard_id,class_id,dashboard_name,dashboard_desc,tempate,param,icon from dashboard
+        select dashboard_id,class_id,dashboard_name,dashboard_desc,tempate,param,icon from dashboard where 1=1
+        <if test="dashboard_name != null and dashboard_name!=''">  and dashboard_name like '%${dashboard_name}%' </if>
     </select>
 
-    <select id="countAllDashboard" resultType="int">
-         select count(1) from dashboard
+    <select id="countAllDashboard" resultType="int" parameterType="Map">
+         select count(1) from dashboard where 1=1
+        <if test="dashboard_name != null and dashboard_name!=''">  and dashboard_name like '%${dashboard_name}%' </if>
     </select>
 
     <delete id="deleteDashBoardById" parameterType="int">
