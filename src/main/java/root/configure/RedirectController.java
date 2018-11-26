@@ -11,6 +11,6 @@ import java.io.IOException;
 public class RedirectController {
     @RequestMapping("")
     public void toIndexPage(HttpServletResponse response) throws IOException {
-        response.sendRedirect("app/**");
+//        response.sendRedirect("app/**");
     }
 }

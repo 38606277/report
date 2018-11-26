@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="auth">
+    <cache/>
     <select id="getSelectClassByUserName" resultType="Map" parameterType="Map">
         SELECT a.auth_id as authId,a.auth_type as authType,a.func_id as funcId,a.user_id as userId,u.USER_NAME as userName,f.func_name as funcName,f.func_type as funcType,f.func_pid as funcPid
         from fnd_auth a LEFT JOIN fnd_user u on a.user_id = u.USER_ID 

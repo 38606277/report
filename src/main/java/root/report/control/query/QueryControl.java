@@ -88,7 +88,7 @@ public class QueryControl extends RO {
 
 
     // 根据 func_id 查询出 func_in 跟func_out 表当中的数据
-    @RequestMapping(value = "/getQueryParamByFuncID/{qry_id}", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/getQueryParam/{qry_id}", produces = "text/plain;charset=UTF-8")
     public String getQueryParam(@PathVariable("qry_id") String qry_id) {
 
 
