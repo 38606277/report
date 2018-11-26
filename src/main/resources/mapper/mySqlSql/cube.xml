@@ -60,4 +60,8 @@
     <delete id="deleteCubeById" parameterType="int">
         delete from da_cube where cube_id=#{cube_id,jdbcType=INTEGER}
     </delete>
+    <select id="getAllCubeforAuth" resultType="Map" parameterType="map">
+        select cube_id as `key`,cube_name as title from da_cube
+
+    </select>
 </mapper>

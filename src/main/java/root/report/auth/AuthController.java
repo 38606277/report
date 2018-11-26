@@ -538,4 +538,25 @@ public class AuthController extends RO {
         }
         return SuccessMsg("",chiledList);
     }
+
+    //查询所有的cube 记录
+    @RequestMapping(value = "/getAllCube", produces = "text/plain;charset=UTF-8")
+    public String getAllCube(@RequestBody String pJson) {
+        try {
+            List<Map> mapList = DbFactory.Open(DbFactory.FORM).selectList("cube.getAllCubeforAuth");
+            return SuccessMsg("", mapList);
+        }catch (Exception e){
+            return ExceptionMsg(e.getMessage());
+        }
+    }
+    //查询所有的cube 记录
+    @RequestMapping(value = "/getAllDashBoard", produces = "text/plain;charset=UTF-8")
+    public String getAllDashBoard(@RequestBody String pJson) {
+        try {
+            List<Map> mapList = DbFactory.Open(DbFactory.FORM).selectList("dashboard.getAllDashboardforAuth");
+            return SuccessMsg("",mapList);
+        }catch (Exception e){
+            return ExceptionMsg(e.getMessage());
+        }
+    }
 }

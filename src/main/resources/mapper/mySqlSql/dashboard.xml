@@ -59,4 +59,7 @@
     <delete id="deleteDashBoardById" parameterType="int">
         delete from dashboard where dashboard_id=#{dashboard_id,jdbcType=INTEGER}
     </delete>
+    <select id="getAllDashboardforAuth" parameterType="Map" resultType="Map">
+        select dashboard_id as `key`,dashboard_name as title from dashboard
+    </select>
 </mapper>
