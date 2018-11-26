@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import root.report.auth.RoleModel;
 import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.service.CubeService;
@@ -38,12 +39,30 @@ public class CubeControl extends RO {
 
     //查询所有的cube 记录
     @RequestMapping(value = "/getAllCube", produces = "text/plain;charset=UTF-8")
-    public String getAllDictName() {
-        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+    public String getAllDictName(@RequestBody String pJson) {
+       // SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try {
             // TODO 是否需要分页？
-            List<Map> mapList = sqlSession.selectList("cube.getAllCube");
-            return SuccessMsg("",JSON.toJSONString(mapList,JsonUtil.features));
+          //  List<Map> mapList = sqlSession.selectList("cube.getAllCube");
+           // return SuccessMsg("",JSON.toJSONString(mapList,JsonUtil.features));
+            JSONObject obj = (JSONObject) JSON.parse(pJson);
+            Map<String,Object> map = new HashMap<String,Object>();
+            int currentPage=Integer.valueOf(obj.getIntValue("pageNum"));
+            int perPage=Integer.valueOf(obj.getIntValue("perPage"));
+            if(1==currentPage|| 0==currentPage){
+                currentPage=0;
+            }else{
+                currentPage=(currentPage-1)*perPage;
+            }
+            map.put("startIndex", currentPage);
+            map.put("perPage",perPage);
+            map.put("roleName",  obj.get("roleName")==null?"":obj.getString("roleName"));
+            List<Map<String,Object>> list = DbFactory.Open(DbFactory.FORM).selectList("cube.getAllCube",map);
+            int total=DbFactory.Open(DbFactory.FORM).selectOne("role.countRole", map);
+            Map<String,Object> map3 =new HashMap<String,Object>();
+            map3.put("list",list);
+            map3.put("total",total);
+            return SuccessMsg("",map3);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
