@@ -46,8 +46,12 @@
         select dashboard_id,class_id,dashboard_name,dashboard_desc,tempate,param,icon from dashboard where dashboard_id=#{dashboard_id,jdbcType=INTEGER}
     </select>
 
-    <select id="getAllDashboard" resultType="Map">
+    <select id="getAllDashboard" parameterType="Map" resultType="Map">
         select dashboard_id,class_id,dashboard_name,dashboard_desc,tempate,param,icon from dashboard
+    </select>
+
+    <select id="countAllDashboard" resultType="int">
+         select count(1) from dashboard
     </select>
 
     <delete id="deleteDashBoardById" parameterType="int">

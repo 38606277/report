@@ -16,6 +16,7 @@ import root.report.service.DashboardService;
 import root.report.util.JsonUtil;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +31,26 @@ public class DashboardControl extends RO {
 
     //查询所有的数据字典
     @RequestMapping(value = "/getAllDashboard", produces = "text/plain;charset=UTF-8")
-    public String getAllDashboard() {
+    public String getAllDashboard(@RequestBody String pJson) {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         try {
-            // TODO 是否需要分页？
-            List<Map> mapList = sqlSession.selectList("dashboard.getAllDashboard");
-            return SuccessMsg("",JSON.toJSONString(mapList,JsonUtil.features));
+            JSONObject obj = (JSONObject) JSON.parse(pJson);
+            Map<String,Object> map = new HashMap<String,Object>();
+            int currentPage=Integer.valueOf(obj.getIntValue("pageNum"));
+            int perPage=Integer.valueOf(obj.getIntValue("perPage"));
+            if(1==currentPage|| 0==currentPage){
+                currentPage=0;
+            }else{
+                currentPage=(currentPage-1)*perPage;
+            }
+            map.put("startIndex", currentPage);
+            map.put("perPage",perPage);
+            List<Map> mapList = sqlSession.selectList("dashboard.getAllDashboard",map);
+            int total = sqlSession.selectOne("dashboard.countAllDashboard");
+            Map<String,Object> map3 =new HashMap<String,Object>();
+            map3.put("list",mapList);
+            map3.put("total",total);
+            return SuccessMsg("",map3);
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
