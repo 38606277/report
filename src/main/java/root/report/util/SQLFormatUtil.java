@@ -55,8 +55,22 @@ public class SQLFormatUtil {
     static final String indentString = "    ";
     static final String initial = "\n    ";
 
+    // 加上mybatis的 特定字符换行
     public String format(String source) {
-        return new FormatProcess( source ).perform();
+        String rs = new FormatProcess(source).perform();
+        String[] strArray = {"include","trim","foreach","choose","if","bind","selectKey"};
+        for(String memeber : strArray){
+            String end = "</"+memeber;
+            memeber = "<"+memeber;
+            if(rs.contains(end) ){
+                rs = rs.replace(end," \n\r\f\t"+end); // " \n\r\f\t";
+            }
+            if(rs.contains(memeber)){
+                rs = rs.replace(memeber," \n\r\f\t"+memeber);
+            }
+        }
+        return rs;
+        // return new FormatProcess( source ).perform();
     }
 
     private static class FormatProcess {
@@ -368,12 +382,30 @@ public class SQLFormatUtil {
         String sql = "select a.会计科目编码,a.会计科目名称,b.余额方向,b.期初余额,sum(a.借方发生额) 借方发生额,";
         sql += "sum(a.贷方发生额) 贷方发生额,b.期末余额 FROM 基础表_会计管理数据_凭证辅助明细表 a ";
         sql += "LEFT JOIN 基础表_会计管理数据_全年辅助余额表 b on(a.会计科目编码 = b.会计科目编码 ";
-        sql += "and a.辅助编码 = b.辅助编码 and a.会计电子账簿编号 = b.会计电子账簿编号) ";
-        sql += "WHERE a.辅助编码 = '' AND a.会计电子账簿编号 = '' ";
+        sql += "and a.辅助编码 = b.辅助编码 and a.会计电子账簿编号 = b.会计电子账簿编号 <if>adwada</if>) ";
+        sql += "WHERE a.辅助编码 = '' AND a.会计电子账簿编号 = '' <include>aaa</include> ";
         sql += "GROUP BY a.会计科目编码,a.会计科目名称,b.余额方向,b.期初余额,b.期末余额 order by a.会计科目编码 ";
+        System.out.println(new SQLFormatUtil().format(sql));
+
+        // 需要注意到的标签有：   include trim  foreach  choose if   bind   selectKey
+        /*String rs = new SQLFormatUtil().format(sql);
+        String[] strArray = {"include","trim","foreach","choose","if","bind","selectKey"};
+        for(String memeber : strArray){
+            String end = "</"+memeber;
+            memeber = "<"+memeber;
+            if(rs.contains(end) ){
+                rs = rs.replace(end," \n\r\f\t"+end); // " \n\r\f\t";
+            }
+            if(rs.contains(memeber)){
+                rs = rs.replace(memeber," \n\r\f\t"+memeber);
+            }
+        }
+        System.out.println(rs);*/
+    /*    String rs = a.replace("<if","\n<if");
+        rs = rs.replace("</if>","\n</if>");
 
 
-        String a = new SQLFormatUtil().format(sql);
-        System.out.println(a);
+        //  System.out.println(a);
+        System.out.println(rs);*/
     }
 }
