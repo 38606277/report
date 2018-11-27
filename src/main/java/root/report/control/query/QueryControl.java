@@ -383,7 +383,7 @@ public class QueryControl extends RO {
 
             JSONObject objin=params.getJSONObject("in");
             RowBounds bounds = null;
-            if(page==null){
+            if(page==null || page.size()==0){
                 bounds = RowBounds.DEFAULT;
             }else{
                 int startIndex=page.getIntValue("startIndex");
@@ -405,7 +405,6 @@ public class QueryControl extends RO {
                     value=entry.getValue().toString(); //返回与此项对应的值
                     map.put(key, value);
                 }
-               System.err.println(map);
             }
 //            JSONArray jsonArray = params.getJSONArray("in");
 //            if(jsonArray!=null){
@@ -447,7 +446,7 @@ public class QueryControl extends RO {
                 //将Map放进List集合里
                 newList.add(obdmap);
             }
-            if(page!=null){
+            if(page!=null && page.size()!=0){
                 totalSize = ((PageRowBounds)bounds).getTotal();
             }else{
                 totalSize = Long.valueOf(newList.size());
