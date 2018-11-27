@@ -146,9 +146,21 @@ public class CubeControl extends RO {
     }
 
 
-    @RequestMapping(value = "/getCubeValueByID/{cube_id}", produces = "text/plain;charset=UTF-8")
-    public String getCubeValueByID(@PathVariable("cube_id") String dict_id,@RequestBody String pjson) {
-        return "未实现";
+    @RequestMapping(value = "/getCubeValueByID/{qry_id}", produces = "text/plain;charset=UTF-8")
+    public String getCubeValueByID(@PathVariable("qry_id") String qry_id,@RequestBody String pjson) {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        Map<String,Object> param = new HashMap<String,Object>();
+        param.put("qry_id",qry_id);
+        try {
+            Map<String,Object> map = new HashMap<String,Object>();
+            List<Map> mapIn = sqlSession.selectList("cube.getCubeInById",param);
+            List<Map> mapOut = sqlSession.selectList("cube.getCubeOutById",param);
+            map.put("in",mapIn);
+            map.put("out",mapOut);
+            return SuccessMsg("",map);
+        }catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
     }
 
 
