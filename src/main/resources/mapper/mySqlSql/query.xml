@@ -371,4 +371,11 @@
         select count(1) from qry_name where  1=1
         <if test="qry_name != null and qry_name!=''">  and qry_name like '%${qry_name}%' </if>
     </select>
+    <!-- 查找cube 表当中的所有记录  -->
+    <select id="getQueryByChineseName" resultType="Map" parameterType="map">
+        select qry_id,qry_name,class_id from qry_name where  1=1
+        <if test="qry_name != null and qry_name!=''">
+            and qry_name like '%${qry_name}%'
+        </if>
+    </select>
 </mapper>

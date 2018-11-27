@@ -23,6 +23,14 @@
           fdv.dict_id=#{dict_id,jdbcType=INTEGER}
     </select>
 
+    <select id="getDictIdByValue" parameterType="Map" resultType="Map">
+        SELECT
+        fdv.dict_id
+        FROM
+        func_dict_value fdv
+        where
+        fdv.value_name like '%{value_name}%'
+    </select>
     <!--  创建func_dict信息  -->
     <insert id="createFuncDict" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
         insert into func_dict(dict_name,dict_desc,dict_db,loaddata_mode,loaddata_state,dict_sql)

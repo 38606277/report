@@ -271,6 +271,19 @@ public class DictService {
             throw e;
         }
     }
+    // 功能描述 : 根据dict_id 查询 func_dict信息
+    public Map<String,Object> getDictIdByValue(SqlSession sqlSession,String value_name) throws SAXException, DocumentException {
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("value_name",value_name);
+
+        Map<String,Object> dict = sqlSession.selectOne("dict.getDictIdByValue",map);
+
+
+        return  dict;
+    }
+
+
 
     // 修改 func_dict_value 表当中的记录
     public void updateFuncDictValue(SqlSession sqlSession,JSONObject jsonObject){

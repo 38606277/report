@@ -809,4 +809,13 @@ public class QueryService {
                 selectOne("query.getFunctionNameByClassIdPId", param);
         return listQueryName;
     }
+    public Map<String, Object> getQueryByChineseName(String qry_name) {
+        Map<String,String> param=new HashMap<String,String>();
+        param.put("qry_name",qry_name);
+        Map<String, Object> listQueryName = DbFactory.Open(DbFactory.FORM).
+                selectOne("query.getQueryByChineseName", param);
+        return listQueryName;
+    }
+
+
 }
