@@ -18,12 +18,13 @@ public class SentenceParser {
 		List<String> paramsString = new ArrayList<String>();
 		String functionNameString = "";
 		List<Term> outPut = nShortSegment.seg(testCase);
+		System.out.println(outPut.toString());
 		for(Term term : outPut){
 			String wordString = term.word;
 			String verbString = term.nature.name();
 			if(verbString == "v" || verbString == "n" || verbString == "vn"){
 				functionNameString+=wordString;
-			}else if(verbString == "t" || verbString == "nt"){
+			}else if(verbString == "t" || verbString == "nt"||verbString == "ns"||verbString == "nz"){
 				paramsString.add(wordString);
 			}
 		}

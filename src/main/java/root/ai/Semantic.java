@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import root.report.common.RO;
 import root.report.control.dict.DictControl;
 import root.report.control.query.QueryControl;
 import root.report.db.DbFactory;
 import root.report.query.FunctionControl;
+import root.report.service.DictService;
 import root.report.service.QueryService;
 
 import javax.print.DocFlavor;
@@ -26,7 +28,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/reportServer/ai")
-public class Semantic {
+public class Semantic  extends RO {
 
 
     @Autowired
@@ -34,7 +36,7 @@ public class Semantic {
     @Autowired
     private QueryService queryService;
     @Autowired
-    private DictControl dictControl;
+    private DictService dictService;
 
     //根据语义识别匹配函数，并返回结果
     @RequestMapping(value = "/getResult/{aText}", produces = "text/plain;charset=UTF-8")
@@ -52,41 +54,42 @@ public class Semantic {
         String qry_id = mapQuery.get("qry_id").toString();
 
         //2---查找查询的输入输出参数，匹配参数
-        List<String> wordInName = sentenceParser.getInNames();//语言中的参烽
-        JSONObject queryParam = queryService.getQueryParam(qry_id);
-        JSONArray inParam = queryParam.getJSONArray("out");//数据库中的参数定义
+        List<String> wordInName = sentenceParser.getInNames();//语言中的参数
+        JSONObject queryParam = queryService.getQueryParam(qry_id);//查询查询的参数定义
+        JSONArray inParam = queryParam.getJSONArray("in");//
         JSONObject in = new JSONObject();//最终的参数
+        //分配参数为空串
+        for(Object aIn:inParam)
+        {
+            in.put( ((JSONObject)aIn).getString("in_id"),"");
+        }
 
-
+        //按字典匹配
         for (int i = 0; i < wordInName.size(); i++) {
             //根据数据字典匹配参数
             String aInName = wordInName.get(i);
-            String dict_id = dictControl.getDictIdByValue(aInName);
+            String dict_id = dictService.getDictIdByValue(aInName);
             for (int j = 0; j < inParam.size(); j++) {
                 JSONObject aIn = inParam.getJSONObject(j);
-                if (aIn.getString("dict_id").equals(dict_id)) {
+                String param_dict_id=aIn.getString("dict_id");
+                if ((param_dict_id!=null)&&(param_dict_id.equals(dict_id))) {
                     //参数命中，则赋值
                     in.put(aIn.getString("in_id"), aInName);
 
-                } else {
-                    //没有命中，则赋空值
-                    in.put(aIn.getString("in_id"), "");
                 }
             }
             //根据词性匹配参数
-
-
         }
 
         //3---生成查询的输入参数
         JSONArray params = new JSONArray();
         JSONObject param = new JSONObject();
 
-        param.put("in", param);
+        param.put("in", in);
         params.add(param);
 
         //4---执行查询
-        String aResult = queryControl.execQuery("", qry_id, JSONArray.toJSONString(params));
+        String aResult = queryControl.execQuery("2", qry_id, JSONArray.toJSONString(params, RO.features));
 
         return aResult;
 

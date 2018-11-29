@@ -11,7 +11,7 @@ import java.util.List;
 public class RO {
 	
 
-	private static SerializerFeature[] features = { SerializerFeature.WriteNullNumberAsZero,
+	public static SerializerFeature[] features = { SerializerFeature.WriteNullNumberAsZero,
 			SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteMapNullValue,
 			SerializerFeature.PrettyFormat, SerializerFeature.UseISO8601DateFormat,
 			SerializerFeature.WriteDateUseDateFormat, SerializerFeature.WriteNullListAsEmpty };

@@ -217,18 +217,7 @@ public class DictControl extends RO {
         }
     }
 
-    //返回数据字典的定义头，out
-    @RequestMapping(value = "/getDictIdByValue/{value_name}", produces = "text/plain;charset=UTF-8")
-    public String getDictIdByValue(@PathVariable("value_name") String value_name) {
-        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
-        try{
-            Map<String, Object> dict = this.dictService.getDictIdByValue(sqlSession, value_name);
-            return SuccessMsg("查询成功",dict);
-        }catch (Exception ex){
-            ex.printStackTrace();
-            return ExceptionMsg(ex.getMessage());
-        }
-    }
+
 
 
     //初始化导入  代码注释行

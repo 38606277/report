@@ -272,15 +272,15 @@ public class DictService {
         }
     }
     // 功能描述 : 根据dict_id 查询 func_dict信息
-    public Map<String,Object> getDictIdByValue(SqlSession sqlSession,String value_name) throws SAXException, DocumentException {
-
+    public String getDictIdByValue(String value_name)  {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         Map<String,Object> map = new HashMap<>();
         map.put("value_name",value_name);
 
         Map<String,Object> dict = sqlSession.selectOne("dict.getDictIdByValue",map);
 
 
-        return  dict;
+        return  dict.get("dict_id").toString();
     }
 
 
