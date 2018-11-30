@@ -51,10 +51,11 @@ public class WeChatControl{
     @RequestMapping(value = "wechat",method=RequestMethod.POST)
     public void processMsg(HttpServletRequest request,HttpServletResponse response) {
         // 调用核心服务类接收处理请求
-
+        response.setCharacterEncoding("utf-8");
         PrintWriter out = null;
         try {
             String message= weChatService.processRequest(request);
+            System.out.println(message);
             out = response.getWriter();
             out.write(message);
         } catch (IOException e) {
