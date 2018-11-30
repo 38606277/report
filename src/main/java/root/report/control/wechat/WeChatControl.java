@@ -2,16 +2,17 @@ package  root.report.control.wechat;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 import root.report.service.WeChatService;
 import root.report.util.WeChatUtil;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-@RestController
+@Controller
 public class WeChatControl{
     @Autowired
     private WeChatService weChatService;
@@ -25,18 +26,29 @@ public class WeChatControl{
      * nonce     微信端发来的随机字符串
      * echostr   微信端发来的验证字符串
      */
-    @GetMapping(value = "wechat")
-    public String validate(@RequestParam(value = "signature") String signature,
-                           @RequestParam(value = "timestamp") String timestamp,
-                           @RequestParam(value = "nonce") String nonce,
-                           @RequestParam(value = "echostr") String echostr) {
-        return WeChatUtil.checkSignature(signature, timestamp, nonce) ? echostr : null;
-
+    @RequestMapping(value = "wechat",method=RequestMethod.GET)
+    public void validate(HttpServletRequest request,HttpServletResponse response) {
+        System.out.println("success");
+        String signature = request.getParameter("signature");
+        String timestamp = request.getParameter("timestamp");
+        String nonce = request.getParameter("nonce");
+        String echostr = request.getParameter("echostr");
+        PrintWriter out = null;
+        try {
+            out = response.getWriter();
+            if (WeChatUtil.checkSignature(signature, timestamp, nonce)) {
+                out.write(echostr);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            out.close();
+        }
     }
     /**
      * 此处是处理微信服务器的消息转发的
      */
-    @PostMapping(value = "wechat")
+    @RequestMapping(value = "wechat",method=RequestMethod.POST)
     public String processMsg(HttpServletRequest request) {
         // 调用核心服务类接收处理请求
         return weChatService.processRequest(request);

@@ -6,7 +6,7 @@ public class WeChatContant {
     //appsecret
     public static final String appsecret = "appsecret";
     // Token
-    public static final String TOKEN = "zch";
+    public static final String TOKEN = "wmh";
     public static final String RESP_MESSAGE_TYPE_TEXT = "text";
     public static final Object REQ_MESSAGE_TYPE_TEXT = "text";
     public static final Object REQ_MESSAGE_TYPE_IMAGE = "image";

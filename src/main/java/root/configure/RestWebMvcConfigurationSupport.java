@@ -69,9 +69,17 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        String[] EXCLUDE_URL = {"/reportServer/fonts/*","/reportServer/css/*","/reportServer/js/*",
-                                "/reportServer/DBConnection/test","/reportServer/DBConnection/save",
-                                "/reportServer/user/encodePwd","/reportServer/user/encodePwdReact","/reportServer/user/login","/reportServer/user/Reactlogin","/reportServer/dataCollect/saveTaskInfo"};
+        String[] EXCLUDE_URL = {"/reportServer/fonts/*",
+                                "/reportServer/css/*",
+                                "/reportServer/js/*",
+                                "/reportServer/DBConnection/test",
+                                "/reportServer/DBConnection/save",
+                                "/reportServer/user/encodePwd",
+                                "/reportServer/user/encodePwdReact",
+                                "/reportServer/user/login",
+                                "/reportServer/user/Reactlogin",
+                                "/wechat",
+                                "/reportServer/dataCollect/saveTaskInfo"};
         registry.addInterceptor(new RestInterceptor())
                 .addPathPatterns("/reportServer/**")
                 .excludePathPatterns(EXCLUDE_URL);
