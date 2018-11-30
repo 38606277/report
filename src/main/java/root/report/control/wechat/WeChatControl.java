@@ -49,8 +49,20 @@ public class WeChatControl{
      * 此处是处理微信服务器的消息转发的
      */
     @RequestMapping(value = "wechat",method=RequestMethod.POST)
-    public String processMsg(HttpServletRequest request) {
+    public void processMsg(HttpServletRequest request,HttpServletResponse response) {
         // 调用核心服务类接收处理请求
-        return weChatService.processRequest(request);
+
+        PrintWriter out = null;
+        try {
+            String message= weChatService.processRequest(request);
+            out = response.getWriter();
+            out.write(message);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        out.close();
+
+
     }
 }
