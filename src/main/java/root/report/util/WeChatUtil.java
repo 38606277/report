@@ -168,7 +168,7 @@ public class WeChatUtil {
                     mapToXML2((HashMap) value, sb);
                     sb.append("</" + key + ">");
                 } else {
-                    sb.append("<" + key + "><![CDATA[" + value + "]]></" + key + ">");
+                    sb.append("<" + key + ">" + value + "</" + key + ">");
                 }
 
             }
