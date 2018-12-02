@@ -1,7 +1,10 @@
 package root.report.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import root.ai.Semantic;
 import root.report.util.ArticleItem;
 import root.report.util.WeChatContant;
 import root.report.util.WeChatUtil;
@@ -31,19 +34,32 @@ public class WeChatService {
             // 文本消息
             if (msgType.equals(WeChatContant.REQ_MESSAGE_TYPE_TEXT)) {
                 mes =requestMap.get(WeChatContant.Content).toString();
-                if(mes!=null&&mes.length()<2){
-                    List<ArticleItem> items = new ArrayList<>();
-                    ArticleItem item = new ArticleItem();
-                    item.setTitle("为您找到以下数据：");
+                if(mes!=null){
 
-                    String a="<p><a>www.baidu.com</a></p>";
-                    item.setDescription(a);
+                    String resultMsg=new Semantic().GetResult(mes);
+                    JSONObject jsonObject= (JSONObject) JSONObject.parse(resultMsg);
+                    jsonObject= jsonObject.getJSONObject("data");
+                    JSONArray jsonArray=jsonObject.getJSONArray("list");
+                    StringBuilder sb=new StringBuilder();
+                    for (int i=0;i<jsonArray.size();i++)
+                    {
+                        sb.append(jsonArray.getJSONObject(i).getString("VENDOR_NAME")+"\n");
+
+
+                    }
+                    respXml = WeChatUtil.sendTextMsg(requestMap, sb.toString());
+//                    List<ArticleItem> items = new ArrayList<>();
+//                    ArticleItem item = new ArticleItem();
+//                    item.setTitle("为您找到以下数据：");
+//
+//                    String a="<p><a>www.baidu.com</a></p>";
+//                    item.setDescription(a);
 //                    item.setPicUrl("http://changhaiwx.pagekite.me/photo-wall/a/iali11.jpg");
-                    item.setUrl("http://www.baidu.com");
-                    items.add(item);
+//                    item.setUrl("http://www.baidu.com");
+//                    items.add(item);
 
 
-                    respXml = WeChatUtil.sendArticleMsg(requestMap, items);
+//                    respXml = WeChatUtil.sendArticleMsg(requestMap, items);
                 }else if("我的信息".equals(mes)){
 //                    Map<String, String> userInfo = getUserInfo(requestMap.get(WeChatContant.FromUserName));
 //                    System.out.println(userInfo.toString());
