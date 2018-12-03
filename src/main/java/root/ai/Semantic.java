@@ -31,8 +31,7 @@ import java.util.Map;
 public class Semantic  extends RO {
 
 
-    @Autowired
-    private QueryControl queryControl;
+
     @Autowired
     private QueryService queryService;
     @Autowired
@@ -89,9 +88,17 @@ public class Semantic  extends RO {
         params.add(param);
 
         //4---执行查询
-        String aResult = queryControl.execQuery("2", qry_id, JSONArray.toJSONString(params, RO.features));
+        try{
+            Map map = queryService.executeSql("2", qry_id, JSONArray.toJSONString(params, RO.features));
 
-        return aResult;
+            return SuccessMsg("",map);
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getCause().getMessage());
+
+        }
+
 
 
     }
