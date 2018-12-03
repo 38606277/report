@@ -3,7 +3,10 @@ package root.report.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageRowBounds;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.*;
@@ -18,16 +21,14 @@ import root.configure.AppConstants;
 import root.configure.MybatisCacheConfiguration;
 import root.report.db.DbFactory;
 import root.report.query.SqlTemplate;
+import root.report.util.ExecuteSqlUtil;
 import root.report.util.JsonUtil;
 import root.report.util.XmlUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 功能描述: 对query表的增删改查功能
@@ -817,5 +818,79 @@ public class QueryService {
         return listQueryName;
     }
 
+    // 执行sql
+    public Map executeSql(String queryClassName,String queryID,String pJson) throws Exception {
+        Map<String,Object> result = new HashMap();
+        try {
+            SqlTemplate template = new SqlTemplate();
+            this.assemblySqlTemplateTwo(template,queryClassName,queryID);
+            if(StringUtils.isBlank(template.getSql())){
+                throw new Exception("数据库查询SQL为空,无法继续操作");
+            }
 
+            JSONArray arr = JSON.parseArray(pJson);
+            JSONObject params = arr.getJSONObject(0);//查询参数
+            JSONObject page = null;
+            if(arr.size()>1){
+                page = arr.getJSONObject(1);  //分页对象
+            }
+            JSONObject objin=params.getJSONObject("in");
+            RowBounds bounds = null;
+            if(page==null || page.size()==0){
+                bounds = RowBounds.DEFAULT;
+            }else{
+                int startIndex=page.getIntValue("startIndex");
+                int perPage=page.getIntValue("perPage");
+                if(startIndex==1 || startIndex==0){
+                    startIndex=0;
+                }else{
+                    startIndex=(startIndex-1)*perPage;
+                }
+                bounds = new PageRowBounds(startIndex, perPage);
+            }
+            Map map = new HashMap();
+            if(objin!=null){
+                String value = null,key=null;
+                java.util.Iterator it = objin.entrySet().iterator();
+                while(it.hasNext()) {
+                    java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
+                    key=entry.getKey().toString(); //返回与此项对应的键
+                    value=entry.getValue().toString(); //返回与此项对应的值
+                    map.put(key, value);
+                }
+            }
+            List<Map> aResult = new ArrayList<Map>();
+            Long totalSize = 0L;
+            String db = template.getDb();
+            String namespace = template.getNamespace();
+            String qryId = template.getId();
+            SqlSession targetSqlSession = DbFactory.Open(db);
+            // 强转成自己想要的类型
+            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,
+                    Map.class,Map.class,map,StatementType.PREPARED,true);
+            List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
+            //将集合遍历
+            for(int i=0;i<aResult.size();i++) {
+                //循环new  map集合
+                Map<String, Object> obdmap = new HashMap<String, Object>();
+                Set<String> se = aResult.get(i).keySet();
+                for (String set : se) {
+                    //在循环将大写的KEY和VALUE 放到新的Map
+                    obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                }
+                //将Map放进List集合里
+                newList.add(obdmap);
+            }
+            if(page!=null && page.size()!=0){
+                totalSize = ((PageRowBounds)bounds).getTotal();
+            }else{
+                totalSize = Long.valueOf(newList.size());
+            }
+            result.put("list", newList);
+            result.put("totalSize", totalSize);
+        }catch (Exception e){
+            throw e;
+        }
+        return result;
+    }
 }

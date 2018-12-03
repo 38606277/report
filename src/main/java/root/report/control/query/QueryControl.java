@@ -379,9 +379,10 @@ public class QueryControl extends RO {
                 + "pJson:" + pJson + ",");
         long t1 = System.nanoTime();
 
-        JSONObject result = new JSONObject();
+        JSONObject result = null;
         try{
-            JSONArray arr = JSON.parseArray(pJson);
+            result = new JSONObject(this.queryService.executeSql(queryClassName,queryID,pJson));
+/*            JSONArray arr = JSON.parseArray(pJson);
             JSONObject params = arr.getJSONObject(0);//查询参数
             JSONObject page = null;
             if(arr.size()>1){
@@ -420,22 +421,6 @@ public class QueryControl extends RO {
                     map.put(key, value);
                 }
             }
-//            JSONArray jsonArray = params.getJSONArray("in");
-//            if(jsonArray!=null){
-//                String value = null,key=null;
-//                JSONObject aJsonObject = null;
-//                for (int i = 0; i < jsonArray.size(); i++){
-//                    aJsonObject = (JSONObject) jsonArray.get(i);
-//                    java.util.Iterator it = aJsonObject.entrySet().iterator();
-//                    while(it.hasNext()) {
-//                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
-//                        key=entry.getKey().toString(); //返回与此项对应的键
-//                        value=entry.getValue().toString(); //返回与此项对应的值
-//                    }
-//                    map.put(key, value);
-//                }
-//            }
-//            map.put("name",page.getString("searchResult"));
             List<Map> aResult = new ArrayList<Map>();
             Long totalSize = 0L;
             String db = template.getDb();
@@ -466,45 +451,11 @@ public class QueryControl extends RO {
                 totalSize = Long.valueOf(newList.size());
             }
             result.put("list", newList);
-            result.put("totalSize", totalSize);
+            result.put("totalSize", totalSize);*/
         }catch (Exception e){
             e.printStackTrace();
             return ExceptionMsg(e.getCause().getMessage());
         }
-
-//            Object aResult = null;
-//        try {
-//            // String usersqlPath = AppConstants.getUserSqlPath() + File.separator + queryClassName + ".xml";
-//            SqlTemplate template = new SqlTemplate();
-//            queryService.assemblySqlTemplate(template,queryClassName,queryID);
-//            // 输入参数放入map中
-//            JSONArray inTemplate = template.getIn();
-//            JSONArray inValue = JSONArray.parseArray(pJson);
-//
-//            Map<String,Object> map = new LinkedHashMap<String,Object>();
-//            if (inTemplate != null) {
-//                for (int i = 0; i < inTemplate.size(); i++) {
-//                    JSONObject aJsonObject = (JSONObject) inTemplate.get(i);
-//                    String id = aJsonObject.getString("in_id");
-//                    map.put(id, inValue.getString(i));
-//                }
-//            }
-//            Map<String,Object> qryParamMap = new HashMap<String,Object>();
-//            List<FuncMetaData> list = new ArrayList<FuncMetaData>();
-//            acquireFuncMetaData(list,map,qryParamMap);
-//            if(list.size()!=0){
-//                aResult = excuteFunc(list,0,qryParamMap,template);
-//            }else{
-//                    String db = template.getDb();
-//                    String namespace = template.getNamespace();
-//                    String qryId = template.getId();
-//                    aResult = DbFactory.Open(db).selectOne("qry_"+namespace + "." + qryId, map);
-//
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            aResult=e.getMessage();
-//        }
 
         long t2 = System.nanoTime();
         System.out.println("结束执行查询:" + "QueryClassName:" + queryClassName + "," + "selectID:" + queryID + ","
