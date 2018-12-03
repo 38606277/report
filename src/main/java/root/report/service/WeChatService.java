@@ -1,16 +1,11 @@
 package root.report.service;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import root.ai.Semantic;
-import root.report.util.ArticleItem;
 import root.report.util.WeChatContant;
 import root.report.util.WeChatUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +14,9 @@ import java.util.Map;
  */
 @Service
 public class WeChatService {
+
+    @Autowired
+    NLPService nlpService;
 
     public String processRequest(HttpServletRequest request) {
         // xml格式的消息数据
@@ -36,15 +34,13 @@ public class WeChatService {
                 mes =requestMap.get(WeChatContant.Content).toString();
                 if(mes!=null){
 
-                    String resultMsg=new Semantic().GetResult(mes);
-                    JSONObject jsonObject= (JSONObject) JSONObject.parse(resultMsg);
-                    jsonObject= jsonObject.getJSONObject("data");
-                    JSONArray jsonArray=jsonObject.getJSONArray("list");
+//                    String resultMsg
+                    Map map=nlpService.ExecNLP(mes);
+                    List<Map<String, Object>> list=(List)map.get("list");
                     StringBuilder sb=new StringBuilder();
-                    for (int i=0;i<jsonArray.size();i++)
+                    for (int i=0;i<list.size();i++)
                     {
-                        sb.append(jsonArray.getJSONObject(i).getString("VENDOR_NAME")+"\n");
-
+                        sb.append(list.get(i).get("VENDOR_NAME")+"\n");
 
                     }
                     respXml = WeChatUtil.sendTextMsg(requestMap, sb.toString());
