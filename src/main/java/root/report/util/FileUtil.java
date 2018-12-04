@@ -55,4 +55,10 @@ public class FileUtil {
 			return false;
 		}
 	}
+
+	// 判断文件是否存在
+	public static boolean existsFile(String fileName){
+		File a = new File(fileName);  // fileName 要求完整路径
+		return a.exists();
+	}
 }
