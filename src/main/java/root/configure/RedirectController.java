@@ -7,10 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/")
 public class RedirectController {
     @RequestMapping("")
     public void toIndexPage(HttpServletResponse response) throws IOException {
-//        response.sendRedirect("app/**");
+        response.sendRedirect("index.html");
     }
 }
