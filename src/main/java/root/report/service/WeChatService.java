@@ -2,7 +2,7 @@ package root.report.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import root.report.util.WeChatContant;
+import root.report.service.webchat.WeChatContant;
 import root.report.util.WeChatUtil;
 
 import javax.servlet.http.HttpServletRequest;
