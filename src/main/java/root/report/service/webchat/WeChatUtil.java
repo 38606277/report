@@ -1,4 +1,4 @@
-package root.report.util;
+package root.report.service.webchat;
 
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -17,6 +17,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import root.report.service.webchat.WeChatContant;
+import root.report.util.ArticleItem;
 
 
 /**

@@ -3,9 +3,11 @@ package root.report.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import root.report.service.webchat.WeChatContant;
-import root.report.util.WeChatUtil;
+import root.report.service.webchat.WeChatUtil;
+import root.report.util.ArticleItem;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,19 +45,19 @@ public class WeChatService {
                         sb.append(list.get(i).get("VENDOR_NAME")+"\n");
 
                     }
-                    respXml = WeChatUtil.sendTextMsg(requestMap, sb.toString());
-//                    List<ArticleItem> items = new ArrayList<>();
-//                    ArticleItem item = new ArticleItem();
-//                    item.setTitle("为您找到以下数据：");
-//
+//                    respXml = WeChatUtil.sendTextMsg(requestMap, sb.toString());
+                    List<ArticleItem> items = new ArrayList<>();
+                    ArticleItem item = new ArticleItem();
+                    item.setTitle("为您找到以下数据：");
+
 //                    String a="<p><a>www.baidu.com</a></p>";
-//                    item.setDescription(a);
+                    item.setDescription(sb.toString());
 //                    item.setPicUrl("http://changhaiwx.pagekite.me/photo-wall/a/iali11.jpg");
-//                    item.setUrl("http://www.baidu.com");
-//                    items.add(item);
+                    item.setUrl("http://www.baidu.com");
+                    items.add(item);
 
 
-//                    respXml = WeChatUtil.sendArticleMsg(requestMap, items);
+                    respXml = WeChatUtil.sendArticleMsg(requestMap, items);
                 }else if("我的信息".equals(mes)){
 //                    Map<String, String> userInfo = getUserInfo(requestMap.get(WeChatContant.FromUserName));
 //                    System.out.println(userInfo.toString());
