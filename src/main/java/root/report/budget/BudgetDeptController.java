@@ -44,7 +44,7 @@ public class BudgetDeptController extends RO {
                 if(page==null){
                     bounds = RowBounds.DEFAULT;
                 }else{
-                    int startIndex=page.getIntValue("startIndex");
+                    int startIndex=page.getIntValue("currentPage");
                     int perPage=page.getIntValue("perPage");
                     if(startIndex==1 || startIndex==0){
                         startIndex=0;
