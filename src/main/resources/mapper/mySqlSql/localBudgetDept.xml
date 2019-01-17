@@ -13,8 +13,8 @@
             <if test="budget_year!=null and budget_year!=''">
                 AND mbdd.budget_year = '${budget_year}'
             </if>
-            <if test="department_id!=null and department_id!=''">
-                AND mbdd.department_id = '${department_id}'
+            <if test="department_name!=null and department_name!=''">
+                AND mbdd.DEPARTMENT_NAME = '${department_name}'
             </if>
             <if test="company_code!=null and company_code!=''">
                 AND mbdd.company_code = '${company_code}'
