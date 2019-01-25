@@ -19,15 +19,15 @@
       <maxPoolSize>50</maxPoolSize>
       <minPoolSize>3</minPoolSize>
   </DB> -->  
-   <DB> 
-      <name>form</name>  
-      <dbtype>Mysql</dbtype>  
-      <driver>com.mysql.cj.jdbc.Driver</driver>  
-      <url>jdbc:mysql://127.0.0.1:3306/form</url>  
-      <username>root</username>  
-      <password>v600KuCLNBc=</password>
-      <maxPoolSize>50</maxPoolSize>  
-      <minPoolSize>3</minPoolSize> 
+   <DB>
+      <name>form</name>
+      <dbtype>Mysql</dbtype>
+      <driver>com.mysql.cj.jdbc.Driver</driver>
+      <url>jdbc:mysql://127.0.0.1:3306/form</url>
+      <username>root</username>
+      <password></password>
+      <maxPoolSize>50</maxPoolSize>
+      <minPoolSize>3</minPoolSize>
    </DB>  
    <DB> 
       <name>jlerp</name>  
@@ -38,7 +38,7 @@
       <!-- <url>jdbc:mysql://10.19.110.170:3306/form</url> -->  
       <!-- <url>jdbc:mysql://172.25.105.113:3306/form</url> -->  
       <username>root</username>  
-      <password>v600KuCLNBc=</password>
+      <password></password>
       <maxPoolSize>50</maxPoolSize>  
       <minPoolSize>3</minPoolSize> 
    </DB>  
@@ -71,5 +71,15 @@
        <password></password>
        <maxPoolSize></maxPoolSize>
        <minPoolSize></minPoolSize>
-   </DB> --> 
+   </DB> -->  
+   <DB>
+      <name>orcl</name>
+      <driver>oracle.jdbc.OracleDriver</driver>
+      <dbtype>Oracle</dbtype>
+      <url>jdbc:oracle:thin:@172.16.131.201:1521:ORCL</url>
+      <username>apps</username>
+      <password>Y0pBthERE0A=</password>
+      <maxPoolSize>50</maxPoolSize>
+      <minPoolSize>3</minPoolSize>
+   </DB>
 </DBConnection>

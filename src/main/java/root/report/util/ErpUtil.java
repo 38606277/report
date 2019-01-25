@@ -142,7 +142,7 @@ public class ErpUtil {
 
 		System.out.println("加密:" + tools.encode("root"));
 
-		System.out.println("解密:" + tools.decode("v600KuCLNBc="));
+		System.out.println("解密:" + tools.decode("PyLaXmDHgI8="));
 
 	}
 }
