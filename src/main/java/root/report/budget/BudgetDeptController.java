@@ -59,7 +59,11 @@ public class BudgetDeptController extends RO {
                 //预算年份
                 param.put("budget_year", obj.getIntValue("budget_year"));
                 //公司名称(ID)
-                param.put("company_code", obj.getString("companycodes"));
+                if(null!=obj.getString("companycodes") && obj.getString("companycodes").equals("0")){
+                    param.put("company_code",null);
+                }else{
+                    param.put("company_code", obj.getString("companycodes"));
+                }
                 //部门名称
                 param.put("department_name", obj.getString("departmentids"));
                 //预算立项编号
@@ -172,7 +176,12 @@ public class BudgetDeptController extends RO {
                 //预算年份
                 param.put("budget_year", obj.getIntValue("budget_year"));
                 //公司名称(ID)
-                param.put("company_code", obj.getString("companycodes"));
+                if(null!=obj.getString("companycodes") && obj.getString("companycodes").equals("0")){
+                    param.put("company_code",null);
+                }else{
+                    param.put("company_code", obj.getString("companycodes"));
+                }
+
                 //部门名称
                 param.put("department_name", obj.getString("departmentids"));
                 //预算立项编号

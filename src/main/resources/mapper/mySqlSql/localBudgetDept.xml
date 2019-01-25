@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="localBudgetDept">
-    <cache/>
+
     <select id="getAll" resultType="Map" parameterType="Map">
-        select BUDGET_YEAR,COMPANY_CODE,ORG_CODE,COMPANY_NAME,DEPARTMENT_NAME,BUDGET_ACCOUNT_NAME,
+        select DISTINCT BUDGET_YEAR,COMPANY_CODE,ORG_CODE,COMPANY_NAME,DEPARTMENT_NAME,BUDGET_ACCOUNT_NAME,
         PROJECT_NUMBER,PROJECT_NAME,BMS_CURRENT_PERSON,APPROVED_BUDGET_AMOUNT,SUBMIT_HT_AMOUNT,
         DOCUMENT_CODE,DOCUMENT_DESCRIPTION,HT_CURRENT_PERSON,HT_AMOUNT,HT_PROFIT_FROM,HT_PROFIT_TO,
         HT_SUPPLIER,FROM_DEPT,DOCUMENT_CREATE_BY,BZ_DOCUMENT_NUMBER,BZ_DOCUMENT_CREATE_BY,BZ_CURRENT_PERSON,
@@ -16,7 +16,7 @@
             <if test="department_name!=null and department_name!=''">
                 AND mbdd.DEPARTMENT_NAME = '${department_name}'
             </if>
-            <if test="company_code!=null and company_code!=''">
+            <if test="company_code!=null and company_code!='' and company_code!='0'">
                 AND mbdd.company_code = '${company_code}'
             </if>
             <if test="project_number!=null and project_number!=''">
