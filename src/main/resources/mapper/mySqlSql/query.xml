@@ -5,7 +5,7 @@
 
     <!-- 让此SQL能返回自增长主键 -->
     <insert id="createQueryName" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO qry_name(class_id,qry_name,qry_desc,qry_type,qry_file,qry_db,qry_sql)
+        INSERT INTO qry_name(class_id,qry_name,qry_desc,qry_type,qry_file,qry_db,qry_sql,cached)
         VALUES ('${class_id}', '${qry_name}',
         <if  test="qry_desc == null">NULL</if>
         <if  test="qry_desc != null">'${qry_desc}'</if>
@@ -21,6 +21,9 @@
         ,
         <if  test="qry_sql == null">NULL</if>
         <if  test="qry_sql != null">'${qry_sql}'</if>
+        ,
+        <if  test="cached == null">NULL</if>
+        <if  test="cached != null">${cached}</if>
         )
     </insert>
 
@@ -94,6 +97,9 @@
         ,qry_sql=
         <if  test="qry_sql == null">NULL</if>
         <if  test="qry_sql != null">'${qry_sql}'</if>
+        ,cached=
+        <if  test="cached == null">NULL</if>
+        <if  test="cached != null">${cached}</if>
         where qry_id=#{qry_id,jdbcType=INTEGER}
     </update>
 
@@ -163,7 +169,8 @@
 			qn.qry_type ,
 			qn.qry_file,
 			qn.qry_db,
-		    qn.qry_sql
+		    qn.qry_sql,
+             qn.cached
 		FROM
 			qry_name qn ,
 			qry_class qc

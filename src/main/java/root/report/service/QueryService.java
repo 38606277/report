@@ -52,6 +52,7 @@ public class QueryService {
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
         mapFunc.put("qry_file", jsonFunc.getString("qry_file"));
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
+        mapFunc.put("cached", jsonFunc.getIntValue("cached"));
         String escapeSQL=jsonFunc.getString("qry_sql");
         escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
         mapFunc.put("qry_sql", escapeSQL);
@@ -201,7 +202,7 @@ public class QueryService {
      * 功能描述:  修改 query_name 表当中的记录
      */
     public int updateQueryName(SqlSession sqlSession, JSONObject jsonFunc) {
-        Map<String, String> mapFunc = new HashMap<>();
+        Map<String, Object> mapFunc = new HashMap<>();
         mapFunc.put("class_id", jsonFunc.getString("class_id"));
         mapFunc.put("qry_id", jsonFunc.getString("qry_id"));
         mapFunc.put("qry_name", jsonFunc.getString("qry_name"));
@@ -209,6 +210,7 @@ public class QueryService {
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
         mapFunc.put("qry_file", jsonFunc.getString("qry_file"));
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
+        mapFunc.put("cached", jsonFunc.getIntValue("cached"));
         String escapeSQL=jsonFunc.getString("qry_sql");
         escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
         mapFunc.put("qry_sql", escapeSQL);
