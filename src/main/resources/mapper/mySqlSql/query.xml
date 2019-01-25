@@ -163,7 +163,9 @@
 			qn.qry_type ,
 			qn.qry_file,
 			qn.qry_db,
-		    qn.qry_sql
+		    qn.qry_sql,
+		    qn.qry_http,
+		    qn.cached
 		FROM
 			qry_name qn ,
 			qry_class qc

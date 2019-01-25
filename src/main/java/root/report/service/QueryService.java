@@ -753,6 +753,7 @@ public class QueryService {
         sqlTemplate.setSelectType(jsonObject.containsKey("qry_type") ? jsonObject.getString("qry_type") : "");
         // 组装sql
         sqlTemplate.setSql(jsonObject.getString("qry_sql"));
+        sqlTemplate.setCached(jsonObject.getString("cached"));
         sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
 
@@ -768,6 +769,7 @@ public class QueryService {
         sqlTemplate.setSelectType(jsonObject.containsKey("qry_type") ? jsonObject.getString("qry_type") : "");
         // 组装sql
         sqlTemplate.setSql(jsonObject.getString("qry_sql"));
+        sqlTemplate.setCached(jsonObject.getString("cached"));
         sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
@@ -865,9 +867,14 @@ public class QueryService {
             String namespace = template.getNamespace();
             String qryId = template.getId();
             SqlSession targetSqlSession = DbFactory.Open(db);
+            Boolean cached=false;
+            if(null!=template.getCached()){
+                cached=true;
+            }
+            System.out.print(template.getCached());
             // 强转成自己想要的类型
             aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,
-                    Map.class,Map.class,map,StatementType.PREPARED,true);
+                    Map.class,Map.class,map,StatementType.PREPARED,cached);
             List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
             //将集合遍历
             for(int i=0;i<aResult.size();i++) {

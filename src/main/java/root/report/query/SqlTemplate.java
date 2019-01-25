@@ -23,6 +23,7 @@ public class SqlTemplate {
 	private JSONArray in;
 	private JSONArray out;
 	private String sql;
+	private String cached;
 
 	public  SqlTemplate() {}
 
@@ -134,4 +135,13 @@ public class SqlTemplate {
 	public void setSql(String sql) {
 		this.sql = sql;
 	}
+	public String getCached() {
+		return cached;
+	}
+
+	public void setCached(String cached) {
+		this.cached = cached;
+	}
+
+
 }
