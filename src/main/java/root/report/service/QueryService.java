@@ -15,7 +15,15 @@ import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultCDATA;
 import org.dom4j.tree.DefaultComment;
 import org.dom4j.tree.DefaultElement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
 import root.configure.MybatisCacheConfiguration;
@@ -40,6 +48,8 @@ public class QueryService {
 
     private static Logger log = Logger.getLogger(QueryService.class);
 
+    @Autowired
+    private RestTemplate restTemplate;
     /**
      * 功能描述: 往query_name表中增加记录
      */
@@ -868,32 +878,46 @@ public class QueryService {
             String db = template.getDb();
             String namespace = template.getNamespace();
             String qryId = template.getId();
+            String qryType =template.getSelectType();
             SqlSession targetSqlSession = DbFactory.Open(db);
             Boolean cached=false;
             if(null!=template.getCached()){
                 cached=true;
             }
-            System.out.print(template.getCached());
-            // 强转成自己想要的类型
-            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,
-                    Map.class,Map.class,map,StatementType.PREPARED,cached);
             List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
-            //将集合遍历
-            for(int i=0;i<aResult.size();i++) {
-                //循环new  map集合
-                Map<String, Object> obdmap = new HashMap<String, Object>();
-                Set<String> se = aResult.get(i).keySet();
-                for (String set : se) {
-                    //在循环将大写的KEY和VALUE 放到新的Map
-                    obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+
+            // 强转成自己想要的类型
+            if(qryType.equals("sql")) {
+                aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(), targetSqlSession, namespace, qryId, bounds,
+                        Map.class, Map.class, map, StatementType.PREPARED, cached);
+                //将集合遍历
+                for(int i=0;i<aResult.size();i++) {
+                    //循环new  map集合
+                    Map<String, Object> obdmap = new HashMap<String, Object>();
+                    Set<String> se = aResult.get(i).keySet();
+                    for (String set : se) {
+                        //在循环将大写的KEY和VALUE 放到新的Map
+                        obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                    }
+                    //将Map放进List集合里
+                    newList.add(obdmap);
                 }
-                //将Map放进List集合里
-                newList.add(obdmap);
-            }
-            if(page!=null && page.size()!=0){
-                totalSize = ((PageRowBounds)bounds).getTotal();
-            }else{
-                totalSize = Long.valueOf(newList.size());
+                if(page!=null && page.size()!=0){
+                    totalSize = ((PageRowBounds)bounds).getTotal();
+                }else{
+                    totalSize = Long.valueOf(newList.size());
+                }
+            }else if(qryType.equals("procedure")){
+                DbFactory.Open(db).select(namespace + "." + qryId, map, null);
+                newList = (List<Map<String, Object>>) map.get("p_out_data");
+            }else if(qryType.equals("http")){
+                SelectService selectService = SelectService.Load(namespace, qryId);
+
+                String responbody= invokeHttpService(selectService,map);
+                Map t=new HashMap<>();
+                t.put("data",responbody);
+                newList.add(0,t);
+                result.put("metadata",selectService.getMetaData());
             }
             result.put("list", newList);
             result.put("totalSize", totalSize);
@@ -901,5 +925,14 @@ public class QueryService {
             throw e;
         }
         return result;
+    }
+
+    public String invokeHttpService(SelectService selectService,Map<String,String> map){
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+        headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8.toString());
+        HttpEntity<String> requestEntity = new HttpEntity<String>(JSON.toJSONString(map), headers);
+        //  执行HTTP请求
+        ResponseEntity<String> response = restTemplate.exchange(selectService.getMetaData().getString("url"), HttpMethod.POST, requestEntity, String.class);
+        return response.getBody();
     }
 }
