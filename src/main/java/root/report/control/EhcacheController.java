@@ -1,9 +1,12 @@
 package root.report.control;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import root.report.common.RO;
@@ -78,6 +81,7 @@ public class EhcacheController extends RO {
     @RequestMapping(value = "/getAllCacheName", produces = "text/plain;charset=UTF-8")
     public String  getAllCacheName(){
         Cache cache = EhcacheController.getCache();    // 得到默认节点的
+
         //return cache.getKeys();
         return SuccessMsg("", cache.getKeys());
     }
@@ -99,6 +103,19 @@ public class EhcacheController extends RO {
         }else {
             log.info("Ehcache:无对应的值.");
             return null;
+        }
+    }
+    @RequestMapping(value = "/getElementValuesByKey", produces = "text/plain;charset=UTF-8")
+    public  String getElementValuesByKey(@RequestBody String key){
+        JSONObject obj= JSONObject.parseObject(key);
+        Cache cache = EhcacheController.getCache();    // 得到默认节点的
+        Element element = cache.get(obj.getString("cached_id"));
+        if(element!=null && element.getObjectValue()!=null){
+           // return element.getObjectValue();
+            return SuccessMsg("", element.getObjectValue());
+        }else {
+            log.info("Ehcache:无对应的值.");
+            return SuccessMsg("",null);
         }
     }
 
