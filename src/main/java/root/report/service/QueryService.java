@@ -66,11 +66,11 @@ public class QueryService {
         String escapeSQL=jsonFunc.getString("qry_sql");
         escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
         mapFunc.put("qry_sql", escapeSQL);
-        mapFunc.put("qry_cursor_name", jsonFunc.getIntValue("qry_cursor_name"));
-        mapFunc.put("qry_http_url", jsonFunc.getIntValue("qry_http_url"));
-        mapFunc.put("qry_http_header", jsonFunc.getIntValue("qry_http_header"));
-        mapFunc.put("qry_http_req_body", jsonFunc.getIntValue("qry_http_req_body"));
-        mapFunc.put("qry_http_res_body", jsonFunc.getIntValue("qry_http_res_body"));
+        mapFunc.put("qry_cursor_name", jsonFunc.getString("qry_cursor_name"));
+        mapFunc.put("qry_http_url", jsonFunc.getString("qry_http_url"));
+        mapFunc.put("qry_http_header", jsonFunc.getString("qry_http_header"));
+        mapFunc.put("qry_http_req_body", jsonFunc.getString("qry_http_req_body"));
+        mapFunc.put("qry_http_res_body", jsonFunc.getString("qry_http_res_body"));
         sqlSession.insert("query.createQueryName", mapFunc);
         return mapFunc.get("id").toString();
     }
@@ -229,11 +229,11 @@ public class QueryService {
         String escapeSQL=jsonFunc.getString("qry_sql");
         escapeSQL=escapeSQL.replace("'","\\'").replace("{","\\{").replace("}","\\}");
         mapFunc.put("qry_sql", escapeSQL);
-        mapFunc.put("qry_cursor_name", jsonFunc.getIntValue("qry_cursor_name"));
-        mapFunc.put("qry_http_url", jsonFunc.getIntValue("qry_http_url"));
-        mapFunc.put("qry_http_header", jsonFunc.getIntValue("qry_http_header"));
-        mapFunc.put("qry_http_req_body", jsonFunc.getIntValue("qry_http_req_body"));
-        mapFunc.put("qry_http_res_body", jsonFunc.getIntValue("qry_http_res_body"));
+        mapFunc.put("qry_cursor_name", jsonFunc.getString("qry_cursor_name"));
+        mapFunc.put("qry_http_url", jsonFunc.getString("qry_http_url"));
+        mapFunc.put("qry_http_header", jsonFunc.getString("qry_http_header"));
+        mapFunc.put("qry_http_req_body", jsonFunc.getString("qry_http_req_body"));
+        mapFunc.put("qry_http_res_body", jsonFunc.getString("qry_http_res_body"));
         return sqlSession.update("query.updateQueryName", mapFunc);
     }
 
