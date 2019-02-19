@@ -848,7 +848,7 @@ public class QueryService {
         try {
             SqlTemplate template = new SqlTemplate();
             this.assemblySqlTemplateTwo(template,queryClassName,queryID);
-            if(StringUtils.isBlank(template.getSql())){
+            if(StringUtils.isBlank(template.getSql()) && "sql".equals(template.getSelectType())){
                 throw new Exception("数据库查询SQL为空,无法继续操作");
             }
 
@@ -889,7 +889,7 @@ public class QueryService {
             String namespace = template.getNamespace();
             String qryId = template.getId();
             String qryType =template.getSelectType();
-            SqlSession targetSqlSession = DbFactory.Open(db);
+
             Boolean cached=false;
             if(null!=template.getCached()){
                 cached=true;
@@ -898,6 +898,7 @@ public class QueryService {
 
             // 强转成自己想要的类型
             if(qryType.equals("sql")) {
+                SqlSession targetSqlSession = DbFactory.Open(db);
                 aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(), targetSqlSession, namespace, qryId, bounds,
                         Map.class, Map.class, map, StatementType.PREPARED, cached);
                 //将集合遍历
