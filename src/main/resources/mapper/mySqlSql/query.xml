@@ -5,7 +5,8 @@
 
     <!-- 让此SQL能返回自增长主键 -->
     <insert id="createQueryName" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO qry_name(class_id,qry_name,qry_desc,qry_type,qry_file,qry_db,qry_sql,cached)
+        INSERT INTO qry_name(class_id,qry_name,qry_desc,qry_type,qry_file,qry_db,qry_sql,qry_cursor_name,qry_http_url,
+        qry_http_header,qry_http_req_body,qry_http_res_body,cached)
         VALUES ('${class_id}', '${qry_name}',
         <if  test="qry_desc == null">NULL</if>
         <if  test="qry_desc != null">'${qry_desc}'</if>
@@ -21,6 +22,21 @@
         ,
         <if  test="qry_sql == null">NULL</if>
         <if  test="qry_sql != null">'${qry_sql}'</if>
+        ,
+        <if  test="qry_cursor_name == null">NULL</if>
+        <if  test="qry_cursor_name != null">'${qry_cursor_name}'</if>
+        ,
+        <if  test="qry_http_url == null">NULL</if>
+        <if  test="qry_http_url != null">'${qry_http_url}'</if>
+        ,
+        <if  test="qry_http_header == null">NULL</if>
+        <if  test="qry_http_header != null">'${qry_http_header}'</if>
+        ,
+        <if  test="qry_http_req_body == null">NULL</if>
+        <if  test="qry_http_req_body != null">'${qry_http_req_body}'</if>
+        ,
+        <if  test="qry_http_res_body == null">NULL</if>
+        <if  test="qry_http_res_body != null">'${qry_http_res_body}'</if>
         ,
         <if  test="cached == null">NULL</if>
         <if  test="cached != null">${cached}</if>
@@ -97,6 +113,21 @@
         ,qry_sql=
         <if  test="qry_sql == null">NULL</if>
         <if  test="qry_sql != null">'${qry_sql}'</if>
+        ,qry_cursor_name=
+        <if  test="qry_cursor_name == null">NULL</if>
+        <if  test="qry_cursor_name != null">'${qry_cursor_name}'</if>
+        ,qry_http_url=
+        <if  test="qry_http_url == null">NULL</if>
+        <if  test="qry_http_url != null">'${qry_http_url}'</if>
+        ,qry_http_header=
+        <if  test="qry_http_header == null">NULL</if>
+        <if  test="qry_http_header != null">'${qry_http_header}'</if>
+        ,qry_http_req_body=
+        <if  test="qry_http_req_body == null">NULL</if>
+        <if  test="qry_http_req_body != null">'${qry_http_req_body}'</if>
+        ,qry_http_res_body=
+        <if  test="qry_http_res_body == null">NULL</if>
+        <if  test="qry_http_res_body != null">'${qry_http_res_body}'</if>
         ,cached=
         <if  test="cached == null">NULL</if>
         <if  test="cached != null">${cached}</if>
@@ -169,7 +200,8 @@
         qn.qry_type ,
         qn.qry_file,
         qn.qry_db,
-        qn.qry_sql,
+        qn.qry_sql,qn.qry_cursor_name,qn.qry_http_url,
+        qn.qry_http_header,qn.qry_http_req_body,qn.qry_http_res_body,
         qn.cached
         FROM
         qry_name qn ,
@@ -244,7 +276,8 @@
         qry.qry_type,
         qry.qry_file,
         qry.qry_db,
-        qry.qry_sql
+        qry.qry_sql,qry.qry_cursor_name,qry.qry_http_url,
+        qry.qry_http_header,qry.qry_http_req_body,qry.qry_http_res_body
         FROM
         qry_name qry,
         qry_class qc
@@ -273,7 +306,8 @@
         qry.qry_type,
         qry.qry_db,
         qry.qry_sql,
-        qry.qry_file
+        qry.qry_file,qry.qry_cursor_name,qry.qry_http_url,
+        qry.qry_http_header,qry.qry_http_req_body,qry.qry_http_res_body
         FROM
         qry_name qry,
         qry_class qc
