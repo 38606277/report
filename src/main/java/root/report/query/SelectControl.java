@@ -525,7 +525,10 @@ public class SelectControl extends RO {
         headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8.toString());
         HttpEntity<String> requestEntity = new HttpEntity<String>(JSON.toJSONString(map), headers);
         //  执行HTTP请求
-        ResponseEntity<String> response = restTemplate.exchange(selectService.getMetaData().getString("url"), HttpMethod.POST, requestEntity, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(selectService.getMetaData().getString("url"),
+                HttpMethod.POST,
+                requestEntity,
+                String.class);
         return response.getBody();
     }
 
