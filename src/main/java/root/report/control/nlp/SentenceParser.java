@@ -20,7 +20,7 @@ public class SentenceParser {
 		System.out.println(outPut.toString());
 		for(Term term : outPut){
 			String wordString = term.word;
-			String verbString = term.nature.name();
+			String verbString = term.nature.toString();
 			if(verbString == "v" || verbString == "n" || verbString == "vn"){
 				functionNameString+=wordString;
 			}else if(verbString == "t" || verbString == "nt"||verbString == "ns"||verbString == "nz"){
