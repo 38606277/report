@@ -61,10 +61,13 @@ public class ExecuteSqlUtil {
         List<?> cacheList = null;
         CacheKey cacheKey = null;
 
-//        if(bounds==null){
-//            bounds = new RowBounds();
-//        }
-
+        if(bounds==null){
+            bounds = new RowBounds();
+        }
+        //如果是存储过程就不要传分页参数bounds
+        if(statementType.equals(StatementType.CALLABLE)){
+            bounds = null;
+        }
         // 1. 对executeSql 加上script标签
         StringBuffer sb = new StringBuffer();
         sb.append("<script>");
