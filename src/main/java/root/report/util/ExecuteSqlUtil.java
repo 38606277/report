@@ -61,9 +61,9 @@ public class ExecuteSqlUtil {
         List<?> cacheList = null;
         CacheKey cacheKey = null;
 
-        if(bounds==null){
-            bounds = new RowBounds();
-        }
+//        if(bounds==null){
+//            bounds = new RowBounds();
+//        }
 
         // 1. 对executeSql 加上script标签
         StringBuffer sb = new StringBuffer();

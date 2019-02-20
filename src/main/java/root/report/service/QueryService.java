@@ -921,7 +921,7 @@ public class QueryService {
             }else if(qryType.equals("procedure")){
                 String sqlPro="{ call "+template.getSql()+" }";
                 SqlSession targetSqlSession = DbFactory.Open(db);
-                newList = (List<Map<String, Object>>) ExecuteSqlUtil.executeDataBaseSql(sqlPro, targetSqlSession, namespace, qryId, bounds,
+                newList = (List<Map<String, Object>>) ExecuteSqlUtil.executeDataBaseSql(sqlPro, targetSqlSession, namespace, qryId, null,
                         Map.class, Map.class, null, StatementType.CALLABLE, cached);
                 if(page!=null && page.size()!=0){
                     totalSize = ((PageRowBounds)bounds).getTotal();
