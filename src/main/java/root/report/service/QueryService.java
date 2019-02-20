@@ -919,8 +919,17 @@ public class QueryService {
                     totalSize = Long.valueOf(newList.size());
                 }
             }else if(qryType.equals("procedure")){
-                DbFactory.Open(db).select(namespace + "." + qryId, map, null);
-                newList = (List<Map<String, Object>>) map.get("p_out_data");
+                String sqlPro="{ call "+template.getSql()+" }";
+                SqlSession targetSqlSession = DbFactory.Open(db);
+                newList = (List<Map<String, Object>>) ExecuteSqlUtil.executeDataBaseSql(sqlPro, targetSqlSession, namespace, qryId, bounds,
+                        Map.class, Map.class, null, StatementType.CALLABLE, cached);
+                if(page!=null && page.size()!=0){
+                    totalSize = ((PageRowBounds)bounds).getTotal();
+                }else{
+                    totalSize = Long.valueOf(newList.size());
+                }
+               // DbFactory.Open(db).selectList(namespace + "." + qryId, map, null);
+               // newList = (List<Map<String, Object>>) map.get("p_out_data");
             }else if(qryType.equals("http")){
                 SelectService selectService = SelectService.Load(namespace, qryId);
 
