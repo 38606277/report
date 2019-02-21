@@ -12,10 +12,7 @@ import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.executor.CachingExecutor;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.formula.functions.T;
@@ -25,9 +22,7 @@ import root.report.util.cache.EhcacheManager;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Auther: pccw
@@ -49,7 +44,13 @@ public class ExecuteSqlUtil {
      * @date: 2018/11/9 16:17
      */
     public static List<?> executeDataBaseSql(String executeSql, SqlSession sqlSession, String namespace, String mapper_id, RowBounds bounds,
-                                               Class<?> inClazz,Class<?> outClazz,Object param,StatementType statementType,Boolean cacheFlag){
+                                             Class<?> inClazz,Class<?> outClazz,Object param,StatementType statementType,Boolean cacheFlag)
+    {
+       return executeDataBaseSql(executeSql,sqlSession,namespace,mapper_id,bounds,
+               inClazz,outClazz,param,statementType,cacheFlag,null);
+    }
+    public static List<?> executeDataBaseSql(String executeSql, SqlSession sqlSession, String namespace, String mapper_id, RowBounds bounds,
+                                               Class<?> inClazz,Class<?> outClazz,Object param,StatementType statementType,Boolean cacheFlag,String dbType){
         if(statementType==null){
             statementType = StatementType.PREPARED; // 默认为 prepared
         }
@@ -90,7 +91,7 @@ public class ExecuteSqlUtil {
         }
         if(ms == null){
             // 构建ms，这个时候 configuration 当中是一定存在ms了
-            ms =  newSelectMappedStatement(configuration,namespace+"."+mapper_id,sqlSource,outClazz,statementType,cacheFlag);
+            ms =  newSelectMappedStatement(configuration,namespace+"."+mapper_id,sqlSource,outClazz,statementType,cacheFlag,dbType);
         }
 
         if(!cacheFlag){
@@ -99,7 +100,13 @@ public class ExecuteSqlUtil {
                 list = sqlSession.selectList(namespace+"."+mapper_id,param,bounds);
                 log.info("执行了一次查询");
             }else {
-                list = sqlSession.selectList(namespace+"."+mapper_id,param);
+                if(StatementType.CALLABLE.equals(statementType) && dbType.equals("bkeam")) {
+                    sqlSession.select(namespace + "." + mapper_id, param, null);
+                    Map map = (Map) param;
+                    list = (List<Map<String, Object>>) map.get("v_name");
+                }else{
+                    list = sqlSession.selectList(namespace+"."+mapper_id,param);
+                }
                 log.info("执行了一次查询");
             }
             return list;
@@ -143,7 +150,13 @@ public class ExecuteSqlUtil {
                     list = sqlSession.selectList(namespace+"."+mapper_id,param,bounds);
                     log.info("执行了一次查询,并把结果集装入到缓存当中");
                 }else {
-                    list = sqlSession.selectList(namespace+"."+mapper_id,param);
+                    if(StatementType.CALLABLE.equals(statementType) && dbType.equals("bkeam")) {
+                        sqlSession.select(namespace + "." + mapper_id, param, null);
+                        Map map = (Map) param;
+                        list = (List<Map<String, Object>>) map.get("v_name");
+                    }else{
+                        list = sqlSession.selectList(namespace + "." + mapper_id, param);
+                    }
                     log.info("执行了一次查询,并把结果集装入到缓存当中");
                 }
                 // 设置缓存分页对象的 total 数量
@@ -173,7 +186,7 @@ public class ExecuteSqlUtil {
 
     // cacheFlag 是否开启缓存标志位
     private  static MappedStatement newSelectMappedStatement(Configuration configuration,String msId, SqlSource sqlSource,
-                                                             final Class<?> resultType,StatementType statementType,Boolean cacheFlag) {
+                                                             final Class<?> resultType,StatementType statementType,Boolean cacheFlag,String dbType) {
         // 加强逻辑 ： 一定要防止 MappedStatement 重复问题
         MappedStatement msTest = null;
         try{
@@ -189,19 +202,43 @@ public class ExecuteSqlUtil {
         }
         MappedStatement ms = null;
         // 构建一个 select 类型的ms ，通过制定SqlCommandType.SELECT
-        ms = new MappedStatement.Builder(
-                configuration, msId, sqlSource, SqlCommandType.SELECT)
-                .statementType(statementType)
-                .useCache(false)      // 切断掉 二级缓存 切换到 ehcache 当中去，即是保证执行的时候不去二级缓存找了，直接查询
-                .resultMaps(new ArrayList<ResultMap>() {
-                    {
-                        add(new ResultMap.Builder(configuration,
-                                "defaultResultMap",
-                                resultType,
-                                new ArrayList<ResultMapping>(0)).build());
-                    }
-                })
-                .build();
+        // @Results(id="studentMap", value={
+        // @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true)
+
+        // call + 游标标志位 TODO : 暂时未对cursor标志位判断，也未取得ResutMap映射
+        if(StatementType.CALLABLE.equals(statementType) && true && dbType.equals("bkeam")){
+            // Builder(Configuration configuration, String property, String column, Class<?> javaType)
+            ResultMapping rm = new ResultMapping.Builder(
+                    configuration,"v_name","v_name",CursorBean.class).nestedQueryId(msId)
+            .build();
+            List<ResultMapping> rsList = new ArrayList<>();
+            rsList.add(rm);
+            ResultMap rMap = new ResultMap.Builder(
+                    configuration,msId,CursorBean.class,rsList
+            ).build();
+            List<ResultMap> rMapList = new ArrayList<>();
+            rMapList.add(rMap);
+            ms = new MappedStatement.Builder(
+                    configuration, msId, sqlSource, SqlCommandType.SELECT)
+                    .statementType(statementType)
+                    .useCache(false)      // 切断掉 二级缓存 切换到 ehcache 当中去，即是保证执行的时候不去二级缓存找了，直接查询
+                    .resultMaps(rMapList)
+                    .build();
+        }else {
+            ms = new MappedStatement.Builder(
+                    configuration, msId, sqlSource, SqlCommandType.SELECT)
+                    .statementType(statementType)
+                    .useCache(false)      // 切断掉 二级缓存 切换到 ehcache 当中去，即是保证执行的时候不去二级缓存找了，直接查询
+                    .resultMaps(new ArrayList<ResultMap>() {
+                        {
+                            add(new ResultMap.Builder(configuration,
+                                    "defaultResultMap",
+                                    resultType,
+                                    new ArrayList<ResultMapping>(0)).build());
+                        }
+                    })
+                    .build();
+        }
         synchronized (configuration){
             configuration.addMappedStatement(ms); // 加入到此中去
         }

@@ -900,7 +900,7 @@ public class QueryService {
             if(qryType.equals("sql")) {
                 SqlSession targetSqlSession = DbFactory.Open(db);
                 aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(), targetSqlSession, namespace, qryId, bounds,
-                        Map.class, Map.class, map, StatementType.PREPARED, cached);
+                        Map.class, Map.class, map, StatementType.PREPARED, cached,db);
                 //将集合遍历
                 for(int i=0;i<aResult.size();i++) {
                     //循环new  map集合
@@ -918,26 +918,24 @@ public class QueryService {
                 }else{
                     totalSize = Long.valueOf(newList.size());
                 }
-            }else if(qryType.equals("procedure")){
-                String sqlPro="{ call "+template.getSql()+" }";
-                SqlSession targetSqlSession = DbFactory.Open(db);
-                newList = (List<Map<String, Object>>) ExecuteSqlUtil.executeDataBaseSql(sqlPro, targetSqlSession, namespace, qryId, null,
-                        Map.class, Map.class, null, StatementType.CALLABLE, cached);
-                if(page!=null && page.size()!=0){
-                    totalSize = ((PageRowBounds)bounds).getTotal();
-                }else{
+            }else {
+                if (qryType.equals("procedure")) {
+                    String sqlPro = "{call " + template.getSql() + "}";
+                    SqlSession targetSqlSession = DbFactory.Open(db);
+                    map.put("v_name", new ArrayList<Map<String, Object>>());
+                    newList = (List<Map<String, Object>>) ExecuteSqlUtil.executeDataBaseSql(sqlPro, targetSqlSession, namespace, qryId, null,
+                            Map.class, Map.class, map, StatementType.CALLABLE, cached,db);
                     totalSize = Long.valueOf(newList.size());
+//               // DbFactory.Open(db).select(namespace + "." + qryId, map, null);
+                   // newList = (List<Map<String, Object>>) map.get("v_name");
+                } else if (qryType.equals("http")) {
+                    SelectService selectService = SelectService.Load(namespace, qryId);
+                    String responbody = invokeHttpService(selectService, map);
+                    Map t = new HashMap<>();
+                    t.put("data", responbody);
+                    newList.add(0, t);
+                    result.put("metadata", selectService.getMetaData());
                 }
-               // DbFactory.Open(db).selectList(namespace + "." + qryId, map, null);
-               // newList = (List<Map<String, Object>>) map.get("p_out_data");
-            }else if(qryType.equals("http")){
-                SelectService selectService = SelectService.Load(namespace, qryId);
-
-                String responbody= invokeHttpService(selectService,map);
-                Map t=new HashMap<>();
-                t.put("data",responbody);
-                newList.add(0,t);
-                result.put("metadata",selectService.getMetaData());
             }
             result.put("list", newList);
             result.put("totalSize", totalSize);
