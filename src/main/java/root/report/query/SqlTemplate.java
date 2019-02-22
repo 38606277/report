@@ -24,7 +24,7 @@ public class SqlTemplate {
 	private JSONArray out;
 	private String sql;
 	private String cached;
-
+	private String qryCursorName;
 	public  SqlTemplate() {}
 
 	public  SqlTemplate(String templateFileName,String selectId) {
@@ -142,6 +142,12 @@ public class SqlTemplate {
 	public void setCached(String cached) {
 		this.cached = cached;
 	}
+	public String getQryCursorName() {
+		return qryCursorName;
+	}
 
+	public void setQryCursorName(String qryCursorName) {
+		this.qryCursorName = qryCursorName;
+	}
 
 }

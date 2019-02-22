@@ -776,6 +776,7 @@ public class QueryService {
         // 组装sql
         sqlTemplate.setSql(jsonObject.getString("qry_sql"));
         sqlTemplate.setCached(jsonObject.getString("cached"));
+        sqlTemplate.setQryCursorName(jsonObject.containsKey("qry_cursor_name") ? jsonObject.getString("qry_cursor_name") : "");
         sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
 
@@ -792,6 +793,7 @@ public class QueryService {
         // 组装sql
         sqlTemplate.setSql(jsonObject.getString("qry_sql"));
         sqlTemplate.setCached(jsonObject.getString("cached"));
+        sqlTemplate.setQryCursorName(jsonObject.containsKey("qry_cursor_name") ? jsonObject.getString("qry_cursor_name") : "");
         sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
@@ -834,11 +836,25 @@ public class QueryService {
                 selectOne("query.getFunctionNameByClassIdPId", param);
         return listQueryName;
     }
+    public List<Map<String, Object>> getQueryByName(String qry_name) {
+        Map<String,String> param=new HashMap<String,String>();
+        param.put("qry_name",qry_name);
+        List<Map<String, Object>> listQueryName = DbFactory.Open(DbFactory.FORM)
+                                           .selectList("query.getQueryByName", param);
+        return listQueryName;
+    }
     public Map<String, Object> getQueryByChineseName(String qry_name) {
         Map<String,String> param=new HashMap<String,String>();
         param.put("qry_name",qry_name);
         Map<String, Object> listQueryName = DbFactory.Open(DbFactory.FORM).
                 selectOne("query.getQueryByChineseName", param);
+        return listQueryName;
+    }
+    public List<Map<String, Object>> getQueryByOutName(String out_name) {
+        Map<String,String> param=new HashMap<String,String>();
+        param.put("out_name",out_name);
+        List<Map<String, Object>> listQueryName = DbFactory.Open(DbFactory.FORM).
+                selectList("query.getQueryByOutName", param);
         return listQueryName;
     }
 
@@ -900,7 +916,7 @@ public class QueryService {
             if(qryType.equals("sql")) {
                 SqlSession targetSqlSession = DbFactory.Open(db);
                 aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(), targetSqlSession, namespace, qryId, bounds,
-                        Map.class, Map.class, map, StatementType.PREPARED, cached,db);
+                        Map.class, Map.class, map, StatementType.PREPARED, cached,db,null);
                 //将集合遍历
                 for(int i=0;i<aResult.size();i++) {
                     //循环new  map集合
@@ -922,9 +938,10 @@ public class QueryService {
                 if (qryType.equals("procedure")) {
                     String sqlPro = "{call " + template.getSql() + "}";
                     SqlSession targetSqlSession = DbFactory.Open(db);
-                    map.put("v_name", new ArrayList<Map<String, Object>>());
+                    String  qryCursorName= template.getQryCursorName();
+                    map.put(template.getQryCursorName(), new ArrayList<Map<String, Object>>());
                     newList = (List<Map<String, Object>>) ExecuteSqlUtil.executeDataBaseSql(sqlPro, targetSqlSession, namespace, qryId, null,
-                            Map.class, Map.class, map, StatementType.CALLABLE, cached,db);
+                            Map.class, Map.class, map, StatementType.CALLABLE, cached,db,qryCursorName);
                     totalSize = Long.valueOf(newList.size());
 //               // DbFactory.Open(db).select(namespace + "." + qryId, map, null);
                    // newList = (List<Map<String, Object>>) map.get("v_name");

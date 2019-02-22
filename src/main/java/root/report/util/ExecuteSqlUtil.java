@@ -14,6 +14,7 @@ import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.Transaction;
+import org.apache.ibatis.type.TypeHandler;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.formula.functions.T;
 import org.mybatis.caches.ehcache.LoggingEhcache;
@@ -47,10 +48,10 @@ public class ExecuteSqlUtil {
                                              Class<?> inClazz,Class<?> outClazz,Object param,StatementType statementType,Boolean cacheFlag)
     {
        return executeDataBaseSql(executeSql,sqlSession,namespace,mapper_id,bounds,
-               inClazz,outClazz,param,statementType,cacheFlag,null);
+               inClazz,outClazz,param,statementType,cacheFlag,null,null);
     }
     public static List<?> executeDataBaseSql(String executeSql, SqlSession sqlSession, String namespace, String mapper_id, RowBounds bounds,
-                                               Class<?> inClazz,Class<?> outClazz,Object param,StatementType statementType,Boolean cacheFlag,String dbType){
+                                               Class<?> inClazz,Class<?> outClazz,Object param,StatementType statementType,Boolean cacheFlag,String dbType,String qryCursorName){
         if(statementType==null){
             statementType = StatementType.PREPARED; // 默认为 prepared
         }
@@ -103,7 +104,7 @@ public class ExecuteSqlUtil {
                 if(StatementType.CALLABLE.equals(statementType) && dbType.equals("bkeam")) {
                     sqlSession.select(namespace + "." + mapper_id, param, null);
                     Map map = (Map) param;
-                    list = (List<Map<String, Object>>) map.get("v_name");
+                    list = (List<Map<String, Object>>) map.get(qryCursorName);
                 }else{
                     list = sqlSession.selectList(namespace+"."+mapper_id,param);
                 }
@@ -153,7 +154,7 @@ public class ExecuteSqlUtil {
                     if(StatementType.CALLABLE.equals(statementType) && dbType.equals("bkeam")) {
                         sqlSession.select(namespace + "." + mapper_id, param, null);
                         Map map = (Map) param;
-                        list = (List<Map<String, Object>>) map.get("v_name");
+                        list = (List<Map<String, Object>>) map.get(qryCursorName);
                     }else{
                         list = sqlSession.selectList(namespace + "." + mapper_id, param);
                     }
@@ -201,30 +202,6 @@ public class ExecuteSqlUtil {
             log.info("没有此mappedStatment,可以注入此mappedStatement到configuration当中");
         }
         MappedStatement ms = null;
-        // 构建一个 select 类型的ms ，通过制定SqlCommandType.SELECT
-        // @Results(id="studentMap", value={
-        // @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true)
-
-        // call + 游标标志位 TODO : 暂时未对cursor标志位判断，也未取得ResutMap映射
-        if(StatementType.CALLABLE.equals(statementType) && true && dbType.equals("bkeam")){
-            // Builder(Configuration configuration, String property, String column, Class<?> javaType)
-            ResultMapping rm = new ResultMapping.Builder(
-                    configuration,"v_name","v_name",CursorBean.class).nestedQueryId(msId)
-            .build();
-            List<ResultMapping> rsList = new ArrayList<>();
-            rsList.add(rm);
-            ResultMap rMap = new ResultMap.Builder(
-                    configuration,msId,CursorBean.class,rsList
-            ).build();
-            List<ResultMap> rMapList = new ArrayList<>();
-            rMapList.add(rMap);
-            ms = new MappedStatement.Builder(
-                    configuration, msId, sqlSource, SqlCommandType.SELECT)
-                    .statementType(statementType)
-                    .useCache(false)      // 切断掉 二级缓存 切换到 ehcache 当中去，即是保证执行的时候不去二级缓存找了，直接查询
-                    .resultMaps(rMapList)
-                    .build();
-        }else {
             ms = new MappedStatement.Builder(
                     configuration, msId, sqlSource, SqlCommandType.SELECT)
                     .statementType(statementType)
@@ -238,7 +215,7 @@ public class ExecuteSqlUtil {
                         }
                     })
                     .build();
-        }
+
         synchronized (configuration){
             configuration.addMappedStatement(ms); // 加入到此中去
         }
