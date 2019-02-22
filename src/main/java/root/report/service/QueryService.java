@@ -907,7 +907,7 @@ public class QueryService {
             String qryType =template.getSelectType();
 
             Boolean cached=false;
-            if(null!=template.getCached()){
+            if(null!=template.getCached() && "1".equals(template.getCached())){
                 cached=true;
             }
             List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
