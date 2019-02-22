@@ -3,6 +3,7 @@ package root.report.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.github.pagehelper.PageRowBounds;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.StatementType;
@@ -777,6 +778,8 @@ public class QueryService {
         sqlTemplate.setSql(jsonObject.getString("qry_sql"));
         sqlTemplate.setCached(jsonObject.getString("cached"));
         sqlTemplate.setQryCursorName(jsonObject.containsKey("qry_cursor_name") ? jsonObject.getString("qry_cursor_name") : "");
+        sqlTemplate.setQryHttpHeader(jsonObject.containsKey("qry_http_header") ? jsonObject.getString("qry_http_header") : "");
+        sqlTemplate.setQryHttpUrl(jsonObject.containsKey("qry_http_url") ? jsonObject.getString("qry_http_url") : "");
         sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
 
@@ -794,6 +797,8 @@ public class QueryService {
         sqlTemplate.setSql(jsonObject.getString("qry_sql"));
         sqlTemplate.setCached(jsonObject.getString("cached"));
         sqlTemplate.setQryCursorName(jsonObject.containsKey("qry_cursor_name") ? jsonObject.getString("qry_cursor_name") : "");
+        sqlTemplate.setQryHttpHeader(jsonObject.containsKey("qry_http_header") ? jsonObject.getString("qry_http_header") : "");
+        sqlTemplate.setQryHttpUrl(jsonObject.containsKey("qry_http_url") ? jsonObject.getString("qry_http_url") : "");
         sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
@@ -896,6 +901,9 @@ public class QueryService {
                     java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
                     key=entry.getKey().toString(); //返回与此项对应的键
                     value=entry.getValue().toString(); //返回与此项对应的值
+//                    if(value.equals("")){
+//                        value=null;
+//                    }
                     map.put(key, value);
                 }
             }
@@ -945,13 +953,30 @@ public class QueryService {
                     totalSize = Long.valueOf(newList.size());
 //               // DbFactory.Open(db).select(namespace + "." + qryId, map, null);
                    // newList = (List<Map<String, Object>>) map.get("v_name");
-                } else if (qryType.equals("http")) {
-                    SelectService selectService = SelectService.Load(namespace, qryId);
-                    String responbody = invokeHttpService(selectService, map);
-                    Map t = new HashMap<>();
-                    t.put("data", responbody);
-                    newList.add(0, t);
-                    result.put("metadata", selectService.getMetaData());
+                } else {
+                    if (qryType.equals("http")) {
+                        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+                        headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8.toString());
+                        headers.add("credentials", template.getQryHttpHeader());
+                        HttpEntity<String> requestEntity = new HttpEntity<String>(JSON.toJSONString(map), headers);
+                        //  执行HTTP请求
+                        ResponseEntity<String> response = restTemplate.exchange(template.getQryHttpUrl(), HttpMethod.POST, requestEntity, String.class);
+                        JSONObject jsonObject =JSONObject.parseObject(response.getBody());
+                        aResult=JSON.parseObject(JSON.toJSONString(jsonObject.get("data")==null?response.getBody():jsonObject.get("data")),new TypeReference<ArrayList<Map>>(){});
+                        //将集合遍历
+                        for(int i=0;i<aResult.size();i++) {
+                            //循环new  map集合
+                            Map<String, Object> obdmap = new HashMap<String, Object>();
+                            Set<String> se = aResult.get(i).keySet();
+                            for (String set : se) {
+                                //在循环将大写的KEY和VALUE 放到新的Map
+                                obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                            }
+                            //将Map放进List集合里
+                            newList.add(obdmap);
+                        }
+
+                    }
                 }
             }
             result.put("list", newList);
@@ -962,12 +987,12 @@ public class QueryService {
         return result;
     }
 
-    public String invokeHttpService(SelectService selectService,Map<String,String> map){
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-        headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8.toString());
-        HttpEntity<String> requestEntity = new HttpEntity<String>(JSON.toJSONString(map), headers);
-        //  执行HTTP请求
-        ResponseEntity<String> response = restTemplate.exchange(selectService.getMetaData().getString("url"), HttpMethod.POST, requestEntity, String.class);
-        return response.getBody();
-    }
+//    public String invokeHttpService(SelectService selectService,Map<String,String> map){
+//        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+//        headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8.toString());
+//        HttpEntity<String> requestEntity = new HttpEntity<String>(JSON.toJSONString(map), headers);
+//        //  执行HTTP请求
+//        ResponseEntity<String> response = restTemplate.exchange(selectService.getMetaData().getString("url"), HttpMethod.POST, requestEntity, String.class);
+//        return response.getBody();
+//    }
 }

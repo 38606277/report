@@ -25,6 +25,8 @@ public class SqlTemplate {
 	private String sql;
 	private String cached;
 	private String qryCursorName;
+	private String qryHttpUrl;
+	private String qryHttpHeader;
 	public  SqlTemplate() {}
 
 	public  SqlTemplate(String templateFileName,String selectId) {
@@ -150,4 +152,19 @@ public class SqlTemplate {
 		this.qryCursorName = qryCursorName;
 	}
 
+
+	public String getQryHttpUrl() {
+		return qryHttpUrl;
+	}
+
+	public void setQryHttpUrl(String qryHttpUrl) {
+		this.qryHttpUrl = qryHttpUrl;
+	}
+	public String getQryHttpHeader() {
+		return qryHttpHeader;
+	}
+
+	public void setQryHttpHeader(String qryHttpHeader) {
+		this.qryHttpHeader = qryHttpHeader;
+	}
 }
