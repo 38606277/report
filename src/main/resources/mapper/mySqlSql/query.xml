@@ -419,4 +419,7 @@
             and qry_name like '%${qry_name}%'
         </if>
     </select>
+    <resultMap type="java.util.HashMap" id="cursorMap">
+
+    </resultMap>
 </mapper>
