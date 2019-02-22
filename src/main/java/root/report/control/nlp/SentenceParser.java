@@ -37,14 +37,12 @@ public class SentenceParser {
 
 
 	public String getFunctionName() {
-
 		return functionName;
 	}
 
 
 
 	public void setFunctionName(String functionName) {
-
 		this.functionName = functionName;
 	}
 

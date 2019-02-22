@@ -834,18 +834,11 @@ public class QueryService {
                 selectOne("query.getFunctionNameByClassIdPId", param);
         return listQueryName;
     }
-    public List<Map<String, Object>> getQueryByName(String qry_name) {
+    public Map<String, Object> getQueryByChineseName(String qry_name) {
         Map<String,String> param=new HashMap<String,String>();
         param.put("qry_name",qry_name);
-        List<Map<String, Object>> listQueryName = DbFactory.Open(DbFactory.FORM)
-                                           .selectList("query.getQueryByName", param);
-        return listQueryName;
-    }
-    public List<Map<String, Object>> getQueryByOutName(String out_name) {
-        Map<String,String> param=new HashMap<String,String>();
-        param.put("out_name",out_name);
-        List<Map<String, Object>> listQueryName = DbFactory.Open(DbFactory.FORM).
-                selectList("query.getQueryByOutName", param);
+        Map<String, Object> listQueryName = DbFactory.Open(DbFactory.FORM).
+                selectOne("query.getQueryByChineseName", param);
         return listQueryName;
     }
 
