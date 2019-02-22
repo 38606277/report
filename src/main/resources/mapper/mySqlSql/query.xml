@@ -412,14 +412,34 @@
         select count(1) from qry_name where  1=1
         <if test="qry_name != null and qry_name!=''">  and qry_name like '%${qry_name}%' </if>
     </select>
-    <!-- 查找cube 表当中的所有记录  -->
-    <select id="getQueryByChineseName" resultType="Map" parameterType="map">
+    <!-- nlp查找查询名称  -->
+    <select id="getQueryByName" resultType="Map" parameterType="map">
         select qry_id,qry_name,class_id from qry_name where  1=1
         <if test="qry_name != null and qry_name!=''">
             and qry_name like '%${qry_name}%'
         </if>
     </select>
+
     <resultMap type="java.util.HashMap" id="cursorMap">
 
     </resultMap>
+
+    <!-- nlp查找输出字段  -->
+    <select id="getQueryByOutName" resultType="Map" parameterType="map">
+        SELECT
+        qn.qry_id ,
+        qn.qry_name ,
+        qn.class_id ,
+        qo.out_name
+        FROM
+        qry_out qo ,
+        qry_name qn
+        WHERE
+        1 = 1
+        AND qo.qry_id = qn.qry_id
+        <if test="out_name != null and out_name!=''">
+            and qry_name like '%${out_name}%'
+        </if>
+    </select>
+
 </mapper>
