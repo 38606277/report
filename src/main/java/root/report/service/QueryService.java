@@ -957,10 +957,13 @@ public class QueryService {
                     if (qryType.equals("http")) {
                         MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
                         headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8.toString());
-                        headers.add("credentials", template.getQryHttpHeader());
+                        headers.add("credentials", "{ UserCode: \"system\", Pwd: \"KfTaJa3vfLE=\" }");
                         HttpEntity<String> requestEntity = new HttpEntity<String>(JSON.toJSONString(map), headers);
                         //  执行HTTP请求
-                        ResponseEntity<String> response = restTemplate.exchange(template.getQryHttpUrl(), HttpMethod.POST, requestEntity, String.class);
+                        ResponseEntity<String> response = restTemplate.exchange(template.getQryHttpUrl(),
+                                HttpMethod.POST,
+                                requestEntity,
+                                String.class);
                         JSONObject jsonObject =JSONObject.parseObject(response.getBody());
                         aResult=JSON.parseObject(JSON.toJSONString(jsonObject.get("data")==null?response.getBody():jsonObject.get("data")),new TypeReference<ArrayList<Map>>(){});
                         //将集合遍历

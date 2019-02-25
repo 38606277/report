@@ -1,5 +1,9 @@
 package root.report.control.nlp;
 
+import com.hankcs.hanlp.HanLP;
+import com.hankcs.hanlp.corpus.dependency.CoNll.CoNLLSentence;
+import com.hankcs.hanlp.corpus.dependency.CoNll.CoNLLWord;
+import com.hankcs.hanlp.dictionary.CustomDictionary;
 import com.hankcs.hanlp.seg.NShort.NShortSegment;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
@@ -33,6 +37,31 @@ public class SentenceParser {
 		businessParser.setInNames(paramsString);
 
 		return  businessParser;
+	}
+
+	public static String parserFuncName(String input){
+
+
+		CustomDictionary.add("供应商资质");
+		CustomDictionary.add("部门负责人");
+		CustomDictionary.add("湖北移动");
+		CustomDictionary.add("成本中心");
+		CustomDictionary.add("采购订单");
+		CoNLLSentence coNLLSentence= HanLP.parseDependency(input);
+		for(CoNLLWord coNLLWord : coNLLSentence.word) {
+
+			//查找最后一个动宾关系,
+ 			if (coNLLWord.ID == coNLLSentence.word.length) {
+				if (coNLLWord.DEPREL.equals("动宾关系")) {
+					return coNLLWord.HEAD.NAME + coNLLWord.NAME;
+
+
+				}
+
+			}
+		}
+		return "不能解析查询名称!";
+
 	}
 
 

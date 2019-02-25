@@ -6,6 +6,8 @@ import com.hankcs.hanlp.corpus.dependency.CoNll.CoNLLWord;
 import com.hankcs.hanlp.dictionary.CustomDictionary;
 import com.hankcs.hanlp.mining.word2vec.DocVectorModel;
 import com.hankcs.hanlp.mining.word2vec.WordVectorModel;
+import com.hankcs.hanlp.seg.NShort.NShortSegment;
+import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.tokenizer.NLPTokenizer;
 
 public class App
@@ -15,6 +17,22 @@ public class App
     {
 
 
+        //        CustomDictionary.add("采购订单");
+//        CustomDictionary.add("华为公司");
+//        CustomDictionary.add("供应商资质");
+//        CustomDictionary.add("部门负责人");
+//        CustomDictionary.add("湖北移动");
+        CustomDictionary.add("2018年");
+        CustomDictionary.add("采购订单");
+
+        Segment nShortSegment = new NShortSegment();
+//                .enableCustomDictionary(true)
+//                .enablePlaceRecognize(true)
+//                .enableOrganizationRecognize(true);
+//        nShortSegment.seg("查询华为公司2018年的采购订单");
+
+        System.out.println(nShortSegment.seg("查询华为公司大于10000的采购订单"));
+        System.out.println(HanLP.segment("查询华为公司2018年的采购订单"));
 
 //        printNearestDocument("体育", documents, docVectorModel);
 //        printNearestDocument("农业", documents, docVectorModel);
@@ -23,25 +41,23 @@ public class App
 
 
         // 动态增加
-//        CustomDictionary.add("采购订单");
-//        CustomDictionary.add("华为公司");
-        CustomDictionary.add("供应商资质");
-        CustomDictionary.add("部门负责人");
-        CustomDictionary.add("湖北移动");
-        CustomDictionary.add("成本中心");
-        CustomDictionary.add("采购订单");
-//        CoNLLSentence coNLLSentence= HanLP.parseDependency("查询周多华的项目");
+
+        CoNLLSentence coNLLSentence= HanLP.parseDependency("查询华为公司2018年的采购订单");
+        System.out.println(coNLLSentence);
 //        for(CoNLLWord coNLLWord : coNLLSentence.word)
 //        {
 //            System.out.println(coNLLWord.ID);
-//            System.out.println(coNLLWord.CPOSTAG);
-//            System.out.println(coNLLWord.DEPREL);
-//            System.out.println(coNLLWord.LEMMA);
-//            System.out.println(coNLLWord.POSTAG);
 //            System.out.println(coNLLWord.NAME);
+////            System.out.println(coNLLWord.CPOSTAG);
+//            System.out.println(coNLLWord.DEPREL);
+//            System.out.println(coNLLWord.HEAD.ID);
+//            System.out.println(coNLLWord.HEAD.NAME);
+////            System.out.println(coNLLWord.LEMMA);
+////            System.out.println(coNLLWord.POSTAG);
+//
 //        }
+////        System.out.println(coNLLSentence);
 //        System.out.println(coNLLSentence);
-        System.out.println(HanLP.parseDependency("查询湖北移动的采购订单"));
 //        System.out.println(HanLP.segment("查询华为2018年的采购订单"));
 //        System.out.println(HanLP.parseDependency("查询华为2018年的采购订单"));
 //        System.out.println(CRFDependencyParser.compute("查询刘德华的项目金额信息"));
