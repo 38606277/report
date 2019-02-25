@@ -1003,9 +1003,6 @@ public class QueryService {
                         httpPost.addHeader(arrlistV1, arrlistVa);
                         // httpPost.addHeader("credentials",template.getQryHttpHeader());
                     }
-                }else{
-                    httpPost.addHeader("credentials", "");
-                    httpPost.setHeader("Content-type","application/json;charset=UTF-8");
                 }
                 // 执行请求操作，并拿到结果（同步阻塞）
                 CloseableHttpResponse response = httpClient.execute(httpPost);
