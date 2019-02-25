@@ -3,9 +3,16 @@ package root.report.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.github.pagehelper.PageRowBounds;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
@@ -17,13 +24,8 @@ import org.dom4j.tree.DefaultCDATA;
 import org.dom4j.tree.DefaultComment;
 import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
@@ -868,65 +870,59 @@ public class QueryService {
         Map<String,Object> result = new HashMap();
         try {
             SqlTemplate template = new SqlTemplate();
-            this.assemblySqlTemplateTwo(template,queryClassName,queryID);
-            if(StringUtils.isBlank(template.getSql()) && "sql".equals(template.getSelectType())){
+            this.assemblySqlTemplateTwo(template, queryClassName, queryID);
+            if (StringUtils.isBlank(template.getSql()) && "sql".equals(template.getSelectType())) {
                 throw new Exception("数据库查询SQL为空,无法继续操作");
             }
-
-            JSONArray arr = JSON.parseArray(pJson);
-            JSONObject params = arr.getJSONObject(0);//查询参数
-            JSONObject page = null;
-            if(arr.size()>1){
-                page = arr.getJSONObject(1);  //分页对象
-            }
-            JSONObject objin=params.getJSONObject("in");
-            RowBounds bounds = null;
-            if(page==null || page.size()==0){
-                bounds = RowBounds.DEFAULT;
-            }else{
-                int startIndex=page.getIntValue("startIndex");
-                int perPage=page.getIntValue("perPage");
-                if(startIndex==1 || startIndex==0){
-                    startIndex=0;
-                }else{
-                    startIndex=(startIndex-1)*perPage;
-                }
-                bounds = new PageRowBounds(startIndex, perPage);
-            }
-            Map map = new HashMap();
-            if(objin!=null){
-                String value = null,key=null;
-                java.util.Iterator it = objin.entrySet().iterator();
-                while(it.hasNext()) {
-                    java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
-                    key=entry.getKey().toString(); //返回与此项对应的键
-                    value=entry.getValue().toString(); //返回与此项对应的值
-//                    if(value.equals("")){
-//                        value=null;
-//                    }
-                    map.put(key, value);
-                }
-            }
+            List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
             List<Map> aResult = new ArrayList<Map>();
             Long totalSize = 0L;
-            String db = template.getDb();
-            String namespace = template.getNamespace();
-            String qryId = template.getId();
-            String qryType =template.getSelectType();
-
-            Boolean cached=false;
-            if(null!=template.getCached() && "1".equals(template.getCached())){
-                cached=true;
-            }
-            List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
-
-            // 强转成自己想要的类型
-            if(qryType.equals("sql")) {
+            String qryType = template.getSelectType();
+            if (qryType.equals("sql")) {
+                JSONArray arr = JSON.parseArray(pJson);
+                JSONObject params = arr.getJSONObject(0);//查询参数
+                JSONObject page = null;
+                if (arr.size() > 1) {
+                    page = arr.getJSONObject(1);  //分页对象
+                }
+                JSONObject objin = params.getJSONObject("in");
+                RowBounds bounds = null;
+                if (page == null || page.size() == 0) {
+                    bounds = RowBounds.DEFAULT;
+                } else {
+                    int startIndex = page.getIntValue("startIndex");
+                    int perPage = page.getIntValue("perPage");
+                    if (startIndex == 1 || startIndex == 0) {
+                        startIndex = 0;
+                    } else {
+                        startIndex = (startIndex - 1) * perPage;
+                    }
+                    bounds = new PageRowBounds(startIndex, perPage);
+                }
+                Map map = new HashMap();
+                if (objin != null) {
+                    String value = null, key = null;
+                    java.util.Iterator it = objin.entrySet().iterator();
+                    while (it.hasNext()) {
+                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
+                        key = entry.getKey().toString(); //返回与此项对应的键
+                        value = entry.getValue().toString(); //返回与此项对应的值
+                        map.put(key, value);
+                    }
+                }
+                String db = template.getDb();
+                String namespace = template.getNamespace();
+                String qryId = template.getId();
+                Boolean cached = false;
+                if (null != template.getCached() && "1".equals(template.getCached())) {
+                    cached = true;
+                }
+                // 强转成自己想要的类型
                 SqlSession targetSqlSession = DbFactory.Open(db);
                 aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(), targetSqlSession, namespace, qryId, bounds,
-                        Map.class, Map.class, map, StatementType.PREPARED, cached,db,null);
+                        Map.class, Map.class, map, StatementType.PREPARED, cached, db, null);
                 //将集合遍历
-                for(int i=0;i<aResult.size();i++) {
+                for (int i = 0; i < aResult.size(); i++) {
                     //循环new  map集合
                     Map<String, Object> obdmap = new HashMap<String, Object>();
                     Set<String> se = aResult.get(i).keySet();
@@ -937,50 +933,108 @@ public class QueryService {
                     //将Map放进List集合里
                     newList.add(obdmap);
                 }
-                if(page!=null && page.size()!=0){
-                    totalSize = ((PageRowBounds)bounds).getTotal();
-                }else{
+                if (page != null && page.size() != 0) {
+                    totalSize = ((PageRowBounds) bounds).getTotal();
+                } else {
                     totalSize = Long.valueOf(newList.size());
                 }
-            }else {
-                if (qryType.equals("procedure")) {
-                    String sqlPro = "{call " + template.getSql() + "}";
-                    SqlSession targetSqlSession = DbFactory.Open(db);
-                    String  qryCursorName= template.getQryCursorName();
-                    map.put(template.getQryCursorName(), new ArrayList<Map<String, Object>>());
-                    newList = (List<Map<String, Object>>) ExecuteSqlUtil.executeDataBaseSql(sqlPro, targetSqlSession, namespace, qryId, null,
-                            Map.class, Map.class, map, StatementType.CALLABLE, cached,db,qryCursorName);
-                    totalSize = Long.valueOf(newList.size());
-//               // DbFactory.Open(db).select(namespace + "." + qryId, map, null);
-                   // newList = (List<Map<String, Object>>) map.get("v_name");
-                } else {
-                    if (qryType.equals("http")) {
-                        MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-                        headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8.toString());
-                        headers.add("credentials", "{ UserCode: \"system\", Pwd: \"KfTaJa3vfLE=\" }");
-                        HttpEntity<String> requestEntity = new HttpEntity<String>(JSON.toJSONString(map), headers);
-                        //  执行HTTP请求
-                        ResponseEntity<String> response = restTemplate.exchange(template.getQryHttpUrl(),
-                                HttpMethod.POST,
-                                requestEntity,
-                                String.class);
-                        JSONObject jsonObject =JSONObject.parseObject(response.getBody());
-                        aResult=JSON.parseObject(JSON.toJSONString(jsonObject.get("data")==null?response.getBody():jsonObject.get("data")),new TypeReference<ArrayList<Map>>(){});
-                        //将集合遍历
-                        for(int i=0;i<aResult.size();i++) {
-                            //循环new  map集合
-                            Map<String, Object> obdmap = new HashMap<String, Object>();
-                            Set<String> se = aResult.get(i).keySet();
-                            for (String set : se) {
-                                //在循环将大写的KEY和VALUE 放到新的Map
-                                obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
-                            }
-                            //将Map放进List集合里
-                            newList.add(obdmap);
-                        }
-
+            } else if (qryType.equals("procedure")) {
+                JSONArray arr = JSON.parseArray(pJson);
+                JSONObject params = arr.getJSONObject(0);//查询参数
+                JSONObject page = null;
+                if (arr.size() > 1) {
+                    page = arr.getJSONObject(1);  //分页对象
+                }
+                JSONObject objin = params.getJSONObject("in");
+                RowBounds bounds = null;
+//                if (page == null || page.size() == 0) {
+//                    bounds = RowBounds.DEFAULT;
+//                } else {
+//                    int startIndex = page.getIntValue("startIndex");
+//                    int perPage = page.getIntValue("perPage");
+//                    if (startIndex == 1 || startIndex == 0) {
+//                        startIndex = 0;
+//                    } else {
+//                        startIndex = (startIndex - 1) * perPage;
+//                    }
+//                    bounds = new PageRowBounds(startIndex, perPage);
+//                }
+                Map map = new HashMap();
+                if (objin != null) {
+                    String value = null, key = null;
+                    java.util.Iterator it = objin.entrySet().iterator();
+                    while (it.hasNext()) {
+                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
+                        key = entry.getKey().toString(); //返回与此项对应的键
+                        value = entry.getValue().toString(); //返回与此项对应的值
+                        map.put(key, value);
                     }
                 }
+                String db = template.getDb();
+                String namespace = template.getNamespace();
+                String qryId = template.getId();
+                Boolean cached = false;
+                if (null != template.getCached() && "1".equals(template.getCached())) {
+                    cached = true;
+                }
+                String sqlPro = "{call " + template.getSql() + "}";
+                SqlSession targetSqlSession = DbFactory.Open(db);
+                String qryCursorName = template.getQryCursorName();
+                map.put(template.getQryCursorName(), new ArrayList<Map<String, Object>>());
+                newList = (List<Map<String, Object>>) ExecuteSqlUtil.executeDataBaseSql(sqlPro, targetSqlSession, namespace, qryId, null,
+                        Map.class, Map.class, map, StatementType.CALLABLE, cached, db, qryCursorName);
+                totalSize = Long.valueOf(newList.size());
+            } else if (qryType.equals("http")) {
+                String results = "";
+                // 创建httpclient对象
+                CloseableHttpClient httpClient = HttpClients.createDefault();
+                // 创建post方式请求对象
+                HttpPost httpPost = new HttpPost(template.getQryHttpUrl());
+                // 设置参数到请求对象中
+                StringEntity stringEntity = new StringEntity(pJson, ContentType.APPLICATION_JSON);
+                stringEntity.setContentEncoding("utf-8");
+                httpPost.setEntity(stringEntity);
+                if(null!=template.getQryHttpHeader() && !"".equals(template.getQryHttpHeader())) {
+                    String[] arrlist = template.getQryHttpHeader().split("\\n");
+                    for (int i = 0; i < arrlist.length; i++) {
+                        String arrlistV = arrlist[i];
+                        String arrlistV1 = arrlistV.substring(0, arrlistV.indexOf(":"));
+                        String arrlistVa = arrlistV.substring(arrlistV.indexOf(":") + 1, arrlistV.length());
+                        httpPost.addHeader(arrlistV1, arrlistVa);
+                        // httpPost.addHeader("credentials",template.getQryHttpHeader());
+                    }
+                }
+                // 执行请求操作，并拿到结果（同步阻塞）
+                CloseableHttpResponse response = httpClient.execute(httpPost);
+                // 获取结果实体
+                // 判断网络连接状态码是否正常(0--200都数正常)
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    results = EntityUtils.toString(response.getEntity(), "utf-8");
+                    JSONObject a=JSON.parseObject(results);
+                    try {
+                        aResult= (List<Map>) a.get("data");
+                    }catch (Exception e){
+                        JSONObject as= (JSONObject)a.get("data");
+                        if(null!=as.get("list")) {
+                            aResult = (List<Map>) as.get("list");
+                        }else{
+                            aResult.add(as);
+                        }
+                    }
+                    for (int i = 0; i < aResult.size(); i++) {
+                        //循环new  map集合
+                        Map<String, Object> obdmap = new HashMap<String, Object>();
+                        Set<String> se = aResult.get(i).keySet();
+                        for (String set : se) {
+                            //在循环将大写的KEY和VALUE 放到新的Map
+                            obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                        }
+                        //将Map放进List集合里
+                        newList.add(obdmap);
+                    }
+                }
+                // 释放链接
+                response.close();
             }
             result.put("list", newList);
             result.put("totalSize", totalSize);
