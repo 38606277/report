@@ -1015,7 +1015,11 @@ public class QueryService {
                         aResult= (List<Map>) a.get("data");
                     }catch (Exception e){
                         JSONObject as= (JSONObject)a.get("data");
-                        aResult= (List<Map>) as.get("list");
+                        if(null!=as.get("list")) {
+                            aResult = (List<Map>) as.get("list");
+                        }else{
+                            aResult.add(as);
+                        }
                     }
                     for (int i = 0; i < aResult.size(); i++) {
                         //循环new  map集合
