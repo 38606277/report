@@ -1039,18 +1039,28 @@ public class QueryService {
                                 if (null != jsonObjData.get("in")) {
                                     try {
                                         aResult = (List<Map>) jsonObjData.get("in");
+                                        if(null!=jsonObjData.get("totalSize")){
+                                            String ss=JSON.toJSONString(jsonObjData.get("totalSize"));
+                                            totalSize= Long.valueOf(ss);
+                                        }
                                     }catch (Exception e) {
                                         aResult =null;
                                     }
                                 }else  if (null != jsonObjData.get("out")) {
                                     try {
                                         aResult = (List<Map>) jsonObjData.get("out");
+                                        if(null!=jsonObjData.get("totalSize")){
+                                            String ss=JSON.toJSONString(jsonObjData.get("totalSize"));
+                                            totalSize= Long.valueOf(ss);
+                                        }
                                     }catch (Exception e) {
                                         aResult =null;
                                     }
                                 }else  if (null != jsonObjData.get("list")) {
                                     try {
                                         aResult = (List<Map>) jsonObjData.get("list");
+                                        String ss=JSON.toJSONString(jsonObjData.get("totalSize"));
+                                        totalSize= Long.valueOf(ss);
                                     }catch (Exception e) {
                                         aResult =null;
                                     }
