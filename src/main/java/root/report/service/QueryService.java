@@ -1014,9 +1014,8 @@ public class QueryService {
                 // 判断网络连接状态码是否正常(0--200都数正常)
                 if (response.getStatusLine().getStatusCode() == 200) {
                     results = EntityUtils.toString(response.getEntity(), "utf-8");
-                    JSONObject jsonObj=JSON.parseObject(results);
-
                     if("data".equals(template.getQryHttpResBodyArrayName())){
+                        JSONObject jsonObj=JSON.parseObject(results);
                         if(null!=jsonObj.get("data")){
                             try {
                                 aResult= (List<Map>) jsonObj.get("data");
@@ -1025,14 +1024,16 @@ public class QueryService {
                             }
                         }
                     }else if(null==template.getQryHttpResBodyArrayName() || "".equals(template.getQryHttpResBodyArrayName())){
+                        JSONArray jsonObj=JSON.parseArray(results);
                         if(null!=jsonObj){
                             try {
-                                aResult= (List<Map>)jsonObj;
+                                aResult= (List)jsonObj;
                             }catch (Exception e) {
                                 aResult =null;
                             }
                         }
                     }else if("data.in".equals(template.getQryHttpResBodyArrayName())){
+                        JSONObject jsonObj=JSON.parseObject(results);
                         if(null!=jsonObj.get("data")) {
                             try {
                                 JSONObject jsonObjData = (JSONObject) jsonObj.get("data");
