@@ -131,6 +131,9 @@
         ,qry_http_res_body=
         <if  test="qry_http_res_body == null">NULL</if>
         <if  test="qry_http_res_body != null">'${qry_http_res_body}'</if>
+        ,qry_http_res_body_arrayname=
+        <if  test="qry_http_res_body_arrayname == null">NULL</if>
+        <if  test="qry_http_res_body_arrayname != null">'${qry_http_res_body_arrayname}'</if>
         ,cached=
         <if  test="cached == null">NULL</if>
         <if  test="cached != null">${cached}</if>
@@ -205,7 +208,7 @@
         qn.qry_db,
         qn.qry_sql,qn.qry_cursor_name,qn.qry_http_url,
         qn.qry_http_header,qn.qry_http_req_body,qn.qry_http_res_body,
-        qn.cached
+        qn.qry_http_res_body_arrayname,qn.cached
         FROM
         qry_name qn ,
         qry_class qc
@@ -280,7 +283,7 @@
         qry.qry_file,
         qry.qry_db,
         qry.qry_sql,qry.qry_cursor_name,qry.qry_http_url,
-        qry.qry_http_header,qry.qry_http_req_body,qry.qry_http_res_body
+        qry.qry_http_header,qry.qry_http_req_body,qry.qry_http_res_body,qry.qry_http_res_body_arrayname
         FROM
         qry_name qry,
         qry_class qc
@@ -310,7 +313,7 @@
         qry.qry_db,
         qry.qry_sql,
         qry.qry_file,qry.qry_cursor_name,qry.qry_http_url,
-        qry.qry_http_header,qry.qry_http_req_body,qry.qry_http_res_body
+        qry.qry_http_header,qry.qry_http_req_body,qry.qry_http_res_body,qry.qry_http_res_body_arrayname
         FROM
         qry_name qry,
         qry_class qc

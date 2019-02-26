@@ -237,6 +237,7 @@ public class QueryService {
         mapFunc.put("qry_http_header", jsonFunc.getString("qry_http_header"));
         mapFunc.put("qry_http_req_body", jsonFunc.getString("qry_http_req_body"));
         mapFunc.put("qry_http_res_body", jsonFunc.getString("qry_http_res_body"));
+        mapFunc.put("qry_http_res_body_arrayname", jsonFunc.getString("qry_http_res_body_arrayname"));
         return sqlSession.update("query.updateQueryName", mapFunc);
     }
 
@@ -782,6 +783,7 @@ public class QueryService {
         sqlTemplate.setQryCursorName(jsonObject.containsKey("qry_cursor_name") ? jsonObject.getString("qry_cursor_name") : "");
         sqlTemplate.setQryHttpHeader(jsonObject.containsKey("qry_http_header") ? jsonObject.getString("qry_http_header") : "");
         sqlTemplate.setQryHttpUrl(jsonObject.containsKey("qry_http_url") ? jsonObject.getString("qry_http_url") : "");
+        sqlTemplate.setQryHttpResBodyArrayName(jsonObject.containsKey("qry_http_res_body_arrayname") ? jsonObject.getString("qry_http_res_body_arrayname") : "");
         sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
 
@@ -801,6 +803,8 @@ public class QueryService {
         sqlTemplate.setQryCursorName(jsonObject.containsKey("qry_cursor_name") ? jsonObject.getString("qry_cursor_name") : "");
         sqlTemplate.setQryHttpHeader(jsonObject.containsKey("qry_http_header") ? jsonObject.getString("qry_http_header") : "");
         sqlTemplate.setQryHttpUrl(jsonObject.containsKey("qry_http_url") ? jsonObject.getString("qry_http_url") : "");
+        sqlTemplate.setQryHttpResBodyArrayName(jsonObject.containsKey("qry_http_res_body_arrayname") ? jsonObject.getString("qry_http_res_body_arrayname") : "");
+
         sqlTemplate.setNamespace(AppConstants.QueryPrefix +namespace);
     }
     public List<Map<String, String>> getAuthTree(SqlSession sqlSession,int user_id) {
@@ -1010,27 +1014,64 @@ public class QueryService {
                 // 判断网络连接状态码是否正常(0--200都数正常)
                 if (response.getStatusLine().getStatusCode() == 200) {
                     results = EntityUtils.toString(response.getEntity(), "utf-8");
-                    JSONObject a=JSON.parseObject(results);
-                    try {
-                        aResult= (List<Map>) a.get("data");
-                    }catch (Exception e){
-                        JSONObject as= (JSONObject)a.get("data");
-                        if(null!=as.get("list")) {
-                            aResult = (List<Map>) as.get("list");
-                        }else{
-                            aResult.add(as);
+                    JSONObject jsonObj=JSON.parseObject(results);
+
+                    if("data".equals(template.getQryHttpResBodyArrayName())){
+                        if(null!=jsonObj.get("data")){
+                            try {
+                                aResult= (List<Map>) jsonObj.get("data");
+                            }catch (Exception e) {
+                                aResult =null;
+                            }
+                        }
+                    }else if(null==template.getQryHttpResBodyArrayName() || "".equals(template.getQryHttpResBodyArrayName())){
+                        if(null!=jsonObj){
+                            try {
+                                aResult= (List<Map>)jsonObj;
+                            }catch (Exception e) {
+                                aResult =null;
+                            }
+                        }
+                    }else if("data.in".equals(template.getQryHttpResBodyArrayName())){
+                        if(null!=jsonObj.get("data")) {
+                            try {
+                                JSONObject jsonObjData = (JSONObject) jsonObj.get("data");
+                                if (null != jsonObjData.get("in")) {
+                                    try {
+                                        aResult = (List<Map>) jsonObjData.get("in");
+                                    }catch (Exception e) {
+                                        aResult =null;
+                                    }
+                                }else  if (null != jsonObjData.get("out")) {
+                                    try {
+                                        aResult = (List<Map>) jsonObjData.get("out");
+                                    }catch (Exception e) {
+                                        aResult =null;
+                                    }
+                                }else  if (null != jsonObjData.get("list")) {
+                                    try {
+                                        aResult = (List<Map>) jsonObjData.get("list");
+                                    }catch (Exception e) {
+                                        aResult =null;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                aResult = null;
+                            }
                         }
                     }
-                    for (int i = 0; i < aResult.size(); i++) {
-                        //循环new  map集合
-                        Map<String, Object> obdmap = new HashMap<String, Object>();
-                        Set<String> se = aResult.get(i).keySet();
-                        for (String set : se) {
-                            //在循环将大写的KEY和VALUE 放到新的Map
-                            obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                    if(null!=aResult) {
+                        for (int i = 0; i < aResult.size(); i++) {
+                            //循环new  map集合
+                            Map<String, Object> obdmap = new HashMap<String, Object>();
+                            Set<String> se = aResult.get(i).keySet();
+                            for (String set : se) {
+                                //在循环将大写的KEY和VALUE 放到新的Map
+                                obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                            }
+                            //将Map放进List集合里
+                            newList.add(obdmap);
                         }
-                        //将Map放进List集合里
-                        newList.add(obdmap);
                     }
                 }
                 // 释放链接

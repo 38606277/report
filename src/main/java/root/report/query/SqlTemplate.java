@@ -27,6 +27,7 @@ public class SqlTemplate {
 	private String qryCursorName;
 	private String qryHttpUrl;
 	private String qryHttpHeader;
+	private String qryHttpResBodyArrayName;
 	public  SqlTemplate() {}
 
 	public  SqlTemplate(String templateFileName,String selectId) {
@@ -166,5 +167,12 @@ public class SqlTemplate {
 
 	public void setQryHttpHeader(String qryHttpHeader) {
 		this.qryHttpHeader = qryHttpHeader;
+	}
+	public String getQryHttpResBodyArrayName() {
+		return qryHttpResBodyArrayName;
+	}
+
+	public void setQryHttpResBodyArrayName(String qryHttpResBodyArrayName) {
+		this.qryHttpResBodyArrayName = qryHttpResBodyArrayName;
 	}
 }
