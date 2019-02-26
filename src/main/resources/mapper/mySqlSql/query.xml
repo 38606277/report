@@ -38,6 +38,9 @@
         <if  test="qry_http_res_body == null">NULL</if>
         <if  test="qry_http_res_body != null">'${qry_http_res_body}'</if>
         ,
+        <if  test="qry_http_res_body_arrayname == null">NULL</if>
+        <if  test="qry_http_res_body_arrayname != null">'${qry_http_res_body_arrayname}'</if>
+        ,
         <if  test="cached == null">NULL</if>
         <if  test="cached != null">${cached}</if>
         )

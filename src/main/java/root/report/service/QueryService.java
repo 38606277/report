@@ -73,7 +73,7 @@ public class QueryService {
         mapFunc.put("qry_http_url", jsonFunc.getString("qry_http_url"));
         mapFunc.put("qry_http_header", jsonFunc.getString("qry_http_header"));
         mapFunc.put("qry_http_req_body", jsonFunc.getString("qry_http_req_body"));
-        mapFunc.put("qry_http_res_body", jsonFunc.getString("qry_http_res_body"));
+        mapFunc.put("qry_http_res_body_arrayname", jsonFunc.getString("qry_http_res_body_arrayname"));
         sqlSession.insert("query.createQueryName", mapFunc);
         return mapFunc.get("id").toString();
     }
