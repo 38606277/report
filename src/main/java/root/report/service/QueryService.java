@@ -1030,26 +1030,25 @@ public class QueryService {
                         int arrl=arrp.length;
                         if(arrl==1){
                             if(null!=arrp[0]) {
-
-
                                 JSONObject jsonObj = JSON.parseObject(results);
                                 if (null != jsonObj.get(arrp[0])) {
                                     try {
-
                                         aResult = (List<Map>) jsonObj.get(arrp[0]);
-
                                     } catch (Exception e) {
                                         aResult = null;
                                     }
                                 }
                             }
                         }else{
-                            JSONObject o=JSON.parseObject(arrp[0]);
-                            for(int i=1;i<arrl;i++) {
-                                if ((i + 1) == arrl) {
-                                    aResult = (List<Map>) o.get(arrp[arrl - 1]);
-                                } else {
-                                    o = JSON.parseObject(arrp[i]);
+                            JSONObject jsonObj = JSON.parseObject(results);
+                            JSONObject o= (JSONObject) jsonObj.get(arrp[0]);
+                            if(null!=o) {
+                                for (int i = 1; i < arrl; i++) {
+                                    if ((i + 1) == arrl) {
+                                        aResult = (List<Map>) o.get(arrp[arrl - 1]);
+                                    } else {
+                                        o = JSON.parseObject(arrp[i]);
+                                    }
                                 }
                             }
                         }
