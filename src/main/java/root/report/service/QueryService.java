@@ -1026,7 +1026,7 @@ public class QueryService {
                             }
                         }
                     }else{
-                        String[] arrp=paramvalue.split(".");
+                        String[] arrp=paramvalue.split("\\.");
                         int arrl=arrp.length;
                         if(arrl==1){
                             if(null!=arrp[0]) {
