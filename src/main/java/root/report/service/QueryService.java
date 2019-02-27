@@ -1014,16 +1014,9 @@ public class QueryService {
                 // 判断网络连接状态码是否正常(0--200都数正常)
                 if (response.getStatusLine().getStatusCode() == 200) {
                     results = EntityUtils.toString(response.getEntity(), "utf-8");
-                    if("data".equals(template.getQryHttpResBodyArrayName())){
-                        JSONObject jsonObj=JSON.parseObject(results);
-                        if(null!=jsonObj.get("data")){
-                            try {
-                                aResult= (List<Map>) jsonObj.get("data");
-                            }catch (Exception e) {
-                                aResult =null;
-                            }
-                        }
-                    }else if(null==template.getQryHttpResBodyArrayName() || "".equals(template.getQryHttpResBodyArrayName())){
+                   String paramvalue= template.getQryHttpResBodyArrayName();
+
+                    if(null==paramvalue || "".equals(paramvalue)){
                         JSONArray jsonObj=JSON.parseArray(results);
                         if(null!=jsonObj){
                             try {
@@ -1032,42 +1025,32 @@ public class QueryService {
                                 aResult =null;
                             }
                         }
-                    }else if("data.in".equals(template.getQryHttpResBodyArrayName())){
-                        JSONObject jsonObj=JSON.parseObject(results);
-                        if(null!=jsonObj.get("data")) {
-                            try {
-                                JSONObject jsonObjData = (JSONObject) jsonObj.get("data");
-                                if (null != jsonObjData.get("in")) {
+                    }else{
+                        String[] arrp=paramvalue.split(".");
+                        int arrl=arrp.length;
+                        if(arrl==1){
+                            if(null!=arrp[0]) {
+
+
+                                JSONObject jsonObj = JSON.parseObject(results);
+                                if (null != jsonObj.get(arrp[0])) {
                                     try {
-                                        aResult = (List<Map>) jsonObjData.get("in");
-                                        if(null!=jsonObjData.get("totalSize")){
-                                            String ss=JSON.toJSONString(jsonObjData.get("totalSize"));
-                                            totalSize= Long.valueOf(ss);
-                                        }
-                                    }catch (Exception e) {
-                                        aResult =null;
-                                    }
-                                }else  if (null != jsonObjData.get("out")) {
-                                    try {
-                                        aResult = (List<Map>) jsonObjData.get("out");
-                                        if(null!=jsonObjData.get("totalSize")){
-                                            String ss=JSON.toJSONString(jsonObjData.get("totalSize"));
-                                            totalSize= Long.valueOf(ss);
-                                        }
-                                    }catch (Exception e) {
-                                        aResult =null;
-                                    }
-                                }else  if (null != jsonObjData.get("list")) {
-                                    try {
-                                        aResult = (List<Map>) jsonObjData.get("list");
-                                        String ss=JSON.toJSONString(jsonObjData.get("totalSize"));
-                                        totalSize= Long.valueOf(ss);
-                                    }catch (Exception e) {
-                                        aResult =null;
+
+                                        aResult = (List<Map>) jsonObj.get(arrp[0]);
+
+                                    } catch (Exception e) {
+                                        aResult = null;
                                     }
                                 }
-                            } catch (Exception e) {
-                                aResult = null;
+                            }
+                        }else{
+                            JSONObject o=JSON.parseObject(arrp[0]);
+                            for(int i=1;i<arrl;i++) {
+                                if ((i + 1) == arrl) {
+                                    aResult = (List<Map>) o.get(arrp[arrl - 1]);
+                                } else {
+                                    o = JSON.parseObject(arrp[i]);
+                                }
                             }
                         }
                     }
