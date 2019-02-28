@@ -993,7 +993,7 @@ public class QueryService {
                 // 创建httpclient对象
                 CloseableHttpClient httpClient = HttpClients.createDefault();
                 // 创建post方式请求对象
-                HttpPost httpPost = new HttpPost(template.getQryHttpUrl());
+                HttpPost httpPost = new HttpPost(template.getQryHttpUrl().trim());
                 // 设置参数到请求对象中
                 StringEntity stringEntity = new StringEntity(pJson, ContentType.APPLICATION_JSON);
                 stringEntity.setContentEncoding("utf-8");
