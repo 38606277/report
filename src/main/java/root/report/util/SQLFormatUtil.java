@@ -104,7 +104,7 @@ public class SQLFormatUtil {
 
         public String perform() {
 
-            result.append( initial );
+           // result.append( initial );
 
             while ( tokens.hasMoreTokens() ) {
                 token = tokens.nextToken();
