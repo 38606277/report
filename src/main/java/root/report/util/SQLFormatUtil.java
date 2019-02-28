@@ -63,10 +63,10 @@ public class SQLFormatUtil {
             String end = "</"+memeber;
             memeber = "<"+memeber;
             if(rs.contains(end) ){
-                rs = rs.replace(end," \n\r\f\t"+end); // " \n\r\f\t";
+                rs = rs.replace(end," \r\t"+end); // " \n\r\f\t";
             }
             if(rs.contains(memeber)){
-                rs = rs.replace(memeber," \n\r\f\t"+memeber);
+                rs = rs.replace(memeber," \r\t"+memeber);
             }
         }
         return rs;
