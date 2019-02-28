@@ -6,7 +6,7 @@
     <!-- 让此SQL能返回自增长主键 -->
     <insert id="createQueryName" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
         INSERT INTO qry_name(class_id,qry_name,qry_desc,qry_type,qry_file,qry_db,qry_sql,qry_cursor_name,qry_http_url,
-        qry_http_header,qry_http_req_body,qry_http_res_body,cached)
+        qry_http_header,qry_http_req_body,qry_http_res_body,qry_http_res_body_arrayname,cached)
         VALUES ('${class_id}', '${qry_name}',
         <if  test="qry_desc == null">NULL</if>
         <if  test="qry_desc != null">'${qry_desc}'</if>
