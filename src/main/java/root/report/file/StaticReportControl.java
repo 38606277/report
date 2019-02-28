@@ -40,38 +40,35 @@ public class StaticReportControl {
 		File[] fs = dir.listFiles();
 		String filePath;
 		String fileName;
-		for (int i = 0; i < fs.length; i++) {
+		if(null!=fs) {
+			for (int i = 0; i < fs.length; i++) {
 
-			if (fs[i].isHidden()||fs[i].getName().endsWith(".files")
-			    ||fs[i].getName().endsWith(".js")||fs[i].getName().endsWith(".xlsx")) {
-				continue;
+				if (fs[i].isHidden() || fs[i].getName().endsWith(".files")
+						|| fs[i].getName().endsWith(".js") || fs[i].getName().endsWith(".xlsx")) {
+					continue;
+				}
+				JSONObject tNode = new JSONObject(true);
+				fileName = fs[i].getName();
+				tNode.put("name", fileName.endsWith(".html") == true ? fileName.substring(0, fileName.length() - 5) : fileName);
+				filePath = fs[i].getPath();
+				try {
+					tNode.put("path", URLEncoder.encode(URLEncoder.encode(filePath.replaceAll("\\\\", "/"), "utf-8"), "utf-8"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+					System.out.println("文件路径编码错误:" + filePath);
+				}
+				tNode.put("isReportFile", fileName.endsWith(".html"));
+				aNode.add(tNode);
+
+				if (fs[i].isDirectory() && !fileName.endsWith(".files")) {
+
+					JSONArray nNode = new JSONArray();
+
+					tNode.put("children", nNode);
+					showAllFiles(fs[i], nNode);
+				}
 			}
-			JSONObject tNode = new JSONObject(true);
-			fileName = fs[i].getName();
-			tNode.put("name", fileName.endsWith(".html")==true?fileName.substring(0, fileName.length()-5):fileName);
-			filePath = fs[i].getPath();
-			try
-			{
-				tNode.put("path", URLEncoder.encode(URLEncoder.encode(filePath.replaceAll("\\\\", "/"),"utf-8"),"utf-8"));
-			}
-			catch(UnsupportedEncodingException e)
-			{
-				e.printStackTrace();
-				System.out.println("文件路径编码错误:"+filePath);
-			}
-			tNode.put("isReportFile",fileName.endsWith(".html"));
-			aNode.add(tNode);
-
-			if (fs[i].isDirectory()&&!fileName.endsWith(".files")) {
-
-				JSONArray nNode = new JSONArray();
-
-				tNode.put("children", nNode);
-				showAllFiles(fs[i], nNode);
-			}
-
 		}
-
 	}
 	
 	/**

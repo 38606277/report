@@ -38,31 +38,32 @@ public class TemplateControl extends RO {
 	private void showAllFiles(File dir, JSONArray aNode) {
 	    String name = dir.getName();
 		File[] fs = dir.listFiles();
-		for (int i = 0; i < fs.length; i++) {
+		if(null!=fs) {
+			for (int i = 0; i < fs.length; i++) {
 
-			if (fs[i].isHidden()) {
-				continue;
+				if (fs[i].isHidden()) {
+					continue;
+				}
+				JSONObject tNode = new JSONObject(true);
+				tNode.put("name", fs[i].getName());
+				if (!name.equals("template")) {
+					tNode.put("value", name + "/" + fs[i].getName());
+				} else {
+					tNode.put("value", fs[i].getName());
+				}
+				tNode.put("path", fs[i].getPath());
+				aNode.add(tNode);
+
+				if (fs[i].isDirectory()) {
+
+					JSONArray nNode = new JSONArray();
+
+					tNode.put("children", nNode);
+					showAllFiles(fs[i], nNode);
+				}
+
 			}
-			JSONObject tNode = new JSONObject(true);
-			tNode.put("name", fs[i].getName());
-			if(!name.equals("template")){
-			    tNode.put("value", name+"/"+fs[i].getName());
-			}else{
-			    tNode.put("value", fs[i].getName());
-			}
-			tNode.put("path", fs[i].getPath());
-			aNode.add(tNode);
-
-			if (fs[i].isDirectory()) {
-
-				JSONArray nNode = new JSONArray();
-
-				tNode.put("children", nNode);
-				showAllFiles(fs[i], nNode);
-			}
-
 		}
-
 	}
 
 	/**
