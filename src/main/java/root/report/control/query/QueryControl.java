@@ -28,6 +28,7 @@ import root.report.service.SelectService;
 import root.report.util.ExecuteSqlUtil;
 import root.report.util.FileUtil;
 import root.report.util.JsonUtil;
+import root.report.util.SQLFormatUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -712,5 +713,13 @@ public class QueryControl extends RO {
         }catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
+    }
+
+    //格式化SQL
+    @RequestMapping(value = "/sqlFormat", produces = "text/plain;charset=UTF-8")
+    public String sqlFormat(@RequestBody String pJson) {
+        SQLFormatUtil formatUtil=new SQLFormatUtil();
+        String newSql= formatUtil.format(pJson);
+        return  SuccessMsg("",newSql);
     }
 }
