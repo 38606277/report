@@ -163,7 +163,7 @@ public class QueryControl extends RO {
           /*  queryService.updateSqlTemplate(jsonQuery.getString("class_id"),
                     jsonQuery.getString("qry_id"),
                     jsonQuery.getString("qry_sql"));*/
-            ExecuteSqlUtil.removeMapperStatement(sqlSession,jsonQuery.getString("qry_name"),jsonQuery.getString("qry_id"));
+            ExecuteSqlUtil.removeMapperStatement(sqlSession,AppConstants.QueryPrefix +jsonQuery.getString("class_id"),jsonQuery.getString("qry_id"));
             sqlSession.getConnection().commit();
            //  DbFactory.init(DbFactory.FORM);
             return SuccessMsg("修改报表成功","");

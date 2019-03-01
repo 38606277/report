@@ -85,7 +85,7 @@ public class ExecuteSqlUtil {
         MappedStatement ms = null;
 
         // 如果我们从 configuration 当中可以取得到的话，则看缓存当中是否存在
-        if(configuration.getMappedStatementNames().contains(namespace+"."+mapper_id)){
+        if(configuration.getMappedStatementNames().contains(namespace+"."+mapper_id) && cacheFlag){
             ms = configuration.getMappedStatement(namespace+"."+mapper_id);
         }else {
             log.info("======不存在此mappedStatment,可以构建=====");
