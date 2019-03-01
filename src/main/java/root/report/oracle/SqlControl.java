@@ -522,7 +522,8 @@ public class SqlControl extends RO{
 		    
 	    	StringBuilder sb = new StringBuilder();
 	    	Element root = doc.getRootElement();
-	    	String sql = getElementText(sb, root).toString().toLowerCase();
+	    	//String sql = getElementText(sb, root).toString().toLowerCase();
+			String sql = getElementText(sb, root).toString();
 			log.debug("sql=====================" + sql);
 			
 			list = parseSqlOutputParams(sqlType,sql);
