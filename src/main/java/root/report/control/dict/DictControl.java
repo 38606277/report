@@ -42,7 +42,7 @@ public class DictControl extends RO {
     private static Logger log = Logger.getLogger(DictControl.class);
 
     @Autowired
-    private DictService dictService;
+    public DictService dictService;
 
 
 
@@ -58,7 +58,18 @@ public class DictControl extends RO {
             return ExceptionMsg(ex.getMessage());
         }
     }
+    @RequestMapping(value = "/getDictList", produces = "text/plain; charset=utf-8")
+    public String getDictValueList(@RequestBody String pJson)
+    {
+        Map data=null;
+        try {
+            data=dictService.getDictValueList(pJson);
+            return SuccessMsg("", data);
+        } catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
 
+    }
 
      //返回数据字典的定义头，out
     @RequestMapping(value = "/getDictByID/{dict_id}", produces = "text/plain;charset=UTF-8")
@@ -274,6 +285,20 @@ public class DictControl extends RO {
         }
     }
     //修改字典值
+    @RequestMapping(value = "/createFuncDictValue", produces = "text/plain;charset=UTF-8")
+    public String createFuncDictValue(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            JSONObject jsonObject = JSON.parseObject(pJson);
+            this.dictService.createFuncDictValue2(sqlSession,jsonObject);
+            return SuccessMsg("创建数据成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+    //修改字典值
     @RequestMapping(value = "/updateDictValue", produces = "text/plain;charset=UTF-8")
     public String updateDictValue(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
@@ -306,5 +331,33 @@ public class DictControl extends RO {
             return ExceptionMsg(ex.getMessage());
         }
     }
-
+    // 删除 func_dict_value 信息
+    @RequestMapping(value = "/deleteDictValueByIDCode", produces = "text/plain;charset=UTF-8")
+    public String deleteDictValueByIDCode(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            JSONObject jsonArray = JSON.parseObject(pJson);
+            this.dictService.deleteFuncDictValueByIDCode(sqlSession,jsonArray);
+            return SuccessMsg("删除数据成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+    //返回数据字典的定义头，out
+    @RequestMapping(value = "/getDictValueByDictID", produces = "text/plain;charset=UTF-8")
+    public String getDictValueByDictID(@RequestBody String pjson) {
+        JSONObject obj=JSON.parseObject(pjson);
+        Map map=new HashMap<>();
+        map.put("dict_id",obj.getIntValue("dict_id"));
+        map.put("value_code",obj.get("value_code"));
+        try{
+            Map jsonObject = this.dictService.getDictValueByDictID(map);
+            return SuccessMsg("查询成功",jsonObject);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
 }

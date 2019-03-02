@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.github.pagehelper.PageRowBounds;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.dom4j.*;
@@ -283,7 +285,30 @@ public class DictService {
         return  dict.get("dict_id").toString();
     }
 
-
+    // 修改 func_dict_value 表当中的记录
+    public void createFuncDictValue2(SqlSession sqlSession,JSONObject jsonObject){
+        // 只更新  value_name 即可
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Object> maps = new HashMap<>();
+        map.put("dict_id",jsonObject.getIntValue("dict_id"));
+        map.put("value_code",jsonObject.getString("value_code"));
+        maps= DbFactory.Open(DbFactory.FORM).selectOne("dict.getDictValueByDictID",map);
+        if(null==maps) {
+            map.put("value_name", jsonObject.getString("value_name"));
+            map.put("value_pid", jsonObject.get("value_pid") == null ? null : jsonObject.getIntValue("value_pid"));
+            map.put("abbr_name1", jsonObject.getString("abbr_name1"));
+            map.put("abbr_name2", jsonObject.getString("abbr_name2"));
+            map.put("attribute1", jsonObject.getString("attribute1"));
+            map.put("attribute2", jsonObject.getString("attribute2"));
+            map.put("attribute3", jsonObject.getString("attribute3"));
+            map.put("attribute4", jsonObject.getString("attribute4"));
+            map.put("attribute5", jsonObject.getString("attribute5"));
+            map.put("attribute6", jsonObject.getString("attribute6"));
+            map.put("attribute7", jsonObject.getString("attribute7"));
+            map.put("attribute8", jsonObject.getString("attribute8"));
+            sqlSession.insert("dict.createFuncDictValue", map);
+        }
+    }
 
     // 修改 func_dict_value 表当中的记录
     public void updateFuncDictValue(SqlSession sqlSession,JSONObject jsonObject){
@@ -292,6 +317,8 @@ public class DictService {
         map.put("dict_id",jsonObject.getIntValue("dict_id"));
         map.put("value_code",jsonObject.getString("value_code"));
         map.put("value_name",jsonObject.getString("value_name"));
+        map.put("abbr_name1",jsonObject.getString("abbr_name1"));
+        map.put("abbr_name2",jsonObject.getString("abbr_name2"));
         sqlSession.update("dict.updateFuncDictValue",map);
     }
 
@@ -304,6 +331,13 @@ public class DictService {
             map.put("value_code",jsonObject.getString("value_code"));
             sqlSession.delete("dict.deleteFuncDictValue",map);
         }
+    }
+    public void deleteFuncDictValueByIDCode(SqlSession sqlSession,JSONObject jsonObj){
+        Map<String,Object> map = new HashMap<>();
+        map.put("dict_id",jsonObj.getIntValue("dict_id"));
+        map.put("value_code",jsonObj.getString("value_code"));
+        sqlSession.delete("dict.deleteFuncDictValue",map);
+
     }
 
     public void createSqlTemplate(String TemplateName, String SelectID, String aSQLTemplate) throws DocumentException, SAXException, IOException {
@@ -820,5 +854,44 @@ public class DictService {
         }
         return "1";
     }
+    public Map getDictValueList(String pJson){
+        Map<String,Object> map3 =new HashMap<String,Object>();
+        try {
+            JSONObject obj = (JSONObject) JSON.parse(pJson);
+            Map<String,Object> map = new HashMap<String,Object>();
+            Long total = 0L;
+            RowBounds bounds = null;
+            if(obj==null){
+                bounds = RowBounds.DEFAULT;
+            }else {
+                int currentPage = Integer.valueOf(obj.getIntValue("pageNum"));
+                int perPage = Integer.valueOf(obj.getIntValue("perPage"));
+                if (1 == currentPage || 0 == currentPage) {
+                    currentPage = 0;
+                } else {
+                    currentPage = (currentPage - 1) * perPage;
+                }
+                bounds = new PageRowBounds(currentPage, perPage);
+            }
+            map.put("dict_id",obj.get("dictId"));
+            map.put("value_name",  obj.get("value_name")==null?"":obj.getString("value_name"));
+            List<Map<String,Object>> list = DbFactory.Open(DbFactory.FORM).selectList("dict.getDictValueByID",map,bounds);
+            if(obj!=null){
+                total = ((PageRowBounds)bounds).getTotal();
+            }else{
+                total = Long.valueOf(list.size());
+            }
 
+            map3.put("list",list);
+            map3.put("total",total);
+            return map3;
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return map3;
+        }
+    }
+
+    public Map getDictValueByDictID(Map m) {
+        return DbFactory.Open(DbFactory.FORM).selectOne("dict.getDictValueByDictID",m);
+    }
 }
