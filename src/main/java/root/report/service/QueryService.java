@@ -1043,10 +1043,12 @@ public class QueryService {
                 String[] arrlist = template.getQryHttpHeader().split("\\n");
                 for (int i = 0; i < arrlist.length; i++) {
                     String arrlistV = arrlist[i];
-                    String arrlistV1 = arrlistV.substring(0, arrlistV.indexOf(":"));
-                    String arrlistVa = arrlistV.substring(arrlistV.indexOf(":") + 1, arrlistV.length());
-                    httpPost.addHeader(arrlistV1, arrlistVa);
-                    // httpPost.addHeader("credentials",template.getQryHttpHeader());
+                    if(arrlistV.indexOf(":")>1) {
+                        String arrlistV1 = arrlistV.substring(0, arrlistV.indexOf(":"));
+                        String arrlistVa = arrlistV.substring(arrlistV.indexOf(":") + 1, arrlistV.length());
+                        httpPost.addHeader(arrlistV1, arrlistVa);
+                        // httpPost.addHeader("credentials",template.getQryHttpHeader());
+                    }
                 }
             }
             // 执行请求操作，并拿到结果（同步阻塞）
