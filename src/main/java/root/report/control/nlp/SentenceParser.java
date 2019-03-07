@@ -21,6 +21,7 @@ public class SentenceParser {
 		List<String> paramsString = new ArrayList<String>();
 		String functionNameString = "";
 		List<Term> outPut = nShortSegment.seg(testCase);
+		CoNLLSentence coNLLSentence= HanLP.parseDependency(testCase);
 		System.out.println(outPut.toString());
 		for(Term term : outPut){
 			String wordString = term.word;
@@ -39,14 +40,35 @@ public class SentenceParser {
 		return  businessParser;
 	}
 
+	public static SentenceParser parser1(String input){
+
+		SentenceParser sentenceParser=new SentenceParser();
+		sentenceParser.setFunctionName("不能解析函数名称！");
+		List<String> paramsString = new ArrayList<String>();
+		CoNLLSentence coNLLSentence= HanLP.parseDependency(input);
+		for(CoNLLWord coNLLWord : coNLLSentence.word) {
+
+			//匹配函数：查找最后一个动宾关系,
+			if (coNLLWord.ID == coNLLSentence.word.length) {
+				if (coNLLWord.DEPREL.equals("动宾关系")) {
+					sentenceParser.setFunctionName(coNLLWord.HEAD.LEMMA + coNLLWord.LEMMA);
+				}
+			}
+			//名词参数：
+			if(coNLLWord.POSTAG.startsWith("n")
+					&&(coNLLWord.ID != coNLLSentence.word.length))
+			{
+				paramsString.add(coNLLWord.LEMMA);
+			}
+			//数量词参数：
+		}
+		sentenceParser.setInNames(paramsString);
+		return sentenceParser;
+
+	}
+
 	public static String parserFuncName(String input){
 
-
-		CustomDictionary.add("供应商资质");
-		CustomDictionary.add("部门负责人");
-		CustomDictionary.add("湖北移动");
-		CustomDictionary.add("成本中心");
-		CustomDictionary.add("采购订单");
 		CoNLLSentence coNLLSentence= HanLP.parseDependency(input);
 		for(CoNLLWord coNLLWord : coNLLSentence.word) {
 

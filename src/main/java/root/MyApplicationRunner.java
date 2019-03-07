@@ -4,6 +4,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import root.report.db.DbFactory;
+import root.report.service.NLPService;
 
 /**
  * Created by pangkunkun on 2017/9/3.
@@ -18,13 +19,25 @@ public class MyApplicationRunner implements ApplicationRunner {
         System.out.println("开始初始化系统数据库!");
         try {
             DbFactory.initializeDB("form");
+
             System.out.println("初始化系统数据库成功!");
         } catch (Exception ex) {
             System.out.println("初始化系统数据库失败!");
             ex.printStackTrace();
         }
 
+        try {
+            NLPService.LoadNlpDict();
+            System.out.println("加载nlp自定义词典成功!");
+        } catch (Exception ex) {
+            System.out.println("加载nlp自定义词典失败!");
+            ex.printStackTrace();
+        }
+
 
     }
+
+
+
 
 }
