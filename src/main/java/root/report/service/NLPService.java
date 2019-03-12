@@ -61,13 +61,13 @@ public class NLPService {
 
         }
         //如果没找到继续查询out表
-        else if (listQuery == null) {
+        else if (listQuery.size() == 0) {
 
-            List<Map<String, Object>> listOutQuery = queryService.getQueryByOutName(wordFuncName);
-            if ((listOutQuery != null) && (listOutQuery.size() > 1)) {
-                currentQryId = listQuery.get(0).get("qry_id").toString();
-                currentQryName = listQuery.get(0).get("qry_name").toString();
-                currentQryClassId = listQuery.get(0).get("class_id").toString();
+            List<Map> listOutQuery = this.getQueryByOutName(wordFuncName);
+            if ((listOutQuery != null) && (listOutQuery.size() > 0)) {
+                currentQryId = listOutQuery.get(0).get("qry_id").toString();
+                currentQryName = listOutQuery.get(0).get("qry_name").toString();
+                currentQryClassId = listOutQuery.get(0).get("class_id").toString();
 
             }//如果out表中也没找到则返回不存在
             else if (listOutQuery == null) {
@@ -100,24 +100,23 @@ public class NLPService {
             Map dict = this.getDictByValue(aWord);
             String aInID = "";
 
-
+            //名词按字典名称匹配
             aInID = MatchByInDict(dict.get("dict_id").toString(), queryParam);
-            if (!aInID.equals("")) {
+            if (aInID!=null) {
                 in.put(aInID, aWord);
                 continue;
             } else {
+                //名词按参数名称匹配
                 aInID = MatchByInName(dict.get("dict_name").toString(), queryParam);
-                if (aInID.equals("")) {
+                if (aInID!=null) {
                     in.put(aInID, aWord);
                     continue;
                 }
             }
 
-            //按条件名称匹配
+            //日期按词性匹配参数
 
-            //按词性匹配参数
-
-            //如果是代词我，则根据登录用户，查找对应的员工姓名
+            // 如果是代词我，则根据登录用户，查找对应的员工姓名
 
         }
 
@@ -209,7 +208,6 @@ public class NLPService {
     public String MatchByInName(String dict_name, List<Map> params) {
 
         List<Map> list = params.stream()
-                .filter(x -> Objects.nonNull(x.get("dict_id")))
                 .filter(x -> x.get("in_name").toString().indexOf(dict_name) > -1)
                 .collect(Collectors.toList());
         if (list.size() > 0)
@@ -249,10 +247,25 @@ public class NLPService {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         Map<String, Object> map = new HashMap<>();
         map.put("value_name", value_name);
-        Map<String, Object> dict = sqlSession.selectOne("dict.getDictIdByValue", map);
+        Map<String, Object> dict = sqlSession.selectOne("dict.getDictByValue", map);
 
 
         return dict;
+    }
+
+    // 功能描述 : 根据dict_id 查询 func_dict信息
+    public List<Map> getQueryByOutName(String out_name) {
+        //去掉查询
+
+        String v_out_name=out_name.replace("查询","");
+
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        Map<String, Object> map = new HashMap<>();
+        map.put("out_name", v_out_name);
+        List<Map> qrys = sqlSession.selectList("nlp.getQryByOutName", map);
+
+
+        return qrys;
     }
 
     public static void LoadNlpDict() {

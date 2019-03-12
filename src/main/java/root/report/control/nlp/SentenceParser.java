@@ -46,7 +46,7 @@ public class SentenceParser {
 		sentenceParser.setFunctionName("不能解析函数名称！");
 		List<String> paramsString = new ArrayList<String>();
 		CoNLLSentence coNLLSentence= HanLP.parseDependency(input);
-		for(CoNLLWord coNLLWord : coNLLSentence.word) {
+ 		for(CoNLLWord coNLLWord : coNLLSentence.word) {
 
 			//匹配函数：查找最后一个动宾关系,
 			if (coNLLWord.ID == coNLLSentence.word.length) {
