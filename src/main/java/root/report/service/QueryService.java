@@ -707,6 +707,19 @@ public class QueryService {
 
         return jResult;
     }
+    /**
+     * 功能描述:  根据qry_id 查找qry表相关的信息
+     */
+    public List<Map<String, Object>> getOutByQryID(String qry_id) throws SAXException, DocumentException {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        //查找函数定义输出参数 qry_out
+        Map<String, String> param = new HashMap<String, String>();
+        param.put("qry_id", qry_id);
+        List<Map<String, Object>> outList = sqlSession.selectList("query.getOutByID", param);
+
+        return outList;
+    }
+
 
     /**
      * 功能描述: 根据  class_id 查询出 func_name 表当中的信息
@@ -886,6 +899,8 @@ public class QueryService {
             } else if (qryType.equals("http")) {
                 result = this.queryHttp(pJson, template);
             }
+            //加入输出参数定义
+            result.put("out",this.getOutByQryID(queryID));
         }catch (Exception e){
             e.printStackTrace();
         }

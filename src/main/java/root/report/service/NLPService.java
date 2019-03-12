@@ -13,10 +13,7 @@ import root.report.control.nlp.SentenceParser;
 import root.report.db.DbFactory;
 import root.report.util.JsonUtil;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,7 +88,7 @@ public class NLPService {
         //最终的参数,初始化参数为空串
         JSONObject in = new JSONObject();
         for (Map aIn : queryParam) {
-            in.put(((JSONObject) aIn).getString("in_id"), "");
+            in.put(aIn.get("in_id").toString(), "");
         }
 
         //参数匹配，字典匹配，参数名匹配，词性匹配
@@ -110,27 +107,18 @@ public class NLPService {
                 continue;
             } else {
                 aInID = MatchByInName(dict.get("dict_name").toString(), queryParam);
-                if(aInID.equals(""))
-                {
+                if (aInID.equals("")) {
                     in.put(aInID, aWord);
                     continue;
                 }
             }
-            //aInID = MatchByInDataType(, queryParam);
 
-            //匹配输入参数中定义的数据字典是该数据字典
-//            for (int j = 0; j < inParam.size(); j++) {
-//                JSONObject aIn = inParam.getJSONObject(j);
-//                String param_dict_id = aIn.getString("dict_id");
-//                if ((param_dict_id != null) && (param_dict_id.equals(dict_id))) {
-//                    //参数命中，则赋值
-//                    in.put(aIn.getString("in_id"), aInName);
-//
-//                }
-//            }
             //按条件名称匹配
 
             //按词性匹配参数
+
+            //如果是代词我，则根据登录用户，查找对应的员工姓名
+
         }
 
         //3--------------生成查询的输入参数---------------//
@@ -221,24 +209,26 @@ public class NLPService {
     public String MatchByInName(String dict_name, List<Map> params) {
 
         List<Map> list = params.stream()
+                .filter(x -> Objects.nonNull(x.get("dict_id")))
                 .filter(x -> x.get("in_name").toString().indexOf(dict_name) > -1)
                 .collect(Collectors.toList());
-        ;
-
-
-        return list.get(0).get("in_id").toString();
+        if (list.size() > 0)
+            return list.get(0).get("in_id").toString();
+        else
+            return null;
     }
 
     //按参数的数据字典匹配
     public String MatchByInDict(String dict_id, List<Map> params) {
 
         List<Map> list = params.stream()
+                .filter(x -> Objects.nonNull(x.get("dict_id")))
                 .filter(x -> x.get("dict_id").toString().equals(dict_id))
                 .collect(Collectors.toList());
         if (list.size() > 0)
             return list.get(0).get("in_id").toString();
         else
-            return "";
+            return null;
 
     }
 
@@ -248,7 +238,7 @@ public class NLPService {
         List<Map> list = params.stream()
                 .filter(x -> x.get("datatype").toString().equals(word))
                 .collect(Collectors.toList());
-        ;
+
 
 
         return list.get(0).get("in_id").toString();
@@ -259,7 +249,6 @@ public class NLPService {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         Map<String, Object> map = new HashMap<>();
         map.put("value_name", value_name);
-
         Map<String, Object> dict = sqlSession.selectOne("dict.getDictIdByValue", map);
 
 

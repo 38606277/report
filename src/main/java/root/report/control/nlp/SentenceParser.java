@@ -52,6 +52,7 @@ public class SentenceParser {
 			if (coNLLWord.ID == coNLLSentence.word.length) {
 				if (coNLLWord.DEPREL.equals("动宾关系")) {
 					sentenceParser.setFunctionName(coNLLWord.HEAD.LEMMA + coNLLWord.LEMMA);
+					continue;
 				}
 			}
 			//名词参数：
@@ -59,8 +60,29 @@ public class SentenceParser {
 					&&(coNLLWord.ID != coNLLSentence.word.length))
 			{
 				paramsString.add(coNLLWord.LEMMA);
+				continue;
 			}
-			//数量词参数：
+			//代词参数：
+			if(coNLLWord.POSTAG.startsWith("r")
+					&&(coNLLWord.ID != coNLLSentence.word.length))
+			{
+				paramsString.add(coNLLWord.LEMMA);
+				continue;
+			}
+			//数词参数：
+			if(coNLLWord.POSTAG.startsWith("m")
+					&&(coNLLWord.ID != coNLLSentence.word.length))
+			{
+				paramsString.add(coNLLWord.LEMMA);
+				continue;
+			}
+			//量词参数：
+			if(coNLLWord.POSTAG.startsWith("g")
+					&&(coNLLWord.ID != coNLLSentence.word.length))
+			{
+				paramsString.add(coNLLWord.LEMMA);
+				continue;
+			}
 		}
 		sentenceParser.setInNames(paramsString);
 		return sentenceParser;
