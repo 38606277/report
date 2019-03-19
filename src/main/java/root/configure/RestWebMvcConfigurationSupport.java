@@ -55,6 +55,7 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/ibas2/**").addResourceLocations("file:"+AppConstants.getClientInstallFile()+File.separator);
         registry.addResourceHandler("/**").addResourceLocations("file:"+AppConstants.getReport2()+File.separator);
         registry.addResourceHandler("/app/**").addResourceLocations("file:"+AppConstants.getPhoneapp()+File.separator);
+        registry.addResourceHandler("/report/upload/**").addResourceLocations("file:"+AppConstants.getStaticReportPath()+ File.separator);
     }
 
 
