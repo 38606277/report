@@ -55,7 +55,8 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/ibas2/**").addResourceLocations("file:"+AppConstants.getClientInstallFile()+File.separator);
         registry.addResourceHandler("/**").addResourceLocations("file:"+AppConstants.getReport2()+File.separator);
         registry.addResourceHandler("/app/**").addResourceLocations("file:"+AppConstants.getPhoneapp()+File.separator);
-        registry.addResourceHandler("/report/upload/**").addResourceLocations("file:"+AppConstants.getStaticReportPath()+ File.separator);
+        registry.addResourceHandler("/report/upload/**").addResourceLocations("file:"+AppConstants.getUploadPath()+ File.separator);
+
     }
 
 
@@ -73,6 +74,7 @@ public class RestWebMvcConfigurationSupport extends WebMvcConfigurationSupport {
         String[] EXCLUDE_URL = {"/reportServer/fonts/*",
                                 "/reportServer/css/*",
                                 "/reportServer/js/*",
+                                "/reportServer/upload/*",
                                 "/reportServer/DBConnection/test",
                                 "/reportServer/DBConnection/save",
                                 "/reportServer/user/encodePwd",

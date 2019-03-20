@@ -7,7 +7,8 @@
     </select>
 
     <insert id="addUpload" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-        insert into fnd_upload(filename, filepath,filesize,filetype,fileoriginname) values(#{filename},#{filepath},#{filesize},#{filetype},#{fileoriginname})
+        insert into fnd_upload(filename, filepath,filesize,filetype,fileoriginname,usefilepath)
+        values(#{filename},#{filepath},#{filesize},#{filetype},#{fileoriginname},#{usefilepath})
     </insert>
 
     <delete id="deleteUpload" parameterType="Map">

@@ -21,12 +21,16 @@ public class AppConstants {
 //    private String clientInstallFile;
 //    private String report2;//前端路径
     private static String workPath = System.getProperty("user.dir") + File.separator + "work";
+    private static String uploadPath = System.getProperty("user.dir") + File.separator + "upload";
     private static String appPath = System.getProperty("user.dir") + File.separator + "app";
 
     public static String getReportPath() {
         return workPath + File.separator + "report";
     }
 
+    public static String getUploadPath() {
+        return uploadPath;
+    }
     public static String getStaticReportPath() {
         return workPath + File.separator + "webpage" + File.separator + "staticReport";
     }

@@ -60,15 +60,20 @@ public class UploadService {
             //写入文件  E:\springboot-upload\image\20180608\113339\FL_eUljOejPseMeDg86h.png
             Path fullPath = Paths.get(basePath, folder, fileName);
             log.info(fullPath);
+            String fullPaths=fullPath.toString();
+            int i=fullPaths.indexOf("upload");
+            String usefilepath=fullPaths.substring(i,fullPaths.length());
+            log.info(usefilepath);
             // E:\springboot-upload\image\20180608\113339\FL_eUljOejPseMeDg86h.png
             Files.write(fullPath, file.getBytes(), StandardOpenOption.CREATE);
             //保存文件信息
             Map<String,Object> map=new HashMap<>();
             map.put("fileoriginname",file.getOriginalFilename());
             map.put("filename",fileName);
-            map.put("filepath",fullPath.toString());
+            map.put("filepath",fullPaths);
             map.put("filesize",file.getSize());
             map.put("filetype",file.getContentType());
+            map.put("usefilepath",usefilepath);
             DbFactory.Open(DbFactory.FORM).insert("upload.addUpload",map);
 
 
