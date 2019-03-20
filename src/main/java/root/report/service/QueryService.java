@@ -581,9 +581,12 @@ public class QueryService {
     }
 
     // 创建一个qry函数类别
-    public String createQueryClass(String class_name, SqlSession sqlSession) throws IOException {
+    public String createQueryClass(String class_name,String img_file, SqlSession sqlSession) throws IOException {
         Map<String, Object> map = new HashMap<>();
         map.put("class_name", class_name);
+        img_file=img_file.replaceAll("/","\\");
+        img_file=img_file.replaceAll("\\\\", "\\\\\\\\");
+        map.put("img_file", img_file);
         sqlSession.insert("query.createQueryClass", map);
         String class_id = String.valueOf(map.get("id"));
         // 生成 xml文件
@@ -646,10 +649,13 @@ public class QueryService {
     }
 
     // 修改一个函数类别
-    public int updateQueryClass(int class_id, String class_name, SqlSession sqlSession) {
+    public int updateQueryClass(int class_id,String class_name ,String img_file, SqlSession sqlSession) {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("class_id", class_id);
         map.put("class_name", class_name);
+        img_file=img_file.replaceAll("/","\\");
+        img_file=img_file.replaceAll("\\\\", "\\\\\\\\");
+        map.put("img_file", img_file);
         // 修改一个函数，传递2个参数
         return sqlSession.update("query.updateQueryClass", map);
     }

@@ -272,15 +272,29 @@ public class QueryControl extends RO {
         }
     }
 
+
+    @RequestMapping(value = "/uploadImg", produces = "text/plain;charset=UTF-8")
+    public String uploadImg(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
+        int class_Id = jsonObject.getInteger("calssid");
+        String img_file = jsonObject.getString("img_file");
+       int  flag= this.queryService.updateQueryClass(class_Id,null,img_file,sqlSession);
+        if(flag!=1){
+            return ErrorMsg("3000","修改数据失败");
+        }
+        return SuccessMsg("修改数据成功",null);
+    }
     // 往qry_class这张表插入一条记录 并生成mapper.xml文件
     @RequestMapping(value = "/createQueryClassInfo", produces = "text/plain;charset=UTF-8")
     public String createQueryClassInfo(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
         JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
         String class_name = jsonObject.getString("class_name");
+        String img_file = jsonObject.getString("img_file");
         String class_id = "";
         try {
-            class_id = this.queryService.createQueryClass(class_name,sqlSession);
+            class_id = this.queryService.createQueryClass(class_name,img_file,sqlSession);
             // DbFactory.init(DbFactory.FORM);
         } catch (IOException e) {
             sqlSession.getConnection().rollback();
@@ -315,7 +329,7 @@ public class QueryControl extends RO {
         JSONObject jsonObject = (JSONObject) JSON.parse(pJson);
         String class_name = jsonObject.getString("class_name");
         int class_id = jsonObject.getInteger("class_id");
-        int flag = this.queryService.updateQueryClass(class_id,class_name,sqlSession);
+        int flag = this.queryService.updateQueryClass(class_id,class_name,null,sqlSession);
         if(flag!=1){
             return ErrorMsg("3000","修改数据失败");
         }

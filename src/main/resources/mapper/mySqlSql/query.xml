@@ -172,7 +172,7 @@
 
     <!-- 往query_class表中新增一条记录 -->
     <insert id="createQueryClass" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-        insert into qry_class(class_name) values('${class_name}')
+        insert into qry_class(class_name,img_file) values('${class_name}','${img_file}')
     </insert>
 
     <select id="getQueryInfoRelationClass" parameterType="int" resultType="int">
@@ -184,7 +184,12 @@
     </delete>
 
     <update id="updateQueryClass"  parameterType="Map">
-        update qry_class set class_name='${class_name}' where class_id=#{class_id};
+        update qry_class
+        <trim prefix="set" suffixOverrides=",">
+            <if test="class_name!=null">class_name='${class_name}',</if>
+            <if test="img_file!=null">img_file='${img_file}'</if>
+        </trim>
+        where class_id=#{class_id};
     </update>
 
     <select id="getQueryNameById" parameterType="int" resultType="String">
@@ -296,7 +301,8 @@
     <select id="getAllQueryClass" parameterType="Map" resultType="Map">
         SELECT
         qry.class_id ,
-        qry.class_name
+        qry.class_name,
+        qry.img_file
         FROM
         qry_class qry
     </select>
