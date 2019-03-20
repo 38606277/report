@@ -63,7 +63,10 @@ public class QueryService {
         mapFunc.put("qry_name", jsonFunc.getString("qry_name"));
         mapFunc.put("qry_desc", jsonFunc.getString("qry_desc"));
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
-        mapFunc.put("qry_file", jsonFunc.getString("qry_file"));
+        String qryfile= jsonFunc.getString("qry_file");
+        qryfile=qryfile.replaceAll("/","\\");
+        qryfile=qryfile.replaceAll("\\\\", "\\\\\\\\");
+        mapFunc.put("qry_file", qryfile);
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
         mapFunc.put("cached", jsonFunc.getIntValue("cached"));
         String escapeSQL=jsonFunc.getString("qry_sql");
@@ -226,7 +229,10 @@ public class QueryService {
         mapFunc.put("qry_name", jsonFunc.getString("qry_name"));
         mapFunc.put("qry_desc", jsonFunc.getString("qry_desc"));
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
-        mapFunc.put("qry_file", jsonFunc.getString("qry_file"));
+       String qryfile= jsonFunc.getString("qry_file");
+        qryfile=qryfile.replaceAll("/","\\");
+        qryfile=qryfile.replaceAll("\\\\", "\\\\\\\\");
+        mapFunc.put("qry_file", qryfile);
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
         mapFunc.put("cached", jsonFunc.getIntValue("cached"));
         String escapeSQL=jsonFunc.getString("qry_sql");
