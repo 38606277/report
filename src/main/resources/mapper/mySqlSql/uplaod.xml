@@ -14,5 +14,7 @@
     <delete id="deleteUpload" parameterType="Map">
         delete from fnd_upload where id =  #{id}
     </delete>
-
+    <select id="getById" resultType="Map" parameterType="Map">
+         SELECT  * from fnd_upload where id =  #{id}
+    </select>
 </mapper>

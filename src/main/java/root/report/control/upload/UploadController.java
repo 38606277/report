@@ -93,8 +93,19 @@ public class UploadController  extends RO {
             JSONObject json = JSON.parseObject(pJson);
             Map<String,Object> map = new HashMap<>();
             map.put("id",json.getIntValue("id"));
-            DbFactory.Open(DbFactory.FORM).delete("upload.deleteUpload",map);
-            return SuccessMsg("删除数据成功",null);
+            Map m=DbFactory.Open(DbFactory.FORM).selectOne("upload.getById",map);
+            String filepath=m.get("filepath").toString();
+            File file = new File(filepath);
+            if (file.exists()) {
+                if (file.delete()) {
+                    DbFactory.Open(DbFactory.FORM).delete("upload.deleteUpload",map);
+                    return SuccessMsg("","删除数据成功");
+                } else {
+                    return ExceptionMsg("删除失败！");
+                }
+            } else {
+                return ExceptionMsg("文件不存在！");
+            }
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             ex.printStackTrace();
