@@ -35,7 +35,7 @@ public class SentenceParser {
 
 		SentenceParser businessParser=new SentenceParser();
 		businessParser.setFunctionName(functionNameString);
-		businessParser.setInNames(paramsString);
+//		businessParser.setInNames(paramsString);
 
 		return  businessParser;
 	}
@@ -44,8 +44,11 @@ public class SentenceParser {
 
 		SentenceParser sentenceParser=new SentenceParser();
 		sentenceParser.setFunctionName("不能解析函数名称！");
-		List<String> paramsString = new ArrayList<String>();
+		List<CoNLLWord> paramsString = new ArrayList<CoNLLWord>();
+		List<Term> list=HanLP.segment(input);
+		System.out.println(list);
 		CoNLLSentence coNLLSentence= HanLP.parseDependency(input);
+		System.out.println(coNLLSentence);
  		for(CoNLLWord coNLLWord : coNLLSentence.word) {
 
 			//匹配函数：查找最后一个动宾关系,
@@ -59,28 +62,28 @@ public class SentenceParser {
 			if(coNLLWord.POSTAG.startsWith("n")
 					&&(coNLLWord.ID != coNLLSentence.word.length))
 			{
-				paramsString.add(coNLLWord.LEMMA);
+				paramsString.add(coNLLWord);
 				continue;
 			}
 			//代词参数：
 			if(coNLLWord.POSTAG.startsWith("r")
 					&&(coNLLWord.ID != coNLLSentence.word.length))
 			{
-				paramsString.add(coNLLWord.LEMMA);
+				paramsString.add(coNLLWord);
 				continue;
 			}
 			//数词参数：
 			if(coNLLWord.POSTAG.startsWith("m")
 					&&(coNLLWord.ID != coNLLSentence.word.length))
 			{
-				paramsString.add(coNLLWord.LEMMA);
+				paramsString.add(coNLLWord);
 				continue;
 			}
 			//量词参数：
 			if(coNLLWord.POSTAG.startsWith("g")
 					&&(coNLLWord.ID != coNLLSentence.word.length))
 			{
-				paramsString.add(coNLLWord.LEMMA);
+				paramsString.add(coNLLWord);
 				continue;
 			}
 		}
@@ -121,15 +124,15 @@ public class SentenceParser {
 
 	private String functionName;
 
-	public List<String> getInNames() {
+	public List<CoNLLWord> getInNames() {
 		return inNames;
 	}
 
-	public void setInNames(List<String> inNames) {
+	public void setInNames(List<CoNLLWord> inNames) {
 		this.inNames = inNames;
 	}
 
-	private List<String> inNames;
+	private List<CoNLLWord> inNames;
 
 
 

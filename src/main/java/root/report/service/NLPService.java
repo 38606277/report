@@ -2,6 +2,7 @@ package root.report.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hankcs.hanlp.corpus.dependency.CoNll.CoNLLWord;
 import com.hankcs.hanlp.dictionary.CustomDictionary;
 import com.mysql.cj.x.json.JsonArray;
 import org.apache.ibatis.annotations.Select;
@@ -82,7 +83,7 @@ public class NLPService {
 
 
         //2---------查找查询的输入输出参数，匹配参数------------------//
-        List<String> wordInName = sentenceParser.getInNames();//语言中的
+        List<CoNLLWord> wordInName = sentenceParser.getInNames();//语言中的
         List<Map> queryParam = this.GetInByQryId(currentQryId);
 
         //最终的参数,初始化参数为空串
@@ -94,7 +95,7 @@ public class NLPService {
         //参数匹配，字典匹配，参数名匹配，词性匹配
         for (int i = 0; i < wordInName.size(); i++) {
             //根据数据字典匹配参数
-            String aWord = wordInName.get(i);
+            String aWord = wordInName.get(i).LEMMA;
 
             //根据nlp中的参数匹配数据字典的定义
             Map dict = this.getDictByValue(aWord);
