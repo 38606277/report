@@ -64,7 +64,7 @@ public class QueryService {
         mapFunc.put("qry_desc", jsonFunc.getString("qry_desc"));
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
         String qryfile= jsonFunc.getString("qry_file");
-        qryfile=qryfile.replaceAll("/","\\");
+        qryfile=qryfile.replaceAll("/","\\\\");
         qryfile=qryfile.replaceAll("\\\\", "\\\\\\\\");
         mapFunc.put("qry_file", qryfile);
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
@@ -584,7 +584,7 @@ public class QueryService {
     public String createQueryClass(String class_name,String img_file, SqlSession sqlSession) throws IOException {
         Map<String, Object> map = new HashMap<>();
         map.put("class_name", class_name);
-        img_file=img_file.replaceAll("/","\\");
+        img_file=img_file.replaceAll("/","\\\\");
         img_file=img_file.replaceAll("\\\\", "\\\\\\\\");
         map.put("img_file", img_file);
         sqlSession.insert("query.createQueryClass", map);
@@ -653,7 +653,7 @@ public class QueryService {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("class_id", class_id);
         map.put("class_name", class_name);
-        img_file=img_file.replaceAll("/","\\");
+        img_file=img_file.replaceAll("/","\\\\");
         img_file=img_file.replaceAll("\\\\", "\\\\\\\\");
         map.put("img_file", img_file);
         // 修改一个函数，传递2个参数
