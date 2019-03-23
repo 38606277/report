@@ -584,9 +584,9 @@ public class QueryService {
     public String createQueryClass(String class_name,String img_file, SqlSession sqlSession) throws IOException {
         Map<String, Object> map = new HashMap<>();
         map.put("class_name", class_name);
-        img_file=img_file.replaceAll("/","\\\\");
-        img_file=img_file.replaceAll("\\\\", "\\\\\\\\");
-        map.put("img_file", img_file);
+//        img_file=img_file.replaceAll("/","\\\\");
+//        img_file=img_file.replaceAll("\\\\", "\\\\\\\\");
+//        map.put("img_file", img_file);
         sqlSession.insert("query.createQueryClass", map);
         String class_id = String.valueOf(map.get("id"));
         // 生成 xml文件

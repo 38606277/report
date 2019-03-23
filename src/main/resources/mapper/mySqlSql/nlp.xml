@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nlp">
+
+
+    <select id="getDictByValue" parameterType="Map" resultType="Map">
+        SELECT
+        fdv.dict_id,fdv_dict_name
+        FROM
+        func_dict_value fdv
+        WHERE
+        fdv.value_name LIKE '%${value_name}%'
+        GROUP BY
+        fdv.dict_id
+    </select>
+    <!-- 根据输出字段查询对应的查询ID和名称 -->
+    <select id="getQryByOutName" resultType="Map" parameterType="map">
+        SELECT
+            qo.qry_id ,
+            qn.qry_name ,
+            qo.out_name,
+            class_id
+        FROM
+            qry_out qo ,
+            qry_name qn
+        WHERE
+            qo.qry_id = qn.qry_id
+        AND qo.out_name = '${out_name}'
+    </select>
+
+    <!-- 根据输出字段查询对应的查询ID和名称 -->
+    <select id="getQryByQryName" resultType="Map" parameterType="map">
+        select
+            qry_id,
+            qry_name,
+            class_id
+        from
+            qry_name
+        where  1=1
+        <if test="qry_name != null and qry_name!=''">
+            and qry_name like '%${qry_name}%'
+        </if>
+    </select>
+
+    <!-- nlp查找输出字段  -->
+    <select id="getQryNameAndOutName" resultType="Map" parameterType="map">
+        SELECT
+          substring_index(qry_name, '查询', -1) qry_name
+        FROM
+          qry_name
+        UNION
+          SELECT
+          out_name
+        FROM
+         qry_out
+    </select>
+
+    <!-- nlp查找输出字段  -->
+    <select id="getDictValueName" resultType="Map" parameterType="map">
+        SELECT DISTINCT
+          value_name
+        FROM
+          func_dict_value fdv
+        WHERE
+           fdv.value_name IS NOT NULL
+        UNION
+        SELECT DISTINCT
+        fdv1.abbr_name1
+        FROM
+        func_dict_value fdv1
+        WHERE
+        fdv1.abbr_name1 IS NOT NULL
+        UNION
+        SELECT DISTINCT
+        fdv2.abbr_name2
+        FROM
+        func_dict_value fdv2
+        WHERE
+        fdv2.abbr_name2 IS NOT NULL
+    </select>
+    <!-- nlp查找名词所属字典  -->
+    <select id="getDictIdByValue" parameterType="Map" resultType="Map">
+        SELECT
+        fdv.dict_id dict_id
+        FROM
+        func_dict_value fdv
+        WHERE
+        fdv.value_name LIKE '%${value_name}%'
+        GROUP BY
+        fdv.dict_id
+    </select>
+
+</mapper>

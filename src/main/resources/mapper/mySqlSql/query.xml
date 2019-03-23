@@ -172,7 +172,7 @@
 
     <!-- 往query_class表中新增一条记录 -->
     <insert id="createQueryClass" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-        insert into qry_class(class_name,img_file) values('${class_name}','${img_file}')
+        insert into qry_class(class_name) values('${class_name}')
     </insert>
 
     <select id="getQueryInfoRelationClass" parameterType="int" resultType="int">
