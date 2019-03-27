@@ -78,11 +78,13 @@ public class NLPControl extends RO {
         }else if(dbtype.equals("Mysql")){
             try {
                 conn = dbManager.getConnection(dbname);
-                DatabaseMetaData dbMetaData = conn.getMetaData();
-                ResultSet rs = dbMetaData.getTables(null, null, "%", new String[] { "TABLE" });
+               // DatabaseMetaData dbMetaData = conn.getMetaData();
+                Statement stmt = conn.createStatement();
+                stmt.executeQuery("use "+dbname);
+                ResultSet rs =  stmt.executeQuery("SHOW TABLES ");
                 if (null != rs) {
                     while (rs.next()) {
-                        tableList.add(rs.getString("TABLE_NAME"));
+                        tableList.add(rs.getString(1));
                     }
                 }
                 if (null != conn) {
@@ -138,13 +140,23 @@ public class NLPControl extends RO {
                     HashMap<String, Object> map = new HashMap<String, Object>();
                     map.put("COLUMN_NAME", rsComments.getString("Field"));
                     String type= rsComments.getString("Type");
+
                     int fi= type.indexOf("(");
-                    String types =type.substring(0,fi);
-                    String id=type.substring(fi+1,type.length()-1);
-                    map.put("DATA_TYPE", types);
-                    map.put("COLUMN_SIZE",id);
+                    type= type.replace("unsigned zerofill","");
+                    String oldtype=type.trim();
+                    String types =null;
+                    String columnlength =null;
+                    if(fi>-1) {
+                        types=type.substring(0, fi);
+                        columnlength = oldtype.substring(fi + 1, oldtype.length()-1);
+                    }else{
+                        types=type;
+                        columnlength=null;
+                    }
+                    map.put("DATA_TYPE",types);
+                    map.put("COLUMN_SIZE",columnlength);
                     map.put("COMMENTS",rsComments.getString("Comment"));
-                    map.put("PRIMARY",rsComments.getString("Key"));
+                    map.put("PRIMARY",rsComments.getString("Key")=="PRI"?"TRUE":"FALSE");
                     map.put("NULLABLE",rsComments.getObject("Null"));
                     ColumnList.add(map);
                 }
