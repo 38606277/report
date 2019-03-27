@@ -1,6 +1,7 @@
 package root.report.control.nlp;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.corpus.dependency.CoNll.CoNLLSentence;
@@ -54,39 +55,55 @@ public class NLPControl extends RO {
 
     }
 
-    @RequestMapping(value = "/tableDefinition", produces = "text/plain;charset=UTF-8")
-    public String tableDefinition(@RequestBody String dbname){
+    @RequestMapping(value = "/getTable", produces = "text/plain;charset=UTF-8")
+    public String getTable(@RequestBody String dbname) throws SQLException,Exception {
         JSONObject obj = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
         String dbtype = obj.getString("dbtype");
         List tableList =null;
+        Connection conn=null;
         if(dbtype.equals("Oracle")){
             try {
-                Connection conn= dbManager.getConnection(dbname);
+                 conn= dbManager.getConnection(dbname);
                  tableList = this.getTableNameList(conn,dbname);
-                conn.close();
-                log.info(tableList);
-            } catch (Exception e) {
+            } catch (SQLException e) {
+                if(null!=conn) {
+                    conn.close();
+                }
                 e.printStackTrace();
+            }finally {
+                if(null!=conn) {
+                    conn.close();
+                }
             }
         }
         return SuccessMsg("修改数据成功",tableList);
     }
     @RequestMapping(value = "/getColumnList", produces = "text/plain;charset=UTF-8")
-    public String getColumnList(@RequestBody String pjson){
+    public String getColumnList(@RequestBody String pjson) throws Exception,SQLException{
         JSONObject obj = JSON.parseObject(pjson);
         String dbname = obj.getString("dbname");
         JSONObject objtwo = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
         String dbtype = objtwo.getString("dbtype");
         String tableName = obj.getString("tableName");
         List ColumnList =null;
+        Connection conn=null;
         if(dbtype.equals("Oracle")){
             try {
-                Connection conn= dbManager.getConnection(dbname);
+                conn= dbManager.getConnection(dbname);
                 ColumnList = this.getColumnNameList(conn,dbname,tableName);
-                conn.close();
+                if(null!=conn) {
+                    conn.close();
+                }
                 log.info(ColumnList);
-            } catch (Exception e) {
+            } catch (SQLException e) {
+                if(null!=conn) {
+                    conn.close();
+                }
                 e.printStackTrace();
+            }finally {
+                if(null!=conn) {
+                    conn.close();
+                }
             }
         }
         return SuccessMsg("修改数据成功",ColumnList);
@@ -103,7 +120,6 @@ public class NLPControl extends RO {
     }
     // 获取数据表中所有列的列名，并添加到列表结构中。
     public List getColumnNameList(Connection conn, String dbname,String tableName)throws SQLException {
-
         List<HashMap<String,String>> columns = new ArrayList<HashMap<String,String>>();
         try{
             Statement stmt = conn.createStatement();
@@ -137,18 +153,21 @@ public class NLPControl extends RO {
                             "  order by a.COLUMN_ID";
             System.out.println(sql);
             ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()){
-                HashMap<String,String> map = new HashMap<String,String>();
-                map.put("COLUMN_NAME", rs.getString("COLUMN_NAME"));
-                map.put("DATA_TYPE", rs.getString("DATA_TYPE"));
-                map.put("COLUMN_SIZE", rs.getString("COLUMN_SIZE"));
-                map.put("COMMENTS", rs.getString("COMMENTS"));
-                map.put("PRIMARY", rs.getString("PRIMARY"));
-                map.put("NULLABLE", rs.getString("NULLABLE"));
-                columns.add(map);
+            if(rs != null) {
+                while (rs.next()) {
+                    HashMap<String, String> map = new HashMap<String, String>();
+                    map.put("COLUMN_NAME", rs.getString("COLUMN_NAME"));
+                    map.put("DATA_TYPE", rs.getString("DATA_TYPE"));
+                    map.put("COLUMN_SIZE", rs.getString("COLUMN_SIZE"));
+                    map.put("COMMENTS", rs.getString("COMMENTS"));
+                    map.put("PRIMARY", rs.getString("PRIMARY"));
+                    map.put("NULLABLE", rs.getString("NULLABLE"));
+                    columns.add(map);
+                }
             }
         }
         catch (SQLException e){
+            conn.close();
             e.printStackTrace();
         }finally{
             conn.close();
@@ -173,4 +192,38 @@ public class NLPControl extends RO {
 //        }
         return columns;
     }
+    @RequestMapping(value = "/updateColumn", produces = "text/plain;charset=UTF-8")
+    public String updateColumn(@RequestBody String pjson) throws Exception {
+        JSONObject obj = JSON.parseObject(pjson);
+        String dbname = obj.getString("dbname");
+        JSONObject objtwo = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
+        String dbtype = objtwo.getString("dbtype");
+        String tableName = obj.getString("tableName");
+        JSONArray tableList =obj.getJSONArray("columnList");
+        boolean istrue=true;
+        if(dbtype.equals("Oracle")){
+            Connection conn=null;
+            try {
+                conn= dbManager.getConnection(dbname);
+                Statement stmt = conn.createStatement();
+                for (int i=0;i<tableList.size();i++){
+                    Map m= (Map) tableList.get(i);
+                    String sql = "comment on column " + tableName + "." + m.get("COLUMN_NAME")+ " is '" + m.get("COMMENTS") + "'";
+                    stmt.execute(sql);
+                }
+            } catch (ClassNotFoundException e) {
+                istrue=false;
+                if(null!=conn) {
+                    conn.close();
+                }
+                e.printStackTrace();
+            }finally {
+                if(null!=conn) {
+                    conn.close();
+                }
+            }
+        }
+        return SuccessMsg("修改数据成功",istrue);
+    }
+
 }
