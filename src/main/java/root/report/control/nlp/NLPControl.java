@@ -156,7 +156,7 @@ public class NLPControl extends RO {
                     map.put("DATA_TYPE",types);
                     map.put("COLUMN_SIZE",columnlength);
                     map.put("COMMENTS",rsComments.getString("Comment"));
-                    map.put("PRIMARY",rsComments.getString("Key")=="PRI"?"TRUE":"FALSE");
+                    map.put("PRIMARY",rsComments.getString("Key").equals("PRI")?"TRUE":"FALSE");
                     map.put("NULLABLE",rsComments.getObject("Null"));
                     ColumnList.add(map);
                 }
