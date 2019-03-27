@@ -59,7 +59,7 @@ public class NLPControl extends RO {
     public String getTable(@RequestBody String dbname) throws SQLException,Exception {
         JSONObject obj = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
         String dbtype = obj.getString("dbtype");
-        List tableList =null;
+        List<String> tableList = new ArrayList<String>();
         Connection conn=null;
         if(dbtype.equals("Oracle")){
             try {
@@ -75,6 +75,29 @@ public class NLPControl extends RO {
                     conn.close();
                 }
             }
+        }else if(dbtype.equals("Mysql")){
+            try {
+                conn = dbManager.getConnection(dbname);
+                DatabaseMetaData dbMetaData = conn.getMetaData();
+                ResultSet rs = dbMetaData.getTables(null, null, "%", new String[] { "TABLE" });
+                if (null != rs) {
+                    while (rs.next()) {
+                        tableList.add(rs.getString("TABLE_NAME"));
+                    }
+                }
+                if (null != conn) {
+                    conn.close();
+                }
+            }catch (Exception e){
+                if (null != conn) {
+                    conn.close();
+                }
+                e.printStackTrace();
+            }finally {
+                if (null != conn) {
+                    conn.close();
+                }
+            }
         }
         return SuccessMsg("修改数据成功",tableList);
     }
@@ -85,7 +108,7 @@ public class NLPControl extends RO {
         JSONObject objtwo = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
         String dbtype = objtwo.getString("dbtype");
         String tableName = obj.getString("tableName");
-        List ColumnList =null;
+        List<HashMap<String,Object>> ColumnList = new ArrayList<HashMap<String,Object>>();
         Connection conn=null;
         if(dbtype.equals("Oracle")){
             try {
@@ -96,6 +119,52 @@ public class NLPControl extends RO {
                 }
                 log.info(ColumnList);
             } catch (SQLException e) {
+                if(null!=conn) {
+                    conn.close();
+                }
+                e.printStackTrace();
+            }finally {
+                if(null!=conn) {
+                    conn.close();
+                }
+            }
+        }else if(dbtype.equals("Mysql")){
+            String sql = "select * from " + tableName;
+            try {
+                conn= dbManager.getConnection(dbname);
+                Statement stmt = conn.createStatement();
+                ResultSet rsComments = stmt.executeQuery("show full columns from " + tableName);
+                while (rsComments.next()) {
+                    HashMap<String, Object> map = new HashMap<String, Object>();
+                    map.put("COLUMN_NAME", rsComments.getString("Field"));
+                    String type= rsComments.getString("Type");
+                    int fi= type.indexOf("(");
+                    String types =type.substring(0,fi);
+                    String id=type.substring(fi+1,type.length()-1);
+                    map.put("DATA_TYPE", types);
+                    map.put("COLUMN_SIZE",id);
+                    map.put("COMMENTS",rsComments.getString("Comment"));
+                    map.put("PRIMARY",rsComments.getString("Key"));
+                    map.put("NULLABLE",rsComments.getObject("Null"));
+                    ColumnList.add(map);
+                }
+
+//                PreparedStatement ps = conn.prepareStatement(sql);
+//                ResultSet rs = ps.executeQuery();
+//                ResultSetMetaData meta = rs.getMetaData();
+//                int columeCount = meta.getColumnCount();
+//                log.info(sql);
+//                for (int i = 1; i < columeCount + 1; i++) {
+//                   HashMap<String, Object> map = new HashMap<String, Object>();
+//                    map.put("COLUMN_NAME", meta.getColumnName(i));
+//                    map.put("DATA_TYPE", meta.getColumnTypeName(i));
+//                    map.put("COLUMN_SIZE",meta.getScale(i));
+//                    map.put("COMMENTS","");
+//                    map.put("PRIMARY","");
+//                    map.put("NULLABLE", "");
+//                    ColumnList.add(map);
+//                }
+            }catch (Exception e){
                 if(null!=conn) {
                     conn.close();
                 }
