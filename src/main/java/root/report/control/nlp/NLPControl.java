@@ -20,10 +20,7 @@ import root.report.service.NLPService;
 import root.report.util.ErpUtil;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @RestController
@@ -112,14 +109,79 @@ public class NLPControl extends RO {
         String tableName = obj.getString("tableName");
         List<HashMap<String,Object>> ColumnList = new ArrayList<HashMap<String,Object>>();
         Connection conn=null;
+        SqlSession session= DbFactory.Open(DbFactory.FORM);
+        Map param=new HashMap<>();
+        List<Map<String, Object>> listOld = new ArrayList<Map<String, Object>>();
+        param.put("table_db",dbname);
+        param.put("table_name",tableName);
+        //查询已经保存的值
+        Map mm= session.selectOne("nlp.selectQryTable",param);
+        if(null!=mm){
+            listOld=session.selectList("nlp.getqryTableFiled",mm);
+        }
         if(dbtype.equals("Oracle")){
             try {
                 conn= dbManager.getConnection(dbname);
-                ColumnList = this.getColumnNameList(conn,dbname,tableName);
-                if(null!=conn) {
-                    conn.close();
-                }
-                log.info(ColumnList);
+//                ColumnList = this.getColumnNameList(conn,dbname,tableName);
+                    Statement stmt = conn.createStatement();
+                    String sql=
+                            "select "+
+                                    "         comments as \"COMMENTS\","+
+                                    "         a.column_name \"COLUMN_NAME\","+
+                                    "         a.DATA_TYPE as \"DATA_TYPE\","+
+                                    "        DECODE (a.data_precision, null,DECODE (a.data_type, 'CHAR', a.char_length,'VARCHAR'," +
+                                    "       a.char_length, 'VARCHAR2', a.char_length, 'NVARCHAR2', a.char_length, 'NCHAR', a.char_length,a.data_length),a.data_precision)\n" +
+                                    "              AS COLUMN_SIZE,"+
+                                    "         decode(c.column_name,null,'FALSE','TRUE') as \"PRIMARY\","+
+                                    "         decode(a.NULLABLE,'N','NO','Y','YES','') as \"NULLABLE\""+
+                                    "   from "+
+                                    "       all_tab_columns a, "+
+                                    "       all_col_comments b,"+
+                                    "       ("+
+                                    "        select a.constraint_name, a.column_name"+
+                                    "          from user_cons_columns a, user_constraints b"+
+                                    "         where a.constraint_name = b.constraint_name"+
+                                    "               and b.constraint_type = 'P'"+
+                                    "               and a.table_name = '"+tableName+"'"+
+                                    "       ) c"+
+                                    "   where "+
+                                    "     a.Table_Name=b.table_Name "+
+                                    "     and a.column_name=b.column_name"+
+                                    "     and a.Table_Name='"+tableName+"'"+
+                                    "     and a.owner=b.owner "+
+                                    "     and a.owner='"+dbname.toUpperCase()+"'"+
+                                    "     and a.COLUMN_NAME = c.column_name(+)" +
+                                    "  order by a.COLUMN_ID";
+                    System.out.println(sql);
+                    ResultSet rs = stmt.executeQuery(sql);
+                    if(rs != null) {
+                        while (rs.next()) {
+                            HashMap<String, Object> map = new HashMap<String, Object>();
+                            map.put("COLUMN_NAME", rs.getString("COLUMN_NAME"));
+                            map.put("DATA_TYPE", rs.getString("DATA_TYPE"));
+                            map.put("COLUMN_SIZE", rs.getString("COLUMN_SIZE"));
+                            map.put("COMMENTS", rs.getString("COMMENTS"));
+                            map.put("PRIMARY", rs.getString("PRIMARY"));
+                            map.put("NULLABLE", rs.getString("NULLABLE"));
+                            if(null!=listOld&& listOld.size()>0){
+                                for (int j=0;j<listOld.size();j++) {
+                                    String se = listOld.get(j).get("field_name").toString();
+                                    if (se.equals(rs.getString("COLUMN_NAME"))) {
+                                        map.put("FIELD_NLP1", listOld.get(j).get("field_nlp1"));
+                                        map.put("FIELD_NLP2", listOld.get(j).get("field_nlp2"));
+                                        map.put("FIELD_NLP3", listOld.get(j).get("field_nlp3"));
+                                        map.put("FIELD_NLP4", listOld.get(j).get("field_nlp4"));
+                                    }
+                                }
+                            }else{
+                                map.put("FIELD_NLP1", null);
+                                map.put("FIELD_NLP2", null);
+                                map.put("FIELD_NLP3", null);
+                                map.put("FIELD_NLP4", null);
+                            }
+                            ColumnList.add(map);
+                        }
+                    }
             } catch (SQLException e) {
                 if(null!=conn) {
                     conn.close();
@@ -132,6 +194,7 @@ public class NLPControl extends RO {
             }
         }else if(dbtype.equals("Mysql")){
             String sql = "select * from " + tableName;
+
             try {
                 conn= dbManager.getConnection(dbname);
                 DatabaseMetaData dbmd  = conn.getMetaData();
@@ -140,16 +203,29 @@ public class NLPControl extends RO {
                     HashMap<String, Object> map = new HashMap<String, Object>();
                     map.put("COLUMN_NAME", colRet.getString("COLUMN_NAME"));
                     map.put("DATA_TYPE", colRet.getString("TYPE_NAME"));
-                    map.put("COLUMN_SIZE",colRet.getInt("COLUMN_SIZE"));
-                    map.put("COMMENTS",colRet.getString("REMARKS"));
-                    map.put("PRIMARY",colRet.getString("IS_AUTOINCREMENT"));
-                    map.put("NULLABLE",colRet.getString("IS_NULLABLE"));
-                    map.put("FIELD_NLP1",null);
-                    map.put("FIELD_NLP2",null);
-                    map.put("FIELD_NLP3",null);
-                    map.put("FIELD_NLP4",null);
+                    map.put("COLUMN_SIZE", colRet.getInt("COLUMN_SIZE"));
+                    map.put("COMMENTS", colRet.getString("REMARKS"));
+                    map.put("PRIMARY", colRet.getString("IS_AUTOINCREMENT"));
+                    map.put("NULLABLE", colRet.getString("IS_NULLABLE"));
+                    if(null!=listOld&& listOld.size()>0){
+                        for (int j=0;j<listOld.size();j++) {
+                            String se = listOld.get(j).get("field_name").toString();
+                            if (se.equals(colRet.getString("COLUMN_NAME"))) {
+                                map.put("FIELD_NLP1", listOld.get(j).get("field_nlp1"));
+                                map.put("FIELD_NLP2", listOld.get(j).get("field_nlp2"));
+                                map.put("FIELD_NLP3", listOld.get(j).get("field_nlp3"));
+                                map.put("FIELD_NLP4", listOld.get(j).get("field_nlp4"));
+                            }
+                        }
+                    }else{
+                            map.put("FIELD_NLP1", null);
+                            map.put("FIELD_NLP2", null);
+                            map.put("FIELD_NLP3", null);
+                            map.put("FIELD_NLP4", null);
+                     }
                     ColumnList.add(map);
-                }
+                    }
+
 //                Statement stmt = conn.createStatement();
 //                ResultSet rsComments = stmt.executeQuery("show full columns from " + tableName);
 //                while (rsComments.next()) {
@@ -336,7 +412,7 @@ public class NLPControl extends RO {
                     paramt.put("not_null", m.get("NULLABLE"));
                     paramt.put("key", null);
                     paramt.put("reference_table_id", null);
-                    paramt.put("reference_fields", null);
+                    paramt.put("reference_fields",  m.get("COLUMN_NAME"));
                     session.insert("nlp.createQueryTableField", paramt);
                 }
 
