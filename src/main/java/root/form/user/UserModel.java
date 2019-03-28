@@ -13,6 +13,7 @@ public class UserModel
     private String endDate;      //结束时间
     private String description;  //备注
     private String regisType;//注册来源(import)
+    private String icon;
     
     public int getId()
     {
@@ -101,6 +102,14 @@ public class UserModel
     public void setRegisType(String regisType)
     {
         this.regisType = regisType;
+    }
+    public String getIcon()
+    {
+        return icon;
+    }
+    public void setIcon(String icon)
+    {
+        this.icon = icon;
     }
     @Override
     public String toString()

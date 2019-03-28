@@ -4,19 +4,27 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.util.ErpUtil;
+import root.report.util.FileUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/reportServer/formUser")
-public class FormUserService
+public class FormUserService extends RO
 {
     private static final Logger log = Logger.getLogger(FormUserService.class);
     
@@ -246,5 +254,67 @@ public class FormUserService
         map2.put("data",map3);
         map2.put("status",0);
         return JSON.toJSONString(map2);
+    }
+    @RequestMapping(value = "/uploadFile/{uid}", produces = "text/html;charset=UTF-8")
+    public String uplaod( HttpServletRequest req,@RequestParam("file") MultipartFile file,@PathVariable("uid") Integer uid) {//1. 接受上传的文件  @RequestParam("file") MultipartFile file
+        // 判断文件是否为空
+        System.out.print(uid);
+        if (file.isEmpty()) {
+            return ExceptionMsg("文件不能为空");
+        }
+        String pathname=null;
+        try {
+            String basePath =System.getProperty("user.dir") + File.separator + "upload";
+            File destFile = new File(basePath);
+            destFile.getParentFile().mkdirs();
+            //获取文件保存路径 \20180608\113339\
+            String folder = FileUtils.getFolder();
+            // 获取前缀为"FL_" 长度为20 的文件名  FL_eUljOejPseMeDg86h.png
+            String fileName = FileUtils.getFileName() + FileUtils.getFileNameSub(file.getOriginalFilename());
+            String filepath=null;
+            try {
+                // E:\springboot-upload\image\20180608\113339
+                Path filePath = Files.createDirectories(Paths.get(basePath, folder));
+                log.info(filePath);
+                filepath=filePath.toString();
+                //写入文件  E:\springboot-upload\image\20180608\113339\FL_eUljOejPseMeDg86h.png
+                Path fullPath = Paths.get(basePath, folder, fileName);
+                log.info(fullPath);
+                String fullPaths=fullPath.toString();
+                int i=fullPaths.indexOf("upload");
+                String usefilepath=fullPaths.substring(i,fullPaths.length());
+                log.info(usefilepath);
+                pathname=usefilepath;
+                // E:\springboot-upload\image\20180608\113339\FL_eUljOejPseMeDg86h.png
+                Files.write(fullPath, file.getBytes(), StandardOpenOption.CREATE);
+                //保存文件信息
+                UserModel userModel =DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserInfoById",uid);
+
+                String delfilepath=userModel.getIcon();
+                File filess = new File(delfilepath);
+                if (filess.exists()) {
+                    if (filess.delete()) {
+                       log.info("删除数据成功");
+                    } else {
+                        log.info("删除失败！");
+                    }
+                }
+                //修改數據
+                userModel.setIcon(usefilepath);
+                DbFactory.Open(DbFactory.FORM).update("formUser.updateUser", userModel);
+            } catch (Exception e) {
+                Path path = Paths.get(basePath, folder);
+                log.error("写入文件异常,删除文件。。。。", e);
+                try {
+                    Files.deleteIfExists(path);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                return e.getMessage();
+            }
+        } catch (Exception e) {
+            ExceptionMsg(e.getMessage());
+        }
+        return  SuccessMsg("",pathname);
     }
 }

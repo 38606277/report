@@ -14,6 +14,7 @@
 	   <result column="DESCRIPTION" property="description" javaType="string" jdbcType="VARCHAR"></result>
 	   <result column="IMPORT" property="regisType" javaType="string" jdbcType="VARCHAR"></result>
 	   <result column="ENCRYPTED_USER_PASSWORD" property="encryptPwd" javaType="string" jdbcType="VARCHAR"></result>
+        <result column="ICON" property="icon" javaType="string" jdbcType="VARCHAR"></result>
 	</resultMap>
 	<select id="getUserListTotalRows" resultType="int" parameterType="root.form.user.UserModel">
         select count(1) 
@@ -22,7 +23,7 @@
     </select>
 	<select id="getUserList" resultMap="userModel" parameterType="map">
         select t._id,t.user_id,t.user_name,t.creation_date,t.isAdmin,t.encrypted_user_password,t.import,
-               case when t.isAdmin=1 then '管理员' else '普通用户' end isAdminText,t.start_date,t.end_date,t.description
+               case when t.isAdmin=1 then '管理员' else '普通用户' end isAdminText,t.start_date,t.end_date,t.description,t.icon
           from fnd_user t 
          where 1=1
         <if test="userName != null and userName!=''">  and t.user_name like '%${userName}%' </if>
@@ -30,7 +31,7 @@
     </select>
     <select id="getUserInfoById" resultMap="userModel" parameterType="int">
         select t._id,t.user_id,t.user_name,t.creation_date,DATE_FORMAT(t.start_date,'%Y-%m-%d') start_date,DATE_FORMAT(t.end_date,'%Y-%m-%d') end_date,t.description,
-               t.isAdmin,t.encrypted_user_password,t.import
+               t.isAdmin,t.encrypted_user_password,t.import,t.icon
           from fnd_user t 
          where t._id=#{id} 
     </select>
@@ -54,6 +55,7 @@
               <if test="startDate!=null">start_date=#{startDate},</if>
               <if test="endDate!=null">end_date=#{endDate},</if>
               <if test="description!=null">description=#{description},</if>
+              <if test="icon!=null">icon=#{icon},</if>
           </trim>
          where _id=#{id}
     </update>
@@ -65,7 +67,7 @@
     </select>
     <select id="getUserInfoByUserId" resultMap="userModel" parameterType="string">
         select t._id,t.user_id,t.user_name,t.creation_date,DATE_FORMAT(t.start_date,'%Y-%m-%d') start_date,DATE_FORMAT(t.end_date,'%Y-%m-%d') end_date,t.description,
-               t.isAdmin,t.import,t.encrypted_user_password
+               t.isAdmin,t.import,t.encrypted_user_password,t.icon
           from fnd_user t
          where t.user_name=#{userCode} 
     </select>

@@ -148,6 +148,7 @@ public class UserController extends RO{
 			String regisType = userModel.getRegisType();
 			map.put("isAdmin", isAdmin);
 			map.put("import", regisType);
+			map.put("icon", userModel.getIcon());
 			Map<String, Object> map2 = new HashMap<String, Object>();
 			map2.put("status",0);
 			map2.put("data",map);
