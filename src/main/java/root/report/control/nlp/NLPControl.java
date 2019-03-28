@@ -134,32 +134,52 @@ public class NLPControl extends RO {
             String sql = "select * from " + tableName;
             try {
                 conn= dbManager.getConnection(dbname);
-                Statement stmt = conn.createStatement();
-                ResultSet rsComments = stmt.executeQuery("show full columns from " + tableName);
-                while (rsComments.next()) {
+                DatabaseMetaData dbmd  = conn.getMetaData();
+                ResultSet colRet = dbmd.getColumns(null,"%", tableName,"%");
+                while(colRet.next()) {
                     HashMap<String, Object> map = new HashMap<String, Object>();
-                    map.put("COLUMN_NAME", rsComments.getString("Field"));
-                    String type= rsComments.getString("Type");
-
-                    int fi= type.indexOf("(");
-                    type= type.replace("unsigned zerofill","");
-                    String oldtype=type.trim();
-                    String types =null;
-                    String columnlength =null;
-                    if(fi>-1) {
-                        types=type.substring(0, fi);
-                        columnlength = oldtype.substring(fi + 1, oldtype.length()-1);
-                    }else{
-                        types=type;
-                        columnlength=null;
-                    }
-                    map.put("DATA_TYPE",types);
-                    map.put("COLUMN_SIZE",columnlength);
-                    map.put("COMMENTS",rsComments.getString("Comment"));
-                    map.put("PRIMARY",rsComments.getString("Key").equals("PRI")?"TRUE":"FALSE");
-                    map.put("NULLABLE",rsComments.getObject("Null"));
+                    map.put("COLUMN_NAME", colRet.getString("COLUMN_NAME"));
+                    map.put("DATA_TYPE", colRet.getString("TYPE_NAME"));
+                    map.put("COLUMN_SIZE",colRet.getInt("COLUMN_SIZE"));
+                    map.put("COMMENTS",colRet.getString("REMARKS"));
+                    map.put("PRIMARY",colRet.getString("IS_AUTOINCREMENT"));
+                    map.put("NULLABLE",colRet.getString("IS_NULLABLE"));
+                    map.put("FIELD_NLP1",null);
+                    map.put("FIELD_NLP2",null);
+                    map.put("FIELD_NLP3",null);
+                    map.put("FIELD_NLP4",null);
                     ColumnList.add(map);
                 }
+//                Statement stmt = conn.createStatement();
+//                ResultSet rsComments = stmt.executeQuery("show full columns from " + tableName);
+//                while (rsComments.next()) {
+//                    HashMap<String, Object> map = new HashMap<String, Object>();
+//                    map.put("COLUMN_NAME", rsComments.getString("Field"));
+//                    String type= rsComments.getString("Type");
+//
+//                    int fi= type.indexOf("(");
+//                    type= type.replace("unsigned zerofill","");
+//                    String oldtype=type.trim();
+//                    String types =null;
+//                    String columnlength =null;
+//                    if(fi>-1) {
+//                        types=type.substring(0, fi);
+//                        columnlength = oldtype.substring(fi + 1, oldtype.length()-1);
+//                    }else{
+//                        types=type;
+//                        columnlength=null;
+//                    }
+//                    map.put("DATA_TYPE",types);
+//                    map.put("COLUMN_SIZE",columnlength);
+//                    map.put("COMMENTS",rsComments.getString("Comment"));
+//                    map.put("PRIMARY",rsComments.getString("Key").equals("PRI")?"TRUE":"FALSE");
+//                    map.put("NULLABLE",rsComments.getObject("Null"));
+//                    map.put("FIELD_NLP1",null);
+//                    map.put("FIELD_NLP2",null);
+//                    map.put("FIELD_NLP3",null);
+//                    map.put("FIELD_NLP4",null);
+//                    ColumnList.add(map);
+//                }
 
 //                PreparedStatement ps = conn.prepareStatement(sql);
 //                ResultSet rs = ps.executeQuery();
@@ -174,6 +194,10 @@ public class NLPControl extends RO {
 //                    map.put("COMMENTS","");
 //                    map.put("PRIMARY","");
 //                    map.put("NULLABLE", "");
+//                    map.put("FIELD_NLP1",null);
+//                    map.put("FIELD_NLP2",null);
+//                    map.put("FIELD_NLP3",null);
+//                    map.put("FIELD_NLP4",null);
 //                    ColumnList.add(map);
 //                }
             }catch (Exception e){
@@ -207,6 +231,10 @@ public class NLPControl extends RO {
             String sql=
                     "select "+
                             "         comments as \"COMMENTS\","+
+                            "         '' as \"FIELD_NLP1\","+
+                            "          '' as \"FIELD_NLP2\","+
+                            "          '' as \"FIELD_NLP3\","+
+                            "          '' as \"FIELD_NLP4\","+
                             "         a.column_name \"COLUMN_NAME\","+
                             "         a.DATA_TYPE as \"DATA_TYPE\","+
                             "        DECODE (a.data_precision, null,DECODE (a.data_type, 'CHAR', a.char_length,'VARCHAR'," +
@@ -277,33 +305,76 @@ public class NLPControl extends RO {
     public String updateColumn(@RequestBody String pjson) throws Exception {
         JSONObject obj = JSON.parseObject(pjson);
         String dbname = obj.getString("dbname");
-        JSONObject objtwo = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
-        String dbtype = objtwo.getString("dbtype");
+//        JSONObject objtwo = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
+//        String dbtype = objtwo.getString("dbtype");
         String tableName = obj.getString("tableName");
         JSONArray tableList =obj.getJSONArray("columnList");
         boolean istrue=true;
-        if(dbtype.equals("Oracle")){
-            Connection conn=null;
-            try {
-                conn= dbManager.getConnection(dbname);
-                Statement stmt = conn.createStatement();
-                for (int i=0;i<tableList.size();i++){
-                    Map m= (Map) tableList.get(i);
-                    String sql = "comment on column " + tableName + "." + m.get("COLUMN_NAME")+ " is '" + m.get("COMMENTS") + "'";
-                    stmt.execute(sql);
+        SqlSession session= DbFactory.Open(DbFactory.FORM);
+        Map param=new HashMap<>();
+        try {
+            param.put("table_db",dbname);
+            param.put("table_name",tableName);
+            //先删除再保存
+            Map mm= session.selectOne("nlp.selectQryTable",param);
+            session.delete("nlp.deleteQryTableFiled", mm);
+            session.delete("nlp.deleteQryTableID",  mm);
+
+            session.insert("nlp.createQueryTable", param);
+            String table_id= param.get("table_id").toString();
+                for (int i = 0; i < tableList.size(); i++) {
+                    Map m = (Map) tableList.get(i);
+                    Map paramt = new HashMap<>();
+                    paramt.put("table_id", table_id);
+                    paramt.put("field_name", m.get("COLUMN_NAME"));
+                    paramt.put("field_nlp1", m.get("FIELD_NLP1"));
+                    paramt.put("field_nlp2",  m.get("FIELD_NLP2"));
+                    paramt.put("field_nlp3",  m.get("FIELD_NLP3"));
+                    paramt.put("field_nlp4",  m.get("FIELD_NLP4"));
+                    paramt.put("type", m.get("DATA_TYPE"));
+                    paramt.put("length", m.get("COLUMN_SIZE"));
+                    paramt.put("not_null", m.get("NULLABLE"));
+                    paramt.put("key", null);
+                    paramt.put("reference_table_id", null);
+                    paramt.put("reference_fields", null);
+                    session.insert("nlp.createQueryTableField", paramt);
                 }
-            } catch (ClassNotFoundException e) {
+
+        } catch (Exception e) {
                 istrue=false;
-                if(null!=conn) {
-                    conn.close();
+                if(null!=session) {
+                 //   session.close();
                 }
                 e.printStackTrace();
             }finally {
-                if(null!=conn) {
-                    conn.close();
+                if(null!=session) {
+                   // session.close();
                 }
             }
-        }
+
+
+//        if(dbtype.equals("Oracle")){
+//            Connection conn=null;
+//            try {
+//                conn= dbManager.getConnection(dbname);
+//                Statement stmt = conn.createStatement();
+//                for (int i=0;i<tableList.size();i++){
+//                    Map m= (Map) tableList.get(i);
+//                    String sql = "comment on column " + tableName + "." + m.get("COLUMN_NAME")+ " is '" + m.get("COMMENTS") + "'";
+//                    stmt.execute(sql);
+//                }
+//            } catch (ClassNotFoundException e) {
+//                istrue=false;
+//                if(null!=conn) {
+//                    conn.close();
+//                }
+//                e.printStackTrace();
+//            }finally {
+//                if(null!=conn) {
+//                    conn.close();
+//                }
+//            }
+//        }
         return SuccessMsg("修改数据成功",istrue);
     }
 
