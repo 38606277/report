@@ -236,14 +236,32 @@ public class NLPControl extends RO {
             try {
                 conn= dbManager.getConnection(dbname);
                 DatabaseMetaData dbmd  = conn.getMetaData();
+                ResultSet primaryKeyResultSet = dbmd.getPrimaryKeys(dbname,null,tableName);
+                List plist=new ArrayList<>();
+                while(primaryKeyResultSet.next()){
+                    String primaryKeyColumnName = primaryKeyResultSet.getString("COLUMN_NAME");
+                    plist.add(primaryKeyColumnName);
+                    System.out.print("数据库名称:" + primaryKeyColumnName);
+                }
+
                 ResultSet colRet = dbmd.getColumns(null,"%", tableName,"%");
+
                 while(colRet.next()) {
+                    String pk="FALSE";
                     HashMap<String, Object> map = new HashMap<String, Object>();
                     map.put("COLUMN_NAME", colRet.getString("COLUMN_NAME"));
                     map.put("DATA_TYPE", colRet.getString("TYPE_NAME"));
                     map.put("COLUMN_SIZE", colRet.getInt("COLUMN_SIZE"));
                     map.put("COMMENTS", colRet.getString("REMARKS"));
-                    map.put("PRIMARY", colRet.getString("IS_AUTOINCREMENT"));
+                    map.put("PRIMARY", "FALSE");
+                    if(plist.size()>0) {
+                        for (int i=0;i<plist.size();i++){
+                            if(plist.get(i).equals(colRet.getString("COLUMN_NAME"))){
+                                pk="TRUE";
+                            }
+                        }
+                    }
+                    map.put("PRIMARY",pk);
                     map.put("NULLABLE", colRet.getString("IS_NULLABLE"));
                     if(null!=listOld&& listOld.size()>0){
                         for (int j=0;j<listOld.size();j++) {
