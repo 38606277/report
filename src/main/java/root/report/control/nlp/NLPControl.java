@@ -3,9 +3,11 @@ package root.report.control.nlp;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageRowBounds;
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.corpus.dependency.CoNll.CoNLLSentence;
 import com.hankcs.hanlp.dictionary.CustomDictionary;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +101,42 @@ public class NLPControl extends RO {
             }
         }
         return SuccessMsg("修改数据成功",tableList);
+    }
+
+    @RequestMapping(value = "/getAll", produces = "text/plain;charset=UTF-8")
+    public String getAll(@RequestBody String pJson) {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        try {
+            JSONObject obj = (JSONObject) JSON.parse(pJson);
+            Map<String,Object> map = new HashMap<String,Object>();
+            Long total = 0L;
+            RowBounds bounds = null;
+            if(obj==null){
+                bounds = RowBounds.DEFAULT;
+            }else {
+                int currentPage = Integer.valueOf(obj.getIntValue("pageNum"));
+                int perPage = Integer.valueOf(obj.getIntValue("perPage"));
+                if (1 == currentPage || 0 == currentPage) {
+                    currentPage = 0;
+                } else {
+                    currentPage = (currentPage - 1) * perPage;
+                }
+                bounds = new PageRowBounds(currentPage, perPage);
+                map.put("table_name", obj.get("dbname") == null ?null : obj.getString("dbname").trim());
+            }
+            List<Map> mapList = sqlSession.selectList("nlp.getAll",map,bounds);
+            if(obj!=null){
+                total = ((PageRowBounds)bounds).getTotal();
+            }else{
+                total = Long.valueOf(mapList.size());
+            }
+            Map<String,Object> map3 =new HashMap<String,Object>();
+            map3.put("list",mapList);
+            map3.put("total",total);
+            return SuccessMsg("",map3);
+        }catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
     }
     @RequestMapping(value = "/getColumnList", produces = "text/plain;charset=UTF-8")
     public String getColumnList(@RequestBody String pjson) throws Exception,SQLException{
@@ -395,7 +433,10 @@ public class NLPControl extends RO {
             Map mm= session.selectOne("nlp.selectQryTable",param);
             session.delete("nlp.deleteQryTableFiled", mm);
             session.delete("nlp.deleteQryTableID",  mm);
-
+            param.put("table_nlp1",obj.get("table_nlp1")==null?null:obj.getString("table_nlp1"));
+            param.put("table_nlp2",obj.get("table_nlp2")==null?null:obj.getString("table_nlp2"));
+            param.put("table_nlp3",obj.get("table_nlp3")==null?null:obj.getString("table_nlp3"));
+            param.put("table_nlp4",obj.get("table_nlp4")==null?null:obj.getString("table_nlp4"));
             session.insert("nlp.createQueryTable", param);
             String table_id= param.get("table_id").toString();
                 for (int i = 0; i < tableList.size(); i++) {
@@ -453,5 +494,87 @@ public class NLPControl extends RO {
 //        }
         return SuccessMsg("修改数据成功",istrue);
     }
+    @RequestMapping(value = "/deleteTC", produces = "text/plain;charset=UTF-8")
+    public String deleteTC(@RequestBody String pjson) throws Exception {
+        JSONObject obj = JSON.parseObject(pjson);
+        String tid = obj.getString("tid");
+        boolean istrue=true;
+        SqlSession session= DbFactory.Open(DbFactory.FORM);
+        Map param=new HashMap<>();
+        try {
+            param.put("table_id",tid);
+            session.delete("nlp.deleteQryTableFiled", param);
+            session.delete("nlp.deleteQryTableID",  param);
 
+        } catch (Exception e) {
+            istrue=false;
+            if(null!=session) {
+                //   session.close();
+            }
+            e.printStackTrace();
+        }finally {
+            if(null!=session) {
+                // session.close();
+            }
+        }
+        return SuccessMsg("删除数据成功",istrue);
+    }
+    @RequestMapping(value = "/getInfoByTableId", produces = "text/plain;charset=UTF-8")
+    public String getInfoByTableId(@RequestBody String pjson) throws Exception {
+        JSONObject objson = JSON.parseObject(pjson);
+        String table_id = objson.getString("table_id");
+        SqlSession session= DbFactory.Open(DbFactory.FORM);
+        Map param=new HashMap<>();
+        param.put("table_id",table_id);
+        Map m=session.selectOne("nlp.getqryTable",param);
+        String dbname=m.get("table_db").toString();
+        JSONObject obj = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
+        String dbtype = obj.getString("dbtype");
+        List<String> tableList = new ArrayList<String>();
+        Connection conn=null;
+        if(dbtype.equals("Oracle")){
+            try {
+                conn= dbManager.getConnection(dbname);
+                tableList = this.getTableNameList(conn,dbname);
+            } catch (SQLException e) {
+                if(null!=conn) {
+                    conn.close();
+                }
+                e.printStackTrace();
+            }finally {
+                if(null!=conn) {
+                    conn.close();
+                }
+            }
+        }else if(dbtype.equals("Mysql")){
+            try {
+                conn = dbManager.getConnection(dbname);
+                // DatabaseMetaData dbMetaData = conn.getMetaData();
+                Statement stmt = conn.createStatement();
+                stmt.executeQuery("use "+dbname);
+                ResultSet rs =  stmt.executeQuery("SHOW TABLES ");
+                if (null != rs) {
+                    while (rs.next()) {
+                        tableList.add(rs.getString(1));
+                    }
+                }
+                if (null != conn) {
+                    conn.close();
+                }
+            }catch (Exception e){
+                if (null != conn) {
+                    conn.close();
+                }
+                e.printStackTrace();
+            }finally {
+                if (null != conn) {
+                    conn.close();
+                }
+            }
+        }
+        Map ms=new HashMap<>();
+        ms.put("db",m);
+        ms.put("tableList",tableList);
+        return SuccessMsg("删除数据成功",ms);
+    }
 }

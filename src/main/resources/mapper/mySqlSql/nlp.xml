@@ -61,6 +61,12 @@
         )
     </insert>
 
+    <select id="getAll" parameterType="Map" resultType="Map">
+        SELECT    *    FROM   qry_table t    WHERE  1=1
+        <if  test="table_db != null and table_db!=''"> and table_db like '%${table_db}%'</if>
+        <if  test="table_name != null and table_name!=''"> and `table_name` like '%${table_name}%'</if>
+    </select>
+
     <select id="getqryTable" parameterType="Map" resultType="Map">
         SELECT    *    FROM   qry_table t    WHERE    t.table_id ='${table_id}'
     </select>
