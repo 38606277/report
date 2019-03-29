@@ -470,7 +470,7 @@ public class NLPControl extends RO {
                     paramt.put("length", m.get("COLUMN_SIZE"));
                     paramt.put("not_null", m.get("NULLABLE"));
                     paramt.put("key",  m.get("PRIMARY").equals("TRUE")?m.get("COLUMN_NAME"):null);
-                    paramt.put("reference_table_id", tableName);
+                    paramt.put("reference_table_id", table_id);
                     paramt.put("reference_fields",  m.get("COLUMN_NAME"));
                     session.insert("nlp.createQueryTableField", paramt);
                 }
