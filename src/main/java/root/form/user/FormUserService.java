@@ -291,12 +291,14 @@ public class FormUserService extends RO
                 UserModel userModel =DbFactory.Open(DbFactory.FORM).selectOne("formUser.getUserInfoById",uid);
 
                 String delfilepath=userModel.getIcon();
-                File filess = new File(delfilepath);
-                if (filess.exists()) {
-                    if (filess.delete()) {
-                       log.info("删除数据成功");
-                    } else {
-                        log.info("删除失败！");
+                if(null!=delfilepath && !"".equals(delfilepath)) {
+                    File filess = new File(delfilepath);
+                    if (filess.exists()) {
+                        if (filess.delete()) {
+                            log.info("删除数据成功");
+                        } else {
+                            log.info("删除失败！");
+                        }
                     }
                 }
                 //修改數據
