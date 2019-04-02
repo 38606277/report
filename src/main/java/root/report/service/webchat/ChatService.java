@@ -25,7 +25,7 @@ public class ChatService {
         param.put("from_userId", obj.getInteger("from_userId"));
         param.put("to_userId", obj.getInteger("to_userId"));
         param.put("post_message", obj.getString("post_message"));
-        param.put("message_time", new Date().toString());
+        param.put("message_time",null);
         param.put("message_type", obj.getString("message_type"));
         param.put("message_state", obj.getString("message_state"));
         sqlSession.insert("chat.save",param);

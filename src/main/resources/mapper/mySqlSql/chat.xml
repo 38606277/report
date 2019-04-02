@@ -4,7 +4,8 @@
 <mapper namespace="chat">
     <cache/>
     <select id="getchatInfoByID" resultType="Map" parameterType="Map">
-        SELECT *  from ai_chat_message where from_userId = '${from_userId}' and to_userId ='${to_userId}'
+        SELECT *  from ai_chat_message where (from_userId = '${from_userId}' and to_userId ='${to_userId}')
+        or (from_userId = '${to_userId}' and to_userId ='${from_userId}') ORDER BY message_time asc
     </select>
 
     <insert id="save" parameterType="Map" useGeneratedKeys="true" keyProperty="message_id">
@@ -14,8 +15,8 @@
         <if test="post_message != null">'${post_message}'</if>,
         <if test="message_state == null">'0'</if>
         <if test="message_state != null">'${message_state}'</if>,
-        <if test="message_time == null">NULL</if>
-        <if test="message_time != null">'${message_time}'</if>,
+        <if test="message_time == null">now()</if>
+        <if test="message_time != null">now()</if>,
         <if test="message_type == null">NULL</if>
         <if test="message_type != null">'${message_type}'</if>,
         <if test="from_userId == null">NULL</if>
