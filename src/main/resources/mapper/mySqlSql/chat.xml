@@ -19,7 +19,7 @@
         <if test="message_type == null">NULL</if>
         <if test="message_type != null">'${message_type}'</if>,
         <if test="from_userId == null">NULL</if>
-        <if test="from_userId != null">#{from_userId,jdbcType=INTEGER}</if>
+        <if test="from_userId != null">#{from_userId,jdbcType=INTEGER}</if>,
         <if test="to_userId == null">NULL</if>
         <if test="to_userId != null">#{to_userId,jdbcType=INTEGER}</if>
         )
