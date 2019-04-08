@@ -6,11 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageRowBounds;
 import com.googlecode.aviator.AviatorEvaluator;
 import com.googlecode.aviator.Expression;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,17 +23,10 @@ import root.report.db.DbFactory;
 import root.report.query.FuncMetaData;
 import root.report.query.SqlTemplate;
 import root.report.service.QueryService;
-import root.report.service.SelectService;
-import root.report.util.ExecuteSqlUtil;
-import root.report.util.FileUtil;
-import root.report.util.JsonUtil;
-import root.report.util.SQLFormatUtil;
+import root.report.util.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Array;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -479,6 +471,34 @@ public class QueryControl extends RO {
 
     }
 
+    // 执行excute的代码 ： 版本2
+    @RequestMapping(value = "/execqueryToExcel/{QueryClassName}/{QueryID}", produces = "text/plain;charset=UTF-8")
+    public String execqueryToExcel(@PathVariable("QueryClassName") String queryClassName,
+                            @PathVariable("QueryID") String queryID, @RequestBody String pJson) {
+        System.out.println("开始执行查询:" + "selectClassName:" + queryClassName + "," + "selectID:" + queryID + ","
+                + "pJson:" + pJson + ",");
+       JSONObject result = null;
+        Map m=new HashMap<>();
+        try{
+            result = new JSONObject(this.queryService.executeSql(queryClassName,queryID,pJson));
+            List<Map<String,Object>> outList= (List<Map<String, Object>>) result.get("out");
+            List titles=new ArrayList<>();
+            List column =new ArrayList<>();
+            for(int i=0;i<outList.size();i++){
+                Map oMap=outList.get(i);
+                titles.add(oMap.get("out_name"));
+                String outID=oMap.get("out_id").toString();
+                column.add(outID.toUpperCase());
+            }
+            m= ExportExcel.exportExcel("数据查询","数据查询", titles, column,(List<Object>) result.get("list"));
+            m.put("filetype","file");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ExceptionMsg(e.getCause().getMessage());
+        }
+        return SuccessMsg("",m);
+
+    }
     // 执行excute的代码 ：
     @RequestMapping(value = "/execQueryOld/{QueryClassName}/{QueryID}", produces = "text/plain;charset=UTF-8")
     public String execQueryOld(@PathVariable("QueryClassName") String queryClassName,

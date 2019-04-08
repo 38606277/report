@@ -5,10 +5,14 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +28,7 @@ public class ExportExcel {
      * @return
      * @throws IOException
      */
-    public  final static HSSFWorkbook exportExcel(String titleHeader, String fileName, String[] listTitle, String[] listColumn, List<Object> listContent) throws IOException {
+    public  final static Map exportExcel(String titleHeader, String fileName, List listTitle, List listColumn, List<Object> listContent) throws IOException {
         String result="系统提示：Excel文件导出成功！";
         //创建HSSFWorkbook对象(excel的文档对象)
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -43,31 +47,32 @@ public class ExportExcel {
 		sheet.addMergedRegion(new CellRangeAddress(0,0,0,3));*/
         //在sheet里创建第二行
         //row1=sheet.createRow(1);
-        for (int i = 0; i < listTitle.length; i++) {
+        for (int i = 0; i < listTitle.size(); i++) {
             // 创建单元格，设置值
-            row1.createCell(i).setCellValue(listTitle[i]);
+            row1.createCell(i).setCellValue(listTitle.get(i).toString());
         }
         //在sheet里创建第三行
         for (int i = 0; i < listContent.size(); i++) {
             Row rows = sheet.createRow((int) i + 1);
             rows.setHeightInPoints(25);
             Map list=  (Map) listContent.get(i);
-            for (int j = 0; j < listColumn.length; j++) {
+            for (int j = 0; j < listColumn.size(); j++) {
                 // 创建单元格，设置值
-                 rows.createCell(j).setCellValue(list.get(listColumn[j])!=null?list.get(listColumn[j]).toString():null);
+                rows.createCell(j).setCellValue(list.get(listColumn.get(j))!=null?list.get(listColumn.get(j)).toString():null);
             }
         }
 
-//        Format format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-//        //String filepath="/app/rcm_file/ExcelREPLACE"+format.format(new Date())+".xlsx";
-//        String filepath=Constants.UPLOAD_DIR+"Excel"+fileName+".xls";
-//        FileOutputStream out =new FileOutputStream(filepath);
-//        wb.write(out);
-//        out.close();
-//        Map<String,String> map=new HashMap<String,String>();
-//        map.put("fileName", "Excel"+fileName+".xls");
-//        map.put("filePath", filepath);
-        return wb;
+        Format format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        //String filepath="/app/rcm_file/ExcelREPLACE"+format.format(new Date())+".xlsx";
+        String filepath=System.getProperty("user.dir") + File.separator + "upload/"+"Excel"+format.format(new Date())+".xls";
+        String usefilepath="upload/Excel/"+"Excel"+format.format(new Date())+".xls";
+        FileOutputStream out =new FileOutputStream(filepath);
+        wb.write(out);
+        out.close();
+        Map<String,String> map=new HashMap<String,String>();
+        map.put("fileName", "Excel"+fileName+".xls");
+        map.put("filePath", usefilepath);
+        return map;
     }
 
     public static HSSFWorkbook workbooks(String name, String[] titles, String[] column, List<Map<String, Object>> data) {
