@@ -30,7 +30,10 @@ public class ExportExcel {
      */
     public  final static Map exportExcel(String titleHeader, String fileName, List listTitle, List listColumn, List<Object> listContent) throws IOException {
         //基础路径  E:/springboot-upload/image/
-        String basePath =System.getProperty("user.dir") + File.separator + "upload/excel";
+        String folder=System.getProperty("java.io.tmpdir")+ File.separator ;
+        System.out.println(folder);
+        String basePath =folder+ "reportExcel";
+      //  String basePath =System.getProperty("user.dir") + File.separator + "upload/excel";
         File destFile = new File(basePath);
         if (!destFile.exists()) {
             destFile.mkdirs();
@@ -71,7 +74,7 @@ public class ExportExcel {
         Format format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
         String fileNames="/Excel"+format.format(new Date())+".xls";
         String filepath=basePath+fileNames;
-        String usefilepath="upload/excel/"+fileNames;
+        String usefilepath="reportExcel/"+fileNames;
         FileOutputStream out =new FileOutputStream(filepath);
         wb.write(out);
         out.close();

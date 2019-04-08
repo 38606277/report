@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,7 +17,9 @@ import root.report.service.UploadService;
 import root.report.util.ExecuteSqlUtil;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +31,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/reportServer/uploadFile")
 public class UploadController  extends RO {
+    private static Logger log = Logger.getLogger(UploadController.class);
 
     @Autowired
     private UploadService uploadService;
@@ -110,6 +114,14 @@ public class UploadController  extends RO {
             sqlSession.getConnection().rollback();
             ex.printStackTrace();
             return ExceptionMsg(ex.getMessage());
+        }
+    }
+    @RequestMapping(value = "/downloadFile")
+    public void downloadFile(@RequestBody String filePath, HttpServletResponse response) throws Exception {
+        try {
+            uploadService.downloadFile(filePath, response);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

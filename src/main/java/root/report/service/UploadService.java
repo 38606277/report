@@ -1,6 +1,7 @@
 package root.report.service;
 
 import org.apache.log4j.Logger;
+import org.apache.tomcat.jni.FileInfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +16,7 @@ import root.report.util.FileUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -94,65 +96,56 @@ public class UploadService {
     /**
      * 文件下载
      *
-     * @param fileName
-     * @param res
-     * @throws BusinessException
+     * @param filePath
+     * @param response
+     * @throws Exception
      * @throws UnsupportedEncodingException
      */
-//    public void downloadFile(String fileName, HttpServletResponse res) throws BusinessException, UnsupportedEncodingException {
-//        if (fileName == null) {
-//            throw new BusinessException("1001", "文件名不能为空");
-//        }
-//
-//        // 通过文件名查找文件信息
-//        FileInfo fileInfo = fileInfoDao.findByFileName(fileName);
-//        log.info("fileInfo-->{}", fileInfo);
-//        if (fileInfo == null) {
-//            throw new BusinessException("2001", "文件名不存在");
-//        }
-//
-//        //设置响应头
-//        res.setContentType("application/force-download");// 设置强制下载不打开
-//        res.addHeader("Content-Disposition", "attachment;fileName=" +
-//                new String(fileInfo.getFileOriginName().getBytes("gbk"), "iso8859-1"));// 设置文件名
-//        res.setHeader("Context-Type", "application/xmsdownload");
-//
-//        //判断文件是否存在
-//        File file = new File(Paths.get(fileInfo.getFilePath(), fileName).toString());
-//        if (file.exists()) {
-//            byte[] buffer = new byte[1024];
-//            FileInputStream fis = null;
-//            BufferedInputStream bis = null;
-//            try {
-//                fis = new FileInputStream(file);
-//                bis = new BufferedInputStream(fis);
-//                OutputStream os = res.getOutputStream();
-//                int i = bis.read(buffer);
-//                while (i != -1) {
-//                    os.write(buffer, 0, i);
-//                    i = bis.read(buffer);
-//                }
-//                log.info("下载成功");
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                throw new BusinessException("9999", e.getMessage());
-//            } finally {
-//                if (bis != null) {
-//                    try {
-//                        bis.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                if (fis != null) {
-//                    try {
-//                        fis.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//
-//    }
+    public void downloadFile(String filePath, HttpServletResponse response) throws Exception {
+        if (filePath == null) {
+            throw new Exception("文件名不能为空");
+        }
+        String fileName=filePath.substring(filePath.lastIndexOf("/")+1,filePath.length());
+        // 配置文件下载
+        response.setContentType("application/x-msdownload");
+        response.setHeader("content-disposition", "attachment;filename="+ URLEncoder.encode(fileName, "utf-8"));
+
+        String folder=System.getProperty("java.io.tmpdir")+ File.separator;
+        //判断文件是否存在
+        File file = new File(folder,filePath);
+        if (file.exists()) {
+            byte[] buffer = new byte[1024];
+            FileInputStream fis = null;
+            BufferedInputStream bis = null;
+            try {
+                fis = new FileInputStream(file);
+                bis = new BufferedInputStream(fis);
+                OutputStream os = response.getOutputStream();
+                int i = bis.read(buffer);
+                while (i != -1) {
+                    os.write(buffer, 0, i);
+                    i = bis.read(buffer);
+                }
+                log.info("下载成功");
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new Exception(e.getMessage());
+            } finally {
+                if (bis != null) {
+                    try {
+                        bis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 }
