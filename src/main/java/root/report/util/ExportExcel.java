@@ -29,6 +29,12 @@ public class ExportExcel {
      * @throws IOException
      */
     public  final static Map exportExcel(String titleHeader, String fileName, List listTitle, List listColumn, List<Object> listContent) throws IOException {
+        //基础路径  E:/springboot-upload/image/
+        String basePath =System.getProperty("user.dir") + File.separator + "upload/excel";
+        File destFile = new File(basePath);
+        if (!destFile.exists()) {
+            destFile.mkdirs();
+        }
         String result="系统提示：Excel文件导出成功！";
         //创建HSSFWorkbook对象(excel的文档对象)
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -63,9 +69,9 @@ public class ExportExcel {
         }
 
         Format format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        //String filepath="/app/rcm_file/ExcelREPLACE"+format.format(new Date())+".xlsx";
-        String filepath=System.getProperty("user.dir") + File.separator + "upload/"+"Excel"+format.format(new Date())+".xls";
-        String usefilepath="upload/Excel/"+"Excel"+format.format(new Date())+".xls";
+        String fileNames="/Excel"+format.format(new Date())+".xls";
+        String filepath=basePath+fileNames;
+        String usefilepath="upload/excel/"+fileNames;
         FileOutputStream out =new FileOutputStream(filepath);
         wb.write(out);
         out.close();
