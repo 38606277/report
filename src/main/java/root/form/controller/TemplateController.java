@@ -578,7 +578,7 @@ public class TemplateController extends BaseControl {
         //查询模板文件
         Map<String, Object> templateInfo = session.selectOne("dataCollect.getTemplate", tables.get("template_id"));
         //关闭连接
-        session.close();
+       // session.close();
         String templatePath = (String) templateInfo.get("template_path");
         XSSFExcelToHtmlReact t = new XSSFExcelToHtmlReact();
         File templateFile = new File(templatePath);
@@ -673,7 +673,8 @@ public class TemplateController extends BaseControl {
         map2.put("msg","查询成功");
         map2.put("data",map3);
         map2.put("status",0);
-        return JSON.toJSONString(map2);
+        return  SuccessMsg("操作成功", map3);
+       // return JSON.toJSONString(map2);
     }
 
     String scripts[] = {"https://cdn.bootcss.com/vue/2.2.2/vue.min.js","https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.js"};
@@ -999,7 +1000,7 @@ public class TemplateController extends BaseControl {
         //查询模板文件
         Map<String, Object> templateInfo = session.selectOne("dataCollect.getTemplate", tables.get("template_id"));
         //关闭连接
-        session.close();
+        //session.close();
         String templatePath = (String) templateInfo.get("template_path");
         XSSFExcelToHtmlReactView t = new XSSFExcelToHtmlReactView();
         File templateFile = new File(templatePath);
@@ -1076,6 +1077,6 @@ public class TemplateController extends BaseControl {
         map2.put("msg","查询成功");
         map2.put("data",map3);
         map2.put("status",0);
-        return JSON.toJSONString(map2);
+        return SuccessMsg("查看",map3);//JSON.toJSONString(map2);
     }
 }
