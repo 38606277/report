@@ -26,6 +26,48 @@ public class SRTool {
     static {
         SpeechUtility.createUtility("appid=5cac4812");//申请的appid
     }
+    /**
+       * 输入流转字节流
+       * */
+    private byte[] InputStreamToByte(InputStream is) throws IOException {
+        ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
+        byte[] buffer=new byte[1024];
+        int ch;
+        while ((ch = is.read(buffer)) != -1) {
+            bytestream.write(buffer,0,ch);
+            }
+        byte data[] = bytestream.toByteArray();
+        bytestream.close();
+        return data;
+    }
+    public String voice2words(MultipartFile file) throws InterruptedException, IOException {
+        //1.创建SpeechRecognizer对象
+        SpeechRecognizer mIat = SpeechRecognizer.createRecognizer();
+        //2.设置听写参数，详见《MSC Reference Manual》SpeechConstant类
+        mIat.setParameter(SpeechConstant.DOMAIN, "iat");
+        mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        mIat.setParameter(SpeechConstant.ACCENT, "mandarin ");
+        mIat.setParameter(SpeechConstant.AUDIO_SOURCE, "-1");
+        //3.开始听写
+        mIat.startListening(mRecoListener);
+
+      InputStream inputStream=  file.getInputStream();
+
+        byte[] buf=InputStreamToByte(inputStream);
+        //voiceBuffer为音频数据流，splitBuffer为自定义分割接口，将其以4.8k字节分割成数组
+        ArrayList<byte[]> buffers = splitBuffer(buf, buf.length, 4800);
+        for (int i = 0; i < buffers.size(); i++) {
+            // 每次写入msc数据4.8K,相当150ms录音数据
+            mIat.writeAudio(buffers.get(i), 0, buffers.get(i).length);
+        }
+        mIat.stopListening();
+
+        while (mIat.isListening()) {
+            Thread.sleep(perWaitTime);
+        }
+
+        return mResult + "";
+    }
 
     public String voice2words(String  fileName) throws InterruptedException, IOException {
         //1.创建SpeechRecognizer对象

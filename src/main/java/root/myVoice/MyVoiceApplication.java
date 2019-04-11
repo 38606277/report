@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import root.report.common.RO;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @SpringBootApplication
 @RestController
@@ -24,22 +22,22 @@ public class MyVoiceApplication extends RO {
 		String aa = "单,继,坤";
 		//uploadUserWords(aa);
 		Map<String,String> map =new HashMap();
-		UUID uuid = UUID.randomUUID();
-		String path = System.getProperty("java.io.tmpdir")+ File.separator;
-		String fileName = uuid.toString()+".wav";
-		//可识别的wav文件
-		String wavFile = System.getProperty("java.io.tmpdir")+ File.separator+"/"+uuid.toString()+".wav";
-		File temfiles = new File(path,fileName);
-		try {
-			file.transferTo(temfiles);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		UUID uuid = UUID.randomUUID();
+//		String path = System.getProperty("java.io.tmpdir")+ File.separator;
+//		String fileName = uuid.toString()+".wav";
+//		//可识别的wav文件
+//		String wavFile = System.getProperty("java.io.tmpdir")+ File.separator+"/"+uuid.toString()+".wav";
+//		File temfiles = new File(path,fileName);
+//		try {
+//			file.transferTo(temfiles);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		SRTool sr = new SRTool();
 		String words = null;
 		try {
-			//words = sr.voice2wordswav(file);
-			words = sr.voice2words(wavFile);
+			words = sr.voice2words(file);
+			//words = sr.voice2words(wavFile);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -47,7 +45,7 @@ public class MyVoiceApplication extends RO {
 		}
 		System.out.println("讯飞识别的语音结果："+words);
 
-		if("".equals(words)){
+		if(null==words && "".equals(words)){
 			System.out.println("讯飞识别的语音结果：null");
 			map.put("status","error");
 			map.put("content","对不起，请您在描述一遍！");
