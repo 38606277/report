@@ -2,7 +2,6 @@ package root.myVoice;
 
 
 import com.iflytek.cloud.speech.*;
-import org.apache.commons.io.IOUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,11 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import root.report.common.RO;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -24,25 +20,33 @@ import java.util.UUID;
 @RequestMapping("/reportServer/MyVoiceApplication")
 public class MyVoiceApplication extends RO {
 	@RequestMapping(value = "/uploadai", produces = "text/plain;charset=UTF-8")
-	public String uploadai( @RequestParam("file") MultipartFile file) throws Exception {
+	public String uploadai(@RequestParam("file") MultipartFile file) throws Exception {
 		String aa = "单,继,坤";
-		uploadUserWords(aa);
+		//uploadUserWords(aa);
 		Map<String,String> map =new HashMap();
 		UUID uuid = UUID.randomUUID();
+		String path = System.getProperty("java.io.tmpdir")+ File.separator;
+		String fileName = uuid.toString()+".wav";
+		//可识别的wav文件
+		String wavFile = System.getProperty("java.io.tmpdir")+ File.separator+"/"+uuid.toString()+".wav";
+		File temfiles = new File(path,fileName);
+		try {
+			file.transferTo(temfiles);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		SRTool sr = new SRTool();
-		String pcm = "D:/hb/20190410151336.wav";
-		//this.convertAudioFiles("D:/hb/20190410125852.wav","D:/hb/te.pcm");
-
 		String words = null;
 		try {
-			words = sr.voice2wordswav(file);
-			//words = sr.voice2words(pcm);
+			//words = sr.voice2wordswav(file);
+			words = sr.voice2words(wavFile);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		System.out.println("讯飞识别的语音结果："+words);
+
 		if("".equals(words)){
 			System.out.println("讯飞识别的语音结果：null");
 			map.put("status","error");
@@ -56,49 +60,7 @@ public class MyVoiceApplication extends RO {
 
 		return SuccessMsg("语音识别", map);
 	}
-	public String convertAudioFiles(String wavfilepath,String pcmfilepath){
-		FileInputStream fileInputStream;
-		FileOutputStream fileOutputStream;
-		try {
-			fileInputStream = new FileInputStream(wavfilepath);
-			fileOutputStream = new FileOutputStream(pcmfilepath);
-			byte[] wavbyte = InputStreamToByte(fileInputStream);
-			byte[] pcmbyte = Arrays.copyOfRange(wavbyte, 44, wavbyte.length);
-			fileOutputStream.write(pcmbyte);
-			IOUtils.closeQuietly(fileInputStream);
-			IOUtils.closeQuietly(fileOutputStream);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		return pcmfilepath;
-	}
-	/**
-	 * 输入流转byte二进制数据
-	 * @param fis
-	 * @return
-	 * @throws IOException
-	 */
-	private static byte[] InputStreamToByte(FileInputStream fis) throws IOException {
-		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		long size = fis.getChannel().size();
-		byte[] buffer = null;
-		if (size <= Integer.MAX_VALUE) {
-			buffer = new byte[(int) size];
-		} else {
-			buffer = new byte[8];
-			for (int ix = 0; ix < 8; ++ix) {
-				int offset = 64 - (ix + 1) * 8;
-				buffer[ix] = (byte) ((size >> offset) & 0xff);
-			}
-		}
-		int len;
-		while ((len = fis.read(buffer)) != -1) {
-			byteStream.write(buffer, 0, len);
-		}
-		byte[] data = byteStream.toByteArray();
-		IOUtils.closeQuietly(byteStream);
-		return data;
-	}
+
 	private void uploadUserWords(String aa) throws Exception {
 		SpeechUtility.createUtility("appid=5cac4812");//申请的appid
 		DataUploader dataUploader = new DataUploader();

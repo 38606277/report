@@ -4,26 +4,30 @@ package  root.myVoice;
 import com.iflytek.cloud.speech.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
  * niuhao 2017/12/4.
  */
 public class SRTool {
-
+    /** 每次等待时间 */
     private int perWaitTime = 100;
 
     private StringBuffer mResult = new StringBuffer();
 
+    /** 最大等待时间， 单位ms */
+    private int maxWaitTime = 500;
+
+    /** 出现异常时最多重复次数 */
+    private int maxQueueTimes = 3;
+    /** 音频文件 */
+   private  MultipartFile file;
     static {
         SpeechUtility.createUtility("appid=5cac4812");//申请的appid
     }
 
-    public String voice2wordswav(MultipartFile file) throws InterruptedException, IOException {
-        byte[] buf =file.getBytes();
+    public String voice2words(String  fileName) throws InterruptedException, IOException {
         //1.创建SpeechRecognizer对象
         SpeechRecognizer mIat = SpeechRecognizer.createRecognizer();
         //2.设置听写参数，详见《MSC Reference Manual》SpeechConstant类
@@ -33,23 +37,6 @@ public class SRTool {
         mIat.setParameter(SpeechConstant.AUDIO_SOURCE, "-1");
         //3.开始听写
         mIat.startListening(mRecoListener);
-
-        //voiceBuffer为音频数据流，splitBuffer为自定义分割接口，将其以4.8k字节分割成数组
-        ArrayList<byte[]> buffers = splitBuffer(buf, buf.length, 4800);
-        for (int i = 0; i < buffers.size(); i++) {
-            // 每次写入msc数据4.8K,相当150ms录音数据
-            mIat.writeAudio(buffers.get(i), 0, buffers.get(i).length);
-        }
-        mIat.stopListening();
-
-        while (mIat.isListening()) {
-            Thread.sleep(perWaitTime);
-        }
-        return mResult + "";
-    }
-
-    public String voice2words(String  fileName) throws InterruptedException, IOException {
-
         File file = new File(fileName);
         if (!file.exists()) {
             throw new RuntimeException("要读取的文件不存在");
@@ -59,22 +46,6 @@ public class SRTool {
         byte[] buf = new byte[fis.available()];
         fis.read(buf);
         fis.close();
-//        byte[] buf =file.getBytes();
-//        byte[] pcmbyte = Arrays.copyOfRange(buf, 44, buf.length);
-//        FileOutputStream fileOutputStream = null;
-//        fileOutputStream = new FileOutputStream("D:/hb/20190410113851.pcm");
-//        fileOutputStream.write(pcmbyte);
-//        IOUtils.closeQuietly(fileOutputStream);
-        //1.创建SpeechRecognizer对象
-        SpeechRecognizer mIat = SpeechRecognizer.createRecognizer();
-        //2.设置听写参数，详见《MSC Reference Manual》SpeechConstant类
-        mIat.setParameter(SpeechConstant.DOMAIN, "iat");
-        mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
-        mIat.setParameter(SpeechConstant.ACCENT, "mandarin ");
-        mIat.setParameter(SpeechConstant.AUDIO_SOURCE, "-1");
-        //3.开始听写
-        mIat.startListening(mRecoListener);
-
         //voiceBuffer为音频数据流，splitBuffer为自定义分割接口，将其以4.8k字节分割成数组
         ArrayList<byte[]> buffers = splitBuffer(buf, buf.length, 4800);
         for (int i = 0; i < buffers.size(); i++) {
@@ -85,6 +56,9 @@ public class SRTool {
 
         while (mIat.isListening()) {
             Thread.sleep(perWaitTime);
+        }
+        if (file.exists()){
+            file.delete();
         }
         return mResult + "";
     }
@@ -161,4 +135,5 @@ public class SRTool {
 
         }
     };
+
 }
