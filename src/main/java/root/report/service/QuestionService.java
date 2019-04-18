@@ -19,6 +19,7 @@ public class QuestionService {
     public String createQuestion(SqlSession sqlSession,JSONObject jsonObject){
         Map<String,Object> map  = new HashMap<>();
         map.put("ai_question",jsonObject.getString("ai_question"));
+        map.put("fileDataBlob",jsonObject.get("fileDataBlob"));
         sqlSession.insert("question.createQuestion",map);
         return String.valueOf(map.get("id"));
     }
@@ -29,6 +30,7 @@ public class QuestionService {
         Map<String,Object> map=new HashMap();
         map.put("ai_question",jsonObject.getString("ai_question"));
         map.put("ai_question_id",jsonObject.getString("ai_question_id"));
+        map.put("fileDataBlob",jsonObject.get("fileDataBlob"));
         sqlSession.insert("question.updateQuestion",map);
     }
     // 功能描述: 根据ai_question_id的信息
@@ -45,7 +47,8 @@ public class QuestionService {
         map.put("question_id",jsonObject.getIntValue("question_id"));
         map.put("current",jsonObject.getString("current"));
         map.put("answer",jsonObject.getString("answer"));
-        map.put("creat_by",null);
+        map.put("creat_by",jsonObject.getString("creat_by"));
+        map.put("fileDataBlob",jsonObject.get("fileDataBlob"));
         sqlSession.insert("question.createAnswer",map);
     }
 
@@ -55,7 +58,8 @@ public class QuestionService {
         map.put("answer_id",jsonObject.getIntValue("answer_id"));
         map.put("current",jsonObject.getIntValue("current"));
         map.put("answer",jsonObject.getString("answer"));
-        map.put("creat_by",null);
+        map.put("creat_by",jsonObject.getString("creat_by"));
+        map.put("fileDataBlob",jsonObject.get("fileDataBlob"));
         sqlSession.update("question.updateAnswer",map);
     }
     // 功能描述: 根据 answer_id 删除回答

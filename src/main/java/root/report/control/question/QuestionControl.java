@@ -264,7 +264,7 @@ public class QuestionControl extends RO {
         Map map=new HashMap<>();
         map.put("answer_id",id);
         try{
-            Map jsonObject = (Map) DbFactory.Open(DbFactory.FORM).selectOne("question.getAnswerByPKID", map);
+            Map<String,Object> jsonObject = (Map<String,Object>) DbFactory.Open(DbFactory.FORM).selectOne("question.getAnswerByPKID", map);
             return SuccessMsg("查询成功",jsonObject);
         }catch (Exception ex){
             ex.printStackTrace();

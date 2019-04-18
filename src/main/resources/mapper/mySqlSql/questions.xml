@@ -15,12 +15,13 @@
 
     <!--  创建func_dict信息  -->
     <insert id="createQuestion" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-        insert into ai_chat_question(ai_question)  values ('${ai_question}')
+        insert into ai_chat_question(ai_question,fileDataBlob)  values ('${ai_question}', <if  test="fileDataBlob == null">NULL</if>
+        <if  test="fileDataBlob != null">'${fileDataBlob}'</if>)
     </insert>
 
     <!-- 创建func_dict_out 信息 -->
     <insert id="createAnswer" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-        insert into ai_chat_answer(question_id,`current`,answer,creat_date,creat_by)
+        insert into ai_chat_answer(question_id,`current`,answer,creat_date,creat_by,fileDataBlob)
         values (#{question_id,jdbcType=INTEGER},
         <if  test="current == null">NULL</if>
         <if  test="current != null">'${current}'</if>,
@@ -28,7 +29,9 @@
         <if  test="answer != null">'${answer}'</if>,
         now(),
         <if  test="creat_by == null">NULL</if>
-        <if  test="creat_by != null">'${creat_by}'</if>
+        <if  test="creat_by != null">'${creat_by}'</if>,
+        <if  test="fileDataBlob == null">NULL</if>
+        <if  test="fileDataBlob != null">'${fileDataBlob}'</if>
         )
     </insert>
 
@@ -49,7 +52,9 @@
 
     <!-- 修改 func_dict 表的信息 -->
     <update id="updateQuestion" parameterType="Map">
-		update ai_chat_question set ai_question='${ai_question}'
+		update ai_chat_question set ai_question='${ai_question}', fileDataBlob=
+        <if  test="fileDataBlob == null">NULL</if>
+        <if  test="fileDataBlob != null">'${fileDataBlob}'</if>
 		 where ai_question_id=#{ai_question_id,jdbcType=INTEGER}
 	</update>
     <!-- 修改 func_dict 表的信息 -->
@@ -59,7 +64,10 @@
         creat_date=now(),
         creat_by=
         <if  test="creat_by == null">NULL</if>
-        <if  test="creat_by != null">'${creat_by}'</if>
+        <if  test="creat_by != null">'${creat_by}'</if>,
+        fileDataBlob=
+        <if  test="fileDataBlob == null">NULL</if>
+        <if  test="fileDataBlob != null">'${fileDataBlob}'</if>
         where answer_id=#{answer_id,jdbcType=INTEGER}
     </update>
 
