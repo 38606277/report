@@ -171,6 +171,7 @@ public class QuestionControl extends RO {
                     map.put("startIndex",startIndex);
                     map.put("perPage",perPage);
                 }
+                map.put("answer",obj.getString("answer"));
                 map.put("question_id",question_id);
                 aResult = DbFactory.Open(DbFactory.FORM).selectList("question.getAnswerList", map,bounds);
                 if(obj!=null){

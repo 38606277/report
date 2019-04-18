@@ -66,6 +66,8 @@
     <select id="getAnswerList" parameterType="Map" resultType="Map">
         SELECT *  FROM ai_chat_answer where 1=1
         <if  test="question_id != null and question_id!=''"> and  question_id = '${question_id}'</if>
+        <if  test="answer != null and answer!=''"> and  answer like '%${answer}%'</if>
+
     </select>
 
     <select id="getAnswerByPKID" parameterType="Map" resultType="Map">
