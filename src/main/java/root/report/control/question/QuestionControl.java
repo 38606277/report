@@ -7,14 +7,15 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.service.QuestionService;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -270,5 +271,95 @@ public class QuestionControl extends RO {
             ex.printStackTrace();
             return ExceptionMsg(ex.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/saveQuestionAudio/{qid}", produces = "text/plain;charset=UTF-8")
+    public String saveQuestionAudio(@PathVariable("qid") String qid,@RequestParam("file") MultipartFile file) throws Exception {
+        Map map=new HashMap<>();
+        InputStream inputStream=  file.getInputStream();
+        byte[] buf=InputStreamToByte(inputStream);
+        if(qid==null || qid.equals("null")){
+            SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+            try{
+                sqlSession.getConnection().setAutoCommit(false);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("fileDataBlob",inputStream);
+                String id=this.questionService.createQuestionAudio(sqlSession,jsonObject);
+                sqlSession.getConnection().commit();
+                return SuccessMsg("创建数据成功",id);
+            }catch (Exception ex){
+                sqlSession.getConnection().rollback();
+                ex.printStackTrace();
+                return ExceptionMsg(ex.getMessage());
+            }
+        }else{
+            SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+            try{
+                sqlSession.getConnection().setAutoCommit(false);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("ai_question_id",qid);
+                jsonObject.put("fileDataBlob",inputStream);
+                this.questionService.updateAnswerAudio(sqlSession,jsonObject);
+                sqlSession.getConnection().commit();
+                return SuccessMsg("修改数据成功",qid);
+            }catch (Exception ex){
+                sqlSession.getConnection().rollback();
+                ex.printStackTrace();
+                return ExceptionMsg(ex.getMessage());
+            }
+        }
+
+    }
+
+    @RequestMapping(value = "/saveAnswerAudio/{aid}/{qid}", produces = "text/plain;charset=UTF-8")
+    public String saveAnswerAudio(@PathVariable("aid") String aid,@PathVariable("qid") int qid,@RequestParam("file") MultipartFile file) throws Exception {
+        Map map=new HashMap<>();
+        InputStream inputStream=  file.getInputStream();
+        byte[] buf=InputStreamToByte(inputStream);
+        if(aid==null || aid.equals("null")){
+            SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+            try{
+                sqlSession.getConnection().setAutoCommit(false);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("question_id",qid);
+                jsonObject.put("fileDataBlob",inputStream);
+                String id=this.questionService.createAnswerAudio(sqlSession,jsonObject);
+                sqlSession.getConnection().commit();
+                return SuccessMsg("创建数据成功",id);
+            }catch (Exception ex){
+                sqlSession.getConnection().rollback();
+                ex.printStackTrace();
+                return ExceptionMsg(ex.getMessage());
+            }
+        }else{
+            SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+            try{
+                sqlSession.getConnection().setAutoCommit(false);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("answer_id",aid);
+                jsonObject.put("fileDataBlob",inputStream);
+                this.questionService.updateAnswerAudio(sqlSession,jsonObject);
+                sqlSession.getConnection().commit();
+                return SuccessMsg("修改数据成功",aid);
+            }catch (Exception ex){
+                sqlSession.getConnection().rollback();
+                ex.printStackTrace();
+                return ExceptionMsg(ex.getMessage());
+            }
+        }
+    }
+    /**
+       * 输入流转字节流
+       * */
+    private byte[] InputStreamToByte(InputStream is) throws IOException {
+        ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
+        byte[] buffer=new byte[1024];
+        int ch;
+        while ((ch = is.read(buffer)) != -1) {
+            bytestream.write(buffer,0,ch);
+        }
+        byte data[] = bytestream.toByteArray();
+        bytestream.close();
+        return data;
     }
 }

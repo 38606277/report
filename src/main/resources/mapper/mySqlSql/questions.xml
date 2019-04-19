@@ -15,13 +15,16 @@
 
     <!--  创建func_dict信息  -->
     <insert id="createQuestion" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-        insert into ai_chat_question(ai_question,fileDataBlob)  values ('${ai_question}', <if  test="fileDataBlob == null">NULL</if>
-        <if  test="fileDataBlob != null">'${fileDataBlob}'</if>)
+        insert into ai_chat_question(ai_question)  values ('${ai_question}')
     </insert>
-
+    <!--  创建func_dict信息  -->
+    <insert id="createQuestionAudio" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+        insert into ai_chat_question(fileDataBlob)  values (<if  test="fileDataBlob == null">NULL</if>
+        <if  test="fileDataBlob != null">#{fileDataBlob,jdbcType=BLOB,javaType=java.io.InputStream}</if>)
+    </insert>
     <!-- 创建func_dict_out 信息 -->
     <insert id="createAnswer" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-        insert into ai_chat_answer(question_id,`current`,answer,creat_date,creat_by,fileDataBlob)
+        insert into ai_chat_answer(question_id,`current`,answer,creat_date,creat_by)
         values (#{question_id,jdbcType=INTEGER},
         <if  test="current == null">NULL</if>
         <if  test="current != null">'${current}'</if>,
@@ -29,12 +32,17 @@
         <if  test="answer != null">'${answer}'</if>,
         now(),
         <if  test="creat_by == null">NULL</if>
-        <if  test="creat_by != null">'${creat_by}'</if>,
-        <if  test="fileDataBlob == null">NULL</if>
-        <if  test="fileDataBlob != null">'${fileDataBlob}'</if>
+        <if  test="creat_by != null">'${creat_by}'</if>
         )
     </insert>
-
+    <!-- 创建func_dict_out 信息 -->
+    <insert id="createAnswerAudio" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+        insert into ai_chat_answer(question_id,fileDataBlob)
+        values (#{question_id,jdbcType=INTEGER},
+        <if  test="fileDataBlob == null">NULL</if>
+        <if  test="fileDataBlob != null">#{fileDataBlob,jdbcType=BLOB,javaType=java.io.InputStream}</if>
+        )
+    </insert>
     <!-- 根据 dict_id 删除 func_dict 表的信息 -->
     <delete id="deleteQuestion" parameterType="int">
         delete from ai_chat_question where ai_question_id=#{ai_question_id,jdbcType=INTEGER}
@@ -52,11 +60,16 @@
 
     <!-- 修改 func_dict 表的信息 -->
     <update id="updateQuestion" parameterType="Map">
-		update ai_chat_question set ai_question='${ai_question}', fileDataBlob=
-        <if  test="fileDataBlob == null">NULL</if>
-        <if  test="fileDataBlob != null">'${fileDataBlob}'</if>
+		update ai_chat_question set ai_question='${ai_question}'
 		 where ai_question_id=#{ai_question_id,jdbcType=INTEGER}
 	</update>
+    <!-- 修改 func_dict 表的信息 -->
+    <update id="updateQuestionAudio" parameterType="Map">
+        update ai_chat_question set fileDataBlob=
+        <if  test="fileDataBlob == null">NULL</if>
+        <if  test="fileDataBlob != null">#{fileDataBlob,jdbcType=BLOB,javaType=java.io.InputStream}</if>
+        where ai_question_id=#{ai_question_id,jdbcType=INTEGER}
+    </update>
     <!-- 修改 func_dict 表的信息 -->
     <update id="updateAnswer" parameterType="Map">
         update ai_chat_answer set `current`='${current}',
@@ -64,13 +77,18 @@
         creat_date=now(),
         creat_by=
         <if  test="creat_by == null">NULL</if>
-        <if  test="creat_by != null">'${creat_by}'</if>,
-        fileDataBlob=
-        <if  test="fileDataBlob == null">NULL</if>
-        <if  test="fileDataBlob != null">'${fileDataBlob}'</if>
+        <if  test="creat_by != null">'${creat_by}'</if>
         where answer_id=#{answer_id,jdbcType=INTEGER}
     </update>
 
+    <!-- 修改 func_dict 表的信息 -->
+    <update id="updateAnswerAudio" parameterType="Map">
+        update ai_chat_answer set
+        fileDataBlob=
+        <if  test="fileDataBlob == null">NULL</if>
+        <if  test="fileDataBlob != null">#{fileDataBlob,jdbcType=BLOB,javaType=java.io.InputStream}</if>
+        where answer_id=#{answer_id,jdbcType=INTEGER}
+    </update>
     <select id="getAnswerList" parameterType="Map" resultType="Map">
         SELECT *  FROM ai_chat_answer where 1=1
         <if  test="question_id != null and question_id!=''"> and  question_id = '${question_id}'</if>
