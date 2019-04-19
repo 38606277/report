@@ -298,7 +298,7 @@ public class QuestionControl extends RO {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("ai_question_id",qid);
                 jsonObject.put("fileDataBlob",buf);
-                this.questionService.updateAnswerAudio(sqlSession,jsonObject);
+                this.questionService.updateQuestionAudio(sqlSession,jsonObject);
                 sqlSession.getConnection().commit();
                 return SuccessMsg("修改数据成功",qid);
             }catch (Exception ex){
