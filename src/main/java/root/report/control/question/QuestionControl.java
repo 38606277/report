@@ -282,7 +282,7 @@ public class QuestionControl extends RO {
             try{
                 sqlSession.getConnection().setAutoCommit(false);
                 JSONObject jsonObject = new JSONObject();
-                jsonObject.put("fileDataBlob",inputStream);
+                jsonObject.put("fileDataBlob",buf);
                 String id=this.questionService.createQuestionAudio(sqlSession,jsonObject);
                 sqlSession.getConnection().commit();
                 return SuccessMsg("创建数据成功",id);
@@ -297,7 +297,7 @@ public class QuestionControl extends RO {
                 sqlSession.getConnection().setAutoCommit(false);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("ai_question_id",qid);
-                jsonObject.put("fileDataBlob",inputStream);
+                jsonObject.put("fileDataBlob",buf);
                 this.questionService.updateAnswerAudio(sqlSession,jsonObject);
                 sqlSession.getConnection().commit();
                 return SuccessMsg("修改数据成功",qid);
