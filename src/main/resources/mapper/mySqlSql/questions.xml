@@ -20,7 +20,7 @@
     <!--  创建func_dict信息  -->
     <insert id="createQuestionAudio" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
         insert into ai_chat_question(fileDataBlob)  values (<if  test="fileDataBlob == null">NULL</if>
-        <if  test="fileDataBlob != null">#{fileDataBlob,jdbcType=BLOB,javaType=java.io.InputStream}</if>)
+        <if  test="fileDataBlob != null">#{fileDataBlob}</if>)
     </insert>
     <!-- 创建func_dict_out 信息 -->
     <insert id="createAnswer" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
@@ -40,7 +40,7 @@
         insert into ai_chat_answer(question_id,fileDataBlob)
         values (#{question_id,jdbcType=INTEGER},
         <if  test="fileDataBlob == null">NULL</if>
-        <if  test="fileDataBlob != null">#{fileDataBlob,jdbcType=BLOB,javaType=java.io.InputStream}</if>
+        <if  test="fileDataBlob != null">#{fileDataBlob}</if>
         )
     </insert>
     <!-- 根据 dict_id 删除 func_dict 表的信息 -->
@@ -67,7 +67,7 @@
     <update id="updateQuestionAudio" parameterType="Map">
         update ai_chat_question set fileDataBlob=
         <if  test="fileDataBlob == null">NULL</if>
-        <if  test="fileDataBlob != null">#{fileDataBlob,jdbcType=BLOB,javaType=java.io.InputStream}</if>
+        <if  test="fileDataBlob != null">#{fileDataBlob}</if>
         where ai_question_id=#{ai_question_id,jdbcType=INTEGER}
     </update>
     <!-- 修改 func_dict 表的信息 -->
@@ -86,7 +86,7 @@
         update ai_chat_answer set
         fileDataBlob=
         <if  test="fileDataBlob == null">NULL</if>
-        <if  test="fileDataBlob != null">#{fileDataBlob,jdbcType=BLOB,javaType=java.io.InputStream}</if>
+        <if  test="fileDataBlob != null">#{fileDataBlob}</if>
         where answer_id=#{answer_id,jdbcType=INTEGER}
     </update>
     <select id="getAnswerList" parameterType="Map" resultType="Map">

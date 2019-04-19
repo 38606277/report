@@ -13,9 +13,8 @@ import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.service.QuestionService;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -322,7 +321,7 @@ public class QuestionControl extends RO {
                 sqlSession.getConnection().setAutoCommit(false);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("question_id",qid);
-                jsonObject.put("fileDataBlob",inputStream);
+                jsonObject.put("fileDataBlob",buf);
                 String id=this.questionService.createAnswerAudio(sqlSession,jsonObject);
                 sqlSession.getConnection().commit();
                 return SuccessMsg("创建数据成功",id);
@@ -337,7 +336,7 @@ public class QuestionControl extends RO {
                 sqlSession.getConnection().setAutoCommit(false);
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("answer_id",aid);
-                jsonObject.put("fileDataBlob",inputStream);
+                jsonObject.put("fileDataBlob",buf);
                 this.questionService.updateAnswerAudio(sqlSession,jsonObject);
                 sqlSession.getConnection().commit();
                 return SuccessMsg("修改数据成功",aid);
@@ -361,5 +360,52 @@ public class QuestionControl extends RO {
         byte data[] = bytestream.toByteArray();
         bytestream.close();
         return data;
+    }
+
+    @RequestMapping(value = "/getQuestionAduioBlob")
+    public void getQuestionAduioBlob(@RequestBody String id, HttpServletResponse response) throws Exception {
+        try{
+            Map map=new HashMap<>();
+            map.put("ai_question_id",id);
+            response.setHeader("Content-Type", "audio/mpeg");
+            Map<String,Object> jsonObject = (Map<String,Object>) DbFactory.Open(DbFactory.FORM).selectOne("question.getQuestionByPKID", map);
+            byte[] contents = (byte[])jsonObject.get("fileDataBlob");
+            System.out.println("内容是:"+contents.length);
+            InputStream is = new ByteArrayInputStream(contents);
+            response.setHeader("Content-Type", "audio/mpeg");
+            OutputStream out = response.getOutputStream();
+            int len=0;
+            byte[] buf=new byte[1024];
+            while((len=is.read(buf,0,1024))!=-1){
+                out.write(buf, 0, len);
+            }
+            out.flush();
+            out.close();
+        }catch (Exception e){
+            System.out.println(e);
+        }
+    }
+    @RequestMapping(value = "/getAnswerAduioBlob")
+    public void getAnswerAduioBlob(@RequestBody String id, HttpServletResponse response) throws Exception {
+        try{
+            Map map=new HashMap<>();
+            map.put("answer_id",id);
+            response.setHeader("Content-Type", "audio/mpeg");
+            Map<String,Object> jsonObject = (Map<String,Object>) DbFactory.Open(DbFactory.FORM).selectOne("question.getAnswerByPKID", map);
+            byte[] contents = (byte[])jsonObject.get("fileDataBlob");
+            System.out.println("内容是:"+contents.length);
+            InputStream is = new ByteArrayInputStream(contents);
+            response.setHeader("Content-Type", "audio/mpeg");
+            OutputStream out = response.getOutputStream();
+            int len=0;
+            byte[] buf=new byte[1024];
+            while((len=is.read(buf,0,1024))!=-1){
+                out.write(buf, 0, len);
+            }
+            out.flush();
+            out.close();
+        }catch (Exception e){
+            System.out.println(e);
+        }
     }
 }
