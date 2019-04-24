@@ -272,6 +272,13 @@ public class QuestionControl extends RO {
         }
     }
 
+    @RequestMapping(value = "/getDefaultAnswerByQID/{question_id}", produces = "text/plain;charset=UTF-8")
+    public String getDefaultAnswerByQID(@PathVariable("question_id") String question_id) {
+        Map<String,Object> map=new HashMap<String,Object>();
+        map.put("question_id",question_id);
+        List aResult = DbFactory.Open(DbFactory.FORM).selectList("question.getDefaultAnswerList", map);
+        return SuccessMsg("创建数据成功",aResult);
+    }
     @RequestMapping(value = "/saveQuestionAudio/{qid}", produces = "text/plain;charset=UTF-8")
     public String saveQuestionAudio(@PathVariable("qid") String qid,@RequestParam("file") MultipartFile file) throws Exception {
         Map map=new HashMap<>();
