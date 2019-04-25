@@ -2,8 +2,10 @@ package root.myVoice;
 
 
 import com.iflytek.cloud.speech.*;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import root.report.common.RO;
 
@@ -20,7 +22,6 @@ import java.util.Map;
 
 
 
-@SpringBootApplication
 @RestController
 @RequestMapping("/reportServer/MyVoiceApplication")
 public class MyVoiceApplication extends RO {
