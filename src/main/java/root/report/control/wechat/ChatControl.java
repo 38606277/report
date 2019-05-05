@@ -15,10 +15,11 @@ import org.xml.sax.SAXException;
 import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.service.webchat.ChatService;
+
 import java.sql.SQLException;
-import java.util.*;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 @RestController
 @RequestMapping("/reportServer/chat")
 public class ChatControl extends RO {
@@ -54,13 +55,13 @@ public class ChatControl extends RO {
             map.put("from_userId",obj.get("from_userId"));
             map.put("to_userId",obj.get("to_userId"));
             aResult = DbFactory.Open(DbFactory.FORM).selectList("chat.getchatInfoByID", map,bounds);
-            Collections.sort(aResult, new Comparator<Map<String, Object>>() {
-                public int compare(Map<String, Object> o1, Map<String, Object> o2) {
-                    Date name1 = (Date) o1.get("message_time");//name1是从你list里面拿出来的一个
-                    Date name2 = (Date) o2.get("message_time"); //name1是从你list里面拿出来的第二个name
-                    return name1.compareTo(name2);
-                }
-            });
+//            Collections.sort(aResult, new Comparator<Map<String, Object>>() {
+//                public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+//                    Date name1 = (Date) o1.get("message_time");//name1是从你list里面拿出来的一个
+//                    Date name2 = (Date) o2.get("message_time"); //name1是从你list里面拿出来的第二个name
+//                    return name1.compareTo(name2);
+//                }
+//            });
             totalSize = ((PageRowBounds)bounds).getTotal();
             Map maps=new HashMap<>();
             maps.put("data",aResult);
