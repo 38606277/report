@@ -5,7 +5,7 @@
     <cache/>
     <select id="getchatInfoByID" resultType="Map" parameterType="Map">
      SELECT *  from ai_chat_message where (from_userId = #{from_userId,jdbcType=INTEGER} and to_userId =#{to_userId,jdbcType=INTEGER})
-        or (from_userId = #{to_userId,jdbcType=INTEGER} and to_userId =#{from_userId,jdbcType=INTEGER}) ORDER BY message_time desc
+        or (from_userId = #{to_userId,jdbcType=INTEGER} and to_userId =#{from_userId,jdbcType=INTEGER}) ORDER BY message_id desc
     </select>
 
     <insert id="save" parameterType="Map" useGeneratedKeys="true" keyProperty="message_id">
