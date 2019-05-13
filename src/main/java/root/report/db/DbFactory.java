@@ -17,10 +17,7 @@ import root.configure.AppConstants;
 import root.report.util.ErpUtil;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 public class DbFactory {
     private static final Logger log = Logger.getLogger(DbManager.class);
@@ -48,7 +45,7 @@ public class DbFactory {
             dataSource.setPassword(erpUtil.decode(dbJson.getString("password")));
             dataSource.setDriverClassName(dbJson.getString("driver"));
             if ("Mysql".equals(dbtype)) {
-                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=UTC&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
+                dataSource.setUrl(dbJson.getString("url") + "?serverTimezone=Asia/Shanghai&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true");
             } else {
                 dataSource.setUrl(dbJson.getString("url"));
             }
