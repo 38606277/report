@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageRowBounds;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -24,7 +23,6 @@ import org.dom4j.tree.DefaultCDATA;
 import org.dom4j.tree.DefaultComment;
 import org.dom4j.tree.DefaultElement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
@@ -728,7 +726,25 @@ public class QueryService {
         Map<String, String> param = new HashMap<String, String>();
         param.put("qry_id", qry_id);
         List<Map<String, Object>> outList = sqlSession.selectList("query.getOutByID", param);
-
+        if(outList.size()>0) {
+            for (int i = 0; i < outList.size(); i++) {
+                Map<String, Object> m = outList.get(i);
+                if (m != null) {
+                    String value = null, key = null;
+                    java.util.Iterator it = m.entrySet().iterator();
+                    while (it.hasNext()) {
+                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
+                        key = entry.getKey().toString(); //返回与此项对应的键
+                        if (key.equalsIgnoreCase("out_id")) {
+                            if(entry.getValue()!=null) {
+                                value = entry.getValue().toString().toUpperCase(); //返回与此项对应的值
+                                m.put(key, value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return outList;
     }
 
