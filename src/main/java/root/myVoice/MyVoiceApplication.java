@@ -1,7 +1,10 @@
 package root.myVoice;
 
 
+import com.baidu.aip.speech.AipSpeech;
 import com.iflytek.cloud.speech.*;
+import org.apache.commons.io.IOUtils;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,15 +15,15 @@ import root.report.common.RO;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-
-
+;
 
 @RestController
 @RequestMapping("/reportServer/MyVoiceApplication")
@@ -132,6 +135,63 @@ public class MyVoiceApplication extends RO {
 			}
 	}
 
+	@RequestMapping(value = "/uploadmp3")
+	public String uploadmp3(HttpServletRequest request, @RequestParam("file") MultipartFile file) {
+		// 构建上传目录路径
+		Map<String,Object> map=new HashMap<String, Object>();
+		if (file != null) {
+			try {
+				UUID uuid=UUID.randomUUID();
+				//String wavFile = System.getProperty("java.io.tmpdir")+ File.separator+uuid.toString()+".mp3";
+				//String pcmFile = System.getProperty("java.io.tmpdir")+ File.separator+uuid.toString()+".pcm";
+				byte[] pcmBytes = mp3Convertpcm(file.getInputStream());
+				JSONObject resultJson = speechBdApi(pcmBytes);
+				System.out.println(resultJson.toString());
+				String result =null;
+				if (null != resultJson && resultJson.getInt("err_no") == 0) {
+					result= resultJson.getJSONArray("result").get(0).toString().split("，")[0];
+				}
+			//			File temfiles = new File(wavFile);
+//				File temfiless = new File(pcmFile);
+//				temfiless.createNewFile();
+//				try {
+//					file.transferTo(temfiles);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//				AudioUtils utils  = AudioUtils.getInstance();
+//				utils.convertMP32Pcm(wavFile, pcmFile);
+				//utils.playMP3("D:/hb/155866.mp3");
+
+				SRTool sr = new SRTool();
+				String words = null;
+////			try {
+////				//words = sr.voice2words(temfilePath);
+////				words = sr.voice2words(pcmBytes);
+////			} catch (InterruptedException e) {
+////				e.printStackTrace();
+////			} catch (IOException e) {
+////				e.printStackTrace();
+////			}
+//				System.out.println("讯飞识别的语音结果：" + words);
+//				if (null == words || "".equals(words)) {
+//					System.out.println("讯飞识别的语音结果：null");
+//					map.put("status", "error");
+//					map.put("content", "对不起，请您在描述一遍！");
+//					return ErrorMsg("语音识别失败", "没有获取到语音信息");
+//				}
+//				String result = SR2Words.sr2words(words);
+//				System.out.println("讯飞识别的语音结果：" + result);
+//				map.put("status", "success");
+//				map.put("content", result);
+
+				return SuccessMsg("语音识别", result);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return "";
+	}
 
 	private void uploadUserWords(String aa) throws Exception {
 		SpeechUtility.createUtility("appid=5cac4812");//申请的appid
@@ -167,4 +227,51 @@ public class MyVoiceApplication extends RO {
 
 		}
 	};
+
+	/**
+	 * @Description MP3转换pcm
+	 * @param mp3Stream
+	 *            原始文件流
+	 * @return 转换后的二进制
+	 * @throws Exception
+	 * @author liuyang
+	 * @blog http://www.pqsky.me
+	 * @date 2018年1月30日
+	 */
+	public byte[] mp3Convertpcm(InputStream mp3Stream) throws Exception {
+		// 原MP3文件转AudioInputStream
+		AudioInputStream mp3audioStream = AudioSystem.getAudioInputStream(mp3Stream);
+		// 将AudioInputStream MP3文件 转换为PCM AudioInputStream
+		AudioInputStream pcmaudioStream = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED,
+				mp3audioStream);
+		byte[] pcmBytes = IOUtils.toByteArray(pcmaudioStream);
+		pcmaudioStream.close();
+		mp3audioStream.close();
+		return pcmBytes;
+	}
+
+	/**
+	 * @Description 调用百度语音识别API
+	 * @param pcmBytes
+	 * @return
+	 * @author liuyang
+	 * @blog http://www.pqsky.me
+	 * @date 2018年1月30日
+	 */
+	public static final String APP_ID = "16309438";
+
+	public static final String API_KEY = "KCWcpKpzoQ3tHHzdanWRH9cv";
+
+	public static final String SECRET_KEY = "fA22Gjd0qUrUahUW6IODA1Ql3bBVeOuo";
+	public static JSONObject speechBdApi(byte[] pcmBytes) {
+		// 初始化一个AipSpeech
+		AipSpeech client = new AipSpeech(APP_ID, API_KEY, SECRET_KEY);
+		// 可选：设置网络连接参数
+		client.setConnectionTimeoutInMillis(2000);
+		client.setSocketTimeoutInMillis(60000);
+		// 调用接口
+		JSONObject res = client.asr(pcmBytes, "pcm", 16000, null);
+		return res;
+	}
+
 }

@@ -284,6 +284,17 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>com.googlecode.soundlibs</groupId>-->
+            <!--<artifactId>mp3spi</artifactId>-->
+            <!--<version>1.9.5.4</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>com.baidu.aip</groupId>
+            <artifactId>java-sdk</artifactId>
+            <version>4.1.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -304,6 +315,13 @@
                     <include>**</include>
                 </includes>
             </resource>
+            <!--<resource>-->
+                <!--<directory>lib</directory>-->
+                <!--<targetPath>BOOT-INF/lib/</targetPath>-->
+                <!--<includes>-->
+                    <!--<include>**/*.jar</include>-->
+                <!--</includes>-->
+            <!--</resource>-->
             <resource>
                 <directory>${project.basedir}/config</directory>
                 <targetPath>${project.basedir}/target/config</targetPath>
