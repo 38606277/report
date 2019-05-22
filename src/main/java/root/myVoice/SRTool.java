@@ -2,8 +2,12 @@ package  root.myVoice;
 
 
 import com.iflytek.cloud.speech.*;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -54,6 +58,33 @@ public class SRTool {
       InputStream inputStream=  file.getInputStream();
 
         byte[] buf=InputStreamToByte(inputStream);
+        //voiceBuffer为音频数据流，splitBuffer为自定义分割接口，将其以4.8k字节分割成数组
+        ArrayList<byte[]> buffers = splitBuffer(buf, buf.length, 4800);
+        for (int i = 0; i < buffers.size(); i++) {
+            // 每次写入msc数据4.8K,相当150ms录音数据
+            mIat.writeAudio(buffers.get(i), 0, buffers.get(i).length);
+        }
+        mIat.stopListening();
+
+        while (mIat.isListening()) {
+            Thread.sleep(perWaitTime);
+        }
+
+        return mResult + "";
+    }
+
+    public String voice2words(byte[] buf) throws InterruptedException, IOException {
+        //1.创建SpeechRecognizer对象
+        SpeechRecognizer mIat = SpeechRecognizer.createRecognizer();
+        //2.设置听写参数，详见《MSC Reference Manual》SpeechConstant类
+        mIat.setParameter(SpeechConstant.DOMAIN, "iat");
+        mIat.setParameter(SpeechConstant.LANGUAGE, "zh_cn");
+        mIat.setParameter(SpeechConstant.ACCENT, "mandarin ");
+        mIat.setParameter(SpeechConstant.AUDIO_SOURCE, "-1");
+        //3.开始听写
+        mIat.startListening(mRecoListener);
+//        InputStream inputStream=  file.getInputStream();
+//        byte[] buf=InputStreamToByte(inputStream);
         //voiceBuffer为音频数据流，splitBuffer为自定义分割接口，将其以4.8k字节分割成数组
         ArrayList<byte[]> buffers = splitBuffer(buf, buf.length, 4800);
         for (int i = 0; i < buffers.size(); i++) {
@@ -178,4 +209,66 @@ public class SRTool {
         }
     };
 
+    /**
+     * 根据byte数组，生成文件
+     * filePath  文件路径
+     * fileName  文件名称（需要带后缀，如*.jpg、*.java、*.xml）
+     */
+    public static Boolean getFile(byte[] bfile, String filePath) {
+        boolean ist=false;
+        BufferedOutputStream bos = null;
+        FileOutputStream fos = null;
+        File file = null;
+        try {
+            File dir = new File(filePath);
+            if(!dir.exists()&&dir.isDirectory()){//判断文件目录是否存在
+                dir.mkdirs();
+            }
+            file = new File(filePath);
+            fos = new FileOutputStream(file);
+            bos = new BufferedOutputStream(fos);
+            bos.write(bfile);
+            ist=true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+        return ist;
+    }
+
+    /**
+     * @Description MP3转换pcm
+     * @param mp3Stream
+     *            原始文件流
+     * @return 转换后的二进制
+     * @throws Exception
+     * @author liuyang
+     * @blog http://www.pqsky.me
+     * @date 2018年1月30日
+     */
+    public byte[] mp3Convertpcm(InputStream mp3Stream) throws Exception {
+        // 原MP3文件转AudioInputStream
+        AudioInputStream mp3audioStream = AudioSystem.getAudioInputStream(mp3Stream);
+        // 将AudioInputStream MP3文件 转换为PCM AudioInputStream
+        AudioInputStream pcmaudioStream = AudioSystem.getAudioInputStream(AudioFormat.Encoding.PCM_SIGNED,
+                mp3audioStream);
+        byte[] pcmBytes = IOUtils.toByteArray(pcmaudioStream);
+        pcmaudioStream.close();
+        mp3audioStream.close();
+        return pcmBytes;
+    }
 }
