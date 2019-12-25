@@ -82,14 +82,14 @@
       <maxPoolSize>50</maxPoolSize>  
       <minPoolSize>3</minPoolSize> 
    </DB>  
-   <DB> 
-      <name>bkeam</name>  
-      <driver>oracle.jdbc.OracleDriver</driver>  
-      <dbtype>Oracle</dbtype>  
-      <url>jjdbc:oracle:thin:@114.251.247.114:1521:xe</url>  
-      <username>bkeam</username>  
-      <password>dynd0xW9N5w=</password>  
-      <maxPoolSize>50</maxPoolSize>  
-      <minPoolSize>3</minPoolSize> 
-   </DB> 
+<!--   <DB> -->
+<!--      <name>bkeam</name>  -->
+<!--      <driver>oracle.jdbc.OracleDriver</driver>  -->
+<!--      <dbtype>Oracle</dbtype>  -->
+<!--      <url>jjdbc:oracle:thin:@114.251.247.114:1521:xe</url>  -->
+<!--      <username>bkeam</username>  -->
+<!--      <password>dynd0xW9N5w=</password>  -->
+<!--      <maxPoolSize>50</maxPoolSize>  -->
+<!--      <minPoolSize>3</minPoolSize> -->
+<!--   </DB> -->
 </DBConnection>
