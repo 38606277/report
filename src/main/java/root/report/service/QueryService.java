@@ -62,8 +62,11 @@ public class QueryService {
         mapFunc.put("qry_desc", jsonFunc.getString("qry_desc"));
         mapFunc.put("qry_type", jsonFunc.getString("qry_type"));
         String qryfile= jsonFunc.getString("qry_file");
-        qryfile=qryfile.replaceAll("/","\\\\");
-        qryfile=qryfile.replaceAll("\\\\", "\\\\\\\\");
+        if(qryfile!=null)
+        {
+            qryfile=qryfile.replaceAll("/","\\\\");
+            qryfile=qryfile.replaceAll("\\\\", "\\\\\\\\");
+        }
         mapFunc.put("qry_file", qryfile);
         mapFunc.put("qry_db", jsonFunc.getString("qry_db"));
         mapFunc.put("cached", jsonFunc.getIntValue("cached"));

@@ -23,7 +23,8 @@ import root.websocket.ImportDictValueSocket;
 import javax.sql.DataSource;
 
 @SpringBootApplication(exclude={MongoAutoConfiguration.class,MongoDataAutoConfiguration.class,DataSourceAutoConfiguration.class})
-@PropertySource(value={"file:config/application.properties"})
+@PropertySource(value={"file:config/application.yml"},encoding = "utf-8")
+//@PropertySource(value="file:config/application.properties",encoding = "utf-8")
 @EnableScheduling
 @EnableTransactionManagement
 public class ReportServerApplication {

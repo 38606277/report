@@ -332,30 +332,30 @@ public class DbManager
     public String testConnection(@RequestBody String pJson)
     {
         JSONObject retObj = new JSONObject();
-        JSONArray objArr = (JSONArray)JSONObject.parse(pJson);
-        JSONObject dbObj = objArr.getJSONObject(0);
+       // JSONArray objArr = (JSONArray)JSONObject.parse(pJson);
+        JSONObject dbObj =JSONObject.parseObject(pJson);// objArr.getJSONObject(0);
         //前台更改DB页面,如果测试连通性,需先对密码解密
-        if(objArr.size()>1&&"update".equals(objArr.getString(1)))
-        {
-            //解密之前需要判断是否有对密码进行更改,如果更改则无需解密
-            String last_password = JSONObject.parseObject(getDBConnectionByName(dbObj.getString("name")))
-                    .getString("password");
-            String decryptPwd = "";
-            if(last_password.equals(dbObj.getString("password")))
-            {
-                try
-                {
-                    decryptPwd = erpUtil.decode(dbObj.getString("password"));
-                    dbObj.put("password", decryptPwd);
-                }
-                catch(Exception e)
-                {
-                    retObj.put("retCode", false);
-                    retObj.put("retMsg", "数据库密码解密异常");
-                    return retObj.toJSONString();
-                }
-            }
-        }
+//        if(objArr.size()>1&&"update".equals(objArr.getString(1)))
+//        {
+//            //解密之前需要判断是否有对密码进行更改,如果更改则无需解密
+//            String last_password = JSONObject.parseObject(getDBConnectionByName(dbObj.getString("name")))
+//                    .getString("password");
+//            String decryptPwd = "";
+//            if(last_password.equals(dbObj.getString("password")))
+//            {
+//                try
+//                {
+//                    decryptPwd = erpUtil.decode(dbObj.getString("password"));
+//                    dbObj.put("password", decryptPwd);
+//                }
+//                catch(Exception e)
+//                {
+//                    retObj.put("retCode", false);
+//                    retObj.put("retMsg", "数据库密码解密异常");
+//                    return retObj.toJSONString();
+//                }
+//            }
+//        }
         Connection conn = null;
         try
         {
@@ -379,20 +379,20 @@ public class DbManager
             }
             if(set!=null&&set.next()&&"1".equals(set.getString("1")))
             {
-                retObj.put("retCode", true);
+                retObj.put("retCode", "true");
                 retObj.put("retMsg", "连接成功");
             }
             else
             {
-                retObj.put("retCode", false);
+                retObj.put("retCode", "false");
                 retObj.put("retMsg", "连接失败");
             }
         }
         catch(Exception e)
         {
             log.error("测试数据库连接失败");
-            retObj.put("retCode", false);
-            retObj.put("retMsg", "连接失败");
+            retObj.put("retCode", "false");
+            retObj.put("retMsg", e.toString());
             e.printStackTrace();
         }
         finally

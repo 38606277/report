@@ -57,11 +57,21 @@
         <!--<groupId>org.springframework.boot</groupId>-->
         <!--<artifactId>spring-boot-starter-jetty</artifactId>-->
         <!--</dependency>-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-devtools</artifactId>-->
+<!--            <optional>true</optional>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-security</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security.oauth</groupId>-->
+<!--            <artifactId>spring-security-oauth2</artifactId>-->
+<!--            <version>2.0.0.RELEASE</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -317,7 +327,7 @@
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
                     <compilerArguments>
-                            <extdirs>${project.basedir}/lib</extdirs>
+                        <extdirs>${project.basedir}/lib</extdirs>
                     </compilerArguments>
                 </configuration>
             </plugin>
@@ -329,13 +339,13 @@
                     <include>**</include>
                 </includes>
             </resource>
-            <resource>
-                <directory>lib</directory>
-                <targetPath>BOOT-INF/lib/</targetPath>
-                <includes>
-                   <include>**/*.*</include>
-                </includes>
-            </resource>
+            <!--            <resource>-->
+            <!--                <directory>lib</directory>-->
+            <!--                <targetPath>BOOT-INF/lib/</targetPath>-->
+            <!--                <includes>-->
+            <!--                   <include>**/*.*</include>-->
+            <!--                </includes>-->
+            <!--            </resource>-->
             <resource>
                 <directory>${project.basedir}/config</directory>
                 <targetPath>${project.basedir}/target/config</targetPath>

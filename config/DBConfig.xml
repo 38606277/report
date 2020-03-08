@@ -72,24 +72,24 @@
        <maxPoolSize></maxPoolSize>
        <minPoolSize></minPoolSize>
    </DB> -->  
-   <DB> 
-      <name>sdsf</name>  
-      <driver>oracle.jdbc.OracleDriver</driver>  
-      <dbtype>Oracle</dbtype>  
-      <url>jdbc:oracle:thin:@ip:port:xe</url>  
-      <username>aaa</username>  
-      <password>NVhMrFiXZ3Y=</password>  
-      <maxPoolSize>50</maxPoolSize>  
-      <minPoolSize>3</minPoolSize> 
-   </DB>  
-<!--   <DB> -->
-<!--      <name>bkeam</name>  -->
-<!--      <driver>oracle.jdbc.OracleDriver</driver>  -->
-<!--      <dbtype>Oracle</dbtype>  -->
-<!--      <url>jjdbc:oracle:thin:@114.251.247.114:1521:xe</url>  -->
-<!--      <username>bkeam</username>  -->
-<!--      <password>dynd0xW9N5w=</password>  -->
-<!--      <maxPoolSize>50</maxPoolSize>  -->
-<!--      <minPoolSize>3</minPoolSize> -->
-<!--   </DB> -->
+   <!--   <DB> -->  
+   <!--      <name>bkeam</name>  -->  
+   <!--      <driver>oracle.jdbc.OracleDriver</driver>  -->  
+   <!--      <dbtype>Oracle</dbtype>  -->  
+   <!--      <url>jjdbc:oracle:thin:@114.251.247.114:1521:xe</url>  -->  
+   <!--      <username>bkeam</username>  -->  
+   <!--      <password>dynd0xW9N5w=</password>  -->  
+   <!--      <maxPoolSize>50</maxPoolSize>  -->  
+   <!--      <minPoolSize>3</minPoolSize> -->  
+   <!--   </DB> -->  
+   <DB>
+      <name>saaa</name>
+      <driver>com.mysql.cj.jdbc.Driver</driver>
+      <dbtype>Mysql</dbtype>
+      <url>jdbc:mysql://127.0.0.1:3306/jlerp</url>
+      <username>root</username>
+      <password>v600KuCLNBc=</password>
+      <maxPoolSize>50</maxPoolSize>
+      <minPoolSize>3</minPoolSize>
+   </DB>
 </DBConnection>
