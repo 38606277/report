@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="flexValue">
+
+
+
+    <select id="getFlexValuesByCode" parameterType="Map" resultType="Map">
+        SELECT
+          fdv.dict_id ,
+          fdv.value_code,
+          fdv.value_name,
+          fdv.abbr_name1,
+          fdv.abbr_name2
+        FROM
+          func_dict_value fdv
+        where
+        fdv.dict_id=#{dict_id,jdbcType=INTEGER}
+        <if  test="value_name != null and value_name!=''"> and  fdv.value_name LIKE '%${value_name}%'</if>
+    </select>
+
+
+
+</mapper>
