@@ -23,9 +23,9 @@
       <name>form</name>  
       <dbtype>Mysql</dbtype>  
       <driver>com.mysql.cj.jdbc.Driver</driver>  
-      <url>jdbc:mysql://127.0.0.1:3306/form</url>  
-      <username>root</username>  
-      <password>v600KuCLNBc=</password>  
+      <url>jdbc:mysql://192.168.1.102:3306/form</url>
+      <username>appuser</username>  
+      <password>dLf1GlaLvJQ=</password>  
       <maxPoolSize>50</maxPoolSize>  
       <minPoolSize>3</minPoolSize> 
    </DB>  
@@ -82,14 +82,24 @@
    <!--      <maxPoolSize>50</maxPoolSize>  -->  
    <!--      <minPoolSize>3</minPoolSize> -->  
    <!--   </DB> -->  
-   <DB>
-      <name>saaa</name>
-      <driver>com.mysql.cj.jdbc.Driver</driver>
-      <dbtype>Mysql</dbtype>
-      <url>jdbc:mysql://127.0.0.1:3306/jlerp</url>
-      <username>root</username>
-      <password>v600KuCLNBc=</password>
-      <maxPoolSize>50</maxPoolSize>
-      <minPoolSize>3</minPoolSize>
-   </DB>
+   <DB> 
+      <name>saaa</name>  
+      <driver>com.mysql.cj.jdbc.Driver</driver>  
+      <dbtype>Mysql</dbtype>  
+      <url>jdbc:mysql://127.0.0.1:3306/jlerp</url>  
+      <username>root</username>  
+      <password>v600KuCLNBc=</password>  
+      <maxPoolSize>50</maxPoolSize>  
+      <minPoolSize>3</minPoolSize> 
+   </DB>  
+   <DB> 
+      <name>lee</name>  
+      <driver>com.mysql.cj.jdbc.Driver</driver>  
+      <dbtype>Mysql</dbtype>  
+      <url>jdbc:mysql://192.168.206.49:3306/aaljz</url>  
+      <username>appuser</username>  
+      <password>dLf1GlaLvJQ=</password>  
+      <maxPoolSize>50</maxPoolSize>  
+      <minPoolSize>3</minPoolSize> 
+   </DB> 
 </DBConnection>
