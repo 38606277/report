@@ -86,4 +86,8 @@
     <select id="getTableNames" resultType="Map" parameterType="String">
        select *  from da_table
     </select>
+
+    <select id="getTreeNode" resultType="Map" parameterType="String">
+       select catalog_id as id,catalog_pid as pid ,table_catalog as name from da_table where catalog_id!=''  and table_catalog!=''
+    </select>
 </mapper>
