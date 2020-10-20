@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.dom4j.Node;
+import root.report.leeutils.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +16,7 @@ import root.report.common.RO;
 import root.report.db.DbFactory;
 import root.report.leeutils.DbManagerHutool;
 import root.report.leeutils.IDUtil;
+import root.report.leeutils.TreeBuilder;
 import root.report.sys.SysContext;
 import root.report.util.ErpUtil;
 import root.report.util.XmlUtil;
@@ -36,7 +37,7 @@ public class MysqlMetadata extends RO
     private static ErpUtil erpUtil = new ErpUtil();
     private static final String DB_CONFIG_PATH = System.getProperty("user.dir")+"/config/DBConfig.xml";
 
-    @RequestMapping(value="/GetByName",produces = "text/plain;charset=UTF-8")
+   /* @RequestMapping(value="/GetByName",produces = "text/plain;charset=UTF-8")
     public String getDBConnectionByName(@RequestBody String name)
     {
         JSONObject obj = new JSONObject(true);
@@ -65,7 +66,7 @@ public class MysqlMetadata extends RO
         
         return obj.toJSONString();
     }
-
+*/
     @RequestMapping(value="/test",produces = "text/plain;charset=UTF-8")
     public String testConnection(@RequestBody String pJson)
     {
@@ -150,6 +151,7 @@ public class MysqlMetadata extends RO
         return retObj.toJSONString();
     }
     
+/*
     public Connection getConnection(String dbName) throws Exception{
 		JSONObject obj = JSON.parseObject(getDBConnectionByName(dbName));
 		String driver = obj.getString("driver");
@@ -163,6 +165,7 @@ public class MysqlMetadata extends RO
 		Connection conn = DriverManager.getConnection(url, username, password);
 		return conn;
 	}
+*/
 
 	public static void main(String[] args) throws SQLException {
         JSONObject jsonObject= new JSONObject();
@@ -451,5 +454,29 @@ public class MysqlMetadata extends RO
 
     }
 
+
+    @RequestMapping(value = "/getOrgTree", produces = "text/plain;charset=UTF-8")
+    public String getOrgTree(@RequestBody JSONObject pJson)  {
+        JSONObject jsonTree=new JSONObject();
+//        List<Node> nodes= DbSession.selectList("fndOrg.getAll", pJson);
+        List<Map> treeNodeList = DbFactory.Open(DbFactory.FORM).selectList("mysqlmetadata.getTreeNode");
+        List<Node> nodes= new ArrayList<>();
+        for(int i=0;i<treeNodeList.size();i++){
+               Map treeNode =treeNodeList.get(i);
+               String id= treeNode.get("id").toString();
+               String pid=  treeNode.get("pid").toString();
+               String name= treeNode.get("name").toString();
+               Node node =new Node();
+               node.setId(id);
+               node.setPid(pid);
+               node.setName(name);
+               nodes.add(node);
+        }
+
+        // 拼装树形json字符串
+        List<Node>  result= new TreeBuilder().buildTree(nodes);
+        System.out.println(result.toString());
+        return SuccessMsg("",result);
+    }
 
 }

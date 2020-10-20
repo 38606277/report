@@ -29,6 +29,7 @@ public class AuthTypecontroller extends RO {
         }
 
     }
+
     @RequestMapping(value = "/getAuthTypeListByType", produces = "text/plain;charset=UTF-8")
     public @ResponseBody String getAuthTypeListByType(@RequestBody JSONObject pJson) {
         List<Map<String, Object>> list = new ArrayList<>();
@@ -54,6 +55,8 @@ public class AuthTypecontroller extends RO {
         }
 
     }
+
+
     @RequestMapping(value = "/getAuthTypeListByName", produces = "text/plain;charset=UTF-8")
     public @ResponseBody String getAuthTypeListByName(@RequestBody String name) {
         try{

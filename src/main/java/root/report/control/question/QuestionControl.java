@@ -1,3 +1,4 @@
+/*
 package root.report.control.question;
 
 import com.alibaba.fastjson.JSON;
@@ -87,9 +88,11 @@ public class QuestionControl extends RO {
         }
     }
 
-    /**
+    */
+/**
      * 功能描述: 接收JSON格式参数，往func_dict跟func_dict_out 中插入相关数据
-     */
+     *//*
+
     @RequestMapping(value = "/createQuestion", produces = "text/plain;charset=UTF-8")
     public String createDict(@RequestBody String pJson) throws Exception
     {
@@ -354,9 +357,11 @@ public class QuestionControl extends RO {
             }
         }
     }
-    /**
+    */
+/**
        * 输入流转字节流
-       * */
+       * *//*
+
     private byte[] InputStreamToByte(InputStream is) throws IOException {
         ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
         byte[] buffer=new byte[1024];
@@ -416,3 +421,4 @@ public class QuestionControl extends RO {
         }
     }
 }
+*/

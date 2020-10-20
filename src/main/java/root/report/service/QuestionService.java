@@ -1,3 +1,4 @@
+/*
 package root.report.service;
 
 import com.alibaba.fastjson.JSONObject;
@@ -19,9 +20,11 @@ public class QuestionService {
 
     private static Logger log = Logger.getLogger(QuestionService.class);
 
-    /**
+    */
+/**
      * 功能描述: 根据JSON数据解析 对应数据，生成问题库记录
-     */
+     *//*
+
     public String createQuestion(SqlSession sqlSession,JSONObject jsonObject) throws IOException {
         Map<String,Object> map  = new HashMap<>();
         map.put("ai_question",jsonObject.getString("ai_question"));
@@ -91,9 +94,11 @@ public class QuestionService {
         sqlSession.insert("question.createQuestion",map);
         return String.valueOf(map.get("id"));
     }
-    /**
+    */
+/**
      * 功能描述: 根据JSON数据解析 对应数据，生成 问题库音频 记录
-     */
+     *//*
+
     public String createQuestionAudio(SqlSession sqlSession,JSONObject jsonObject){
         Map<String,Object> map  = new HashMap<>();
         map.put("fileDataBlob",jsonObject.get("fileDataBlob"));
@@ -232,3 +237,4 @@ public class QuestionService {
     }
 
 }
+*/
