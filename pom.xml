@@ -26,6 +26,9 @@
         <log4j.version>1.2.17</log4j.version>
 
         <java.version>1.8</java.version>
+        <hive.version>1.1.0-cdh5.13.3</hive.version>
+
+
     </properties>
     <dependencies>
         <dependency>
@@ -356,6 +359,43 @@
             <artifactId>swagger-models</artifactId>
             <version>2.0.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-exec</artifactId>
+            <version>${hive.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-jdbc</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>2.7.7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+
+        <!-- https://mvnrepository.com/artifact/org.apache.phoenix/phoenix-core -->
+        <dependency>
+            <groupId>org.apache.phoenix</groupId>
+            <artifactId>phoenix-core</artifactId>
+            <version>4.14.0-cdh5.13.2</version>
+        </dependency>
+
+
+
+
 
     </dependencies>
 
