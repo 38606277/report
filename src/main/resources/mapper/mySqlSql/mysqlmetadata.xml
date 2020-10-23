@@ -14,7 +14,7 @@
             <if test="table_catalog == null">NULL</if>
             <if test="table_catalog != null">'${table_catalog}'</if>,
             <if test="table_type == null">NULL</if>
-            <if test="table_type != null">'${table_catalog}'</if>,
+            <if test="table_type != null">'${table_type}'</if>,
             <if test="host == null">NULL</if>
             <if test="host != null">'${host}'</if>,
             <if test="url == null">NULL</if>
