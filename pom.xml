@@ -339,28 +339,7 @@
         </dependency>
 
 
-
-        <!-- https://mvnrepository.com/artifact/com.zyplayer/swagger-mg-ui -->
-        <dependency>
-            <groupId>com.zyplayer</groupId>
-            <artifactId>swagger-mg-ui</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-models</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-
-        <dependency>
+  <!--      <dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-exec</artifactId>
             <version>${hive.version}</version>
@@ -370,7 +349,7 @@
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-jdbc</artifactId>
             <version>1.1.0</version>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -387,15 +366,17 @@
 
 
         <!-- https://mvnrepository.com/artifact/org.apache.phoenix/phoenix-core -->
-        <dependency>
+<!--        <dependency>
             <groupId>org.apache.phoenix</groupId>
             <artifactId>phoenix-core</artifactId>
             <version>4.14.0-cdh5.13.2</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.apache.phoenix</groupId>
+            <artifactId>phoenix-core</artifactId>
+            <version>4.14.1-HBase-1.2</version>
         </dependency>
-
-
-
-
 
     </dependencies>
 
@@ -422,6 +403,15 @@
                     </compilerArguments>
                 </configuration>
             </plugin>
+
+            <!--新增lee1024-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
+            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -430,13 +420,15 @@
                     <include>**</include>
                 </includes>
             </resource>
-            <!--            <resource>-->
-            <!--                <directory>lib</directory>-->
-            <!--                <targetPath>BOOT-INF/lib/</targetPath>-->
-            <!--                <includes>-->
-            <!--                   <include>**/*.*</include>-->
-            <!--                </includes>-->
-            <!--            </resource>-->
+
+            <resource>
+                <directory>lib</directory>
+                <targetPath>BOOT-INF/lib/</targetPath>
+                <includes>
+                   <include>**/*.*</include>
+                </includes>
+            </resource>
+
             <resource>
                 <directory>${project.basedir}/config</directory>
                 <targetPath>${project.basedir}/target/config</targetPath>
