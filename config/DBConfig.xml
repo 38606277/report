@@ -28,7 +28,29 @@
       <password>dLf1GlaLvJQ=</password>  
       <maxPoolSize>50</maxPoolSize>  
       <minPoolSize>3</minPoolSize> 
-   </DB>  
+   </DB>
+
+   <DB>
+      <name>hbase</name>
+      <dbtype>hbase</dbtype>
+      <driver>org.apache.phoenix.jdbc.PhoenixDriver</driver>
+      <url>jdbc:phoenix:172.17.5.132,172.17.5.133,172.17.5.166:2181</url>
+      <username>admin</username>
+      <password>nMHdQlZWoxY=</password>
+      <maxPoolSize>50</maxPoolSize>
+      <minPoolSize>3</minPoolSize>
+   </DB>
+<!--   <DB>
+      <name>hbase</name>
+      <dbtype>hbase</dbtype>
+      <driver>org.apache.phoenix.jdbc.PhoenixDriver</driver>
+      <url>jdbc:phoenix:172.17.5.132,172.17.5.133,172.17.5.166:2181?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT</url>
+      <username>admin</username>
+      <password>nMHdQlZWoxY=</password>
+      <maxPoolSize>50</maxPoolSize>
+      <minPoolSize>3</minPoolSize>
+   </DB>-->
+
    <DB> 
       <name>jlerp</name>  
       <dbtype>Mysql</dbtype>  

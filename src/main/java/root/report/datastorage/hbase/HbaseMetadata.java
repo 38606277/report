@@ -1,6 +1,7 @@
 package root.report.datastorage.hbase;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import root.report.leeutils.DbManagerHutool;
 import root.report.leeutils.IDUtil;
 import root.report.util.ErpUtil;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -485,6 +487,22 @@ public class HbaseMetadata extends RO
         }
         return result;
     }
+
+
+
+    @RequestMapping(value="/getDataBytableName",produces = "text/plain;charset=UTF-8")
+    public String getDataBytableName(@RequestBody String pJson) throws UnsupportedEncodingException {
+
+
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("roleId", "");
+        map.put("type", "");
+
+        List<Map> authList = DbFactory.Open("hbase").selectList("hbasemetadata.getTableNames",map);
+        return JSON.toJSONString(authList);
+    }
+
+
 
 
     public static void main(String[] args) throws SQLException {
