@@ -84,7 +84,7 @@
     </select>
 
     <select id="getTableNames" resultType="Map" parameterType="String">
-       select *  from m_student
+       select *  from ${tableName}
     </select>
 
     <select id="getTreeNode" resultType="Map" parameterType="String">
