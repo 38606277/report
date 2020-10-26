@@ -24,6 +24,7 @@ import root.report.util.XmlUtil;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -477,6 +478,16 @@ public class MysqlMetadata extends RO
         List<Node>  result= new TreeBuilder().buildTree(nodes);
         System.out.println(result.toString());
         return SuccessMsg("",result);
+    }
+
+    @RequestMapping(value="/getDataBytableName",produces = "text/plain;charset=UTF-8")
+    public String getDataBytableName(@RequestBody JSONObject pJson)  {
+        String tableName = pJson.getString("tableName");
+
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        List<Map> authList = DbFactory.Open("hive").selectList("hivemetadata.getTableNames",map);
+        return JSON.toJSONString(authList);
     }
 
 }

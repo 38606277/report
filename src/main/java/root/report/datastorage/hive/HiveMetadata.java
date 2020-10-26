@@ -10,6 +10,7 @@ import root.report.leeutils.DbManagerHutool;
 import root.report.leeutils.IDUtil;
 import root.report.util.ErpUtil;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -219,13 +220,40 @@ public class HiveMetadata extends RO
 
     //查询数据
     @RequestMapping(value = "/selectData", produces = "text/plain;charset=UTF-8")
-    public void selectData() throws SQLException {
+    public  List<String[]> selectData() throws SQLException {
+        List<String[]> result = new ArrayList<>();
         sql = "select * from emp";
         System.out.println("Running:"+sql);
         res = stmt.executeQuery(sql);
-        while (res.next()){
-            System.out.println(res.getString("id") + "\t\t" + res.getString("name") + "\t\t" + res.getString("age"));
+        String[] param = null;
+        PreparedStatement ps = conn.prepareStatement(sql);
+        if (param != null) {
+            for (int i = 1; i <= param.length; i++) {
+                ps.setString(i, param[i - 1]);
+            }
         }
+
+        res = ps.executeQuery();
+        ResultSetMetaData meta = res.getMetaData();
+        int colLength = meta.getColumnCount();
+        List<String> colName = new ArrayList<>();
+        for (int i = 1; i <= colLength; i++) {
+            colName.add(meta.getColumnName(i));
+        }
+        String[] colArr;
+        while (res.next()) {
+            colArr = new String[colLength];
+            for (int i = 0; i < colLength; i++) {
+                colArr[i] = res.getString(colName.get(i));
+            }
+            result.add(colArr);
+        }
+
+  /*      while (res.next()){
+            System.out.println(res.getString("id") + "\t\t" + res.getString("name") + "\t\t" + res.getString("age"));
+        }*/
+
+        return result;
     }
 
 
@@ -411,5 +439,16 @@ public class HiveMetadata extends RO
         }
         return JSON.toJSONString(obj);
     }
+
+    @RequestMapping(value="/getDataBytableName",produces = "text/plain;charset=UTF-8")
+    public String getDataBytableName(@RequestBody JSONObject pJson) throws UnsupportedEncodingException {
+        String tableName = pJson.getString("tableName");
+
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        List<Map> authList = DbFactory.Open("hive").selectList("hivemetadata.getTableNames",map);
+        return JSON.toJSONString(authList);
+    }
+
 
 }
