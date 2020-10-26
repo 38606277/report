@@ -440,6 +440,51 @@ public class HbaseMetadata extends RO
         }
     }
 
+    @RequestMapping(value = "/queryDataByTableName", produces = "text/plain;charset=UTF-8")
+    public  List<String[]> queryDataByTableName(@RequestBody JSONObject pJson) {
+        String jdbcurl = pJson.getString("jdbcurl");
+        String username = pJson.getString("username");
+        String password = pJson.getString("password");
+        String tableName= pJson.getString("tableName");
+        List<String[]> result = new ArrayList<>();
+        try {
+            initV2( jdbcurl, username, password);
+            String sql = "select * from  "+tableName;
+            String[] param = null;
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            if (param != null) {
+                for (int i = 1; i <= param.length; i++) {
+                    ps.setString(i, param[i - 1]);
+                }
+            }
+
+            rs = ps.executeQuery();
+            ResultSetMetaData meta = rs.getMetaData();
+            int colLength = meta.getColumnCount();
+            List<String> colName = new ArrayList<>();
+            for (int i = 1; i <= colLength; i++) {
+                colName.add(meta.getColumnName(i));
+            }
+
+
+            String[] colArr;
+            while (rs.next()) {
+                colArr = new String[colLength];
+                for (int i = 0; i < colLength; i++) {
+                    colArr[i] = rs.getString(colName.get(i));
+                }
+                result.add(colArr);
+            }
+            ps.close();
+            System.out.println(JSON.toJSONString(result));
+            conn.close();
+
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
 
     public static void main(String[] args) throws SQLException {
