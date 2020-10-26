@@ -486,7 +486,7 @@ public class MysqlMetadata extends RO
 
         Map<String,String> map = new HashMap<String,String>();
         map.put("tableName", tableName);
-        List<Map> authList = DbFactory.Open("hive").selectList("hivemetadata.getTableNames",map);
+        List<Map> authList = DbFactory.Open("form").selectList("mysqlmetadata.getTableNames",map);
         return JSON.toJSONString(authList);
     }
 

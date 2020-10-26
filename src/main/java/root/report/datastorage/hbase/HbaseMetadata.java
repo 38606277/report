@@ -491,13 +491,11 @@ public class HbaseMetadata extends RO
 
 
     @RequestMapping(value="/getDataBytableName",produces = "text/plain;charset=UTF-8")
-    public String getDataBytableName(@RequestBody String pJson) throws UnsupportedEncodingException {
-
+    public String getDataBytableName(@RequestBody JSONObject pJson) throws UnsupportedEncodingException {
+        String tableName = pJson.getString("tableName");
 
         Map<String,String> map = new HashMap<String,String>();
-        map.put("roleId", "");
-        map.put("type", "");
-
+        map.put("tableName", tableName);
         List<Map> authList = DbFactory.Open("hbase").selectList("hbasemetadata.getTableNames",map);
         return JSON.toJSONString(authList);
     }
