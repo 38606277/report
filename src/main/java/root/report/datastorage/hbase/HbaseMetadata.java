@@ -28,18 +28,12 @@ public class HbaseMetadata extends RO
 {
     private static final Logger log = Logger.getLogger(HbaseMetadata.class);
 
-
-//    private static String driverName = "org.apache.hive.jdbc.HiveDriver";
-//    private static String url = "jdbc:hive2://172.17.5.132:10000/default";
-//    private static String url2 = "jdbc:hive2://172.17.5.132:10000/";
-//    private static String user = "root";
-//    private static String password ="123456";
     private static String sql="";
     private static ResultSet res;
 
     private static Connection conn;
     private static Statement stmt;
-
+    private static ResultSet rs = null;
 //    public void init() throws ClassNotFoundException, SQLException {
 //        Class.forName(driverName);
 //        conn= DriverManager.getConnection(url,user,password);
@@ -228,47 +222,7 @@ public class HbaseMetadata extends RO
     }
 
 
-    public static void main(String[] args) throws SQLException {
-//        Properties props = new Properties();
-//        props.setProperty("phoenix.query.timeoutMs","1200000");
-//        props.setProperty("hbase.rpc.timeout","1200000");
-//        props.setProperty("hbase.client.scanner.timeout.period","1200000");
-//        String url="jdbc:phoenix:" + "172.17.5.132,172.17.5.133,172.17.5.166:2181?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
-//        Connection conn      = DriverManager.getConnection(url, props);
-        Statement stmt = null;
-        ResultSet rset = null;
-        try {
-            Class.forName("org.apache.phoenix.jdbc.PhoenixDriver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        Connection con =  DriverManager.getConnection("jdbc:phoenix:" + "172.17.5.132,172.17.5.133,172.17.5.166:2181?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT","admin","admin");
 
-        stmt = con.createStatement();
-
-        DatabaseMetaData connMetaData = con.getMetaData();
-
-        String[] type = {"TABLE","VIEW"};
-        String[] type2 = {"VIEW"};
-        ResultSet rs = connMetaData.getTables(null, null, null, type);
-//        ResultSet rs2 = connMetaData.getTables(null, null, null, type2);
-        boolean testFlag = false;
-        while (rs.next()){
-            String tt=rs.getString("TABLE_NAME");
-
-            String tp=rs.getString("TABLE_TYPE");
-            System.out.println(" 表的名称 "+tt+"   表的类型 "+tp);
-        }
-
-//        PreparedStatement statement = con.prepareStatement("select * from testlee1022");
-//        rset = statement.executeQuery();
-//        while (rset.next()) {
-//            System.out.println(rset.getString("mycolumn"));
-//        }
-//        statement.close();
-        stmt.close();
-        con.close();
-    }
     public List<String> getTablesList(String url,String user,String password) throws SQLException {
         Statement stmt = null;
         ResultSet rset = null;
@@ -408,6 +362,135 @@ public class HbaseMetadata extends RO
             e.printStackTrace();
         }
         return JSON.toJSONString(obj);
+    }
+
+    public  void create(String url,String user,String password)  {
+
+        try {
+            initV2( url, user, password);
+            String createSql = "CREATE TABLE user (id varchar PRIMARY KEY,name varchar ,passwd varchar)";
+            PreparedStatement ps = conn.prepareStatement(createSql);
+            ps.execute();
+            ps.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }catch (ClassNotFoundException e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void  upsert(String url,String user,String password) {
+        try {
+            initV2( url, user, password);
+            String upsertSql = "upsert into user(id, name, passwd) values(?, ?, ?)";
+//        String[] param = {"1", "张三", "123456"};
+            String[] param = {"2", "李四", "111111"};
+            PreparedStatement ps = conn.prepareStatement(upsertSql);
+            for (int i = 1; i <= param.length; i++) {
+                ps.setString(i, param[i - 1]);
+            }
+            ps.executeUpdate();
+            conn.commit(); // you must commit
+            ps.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }catch (ClassNotFoundException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void query(String url,String user,String password) {
+        try {
+            initV2( url, user, password);
+            String sql = "select * from user";
+            String[] param = null;
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+            if (param != null) {
+                for (int i = 1; i <= param.length; i++) {
+                    ps.setString(i, param[i - 1]);
+                }
+            }
+
+            rs = ps.executeQuery();
+            ResultSetMetaData meta = rs.getMetaData();
+            int colLength = meta.getColumnCount();
+            List<String> colName = new ArrayList<>();
+            for (int i = 1; i <= colLength; i++) {
+                colName.add(meta.getColumnName(i));
+            }
+
+            List<String[]> result = new ArrayList<>();
+            String[] colArr;
+            while (rs.next()) {
+                colArr = new String[colLength];
+                for (int i = 0; i < colLength; i++) {
+                    colArr[i] = rs.getString(colName.get(i));
+                }
+                result.add(colArr);
+            }
+            ps.close();
+            System.out.println(JSON.toJSONString(result));
+            conn.close();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public static void main(String[] args) throws SQLException {
+//        Properties props = new Properties();
+//        props.setProperty("phoenix.query.timeoutMs","1200000");
+//        props.setProperty("hbase.rpc.timeout","1200000");
+//        props.setProperty("hbase.client.scanner.timeout.period","1200000");
+        String url="jdbc:phoenix:" + "172.17.5.132,172.17.5.133,172.17.5.166:2181?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT";
+        String username="admin";
+        String password="admin";
+//        Connection conn      = DriverManager.getConnection(url, props);
+
+//        Statement stmt = null;
+//        ResultSet rset = null;
+//        try {
+//            Class.forName("org.apache.phoenix.jdbc.PhoenixDriver");
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        Connection con =  DriverManager.getConnection("jdbc:phoenix:" + "172.17.5.132,172.17.5.133,172.17.5.166:2181?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT","admin","admin");
+//
+//        stmt = con.createStatement();
+//
+//        DatabaseMetaData connMetaData = con.getMetaData();
+//
+//        String[] type = {"TABLE","VIEW"};
+//        String[] type2 = {"VIEW"};
+//        ResultSet rs = connMetaData.getTables(null, null, null, type);
+////        ResultSet rs2 = connMetaData.getTables(null, null, null, type2);
+//        boolean testFlag = false;
+//        while (rs.next()){
+//            String tt=rs.getString("TABLE_NAME");
+//
+//            String tp=rs.getString("TABLE_TYPE");
+//            System.out.println(" 表的名称 "+tt+"   表的类型 "+tp);
+//        }
+//
+////        PreparedStatement statement = con.prepareStatement("select * from testlee1022");
+////        rset = statement.executeQuery();
+////        while (rset.next()) {
+////            System.out.println(rset.getString("mycolumn"));
+////        }
+////        statement.close();
+//        stmt.close();
+//        con.close();
+         HbaseMetadata hbaseMetadata = new HbaseMetadata();
+//         hbaseMetadata.create(url,username,password);
+
+//        hbaseMetadata.upsert(url,username,password);
+        hbaseMetadata.query(url,username,password);
+         System.out.println("====");
     }
 
 }
