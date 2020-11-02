@@ -26,13 +26,7 @@ public class MyApplicationRunner implements ApplicationRunner {
             ex.printStackTrace();
         }
 
-        try {
-            NLPService.LoadNlpDict();
-            System.out.println("加载nlp自定义词典成功!");
-        } catch (Exception ex) {
-            System.out.println("加载nlp自定义词典失败!");
-            ex.printStackTrace();
-        }
+
 
 
     }

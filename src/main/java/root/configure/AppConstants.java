@@ -91,11 +91,11 @@ public class AppConstants {
     }
 
     public static String getClientInstallFile() {
-        return workPath + File.separator + "clientInstallFile";
+        return appPath + File.separator + "excel";
     }
 
     public static String getReport2() {
-        return appPath + File.separator + "webapp";
+        return appPath + File.separator + "web";
     }
     public static String getPhoneapp() {
         return appPath + File.separator + "app";

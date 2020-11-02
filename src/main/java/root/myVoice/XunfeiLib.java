@@ -77,7 +77,7 @@ public class XunfeiLib  {
         StringBuffer fileName=new StringBuffer(System.getProperty("user.dir"))
                 .append(File.separator).append("src")
                 .append(File.separator).append("main")
-                .append(File.separator).append("webapp")
+                .append(File.separator).append("web")
                 .append(File.separator).append("WEB-INF")
                 .append(File.separator).append("cache")
                 .append(File.separator).append(name);//获取文件路径

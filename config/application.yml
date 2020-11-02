@@ -7,7 +7,7 @@ spring:
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
 webapp:
-  title: 易算报表平台
+  title: 大数据管理平台
 management:
    endpoint:
      beans:

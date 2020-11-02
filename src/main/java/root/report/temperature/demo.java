@@ -17,7 +17,7 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mysql.cj.x.json.JsonArray;
+//import com.mysql.cj.x.json.JsonArray;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.web.bind.annotation.PathVariable;

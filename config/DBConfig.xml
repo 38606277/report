@@ -19,17 +19,36 @@
       <maxPoolSize>50</maxPoolSize>
       <minPoolSize>3</minPoolSize>
   </DB> -->  
-   <DB> 
-      <name>form</name>  
-      <dbtype>Mysql</dbtype>  
-      <driver>com.mysql.cj.jdbc.Driver</driver>  
-      <url>jdbc:mysql://192.168.1.102:3306/form</url>
-      <username>appuser</username>  
-      <password>dLf1GlaLvJQ=</password>  
-      <maxPoolSize>50</maxPoolSize>  
-      <minPoolSize>3</minPoolSize> 
+<!--   <DB> -->
+<!--      <name>form</name>  -->
+<!--      <dbtype>Mysql</dbtype>  -->
+<!--      <driver>com.mysql.cj.jdbc.Driver</driver>  -->
+<!--      <url>jdbc:mysql://192.168.1.102:3306/form</url>-->
+<!--      <username>appuser</username>  -->
+<!--      <password>dLf1GlaLvJQ=</password>  -->
+<!--      <maxPoolSize>50</maxPoolSize>  -->
+<!--      <minPoolSize>3</minPoolSize> -->
+<!--   </DB>-->
+   <DB>
+      <name>form</name>
+      <dbtype>Mysql</dbtype>
+      <driver>com.mysql.cj.jdbc.Driver</driver>
+      <url>jdbc:mysql://127.0.0.1:3306/form</url>
+      <username>root</username>
+      <password>v600KuCLNBc=</password>
+      <maxPoolSize>50</maxPoolSize>
+      <minPoolSize>3</minPoolSize>
    </DB>
-
+   <DB>
+      <name>bb</name>
+      <driver>com.mysql.cj.jdbc.Driver</driver>
+      <dbtype>Mysql</dbtype>
+      <url>jdbc:mysql://127.0.0.1:3306/bb</url>
+      <username>root</username>
+      <password>v600KuCLNBc=</password>
+      <maxPoolSize>50</maxPoolSize>
+      <minPoolSize>3</minPoolSize>
+   </DB>
     <DB>
         <name>hive</name>
         <dbtype>hive</dbtype>

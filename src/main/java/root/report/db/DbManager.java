@@ -32,6 +32,7 @@ public class DbManager
     private static final Logger log = Logger.getLogger(DbManager.class);
     private static ErpUtil erpUtil = new ErpUtil();
     private static final String DB_CONFIG_PATH = System.getProperty("user.dir")+"/config/DBConfig.xml";
+
     @RequestMapping(value="/ListAll",produces = "text/plain;charset=UTF-8")
 
 //    TODO 这里没有错误处理

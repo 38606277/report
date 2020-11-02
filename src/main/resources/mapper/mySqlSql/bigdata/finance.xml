@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="finance">
+
+
+
+    <select id="getDataView" parameterType="Map" resultType="Map">
+		SELECT
+			bt.table_id,
+			bt.table_name,
+			bt.table_desc,
+			bt.catalog_id,
+			ffv.FLEX_VALUE catalog_value,
+			bt.dbtype_id,
+			bt.source_id,
+			bt.host_id,
+			bt.url,
+			bt.data_count,
+			bt.create_date,
+			bt.create_by,
+			bt.update_date,
+			bt.update_by,
+			bt.data_update_date
+		FROM
+			bd_table AS bt
+			INNER JOIN fnd_flex_values ffv ON bt.catalog_id = ffv.FLEX_VALUE_ID
+			AND ffv.FLEX_VALUE_SET_ID = 4
+	</select>
+
+
+	<select id="getAllCorp" parameterType="Map" resultType="Map">
+		SELECT
+			corp.serial_number,
+			corp.stock_code,
+			corp.stock_abbre,
+			corp.company_name,
+			corp.province,
+			corp.city,
+			corp.main_bussiness_income,
+			corp.net_profit,
+			corp.employees,
+			corp.listing_date,
+			corp.zhaogushu,
+			corp.financial_report,
+			corp.industry_classification,
+			corp.industry_type,
+			corp.main_business
+		FROM
+		   listed_company2 AS corp
+		LIMIT 10
+
+	</select>
+	<select id="getFinReport" parameterType="Map" resultType="Map">
+		SELECT
+			bb.id,
+			bb.symbol,
+			bb.company,
+			bb.item,
+			bb.`year`,
+			bb.`month`,
+			bb.amount
+		FROM
+			zcfzb AS bb
+		WHERE
+			1 = 1
+			AND bb.`year` = '2017'
+			AND bb.`month` = '12'
+			AND company = '中国巨石'
+	</select>
+	<select id="getStudents" parameterType="Map" resultType="Map">
+		select * from m_student
+
+
+	</select>
+
+	<select id="getHbase" parameterType="Map" resultType="Map">
+		select
+		a."city_name" city_name,
+		a."province_id" province_id
+		from
+		"city" a
+
+
+
+	</select>
+
+
+
+</mapper>

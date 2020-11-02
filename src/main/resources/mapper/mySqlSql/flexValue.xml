@@ -5,19 +5,23 @@
 
 
 
-    <select id="getFlexValuesByCode" parameterType="Map" resultType="Map">
+    <select id="getFlexValuesTree" parameterType="Map" resultType="root.fnd.entity.TreeNode">
         SELECT
-          fdv.dict_id ,
-          fdv.value_code,
-          fdv.value_name,
-          fdv.abbr_name1,
-          fdv.abbr_name2
+            fnd_flex_values.FLEX_VALUE_ID AS id,
+            fnd_flex_values.FLEX_VALUE_PID AS pid,
+            fnd_flex_values.FLEX_VALUE AS `value`,
+            fnd_flex_values.FLEX_VALUE_NAME AS `name`
         FROM
-          func_dict_value fdv
-        where
-        fdv.dict_id=#{dict_id,jdbcType=INTEGER}
-        <if  test="value_name != null and value_name!=''"> and  fdv.value_name LIKE '%${value_name}%'</if>
+            fnd_flex_values
+        WHERE
+             fnd_flex_values.FLEX_VALUE_SET_ID = ${FLEX_VALUE_SET_ID}
     </select>
+
+    <select id="get" parameterType="Map" resultType="Map">
+        select * from m_student;
+    </select>
+
+
 
 
 

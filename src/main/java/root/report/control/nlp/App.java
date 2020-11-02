@@ -19,7 +19,8 @@ public class App
 
     {
         NLPService nlpService=new NLPService();
-        Map map=nlpService.ExecNLP("查询电讯盈科的供应商");
+        CustomDictionary.add("发生纠纷");
+        Map map=nlpService.ExecNLP("双方因黄包车拉客发生纠纷");
         System.out.println(map);
 
 
@@ -29,7 +30,7 @@ public class App
 //        CustomDictionary.add("部门负责人");
 //        CustomDictionary.add("湖北移动");
 //        CustomDictionary.add("2018年");
-        CustomDictionary.add("采购订单");
+
         CustomDictionary.add("可用预算额度");
         CustomDictionary.add("王起航");
         CustomDictionary.add("收单人");

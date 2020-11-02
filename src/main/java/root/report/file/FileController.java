@@ -24,6 +24,8 @@ import root.report.util.FileUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -80,7 +82,7 @@ public class FileController {
 	 * userCode 用户ID
 	 * fileDir 文件目录 eg:web or report or template
 	 * oldName 文件名称 or 文件原名称
-	 * newName 修改后文件名称 
+	 * newName 修改后文件名称
 	 * @param request
 	 * @param pJson
 	 * @return
@@ -116,7 +118,7 @@ public class FileController {
 	 * userCode 用户ID
 	 * fileDir 文件目录 eg:web or report or template
 	 * oldName 文件名称 or 文件原名称
-	 * newName 修改后文件名称 
+	 * newName 修改后文件名称
 	 * @param request
 	 * @param pJson
 	 * @return
@@ -149,10 +151,10 @@ public class FileController {
 		return "";
 	}
 
-	
+
 	// 文件改名及文件夹改名
 	/**
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -191,7 +193,7 @@ public class FileController {
 			File file = new File(filePath);
 			if (file.exists()) { // 判断文件是否存在
 				if (file.isFile()) { // 判断是否是文件
-					 
+
 
 					File newfile = new File(newFile);
 					if (newfile.exists()) {
@@ -201,16 +203,16 @@ public class FileController {
 					}
 					// 是删除的意思;
 				} else if (file.isDirectory()) { // 否则如果它是一个目录
-					 
+
 					File newfile = new File(newFile);
 					if (newfile.exists()) {
 						// 文件名重复，请重新命名
 					} else {
 						boolean isOk = file.renameTo(newfile);
 					}
-					 
+
 				}
-				 
+
 			} else {
 				System.out.println(" 文件不存在！" + '\n');
 			}
@@ -310,7 +312,7 @@ public class FileController {
 
 	@RequestMapping(value="/download",produces = "text/plain;charset=UTF-8")
 	public ResponseEntity<byte[]> download() throws IOException {
-		String path = "/Users/wangjian/Documents/iReport/file/提升财务集中核算效率与加强财务集中核算管控v0.4.ppt";
+		String path =AppConstants.getClientInstallFile()+ "/iBas2Setup.msi";
 		File file = new File(path);
 		HttpHeaders headers = new HttpHeaders();
 		String fileName = new String("你好.ppt".getBytes("UTF-8"), "iso-8859-1");// 为了解决中文名称乱码问题
@@ -552,7 +554,7 @@ public class FileController {
                 MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
                 // 取得request中的所有文件名
                 Iterator<String> iter = multiRequest.getFileNames();
-    
+
                 while (iter.hasNext()) {
                     // 记录上传过程起始时的时间，用来计算上传时间
                     int pre = (int) System.currentTimeMillis();
@@ -561,7 +563,7 @@ public class FileController {
                     if (file != null) {
                         // 取得当前上传文件的文件名称
                         String myFileName = file.getOriginalFilename();
-                        
+
                         // 如果名称不为“”,说明该文件存在，否则说明该文件不存在
                         if (myFileName.trim() != "") {
                             System.out.println(myFileName);
@@ -569,7 +571,7 @@ public class FileController {
                             String fileName = file.getOriginalFilename();
                             // 定义上传路径
                             String ServerPath = AppConstants.getExcelFilePath();
-    
+
                             path = ServerPath + "/"+fileName;
                             // 保存文件
                             File localFile = new File(path);
@@ -609,7 +611,7 @@ public class FileController {
                 MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
                 // 取得request中的所有文件名
                 Iterator<String> iter = multiRequest.getFileNames();
-    
+
                 while (iter.hasNext()) {
                     // 记录上传过程起始时的时间，用来计算上传时间
                     int pre = (int) System.currentTimeMillis();
@@ -618,7 +620,7 @@ public class FileController {
                     if (file != null) {
                         // 取得当前上传文件的文件名称
                         String myFileName = file.getOriginalFilename();
-                        
+
                         // 如果名称不为“”,说明该文件存在，否则说明该文件不存在
                         if (myFileName.trim() != "") {
                             System.out.println(myFileName);
@@ -626,7 +628,7 @@ public class FileController {
                             String fileName = file.getOriginalFilename();
                             // 定义上传路径
                             String ServerPath = AppConstants.getExcelFilePath();
-    
+
                             path = ServerPath + "/"+fileName;
                          // 保存文件
                             localFile = new File(path);
@@ -672,6 +674,81 @@ public class FileController {
 		return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),
 				headers, HttpStatus.CREATED);
 	}
+
+	/**
+	 * 稿源周报excel表格下载
+	 * @return
+	 */
+
+	@RequestMapping(value = "/downExcelInstall", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String downExcelInstall(HttpServletResponse response) throws UnsupportedEncodingException {
+
+
+//		String path =AppConstants.getClientInstallFile()+ "/iBas2Setup.msi";
+//		File file = new File(path);
+//		HttpHeaders headers = new HttpHeaders();
+//		String fileName = new String("你好.ppt".getBytes("UTF-8"), "iso-8859-1");// 为了解决中文名称乱码问题
+//		headers.setContentDispositionFormData("attachment", fileName);
+//		headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//		return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file),
+//				headers, HttpStatus.CREATED);
+
+		String filename= AppConstants.getClientInstallFile()+ "/iBas2Setup.msi";
+
+		// 如果文件名不为空，则进行下载
+		if (filename != null) {
+			File file = new File(filename);
+			// 如果文件存在，则进行下载
+			if (file.exists()) {
+				// 配置文件下载
+				response.setHeader("content-type", "application/octet-stream");
+				response.setContentType("application/octet-stream");
+				response.setHeader("Access-Control-Expose-Headers", "Content-Disposition");
+				// 下载文件能正常显示中文
+				response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode("iBas2Setup.msi", "UTF-8"));
+				// 实现文件下载
+				byte[] buffer = new byte[1024];
+				FileInputStream fis = null;
+				BufferedInputStream bis = null;
+				try {
+					fis = new FileInputStream(file);
+					bis = new BufferedInputStream(fis);
+					OutputStream os = response.getOutputStream();
+					int i = bis.read(buffer);
+					while (i != -1) {
+						os.write(buffer, 0, i);
+						i = bis.read(buffer);
+					}
+					System.out.println("Download  successfully!");
+					return "successfully";
+
+				} catch (Exception e) {
+					System.out.println("Download  failed!");
+					return "failed";
+
+				} finally {
+					if (bis != null) {
+						try {
+							bis.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					if (fis != null) {
+						try {
+							fis.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+		return "";
+
+	}
+
 
 	@RequestMapping(value="/mkDir/{userCode}/{filePath}",produces = "text/plain;charset=UTF-8")
 	public ResponseEntity<byte[]> mkDir(
