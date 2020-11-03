@@ -84,7 +84,11 @@
     </select>
 
     <select id="getTableNames" resultType="Map" parameterType="String">
-       select *  from ${tableName}
+       select index_name,year,amount  from ${tableName} order  by ${indexName}
+    </select>
+
+    <select id="getIndexName" resultType="Map" parameterType="String">
+       select distinct ${indexName}  from ${tableName}
     </select>
 
     <select id="getTreeNode" resultType="Map" parameterType="String">

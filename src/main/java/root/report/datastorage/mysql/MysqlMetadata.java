@@ -491,4 +491,36 @@ public class MysqlMetadata extends RO
         return JSON.toJSONString(authList);
     }
 
+    @RequestMapping(value="/dataFormatConversion",produces = "text/plain;charset=UTF-8")
+    public String dataFormatConversion(@RequestBody JSONObject pJson)  {
+        String tableName = pJson.getString("tableName");
+        String indexName = pJson.getString("indexName");
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        map.put("indexName", indexName);
+        List<Map> authList = DbFactory.Open("form").selectList("mysqlmetadata.getTableNames",map);
+        List<Map> keyList = DbFactory.Open("form").selectList("mysqlmetadata.getIndexName",map);
+
+        JSONArray resultArray=new JSONArray();
+
+        for(int i=0;i<keyList.size();i++){
+              Map key=keyList.get(i);
+              String keyString= key.get(indexName).toString();
+              JSONObject objRecord=new JSONObject();
+              for(int j=0;j<authList.size();j++){
+                 Map mapRecord= authList.get(j);
+                 if(keyString.equals(mapRecord.get(indexName).toString())){
+                       objRecord.put(indexName,mapRecord.get(indexName).toString());
+                       objRecord.put(mapRecord.get("year").toString(),mapRecord.get("amount").toString());
+                 }
+              }
+              resultArray.add(objRecord);
+        }
+
+        String result =JSON.toJSONString(resultArray);
+
+        System.out.println("============");
+        return JSON.toJSONString(resultArray);
+    }
+
 }
