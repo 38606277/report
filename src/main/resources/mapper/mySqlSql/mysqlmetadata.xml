@@ -5,24 +5,24 @@
 
     <!-- 增加 da_cube 中的记录，让此SQL能返回自增长主键 -->
     <insert id="insertMysqlMetadata" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
-        insert into da_table(table_id,table_name,table_desc,table_catalog,table_type,host,url,data_count,data_source,create_date,create_by,update_date,update_by,data_update_date)
+        insert into bd_table(table_id,table_name,table_desc,catalog_id,dbtype_id,source_id,host_id,url,data_count,create_date,create_by,update_date,update_by,data_update_date)
         values ('${table_id}',
             <if test="table_name == null">NULL</if>
             <if test="table_name != null">'${table_name}'</if>,
             <if test="table_desc == null">NULL</if>
             <if test="table_desc != null">'${table_desc}'</if>,
-            <if test="table_catalog == null">NULL</if>
-            <if test="table_catalog != null">'${table_catalog}'</if>,
-            <if test="table_type == null">NULL</if>
-            <if test="table_type != null">'${table_type}'</if>,
-            <if test="host == null">NULL</if>
-            <if test="host != null">'${host}'</if>,
+            <if test="catalog_id == null">NULL</if>
+            <if test="catalog_id != null">'${catalog_id}'</if>,
+            <if test="dbtype_id == null">NULL</if>
+            <if test="dbtype_id != null">'${dbtype_id}'</if>,
+            <if test="source_id == null">NULL</if>
+            <if test="source_id != null">'${source_id}'</if>,
+            <if test="host_id == null">NULL</if>
+            <if test="host_id != null">'${host_id}'</if>,
             <if test="url == null">NULL</if>
             <if test="url != null">'${url}'</if>,
             <if test="data_count == null">NULL</if>
             <if test="data_count != null">'${data_count}'</if>,
-            <if test="data_source == null">NULL</if>
-            <if test="data_source != null">'${data_source}'</if>,
             <if test="create_date == null">NULL</if>
             <if test="create_date != null">str_to_date(#{create_date},'%Y%m%d')</if>,
             <if test="create_by == null">NULL</if>

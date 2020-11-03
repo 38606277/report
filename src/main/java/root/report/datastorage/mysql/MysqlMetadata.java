@@ -202,7 +202,7 @@ public class MysqlMetadata extends RO
                   tableNameList= getTablesV3( jdbcurl,  username, password, databaseName);
                   for(int j=0;j<tableNameList.size();j++){
                       String tableName=tableNameList.get(j);
-                      insertMysqlMetadataV2( tableName);
+                      insertMysqlMetadataV2( tableName,databaseName);
                   }
 
             }
@@ -373,7 +373,7 @@ public class MysqlMetadata extends RO
     }
 
     @RequestMapping(value = "/insertMysqlMetadataV2", produces = "text/plain; charset=utf-8")
-    public String insertMysqlMetadataV2(final String tableName)
+    public String insertMysqlMetadataV2(final String tableName,final String dbName)
     {
 //        String currentUser = SysContext.getRequestUser().getUserName();
         java.util.Date date=new Date();
@@ -387,14 +387,15 @@ public class MysqlMetadata extends RO
             Map param = new HashMap<>();
             param.put("table_id", id);
             param.put("table_name", tableName);
-            param.put("table_desc", "测试一");
-            param.put("table_catalog", "测试目录");
-            param.put("table_type", "table_type");
-            param.put("host", "host");
+            param.put("table_desc", "todo");
+            param.put("catalog_id", 1);
+            param.put("dbtype_id", "mysql");
+            param.put("source_id", "内部数据");
+            param.put("host_id", dbName);
 
             param.put("url", "url");
             param.put("data_count", "data_count");
-            param.put("data_source", "data_source");
+
             param.put("create_date", str);
 
             param.put("create_by", "lee");
@@ -486,7 +487,7 @@ public class MysqlMetadata extends RO
 
         Map<String,String> map = new HashMap<String,String>();
         map.put("tableName", tableName);
-        List<Map> authList = DbFactory.Open("hive").selectList("hivemetadata.getTableNames",map);
+        List<Map> authList = DbFactory.Open("form").selectList("mysqlmetadata.getTableNames",map);
         return JSON.toJSONString(authList);
     }
 

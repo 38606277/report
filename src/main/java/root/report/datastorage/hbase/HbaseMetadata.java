@@ -337,16 +337,18 @@ public class HbaseMetadata extends RO
         try{
             long id =IDUtil.getId();
             Map param = new HashMap<>();
+
             param.put("table_id", id);
             param.put("table_name", tableName);
-            param.put("table_desc", "测试一");
-            param.put("table_catalog", "测试目录");
-            param.put("table_type", table_type);
-            param.put("host", url);
+            param.put("table_desc", "todo");
+            param.put("catalog_id", 1);
+            param.put("dbtype_id", table_type);
+            param.put("source_id", "内部数据");
+            param.put("host_id", "hbase");
 
             param.put("url", url);
             param.put("data_count", "data_count");
-            param.put("data_source",url+tableName);
+
             param.put("create_date", str);
 
             param.put("create_by", "lee");
@@ -491,13 +493,11 @@ public class HbaseMetadata extends RO
 
 
     @RequestMapping(value="/getDataBytableName",produces = "text/plain;charset=UTF-8")
-    public String getDataBytableName(@RequestBody String pJson) throws UnsupportedEncodingException {
-
+    public String getDataBytableName(@RequestBody JSONObject pJson) throws UnsupportedEncodingException {
+        String tableName = pJson.getString("tableName");
 
         Map<String,String> map = new HashMap<String,String>();
-        map.put("roleId", "");
-        map.put("type", "");
-
+        map.put("tableName", tableName);
         List<Map> authList = DbFactory.Open("hbase").selectList("hbasemetadata.getTableNames",map);
         return JSON.toJSONString(authList);
     }

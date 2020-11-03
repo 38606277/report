@@ -97,11 +97,7 @@ public class HiveMetadata extends RO
             System.out.println(res.getString(1));
             databaseNameList.add(res.getString(1));
         }
-//        try {
-//            destory();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+
         return databaseNameList;
     }
 
@@ -152,7 +148,7 @@ public class HiveMetadata extends RO
     }
 
 
-    // 查询所有数据库
+    // 查询数据库下所有表
     @RequestMapping(value = "/getHiveTablesV2", produces = "text/plain;charset=UTF-8")
     public List<String> getHiveTables(String url, String username,String password,String databaseName) throws  ClassNotFoundException, SQLException {
 //        String databaseName=pJson.getString("databaseName");
@@ -220,9 +216,12 @@ public class HiveMetadata extends RO
 
     //查询数据
     @RequestMapping(value = "/selectData", produces = "text/plain;charset=UTF-8")
-    public  List<String[]> selectData() throws SQLException {
+    public  List<String[]> selectData() throws SQLException,ClassNotFoundException {
+        if(conn==null){
+            init();
+        }
         List<String[]> result = new ArrayList<>();
-        sql = "select * from emp";
+        sql = "select * from employee";
         System.out.println("Running:"+sql);
         res = stmt.executeQuery(sql);
         String[] param = null;
@@ -411,16 +410,18 @@ public class HiveMetadata extends RO
         try{
             long id =IDUtil.getId();
             Map param = new HashMap<>();
+
             param.put("table_id", id);
             param.put("table_name", tableName);
-            param.put("table_desc", "测试一");
-            param.put("table_catalog", "测试目录");
-            param.put("table_type", table_type);
-            param.put("host", url);
+            param.put("table_desc", "todo");
+            param.put("catalog_id", 1);
+            param.put("dbtype_id", table_type);
+            param.put("source_id", "内部数据");
+            param.put("host_id", databaseName);
 
             param.put("url", url);
             param.put("data_count", "data_count");
-            param.put("data_source",url+databaseName);
+
             param.put("create_date", str);
 
             param.put("create_by", "lee");
@@ -446,9 +447,23 @@ public class HiveMetadata extends RO
 
         Map<String,String> map = new HashMap<String,String>();
         map.put("tableName", tableName);
+        List<ArrayList> authList = DbFactory.Open("hive").selectList("hivemetadata.getTableNames",map);
+        return JSON.toJSONString(authList);
+    }
+
+    @RequestMapping(value="/getHiveDatabasesV3",produces = "text/plain;charset=UTF-8")
+    public String getHiveDatabasesV3(@RequestBody JSONObject pJson) throws UnsupportedEncodingException {
+        String tableName = pJson.getString("tableName");
+
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
         List<Map> authList = DbFactory.Open("hive").selectList("hivemetadata.getTableNames",map);
         return JSON.toJSONString(authList);
     }
 
+    public  static void main(String[] args) throws ClassNotFoundException,SQLException{
+        HiveMetadata hiveMetadata =new HiveMetadata();
+        hiveMetadata.selectData();
+    }
 
 }
