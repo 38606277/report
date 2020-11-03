@@ -7,24 +7,26 @@
 
     <select id="getIndexValue" parameterType="Map" resultType="Map">
 		SELECT
-			bd_index.id,
-			bd_index.index_id,
-			bd_index.`year`,
-			bd_index.`month`,
-			bd_index.provice,
-			bd_index.unit,
-			bd_index.amount,
-			bd_index.`group`,
-			bd_index.corp,
-			bd_index.create_date,
-			bd_index.create_by,
-			bd_index.update_date,
-			bd_index.update_by,
-			bd_index.data_update_date
+			bi.id,
+			bi.index_catalog_id,
+			bi.index_code,
+			bi.index_name,
+			bi.unit,
+			bi.`year`,
+			bi.`month`,
+			bi.provice,
+			bi.amount,
+			bi.`group`,
+			bi.corp,
+			bi.create_date,
+			bi.create_by,
+			bi.update_date,
+			bi.update_by,
+			bi.data_update_date
 		FROM
-			bd_index
+			bd_index AS bi
 		WHERE
-		    bd_index.index_id=${index_id}
+			bi.index_catalog_id =${index_catalog_id}
 	</select>
 
 

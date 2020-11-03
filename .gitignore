@@ -28,3 +28,5 @@ jre6
 /nbdist/
 /.nb-gradle/
 /work/
+/app/
+/app/app/

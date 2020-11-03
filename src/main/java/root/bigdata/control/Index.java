@@ -28,7 +28,10 @@ public class Index extends RO {
     @RequestMapping(value = "/reportServer/index/getIndexValue", produces = "text/plain;charset=UTF-8")
     public String getIndexValue(@RequestBody JSONObject pJson)  {
         List<Map> list = DbFactory.Open(DbFactory.FORM).selectList("index.getIndexValue",pJson);
+
         return SuccessMsg("",list);
 
     }
+
+
 }
