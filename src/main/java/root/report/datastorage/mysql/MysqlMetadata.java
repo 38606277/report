@@ -523,4 +523,36 @@ public class MysqlMetadata extends RO
         return JSON.toJSONString(resultArray);
     }
 
+
+    @RequestMapping(value="/statisticsTableRecordsNumber",produces = "text/plain;charset=UTF-8")
+    public String statisticsTableRecordsNumber(@RequestBody JSONObject pJson)  throws SQLException {
+        String dbName = pJson.getString("dbName");
+        String jdbcurl = pJson.getString("jdbcurl");
+        String username = pJson.getString("username");
+        String password = pJson.getString("password");
+        Map<String,String> map = new HashMap<String,String>();
+
+        List<String> tableNameList=new ArrayList<>();
+        tableNameList= getTablesV3( jdbcurl,  username, password, dbName);
+
+        for(int j=0;j<tableNameList.size();j++){
+            String tableName=tableNameList.get(j);
+            map.put("tableName", tableName);
+            map.put("dbName", dbName);
+            List<Map> tableRecordsNumber = DbFactory.Open("form").selectList("mysqlmetadata.tableRecordsNumber",map);
+            String data_count2="";
+            if(tableRecordsNumber.size()>0){
+                Map<String,String> datacountMap  =tableRecordsNumber.get(0);
+                Object value2 =  datacountMap.get("recordsnumber");
+                data_count2=value2.toString();
+            }
+            map.put("data_count", data_count2);
+            DbFactory.Open("form").selectList("mysqlmetadata.modifyDataCount",map);
+
+        }
+
+
+        return "success";
+    }
+
 }
