@@ -384,7 +384,6 @@ public class HbaseMetadata extends RO
         }
     }
 
-
     public void  upsert(String url,String user,String password) {
         try {
             initV2( url, user, password);
@@ -490,8 +489,6 @@ public class HbaseMetadata extends RO
         return result;
     }
 
-
-
     @RequestMapping(value="/getDataBytableName",produces = "text/plain;charset=UTF-8")
     public String getDataBytableName(@RequestBody JSONObject pJson) throws UnsupportedEncodingException {
         String tableName = pJson.getString("tableName");
@@ -502,8 +499,36 @@ public class HbaseMetadata extends RO
         return JSON.toJSONString(authList);
     }
 
+    @RequestMapping(value="/statisticsTableRecordsNumber",produces = "text/plain;charset=UTF-8")
+    public String statisticsTableRecordsNumber(@RequestBody JSONObject pJson)    throws  ClassNotFoundException, SQLException {
+        String dbName = pJson.getString("dbName");
+        String jdbcurl = pJson.getString("jdbcurl");
+        String username = pJson.getString("username");
+        String password = pJson.getString("password");
+        Map<String,String> map = new HashMap<String,String>();
+
+        List<String> tableNameList=new ArrayList<>();
+//        tableNameList= getTablesV3( jdbcurl,  username, password, dbName);
+        tableNameList=getHbaseTablesV2(jdbcurl,username,password);
+        for(int j=0;j<tableNameList.size();j++){
+            String tableName=tableNameList.get(j);
+            map.put("tableName", tableName);
+            map.put("dbName", dbName);
+            List<Map> tableRecordsNumber = DbFactory.Open("hbase").selectList("hbasemetadata.tableRecordsNumber",map);
+            String data_count2="";
+            if(tableRecordsNumber.size()>0){
+                Map<String,String> datacountMap  =tableRecordsNumber.get(0);
+                Object value2 =  datacountMap.get("RECORDSNUMBER");
+                data_count2=value2.toString();
+            }
+            map.put("data_count", data_count2);
+            DbFactory.Open("form").selectList("mysqlmetadata.modifyDataCount",map);
+
+        }
 
 
+        return "success";
+    }
 
     public static void main(String[] args) throws SQLException {
 //        Properties props = new Properties();

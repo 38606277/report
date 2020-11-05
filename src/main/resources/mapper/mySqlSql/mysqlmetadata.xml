@@ -105,7 +105,7 @@
         data_count=
         <if test="data_count == null">NULL</if>
         <if test="data_count != null">'${data_count}'</if>
---         where table_name = ${tableName} and host_id=${dbName}
+
         where table_name=#{tableName,jdbcType=VARCHAR} and host_id=#{dbName,jdbcType=VARCHAR}
     </update>
 
