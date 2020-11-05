@@ -461,6 +461,44 @@ public class HiveMetadata extends RO
         return JSON.toJSONString(authList);
     }
 
+    @RequestMapping(value = "/statisticsTableRecordsNumber", produces = "text/plain;charset=UTF-8")
+    public @ResponseBody String statisticsTableRecordsNumber(@RequestBody JSONObject pJson) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        try{
+            String jdbcurl = pJson.getString("jdbcurl");
+            String username = pJson.getString("username");
+            String password = pJson.getString("password");
+            String dbName = pJson.getString("dbName");
+            Map<String,String> map = new HashMap<>();
+            List<String> tableNameList=new ArrayList<>();
+            tableNameList= getHiveTables(jdbcurl,  username, password, dbName);
+            for(int j=0;j<tableNameList.size();j++){
+                String tableName=tableNameList.get(j);
+
+                map.put("tableName", tableName);
+                map.put("dbName", dbName);
+                List<Map> tableRecordsNumber = DbFactory.Open("hive").selectList("hivemetadata.tableRecordsNumber",map);
+                String data_count2="";
+                if(tableRecordsNumber.size()>0){
+                    Map<String,String> datacountMap  =tableRecordsNumber.get(0);
+                    Object value2 =  datacountMap.get("recordsnumber");
+                    data_count2=value2.toString();
+                }
+                map.put("data_count", data_count2);
+                DbFactory.Open("form").selectList("mysqlmetadata.modifyDataCount",map);
+            }
+            JSONObject msg = new JSONObject();
+
+
+            return SuccessMsg("成功统计hive表记录数", list);
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return ErrorMsg("3000", ex.getMessage());
+        }
+
+    }
+
+
     public  static void main(String[] args) throws ClassNotFoundException,SQLException{
         HiveMetadata hiveMetadata =new HiveMetadata();
         hiveMetadata.selectData();
