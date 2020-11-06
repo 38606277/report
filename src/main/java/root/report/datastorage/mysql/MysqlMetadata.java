@@ -550,9 +550,21 @@ public class MysqlMetadata extends RO
             DbFactory.Open("form").selectList("mysqlmetadata.modifyDataCount",map);
 
         }
-
-
         return "success";
+    }
+
+
+    /**
+     * 获取表结构
+     * */
+    @RequestMapping(value = "/getStructureV2", method = RequestMethod.POST)
+    public String getStructure(@RequestBody JSONObject pJson) throws SQLException {
+//        String dbName = pJson.getString("dbName");
+        final String dbName=pJson.getString("dbName");
+        final String tableName=pJson.getString("tableName");
+        JSONArray fields=new JSONArray();
+        fields= DbManagerHutool.getTableInfoVer3(dbName, tableName);
+        return fields.toString();
     }
 
 }
