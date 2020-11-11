@@ -330,7 +330,7 @@ public class HbaseMetadata extends RO
     {
 //        String currentUser = SysContext.getRequestUser().getUserName();
         Date date=new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String str = sdf.format(date);
         JSONObject obj = new JSONObject();
 
@@ -528,6 +528,33 @@ public class HbaseMetadata extends RO
 
 
         return "success";
+    }
+
+    //查看表结构
+    @RequestMapping(value = "/getTableStructure", produces = "text/plain;charset=UTF-8")
+    public String getTableStructure(@RequestBody JSONObject pJson) throws SQLException ,ClassNotFoundException{
+//        final String url=pJson.getString("jdbcurl");
+//        final String username=pJson.getString("username");
+//        final String password=pJson.getString("password");
+//        final String databaseName=pJson.getString("dbName");
+
+        final String tableName=pJson.getString("tableName");
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        List<Map> tablefields = DbFactory.Open("hbase").selectList("hbasemetadata.getTableStructure",map);
+        JSONArray fields =new JSONArray();
+
+       for(int i=1;i<tablefields.size();i++){
+           Map<String,String> fieldmap=tablefields.get(i);
+            JSONObject field=new JSONObject();
+            field.put("fieldName",fieldmap.get("COLUMN_NAME"));
+            field.put("columnFamily",fieldmap.get("COLUMN_FAMILY"));
+//            field.put(res.getString(1),res.getString(2));
+//            System.out.println(res.getString(1)+"\t"+res.getString(2));
+            fields.add(field);
+        }
+        System.out.println(fields.toString());
+        return fields.toString();
     }
 
     public static void main(String[] args) throws SQLException {

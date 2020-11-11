@@ -105,5 +105,7 @@
     </update>
 
 
-
+    <select id="getTableStructure" resultType="Map" parameterType="String">
+        select COLUMN_NAME,COLUMN_FAMILY from SYSTEM.CATALOG where TABLE_NAME=#{tableName,jdbcType=VARCHAR}
+    </select>
 </mapper>

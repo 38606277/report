@@ -404,7 +404,8 @@ public class HiveMetadata extends RO
     {
 //        String currentUser = SysContext.getRequestUser().getUserName();
         Date date=new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         String str = sdf.format(date);
         JSONObject obj = new JSONObject();
 
