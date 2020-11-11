@@ -109,4 +109,13 @@
         where table_name=#{tableName,jdbcType=VARCHAR} and host_id=#{dbName,jdbcType=VARCHAR}
     </update>
 
+<!--    <select id="statisticsRecordsNumberByDataBaseType" resultType="Map" parameterType="String">
+           SELECT SUM(data_count) as totalnum FROM bd_table
+            where dbtype_id=#{dbType,jdbcType=VARCHAR} and host_id=#{dbName,jdbcType=VARCHAR}
+    </select>-->
+    <select id="statisticsRecordsNumberByDataBaseType" resultType="Map" parameterType="String">
+           SELECT SUM(data_count) as totalnum FROM bd_table
+            where dbtype_id=#{dbType,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

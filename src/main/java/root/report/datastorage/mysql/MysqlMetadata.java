@@ -553,6 +553,25 @@ public class MysqlMetadata extends RO
         return "success";
     }
 
+    @RequestMapping(value="/statisticsRecordsNumberByDataBaseType",produces = "text/plain;charset=UTF-8")
+    public String statisticsRecordsNumberByDataBaseType(@RequestBody JSONObject pJson)  throws SQLException {
+        String dbName = pJson.getString("dbName");
+        String dbType = pJson.getString("dbType");
+
+        Map<String,String> map = new HashMap<String,String>();
+
+        map.put("dbType", dbType);
+        map.put("dbName", dbName);
+        List<Map> databaseRecordsNumber = DbFactory.Open("form").selectList("mysqlmetadata.statisticsRecordsNumberByDataBaseType",map);
+        String data_count2="";
+        if(databaseRecordsNumber.size()>0){
+            Map<String,String> datacountMap  =databaseRecordsNumber.get(0);
+            Object value2 =  datacountMap.get("totalnum");
+            data_count2=value2.toString();
+        }
+        return data_count2;
+    }
+
 
     /**
      * 获取表结构
