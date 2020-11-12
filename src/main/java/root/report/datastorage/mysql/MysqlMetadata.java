@@ -573,6 +573,19 @@ public class MysqlMetadata extends RO
     }
 
 
+    @RequestMapping(value="/statisticsAllRecordsNumber",produces = "text/plain;charset=UTF-8")
+    public String statisticsAllRecordsNumber(@RequestBody JSONObject pJson)  throws SQLException {
+        Map<String,String> map = new HashMap<String,String>();
+        List<Map> databaseRecordsNumber = DbFactory.Open("form").selectList("mysqlmetadata.statisticsAllRecordsNumber",map);
+        String data_count2="";
+        if(databaseRecordsNumber.size()>0){
+            Map<String,String> datacountMap  =databaseRecordsNumber.get(0);
+            Object value2 =  datacountMap.get("totalnum");
+            data_count2=value2.toString();
+        }
+        return data_count2;
+    }
+
     /**
      * 获取表结构
      * */

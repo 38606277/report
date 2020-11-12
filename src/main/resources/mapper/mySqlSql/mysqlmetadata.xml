@@ -117,5 +117,7 @@
            SELECT SUM(data_count) as totalnum FROM bd_table
             where dbtype_id=#{dbType,jdbcType=VARCHAR}
     </select>
-
+    <select id="statisticsAllRecordsNumber" resultType="Map" parameterType="String">
+           SELECT SUM(data_count) as totalnum FROM bd_table
+    </select>
 </mapper>
