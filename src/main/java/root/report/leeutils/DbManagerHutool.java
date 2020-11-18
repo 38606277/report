@@ -10,6 +10,7 @@ import cn.hutool.log.StaticLog;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 
@@ -58,6 +59,23 @@ public final class DbManagerHutool {
         }
         System.out.println(sampleE.toString());
         return sampleE;
+    }
+
+    public static JSONArray getTableInfoVer3(final String  dbConnName, final String tableName) throws SQLException {
+        List<Entity> l = getSchema(dbConnName, tableName);
+        final Entity sampleE = Entity.create(tableName);
+        JSONArray fields=new JSONArray();
+        for (Entity entity : l) {
+            String fieldName = entity.getStr("Field");
+            String fieldType = entity.getStr("Type");
+//            sampleE.addFieldNames(field);
+            JSONObject field=new JSONObject();
+            field.put("fieldName",fieldName);
+            field.put("fieldType",fieldType);
+            fields.add(field);
+        }
+        System.out.println(sampleE.toString());
+        return fields;
     }
 
     public static Entity getTableInfoNew(String url, String user, String password,String tableName) throws SQLException {

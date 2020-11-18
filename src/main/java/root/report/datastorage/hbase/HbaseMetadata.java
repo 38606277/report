@@ -330,7 +330,7 @@ public class HbaseMetadata extends RO
     {
 //        String currentUser = SysContext.getRequestUser().getUserName();
         Date date=new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String str = sdf.format(date);
         JSONObject obj = new JSONObject();
 
@@ -383,7 +383,6 @@ public class HbaseMetadata extends RO
             e.printStackTrace();
         }
     }
-
 
     public void  upsert(String url,String user,String password) {
         try {
@@ -490,8 +489,6 @@ public class HbaseMetadata extends RO
         return result;
     }
 
-
-
     @RequestMapping(value="/getDataBytableName",produces = "text/plain;charset=UTF-8")
     public String getDataBytableName(@RequestBody JSONObject pJson) throws UnsupportedEncodingException {
         String tableName = pJson.getString("tableName");
@@ -502,8 +499,63 @@ public class HbaseMetadata extends RO
         return JSON.toJSONString(authList);
     }
 
+    @RequestMapping(value="/statisticsTableRecordsNumber",produces = "text/plain;charset=UTF-8")
+    public String statisticsTableRecordsNumber(@RequestBody JSONObject pJson)    throws  ClassNotFoundException, SQLException {
+        String dbName = pJson.getString("dbName");
+        String jdbcurl = pJson.getString("jdbcurl");
+        String username = pJson.getString("username");
+        String password = pJson.getString("password");
+        Map<String,String> map = new HashMap<String,String>();
+
+        List<String> tableNameList=new ArrayList<>();
+//        tableNameList= getTablesV3( jdbcurl,  username, password, dbName);
+        tableNameList=getHbaseTablesV2(jdbcurl,username,password);
+        for(int j=0;j<tableNameList.size();j++){
+            String tableName=tableNameList.get(j);
+            map.put("tableName", tableName);
+            map.put("dbName", dbName);
+            List<Map> tableRecordsNumber = DbFactory.Open("hbase").selectList("hbasemetadata.tableRecordsNumber",map);
+            String data_count2="";
+            if(tableRecordsNumber.size()>0){
+                Map<String,String> datacountMap  =tableRecordsNumber.get(0);
+                Object value2 =  datacountMap.get("RECORDSNUMBER");
+                data_count2=value2.toString();
+            }
+            map.put("data_count", data_count2);
+            DbFactory.Open("form").selectList("mysqlmetadata.modifyDataCount",map);
+
+        }
 
 
+        return "success";
+    }
+
+    //查看表结构
+    @RequestMapping(value = "/getTableStructure", produces = "text/plain;charset=UTF-8")
+    public String getTableStructure(@RequestBody JSONObject pJson) throws SQLException ,ClassNotFoundException{
+//        final String url=pJson.getString("jdbcurl");
+//        final String username=pJson.getString("username");
+//        final String password=pJson.getString("password");
+//        final String databaseName=pJson.getString("dbName");
+
+        final String tableName=pJson.getString("tableName");
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        List<Map> tablefields = DbFactory.Open("hbase").selectList("hbasemetadata.getTableStructure",map);
+        JSONArray fields =new JSONArray();
+
+       for(int i=1;i<tablefields.size();i++){
+           Map<String,String> fieldmap=tablefields.get(i);
+            JSONObject field=new JSONObject();
+            field.put("fieldName",fieldmap.get("COLUMN_NAME"));
+            field.put("columnFamily",fieldmap.get("COLUMN_FAMILY"));
+//            field.put(res.getString(1),res.getString(2));
+//            System.out.println(res.getString(1)+"\t"+res.getString(2));
+            fields.add(field);
+        }
+        System.out.println(fields.toString());
+        return fields.toString();
+    }
 
     public static void main(String[] args) throws SQLException {
 //        Properties props = new Properties();

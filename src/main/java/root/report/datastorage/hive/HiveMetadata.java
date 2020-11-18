@@ -1,6 +1,7 @@
 package root.report.datastorage.hive;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
@@ -125,7 +126,7 @@ public class HiveMetadata extends RO
 
 
 
-    // 查询所有数据库
+    // 查询数据库所有表
     @RequestMapping(value = "/getHiveTables", produces = "text/plain;charset=UTF-8")
     public List<String> getHiveTables(@RequestBody JSONObject pJson) throws  ClassNotFoundException, SQLException {
         String databaseName=pJson.getString("databaseName");
@@ -403,7 +404,8 @@ public class HiveMetadata extends RO
     {
 //        String currentUser = SysContext.getRequestUser().getUserName();
         Date date=new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         String str = sdf.format(date);
         JSONObject obj = new JSONObject();
 
@@ -459,6 +461,71 @@ public class HiveMetadata extends RO
         map.put("tableName", tableName);
         List<Map> authList = DbFactory.Open("hive").selectList("hivemetadata.getTableNames",map);
         return JSON.toJSONString(authList);
+    }
+
+    @RequestMapping(value = "/statisticsTableRecordsNumber", produces = "text/plain;charset=UTF-8")
+    public @ResponseBody String statisticsTableRecordsNumber(@RequestBody JSONObject pJson) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        try{
+            String jdbcurl = pJson.getString("jdbcurl");
+            String username = pJson.getString("username");
+            String password = pJson.getString("password");
+            String dbName = pJson.getString("dbName");
+            Map<String,String> map = new HashMap<>();
+            List<String> tableNameList=new ArrayList<>();
+            tableNameList= getHiveTables(jdbcurl,  username, password, dbName);
+            for(int j=0;j<tableNameList.size();j++){
+                String tableName=tableNameList.get(j);
+
+                map.put("tableName", tableName);
+                map.put("dbName", dbName);
+                List<Map> tableRecordsNumber = DbFactory.Open("hive").selectList("hivemetadata.tableRecordsNumber",map);
+                String data_count2="";
+                if(tableRecordsNumber.size()>0){
+                    Map<String,String> datacountMap  =tableRecordsNumber.get(0);
+                    Object value2 =  datacountMap.get("recordsnumber");
+                    data_count2=value2.toString();
+                }
+                map.put("data_count", data_count2);
+                DbFactory.Open("form").selectList("mysqlmetadata.modifyDataCount",map);
+            }
+            JSONObject msg = new JSONObject();
+
+
+            return SuccessMsg("成功统计hive表记录数", list);
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return ErrorMsg("3000", ex.getMessage());
+        }
+
+    }
+
+
+    //查看表结构
+    @RequestMapping(value = "/getTableStructure", produces = "text/plain;charset=UTF-8")
+    public String getTableStructure(@RequestBody JSONObject pJson) throws SQLException ,ClassNotFoundException{
+        final String url=pJson.getString("jdbcurl");
+        final String username=pJson.getString("username");
+        final String password=pJson.getString("password");
+        final String databaseName=pJson.getString("dbName");
+        initForGetTable( url,  username, password,databaseName);
+//        final String dbName=pJson.getString("dbName");
+        final String tableName=pJson.getString("tableName");
+        sql ="desc  "+tableName;
+        System.out.println("Running:"+sql);
+        res = stmt.executeQuery(sql);
+//        List<Map<String,String>> fields=new ArrayList<Map<String,String>>();
+        JSONArray fields =new JSONArray();
+        while (res.next()){
+            JSONObject field=new JSONObject();
+            field.put("fieldName",res.getString(1));
+            field.put("fieldType",res.getString(2));
+//            field.put(res.getString(1),res.getString(2));
+//            System.out.println(res.getString(1)+"\t"+res.getString(2));
+            fields.add(field);
+        }
+        System.out.println(fields.toString());
+        return fields.toString();
     }
 
     public  static void main(String[] args) throws ClassNotFoundException,SQLException{

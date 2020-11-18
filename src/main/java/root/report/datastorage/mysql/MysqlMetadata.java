@@ -377,7 +377,7 @@ public class MysqlMetadata extends RO
     {
 //        String currentUser = SysContext.getRequestUser().getUserName();
         java.util.Date date=new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String str = sdf.format(date);
         JSONObject obj = new JSONObject();
 
@@ -521,6 +521,82 @@ public class MysqlMetadata extends RO
 
         System.out.println("============");
         return JSON.toJSONString(resultArray);
+    }
+
+
+    @RequestMapping(value="/statisticsTableRecordsNumber",produces = "text/plain;charset=UTF-8")
+    public String statisticsTableRecordsNumber(@RequestBody JSONObject pJson)  throws SQLException {
+        String dbName = pJson.getString("dbName");
+        String jdbcurl = pJson.getString("jdbcurl");
+        String username = pJson.getString("username");
+        String password = pJson.getString("password");
+        Map<String,String> map = new HashMap<String,String>();
+
+        List<String> tableNameList=new ArrayList<>();
+        tableNameList= getTablesV3( jdbcurl,  username, password, dbName);
+
+        for(int j=0;j<tableNameList.size();j++){
+            String tableName=tableNameList.get(j);
+            map.put("tableName", tableName);
+            map.put("dbName", dbName);
+            List<Map> tableRecordsNumber = DbFactory.Open("form").selectList("mysqlmetadata.tableRecordsNumber",map);
+            String data_count2="";
+            if(tableRecordsNumber.size()>0){
+                Map<String,String> datacountMap  =tableRecordsNumber.get(0);
+                Object value2 =  datacountMap.get("recordsnumber");
+                data_count2=value2.toString();
+            }
+            map.put("data_count", data_count2);
+            DbFactory.Open("form").selectList("mysqlmetadata.modifyDataCount",map);
+
+        }
+        return "success";
+    }
+
+    @RequestMapping(value="/statisticsRecordsNumberByDataBaseType",produces = "text/plain;charset=UTF-8")
+    public String statisticsRecordsNumberByDataBaseType(@RequestBody JSONObject pJson)  throws SQLException {
+        String dbName = pJson.getString("dbName");
+        String dbType = pJson.getString("dbType");
+
+        Map<String,String> map = new HashMap<String,String>();
+
+        map.put("dbType", dbType);
+        map.put("dbName", dbName);
+        List<Map> databaseRecordsNumber = DbFactory.Open("form").selectList("mysqlmetadata.statisticsRecordsNumberByDataBaseType",map);
+        String data_count2="";
+        if(databaseRecordsNumber.size()>0){
+            Map<String,String> datacountMap  =databaseRecordsNumber.get(0);
+            Object value2 =  datacountMap.get("totalnum");
+            data_count2=value2.toString();
+        }
+        return data_count2;
+    }
+
+
+    @RequestMapping(value="/statisticsAllRecordsNumber",produces = "text/plain;charset=UTF-8")
+    public String statisticsAllRecordsNumber(@RequestBody JSONObject pJson)  throws SQLException {
+        Map<String,String> map = new HashMap<String,String>();
+        List<Map> databaseRecordsNumber = DbFactory.Open("form").selectList("mysqlmetadata.statisticsAllRecordsNumber",map);
+        String data_count2="";
+        if(databaseRecordsNumber.size()>0){
+            Map<String,String> datacountMap  =databaseRecordsNumber.get(0);
+            Object value2 =  datacountMap.get("totalnum");
+            data_count2=value2.toString();
+        }
+        return data_count2;
+    }
+
+    /**
+     * 获取表结构
+     * */
+    @RequestMapping(value = "/getStructureV2", method = RequestMethod.POST)
+    public String getStructure(@RequestBody JSONObject pJson) throws SQLException {
+//        String dbName = pJson.getString("dbName");
+        final String dbName=pJson.getString("dbName");
+        final String tableName=pJson.getString("tableName");
+        JSONArray fields=new JSONArray();
+        fields= DbManagerHutool.getTableInfoVer3(dbName, tableName);
+        return fields.toString();
     }
 
 }

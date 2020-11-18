@@ -24,15 +24,15 @@
         <if test="data_count == null">NULL</if>
         <if test="data_count != null">'${data_count}'</if>,
         <if test="create_date == null">NULL</if>
-        <if test="create_date != null">str_to_date(#{create_date},'%Y%m%d')</if>,
+        <if test="create_date != null">str_to_date(#{create_date},'%Y-%m-%d %H:%i:%s')</if>,
         <if test="create_by == null">NULL</if>
         <if test="create_by != null">'${create_by}'</if>,
         <if test="update_date == null">NULL</if>
-        <if test="update_date != null">str_to_date(#{update_date},'%Y%m%d')</if>,
+        <if test="update_date != null">str_to_date(#{update_date},'%Y-%m-%d %H:%i:%s')</if>,
         <if test="update_by == null">NULL</if>
         <if test="update_by != null">'${update_by}'</if>,
         <if test="data_update_date == null">NULL</if>
-        <if test="data_update_date != null">str_to_date(#{data_update_date},'%Y%m%d')</if>
+        <if test="data_update_date != null">str_to_date(#{data_update_date},'%Y-%m-%d %H:%i:%s')</if>
         )
     </insert>
 
@@ -90,4 +90,19 @@
     <select id="getTreeNode" resultType="Map" parameterType="String">
        select catalog_id as id,catalog_pid as pid ,table_catalog as name from da_table where catalog_id!=''  and table_catalog!=''
     </select>
+
+
+    <select id="tableRecordsNumber" resultType="Map" parameterType="String">
+       select count(1) as recordsnumber  from ${tableName}
+    </select>
+
+    <!-- 修改 dashboard 记录 -->
+    <update id="modifyDataCount"  parameterType="Map">
+        update bd_table set
+        data_count=
+        <if test="data_count == null">NULL</if>
+        <if test="data_count != null">'${data_count}'</if>
+
+        where table_name=#{tableName,jdbcType=VARCHAR} and host_id=#{dbName,jdbcType=VARCHAR}
+    </update>
 </mapper>

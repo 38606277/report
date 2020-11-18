@@ -1,7 +1,7 @@
-[getMysqlConn]
-url = jdbc:mysql://192.168.206.49:3306/${database}?useCompression=true&useServerPrepStmts=false&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&characterEncoding=UTF-8
-username = appuser
-password = 123456
+#[getMysqlConn]
+#url = jdbc:mysql://192.168.206.49:3306/${database}?useCompression=true&useServerPrepStmts=false&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+#username = appuser
+#password = 123456
 
 #林克数据同步维护的表
 [linKeData]
@@ -10,10 +10,10 @@ username = appuser
 password = 123456
 
 
-#[getMysqlConn]
-#url = jdbc:mysql://192.168.1.102:3306/${database}?useCompression=true&useServerPrepStmts=false&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&characterEncoding=UTF-8
-#username = appuser
-#password = 123456
+[getMysqlConn]
+url = jdbc:mysql://192.168.1.102:3306/${database}?useCompression=true&useServerPrepStmts=false&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&characterEncoding=UTF-8
+username = appuser
+password = 123456
 #
 ##林克数据同步维护的表
 #[linKeData]
