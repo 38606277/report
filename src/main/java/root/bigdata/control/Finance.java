@@ -23,14 +23,14 @@ public class Finance extends RO {
 
     @RequestMapping(value = "/reportServer/finance/getAllCorp", produces = "text/plain;charset=UTF-8")
     public String getAllCorp(@RequestBody JSONObject pJson)  {
-        List<Map> list = DbFactory.Open("bb").selectList("finance.getAllCorp",pJson);
+        List<Map> list = DbFactory.Open(DbFactory.FORM).selectList("finance.getAllCorp",pJson);
         return SuccessMsg("",list);
 
     }
 
     @RequestMapping(value = "/reportServer/finance/getFinReport", produces = "text/plain;charset=UTF-8")
     public String getFinReport(@RequestBody JSONObject pJson)  {
-        List<Map> list = DbFactory.Open("bb").selectList("finance.getFinReport",pJson);
+        List<Map> list = DbFactory.Open(DbFactory.FORM).selectList("finance.getFinReport",pJson);
         return SuccessMsg("",list);
 
     }
@@ -47,6 +47,26 @@ public class Finance extends RO {
     @RequestMapping(value = "/reportServer/finance/gethbase", produces = "text/plain;charset=UTF-8")
     public String gethbase(@RequestBody JSONObject pJson)  {
         List<Map> list = DbFactory.Open("hbase").selectList("finance.getHbase",pJson);
+        return SuccessMsg("",list);
+
+    }
+
+    @RequestMapping(value = "/reportServer/finance/getRevenueTop10", produces = "text/plain;charset=UTF-8")
+    public String getRevenueTop10(@RequestBody JSONObject pJson)  {
+        List<Map> list = DbFactory.Open(DbFactory.FORM).selectList("finance.getRevenueTop10",pJson);
+        return SuccessMsg("",list);
+
+    }
+    @RequestMapping(value = "/reportServer/finance/getNetProfitTop10", produces = "text/plain;charset=UTF-8")
+    public String getNetProfitTop10(@RequestBody JSONObject pJson)  {
+        List<Map> list = DbFactory.Open(DbFactory.FORM).selectList("finance.getNetProfitTop10",pJson);
+        return SuccessMsg("",list);
+
+    }
+
+    @RequestMapping(value = "/reportServer/finance/getTotalProfitTop10", produces = "text/plain;charset=UTF-8")
+    public String getTotalProfitTop10(@RequestBody JSONObject pJson)  {
+        List<Map> list = DbFactory.Open(DbFactory.FORM).selectList("finance.getTotalProfitTop10",pJson);
         return SuccessMsg("",list);
 
     }

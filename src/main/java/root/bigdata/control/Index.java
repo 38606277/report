@@ -32,6 +32,14 @@ public class Index extends RO {
         return SuccessMsg("",list);
 
     }
+    //得到所指标值列表
+    @RequestMapping(value = "/reportServer/index/getIndexValueWithColumn", produces = "text/plain;charset=UTF-8")
+    public String getIndexValueWithColumn(@RequestBody JSONObject pJson)  {
+        List<Map> list = DbFactory.Open(DbFactory.FORM).selectList("index.getIndexValueWithColumn",pJson);
+
+        return SuccessMsg("",list);
+
+    }
 
 
 }

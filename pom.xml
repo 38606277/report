@@ -60,23 +60,22 @@
         <!--<groupId>org.springframework.boot</groupId>-->
         <!--<artifactId>spring-boot-starter-jetty</artifactId>-->
         <!--</dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-devtools</artifactId>-->
-<!--            <optional>true</optional>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-security</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.security.oauth</groupId>-->
-<!--            <artifactId>spring-security-oauth2</artifactId>-->
-<!--            <version>2.0.0.RELEASE</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-devtools</artifactId>-->
+        <!--            <optional>true</optional>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-security</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.security.oauth</groupId>-->
+        <!--            <artifactId>spring-security-oauth2</artifactId>-->
+        <!--            <version>2.0.0.RELEASE</version>-->
+        <!--        </dependency>-->
 
 
-        
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -339,17 +338,17 @@
         </dependency>
 
 
-  <!--      <dependency>
-            <groupId>org.apache.hive</groupId>
-            <artifactId>hive-exec</artifactId>
-            <version>${hive.version}</version>
-        </dependency>
+        <!--      <dependency>
+                  <groupId>org.apache.hive</groupId>
+                  <artifactId>hive-exec</artifactId>
+                  <version>${hive.version}</version>
+              </dependency>
 
-        <dependency>
-            <groupId>org.apache.hive</groupId>
-            <artifactId>hive-jdbc</artifactId>
-            <version>1.1.0</version>
-        </dependency>-->
+              <dependency>
+                  <groupId>org.apache.hive</groupId>
+                  <artifactId>hive-jdbc</artifactId>
+                  <version>1.1.0</version>
+              </dependency>-->
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -364,13 +363,12 @@
         </dependency>
 
 
-
         <!-- https://mvnrepository.com/artifact/org.apache.phoenix/phoenix-core -->
-<!--        <dependency>
-            <groupId>org.apache.phoenix</groupId>
-            <artifactId>phoenix-core</artifactId>
-            <version>4.14.0-cdh5.13.2</version>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>org.apache.phoenix</groupId>
+                    <artifactId>phoenix-core</artifactId>
+                    <version>4.14.0-cdh5.13.2</version>
+                </dependency>-->
 
         <dependency>
             <groupId>org.apache.phoenix</groupId>
@@ -382,14 +380,15 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>root.ReportServerApplication</mainClass>
-                    <fork>true</fork>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <mainClass>root.ReportServerApplication</mainClass>-->
+<!--                    <fork>true</fork>-->
+<!--                    <includeSystemScope>true</includeSystemScope>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -404,14 +403,42 @@
                 </configuration>
             </plugin>
 
-            <!--新增lee1024-->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <includeSystemScope>true</includeSystemScope>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>root.ReportServerApplication</mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
+
+
+
         </plugins>
         <resources>
             <resource>
@@ -425,7 +452,7 @@
                 <directory>lib</directory>
                 <targetPath>BOOT-INF/lib/</targetPath>
                 <includes>
-                   <include>**/*.*</include>
+                    <include>**/*.*</include>
                 </includes>
             </resource>
 
