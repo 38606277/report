@@ -120,4 +120,9 @@
     <select id="statisticsAllRecordsNumber" resultType="Map" parameterType="String">
            SELECT SUM(data_count) as totalnum FROM bd_table
     </select>
+
+
+    <select id="getKmeansResult" resultType="Map" parameterType="String">
+       select *  from ${tableName}
+    </select>
 </mapper>
