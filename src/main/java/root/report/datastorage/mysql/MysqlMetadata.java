@@ -312,6 +312,7 @@ public class MysqlMetadata extends RO
      * */
     @RequestMapping(value = "/getStructure", method = RequestMethod.POST)
     public JSONObject getStructure(final String dbConnName,final String tableName) throws SQLException {
+
         Entity e = DbManagerHutool.getTableInfoVer2(dbConnName, tableName);
 
         JSONObject msg = new JSONObject();
@@ -553,6 +554,55 @@ public class MysqlMetadata extends RO
         return "success";
     }
 
+    /*
+     * 统计大数据平台数据量:通过数据目录
+     * */
+    @RequestMapping(value="/statisticsRecordsNumberByCatalog",produces = "text/plain;charset=UTF-8")
+    public String statisticsRecordsNumberByCatalog(@RequestBody JSONObject pJson)  throws SQLException {
+        String catalog = pJson.getString("catalog");
+        long  catalogId= Long.parseLong(catalog);
+//        String dbType = pJson.getString("dbType");
+
+        Map<String,Long> map = new HashMap<String,Long>();
+
+//        map.put("dbType", dbType);
+        map.put("catalog", catalogId);
+        List<Map> databaseRecordsNumber = DbFactory.Open("form").selectList("mysqlmetadata.statisticsRecordsNumberByCatalog",map);
+        String data_count2="";
+        if(databaseRecordsNumber.size()>0){
+            Map<String,String> datacountMap  =databaseRecordsNumber.get(0);
+            Object value2 =  datacountMap.get("totalnum");
+            data_count2=value2.toString();
+        }
+        return data_count2;
+    }
+
+    /*
+     * 统计大数据平台数据量:通过数据库名称
+     * */
+    @RequestMapping(value="/statisticsRecordsNumberByDataBaseName",produces = "text/plain;charset=UTF-8")
+    public String statisticsRecordsNumberByDataBaseName(@RequestBody JSONObject pJson)  throws SQLException {
+        String dbName = pJson.getString("dbName");
+        String dbType = pJson.getString("dbType");
+
+        Map<String,String> map = new HashMap<String,String>();
+
+        map.put("dbType", dbType);
+        map.put("dbName", dbName);
+        List<Map> databaseRecordsNumber = DbFactory.Open("form").selectList("mysqlmetadata.statisticsRecordsNumberByDataBaseName",map);
+        String data_count2="";
+        if(databaseRecordsNumber.size()>0){
+            Map<String,String> datacountMap  =databaseRecordsNumber.get(0);
+            Object value2 =  datacountMap.get("totalnum");
+            data_count2=value2.toString();
+        }
+        return data_count2;
+    }
+
+
+    /*
+    * 统计大数据平台数据量:通过存储类型
+    * */
     @RequestMapping(value="/statisticsRecordsNumberByDataBaseType",produces = "text/plain;charset=UTF-8")
     public String statisticsRecordsNumberByDataBaseType(@RequestBody JSONObject pJson)  throws SQLException {
         String dbName = pJson.getString("dbName");
@@ -572,7 +622,9 @@ public class MysqlMetadata extends RO
         return data_count2;
     }
 
-
+    /*
+    * 统计大数据平台数据总量
+    * */
     @RequestMapping(value="/statisticsAllRecordsNumber",produces = "text/plain;charset=UTF-8")
     public String statisticsAllRecordsNumber(@RequestBody JSONObject pJson)  throws SQLException {
         Map<String,String> map = new HashMap<String,String>();
