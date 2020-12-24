@@ -77,6 +77,25 @@ public final class DbManagerHutool {
         System.out.println(sampleE.toString());
         return fields;
     }
+    /*
+    * 数据建模获取表结构
+    * */
+    public static JSONArray getTableInfoVer4(final String url,final String username,final String password, final String  dbConnName, final String tableName) throws SQLException {
+        List<Entity> l = getSchema( url, username,password,  dbConnName,  tableName);
+        final Entity sampleE = Entity.create(tableName);
+        JSONArray fields=new JSONArray();
+        for (Entity entity : l) {
+            String fieldName = entity.getStr("Field");
+            String fieldType = entity.getStr("Type");
+//            sampleE.addFieldNames(field);
+            JSONObject field=new JSONObject();
+            field.put("fieldName",fieldName);
+            field.put("fieldType",fieldType);
+            fields.add(field);
+        }
+        System.out.println(sampleE.toString());
+        return fields;
+    }
 
     public static Entity getTableInfoNew(String url, String user, String password,String tableName) throws SQLException {
         List<Entity> l = getSchemaNew(url,user,password,tableName);
@@ -100,6 +119,19 @@ public final class DbManagerHutool {
         final Db dbUse = DbUtil.use(dsSource);
         return  dbUse.query("desc " + tableName);
     }
+
+    public static List<Entity> getSchema(final String  url, final String  dbConnName, final String tableName) throws SQLException {
+        final DataSource dsSource = GetMysqlConn.getConn(dbConnName);
+        final Db dbUse = DbUtil.use(dsSource);
+        return  dbUse.query("desc " + tableName);
+    }
+
+    public static List<Entity> getSchema(final String url,final String username,final String password, final String  dbConnName, final String tableName) throws SQLException {
+        final DataSource dsSource = GetMysqlConn.getConn(url,username,password);
+        final Db dbUse = DbUtil.use(dsSource);
+        return  dbUse.query("desc " + tableName);
+    }
+
     public static String getSchema4Order(Db dbUse, final String tableName) throws SQLException {
         final List<Entity> query = dbUse.query("desc " + tableName);
         String str = "id";

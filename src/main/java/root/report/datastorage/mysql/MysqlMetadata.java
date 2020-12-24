@@ -46,12 +46,12 @@ public class MysqlMetadata extends RO
         try
         {
             dom = XmlUtil.parseXmlToDom(new FileInputStream(DB_CONFIG_PATH));
-        } 
+        }
         catch (Exception e)
         {
             log.error("解析DBConfig.xml异常!");
             e.printStackTrace();
-        } 
+        }
         Node node = dom.selectSingleNode("/DBConnection/DB[name='"+name+"']");
         if(node!=null)
         {
@@ -64,7 +64,7 @@ public class MysqlMetadata extends RO
             obj.put("maxPoolSize", node.selectSingleNode("maxPoolSize").getText());
             obj.put("minPoolSize", node.selectSingleNode("minPoolSize").getText());
         }
-        
+
         return obj.toJSONString();
     }
 */
@@ -424,6 +424,9 @@ public class MysqlMetadata extends RO
         msg.put("structure", e.getFieldNames());
         return msg;
     }
+
+
+
 
     @RequestMapping(value = "/getTableNamesByCatalog", produces = "text/plain;charset=UTF-8")
     public @ResponseBody
