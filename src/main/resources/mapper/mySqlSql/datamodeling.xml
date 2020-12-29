@@ -58,46 +58,7 @@
         where dashboard_id=#{dashboard_id,jdbcType=INTEGER}
     </update>
 
-    <select id="getDashBoardById" parameterType="int" resultType="Map">
-        select dashboard_id,class_id,dashboard_name,dashboard_desc,tempate,param,icon from dashboard where dashboard_id=#{dashboard_id,jdbcType=INTEGER}
-    </select>
 
-    <select id="getAllDashboard" parameterType="Map" resultType="Map">
-        select dashboard_id,class_id,dashboard_name,dashboard_desc,tempate,param,icon from dashboard where 1=1
-        <if test="dashboard_name != null and dashboard_name!=''">  and dashboard_name like '%${dashboard_name}%' </if>
-    </select>
-
-    <select id="countAllDashboard" resultType="int" parameterType="Map">
-         select count(1) from dashboard where 1=1
-        <if test="dashboard_name != null and dashboard_name!=''">  and dashboard_name like '%${dashboard_name}%' </if>
-    </select>
-
-    <delete id="deleteDashBoardById" parameterType="int">
-        delete from dashboard where dashboard_id=#{dashboard_id,jdbcType=INTEGER}
-    </delete>
-    <select id="getAllDashboardforAuth" parameterType="Map" resultType="Map">
-        select dashboard_id as `key`,dashboard_name as title from dashboard
-    </select>
-
-    <select id="getTableNamesByCatalog" resultType="Map" parameterType="String">
-       select * from da_table where table_catalog = #{catalog}
-    </select>
-
-    <select id="getTableNames" resultType="Map" parameterType="String">
-       select index_name,year,amount  from ${tableName} order  by ${indexName}
-    </select>
-
-    <select id="getIndexName" resultType="Map" parameterType="String">
-       select distinct ${indexName}  from ${tableName}
-    </select>
-
-    <select id="getTreeNode" resultType="Map" parameterType="String">
-       select catalog_id as id,catalog_pid as pid ,table_catalog as name from da_table where catalog_id!=''  and table_catalog!=''
-    </select>
-
-    <select id="tableRecordsNumber" resultType="Map" parameterType="String">
-       select count(1) as recordsnumber  from ${tableName}
-    </select>
 
     <!-- 修改 dashboard 记录 -->
     <update id="modifyDataCount"  parameterType="Map">
@@ -108,24 +69,130 @@
 
         where table_name=#{tableName,jdbcType=VARCHAR} and host_id=#{dbName,jdbcType=VARCHAR}
     </update>
+
     <select id="statisticsRecordsNumberByCatalog" resultType="Map" parameterType="Map">
            SELECT SUM(data_count) as totalnum FROM bd_table
             where catalog_id=#{catalog,jdbcType=INTEGER}
     </select>
+
     <select id="statisticsRecordsNumberByDataBaseName" resultType="Map" parameterType="String">
            SELECT SUM(data_count) as totalnum FROM bd_table
             where dbtype_id=#{dbType,jdbcType=VARCHAR} and host_id=#{dbName,jdbcType=VARCHAR}
     </select>
+
     <select id="statisticsRecordsNumberByDataBaseType" resultType="Map" parameterType="String">
            SELECT SUM(data_count) as totalnum FROM bd_table
             where dbtype_id=#{dbType,jdbcType=VARCHAR}
     </select>
+
     <select id="statisticsAllRecordsNumber" resultType="Map" parameterType="String">
            SELECT SUM(data_count) as totalnum FROM bd_table
     </select>
 
-
     <select id="getjdbcurl" resultType="Map" parameterType="Map">
        select *  from bd_datasource
     </select>
+
+    <update id="createNewTable" parameterType="Map">
+        CREATE TABLE ${tableName} (
+          id bigint(20) NOT NULL AUTO_INCREMENT,
+          entityId bigint(20) NOT NULL,
+          dx double NOT NULL,
+          dy double NOT NULL,
+          dz double NOT NULL,
+          ntype varchar(32) NOT NULL,
+          gnssTime bigint(20) NOT NULL,
+          speed float DEFAULT NULL,
+          direction float DEFAULT NULL,
+          attributes varchar(255) DEFAULT NULL,
+          PRIMARY KEY (id))
+    </update>
+
+    <update id="createNewTable2" parameterType="Map">
+        CREATE TABLE ${tableName} (
+          ${tableSql}
+        )
+    </update>
+
+    <!-- 增加 bd_table中的记录，让此SQL能返回自增长主键 -->
+    <insert id="insertBdtableTable" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
+        insert into bd_table(table_id,table_name,table_desc,catalog_id,dbtype_id,source_id,host_id,url,data_count,create_date,create_by,update_date,update_by,data_update_date)
+        values ('${table_id}',
+        <if test="table_name == null">NULL</if>
+        <if test="table_name != null">'${table_name}'</if>,
+        <if test="table_desc == null">NULL</if>
+        <if test="table_desc != null">'${table_desc}'</if>,
+        <if test="catalog_id == null">NULL</if>
+        <if test="catalog_id != null">'${catalog_id}'</if>,
+        <if test="dbtype_id == null">NULL</if>
+        <if test="dbtype_id != null">'${dbtype_id}'</if>,
+        <if test="source_id == null">NULL</if>
+        <if test="source_id != null">'${source_id}'</if>,
+        <if test="host_id == null">NULL</if>
+        <if test="host_id != null">'${host_id}'</if>,
+        <if test="url == null">NULL</if>
+        <if test="url != null">'${url}'</if>,
+        <if test="data_count == null">NULL</if>
+        <if test="data_count != null">'${data_count}'</if>,
+        <if test="create_date == null">NULL</if>
+        <if test="create_date != null">str_to_date(#{create_date},'%Y-%m-%d %H:%i:%s')</if>,
+        <if test="create_by == null">NULL</if>
+        <if test="create_by != null">'${create_by}'</if>,
+        <if test="update_date == null">NULL</if>
+        <if test="update_date != null">str_to_date(#{update_date},'%Y-%m-%d %H:%i:%s')</if>,
+        <if test="update_by == null">NULL</if>
+        <if test="update_by != null">'${update_by}'</if>,
+        <if test="data_update_date == null">NULL</if>
+        <if test="data_update_date != null">str_to_date(#{data_update_date},'%Y-%m-%d %H:%i:%s')</if>
+        )
+    </insert>
+
+    <!-- 增加 bd_column2 中的记录，让此SQL能返回自增长主键 -->
+    <insert id="insertBdcolumnTable" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
+        insert into bd_column2(column_id,model_id,table_id,column_name,column_type,create_date)
+        values ('${column_id}',
+        <if test="model_id == null">NULL</if>
+        <if test="model_id != null">'${model_id}'</if>,
+        <if test="table_id == null">NULL</if>
+        <if test="table_id != null">'${table_id}'</if>,
+        <if test="column_name == null">NULL</if>
+        <if test="column_name != null">'${column_name}'</if>,
+        <if test="column_type == null">NULL</if>
+        <if test="column_type != null">'${column_type}'</if>,
+
+        <if test="create_date == null">NULL</if>
+        <if test="create_date != null">str_to_date(#{create_date},'%Y-%m-%d %H:%i:%s')</if>
+
+        )
+    </insert>
+
+    <!-- 增加 bd_column3 ()中的记录，让此SQL能返回自增长主键 -->
+    <insert id="insertBdcolumnTable3" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
+        insert into bd_column3(column_id,model_id,table_name,db_name,column_name,column_type,create_date)
+        values ('${column_id}',
+        <if test="model_id == null">NULL</if>
+        <if test="model_id != null">'${model_id}'</if>,
+        <if test="table_name == null">NULL</if>
+        <if test="table_name != null">'${table_name}'</if>,
+        <if test="db_name == null">NULL</if>
+        <if test="db_name != null">'${db_name}'</if>,
+        <if test="column_name == null">NULL</if>
+        <if test="column_name != null">'${column_name}'</if>,
+        <if test="column_type == null">NULL</if>
+        <if test="column_type != null">'${column_type}'</if>,
+
+        <if test="create_date == null">NULL</if>
+        <if test="create_date != null">str_to_date(#{create_date},'%Y-%m-%d %H:%i:%s')</if>
+
+        )
+    </insert>
+
+
+
+
+    <select id="bloodlationshipAnalysisDisplay" resultType="Map" parameterType="Map">
+           select a.column_id,a.model_id,a.table_id ,a.column_name ,a.column_type,b.table_name   from bd_column2  as a join  bd_table  as b on a.table_id =b.table_id
+            where model_id=#{modelId,jdbcType=INTEGER}
+    </select>
+
 </mapper>

@@ -69,8 +69,8 @@ public class DataModeling extends RO
     /**
      * 获取数据库下所有表
      * */
-    @RequestMapping(value = "/getTableNamesByDbname", method = RequestMethod.POST)
-    public String  getTablesV3(@RequestBody JSONObject pJson) throws SQLException {
+    @RequestMapping(value = "/getTableNamesByDbname", produces = "text/plain;charset=UTF-8")
+    public List<String>  getTableNamesByDbname(@RequestBody JSONObject pJson) throws SQLException {
         final String url= pJson.getString("url");
         final String user= pJson.getString("user");
         final String password= pJson.getString("password");
@@ -85,9 +85,10 @@ public class DataModeling extends RO
             String jdbc = url.substring(0, url.lastIndexOf("/")+1);
             jdbcUrl =jdbc + dbName;
         }
-        final List<String> list = DbManagerHutool.getTableNameNew(jdbcUrl,user,password);
+        List<String> list = new ArrayList<>();
+        list = DbManagerHutool.getTableNameNew(jdbcUrl,user,password);
 
-        return list.toString();
+        return list;
     }
     /**
      * 获取表结构
@@ -100,10 +101,190 @@ public class DataModeling extends RO
         final String  dbName= pJson.getString("dbName");
         final String tableName= pJson.getString("tableName");
         JSONArray fields = DbManagerHutool.getTableInfoVer4(url, username,password,dbName,tableName);
-
 //        JSONObject msg = new JSONObject();
 //        msg.put("structure", e);
         return fields.toString();
     }
+
+
+    @RequestMapping(value="/createNewTable",produces = "text/plain;charset=UTF-8")
+    public String createNewTable(@RequestBody JSONObject pJson)  {
+        String tableName = pJson.getString("tableName");
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+       DbFactory.Open("form").selectList("datamodeling.createNewTable",map);
+        return "";
+    }
+
+
+    @RequestMapping(value="/createNewTable2",produces = "text/plain;charset=UTF-8")
+    public String createNewTable2(@RequestBody JSONObject pJson)  {
+        String tableName = pJson.getString("tableName");
+        String tableFields = pJson.getString("tableFields");
+
+        String leftTableFields = pJson.getString("leftTableFields");
+
+        JSONArray tableFieldsArray=JSONArray.parseArray(tableFields);
+        JSONArray leftTableFieldsArray=JSONArray.parseArray(leftTableFields);
+
+
+
+        long tableId =IDUtil.getId();
+        long modelId =IDUtil.getId();
+        insertBdtableTable(tableName,tableId);
+//        insertBdcolumnTable3( column_name,column_type,modelId,tableName, dbName);
+
+        //构建表语句
+        StringBuffer tableSql=new StringBuffer();
+
+        for(int i=0;i<tableFieldsArray.size();i++){
+              JSONObject obj= (JSONObject) tableFieldsArray.get(i);
+              String field=obj.get("fieldName").toString();
+              String fieldtype=obj.get("fieldType").toString();
+              tableSql.append(field);
+              tableSql.append(" ");
+              tableSql.append(fieldtype);
+              tableSql.append(",");
+              insertBdcolumnTable(field,fieldtype,modelId,tableId);
+        }
+        tableSql.deleteCharAt(tableSql.length()-1);
+        String aa =  tableSql.toString();
+
+        for(int i=0;i<leftTableFieldsArray.size();i++){
+            JSONObject obj= (JSONObject) leftTableFieldsArray.get(i);
+            String field=obj.get("fieldName").toString();
+            String fieldtype=obj.get("fieldType").toString();
+            String dbName=obj.get("dbName").toString();
+            String leftTableName=obj.get("leftTableName").toString();
+            insertBdcolumnTable3( field,fieldtype,modelId,leftTableName, dbName);
+
+        }
+
+
+
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        map.put("tableSql", tableSql.toString());
+        DbFactory.Open("form").selectList("datamodeling.createNewTable2",map);
+        DbFactory.close(DbFactory.FORM);
+        return "";
+    }
+
+
+    /*
+    *
+    * */
+    @RequestMapping(value = "/insertBdcolumnTable", produces = "text/plain; charset=utf-8")
+    public String insertBdcolumnTable(final String column_name,final String column_type,final long modelId,final long tableId)
+    {
+        java.util.Date date=new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str = sdf.format(date);
+        JSONObject obj = new JSONObject();
+        try{
+            long column_id =IDUtil.getId();
+            Map param = new HashMap<>();
+            param.put("column_id", column_id);
+            param.put("model_id", modelId);
+            param.put("table_id", tableId);
+            param.put("column_name", column_name);
+            param.put("column_type", column_type);
+            param.put("create_date", str);
+            DbFactory.Open(DbFactory.FORM).insert("datamodeling.insertBdcolumnTable",param);
+            obj.put("result", "success");
+            DbFactory.close(DbFactory.FORM);
+        }catch(Exception e){
+            log.error("表信息插入元数据表失败!");
+            obj.put("result", "error");
+            obj.put("errMsg", "表信息插入元数据表失败!");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(obj);
+    }
+    /*
+    * 左侧选择数据源，选择表，选择的字段
+    * */
+    @RequestMapping(value = "/insertBdcolumnTable3", produces = "text/plain; charset=utf-8")
+    public String insertBdcolumnTable3(final String column_name,final String column_type,final long modelId,final String tableName,final String dbName)
+    {
+        java.util.Date date=new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str = sdf.format(date);
+        JSONObject obj = new JSONObject();
+        try{
+            long column_id =IDUtil.getId();
+            Map param = new HashMap<>();
+            param.put("column_id", column_id);
+            param.put("model_id", modelId);
+            param.put("table_name", tableName);
+            param.put("db_name", dbName);
+            param.put("column_name", column_name);
+            param.put("column_type", column_type);
+            param.put("create_date", str);
+            DbFactory.Open(DbFactory.FORM).insert("datamodeling.insertBdcolumnTable3",param);
+            obj.put("result", "success");
+            DbFactory.close(DbFactory.FORM);
+        }catch(Exception e){
+            log.error("表信息插入元数据表失败!");
+            obj.put("result", "error");
+            obj.put("errMsg", "表信息插入元数据表失败!");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(obj);
+    }
+
+    @RequestMapping(value = "/insertBdtableTable", produces = "text/plain; charset=utf-8")
+    public String insertBdtableTable(final String tableName,final long tableId)
+    {
+        java.util.Date date=new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String str = sdf.format(date);
+        JSONObject obj = new JSONObject();
+        try{
+//            long id =IDUtil.getId();
+            Map param = new HashMap<>();
+            param.put("table_id", tableId);
+            param.put("table_name", tableName);
+            param.put("table_desc", "todo");
+            param.put("catalog_id", 1);
+            param.put("dbtype_id", "mysql");
+            param.put("source_id", "内部数据");
+            param.put("host_id", "form");
+
+            param.put("url", "url");
+            param.put("data_count", "data_count");
+
+            param.put("create_date", str);
+
+            param.put("create_by", "lee");
+            param.put("update_date", str);
+            param.put("update_by", "update_by");
+            param.put("data_update_date", str);
+
+            DbFactory.Open(DbFactory.FORM).insert("mysqlmetadata.insertMysqlMetadata",param);
+            obj.put("result", "success");
+            DbFactory.close(DbFactory.FORM);
+        }catch(Exception e){
+            log.error("表信息插入元数据表失败!");
+            obj.put("result", "error");
+            obj.put("errMsg", "表信息插入元数据表失败!");
+            e.printStackTrace();
+        }
+        return JSON.toJSONString(obj);
+    }
+
+    /**
+     * 获取表结构
+     * */
+    @RequestMapping(value = "/bloodlationshipAnalysisDisplay", method = RequestMethod.POST)
+    public String bloodlationshipAnalysisDisplay(@RequestBody JSONObject pJson) throws SQLException {
+        final String modelId= pJson.getString("modelId");
+        Map param = new HashMap<>();
+        param.put("modelId", modelId);
+        List<Map> tableList = DbFactory.Open("form").selectList("datamodeling.bloodlationshipAnalysisDisplay",param);
+        return JSON.toJSONString(tableList);
+    }
+
+
 
 }
