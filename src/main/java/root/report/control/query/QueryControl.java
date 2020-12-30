@@ -12,10 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
 import root.configure.AppConstants;
 import root.report.common.RO;
@@ -47,6 +44,21 @@ public class QueryControl extends RO {
         try {
             listFunc = queryService.getAllQueryName();
             return SuccessMsg("", listFunc);
+        } catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+
+    @RequestMapping(value = "/getAllQueryNamePage", produces = "text/plain;charset=UTF-8")
+    public String getAllQueryNamePage(@RequestBody String pJson) {
+        try {
+            JSONObject jsonFunc = JSONObject.parseObject(pJson);
+            Map<String,String> map=new HashMap();
+            map.put("startIndex",jsonFunc.getString("startIndex"));
+            map.put("perPage",jsonFunc.getString("perPage"));
+            map.put("searchKeyword",jsonFunc.get("searchKeyword")==null?"":jsonFunc.get("searchKeyword").toString());
+            Map<String,Object> map1 = queryService.getAllQueryNamePage(map);
+            return SuccessMsg("", map1);
         } catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
