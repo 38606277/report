@@ -71,7 +71,7 @@ public class MenuController extends RO {
 
 
      //返回数据
-    @RequestMapping(value = "/getMenuByID/{func_id}", produces = "text/plain;charset=UTF-8")
+    @RequestMapping(value = "/getMenuByID", produces = "text/plain;charset=UTF-8")
     public String getMenuByID(@RequestBody String pjson) {
         JSONObject obj=JSON.parseObject(pjson);
         try{
@@ -87,8 +87,8 @@ public class MenuController extends RO {
 
 
     // 从json数据当中解析 ，批量删除
-    @RequestMapping(value = "/deleteMenu", produces = "text/plain;charset=UTF-8")
-    public String deleteMenu(@RequestBody String pJson) throws SQLException {
+    @RequestMapping(value = "/deleteMenuById", produces = "text/plain;charset=UTF-8")
+    public String deleteMenuById(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
