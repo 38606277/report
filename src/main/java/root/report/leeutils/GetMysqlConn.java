@@ -27,7 +27,19 @@ public class GetMysqlConn {
         final Map<String, String> configMap = readString("getMysqlConn", dbConnName);
         return new SimpleDataSource(configMap.get("url"),configMap.get("username"),configMap.get("password"));
     }
-
+    /**
+     * 获取连接
+     * @param url
+     * @param username
+     * @param password
+     * @return
+     * @throws SQLException
+     * @author Lee
+     */
+    public static DataSource getConn(final String url,final String username,final String password) throws SQLException {
+        //具体的配置参数请参阅Druid官方文档
+        return new SimpleDataSource(url,username,password);
+    }
 
     public static DataSource getConn(final String sourceName, final String dbConnName) throws SQLException {
         //具体的配置参数请参阅Druid官方文档
