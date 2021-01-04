@@ -806,6 +806,35 @@ public class QueryService {
         return resultList;
     }
 
+
+    public Map<String,Object> getAllQueryNamePage(Map<String,String> map) {
+        SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
+        RowBounds bounds = null;
+        if(map==null){
+            bounds = RowBounds.DEFAULT;
+        }else{
+            Integer startIndex = Integer.parseInt(map.get("startIndex").toString());
+            Integer perPage = Integer.parseInt(map.get("perPage"));
+            if(startIndex==1 || startIndex==0){
+                startIndex=0;
+            }else{
+                startIndex=(startIndex-1)*perPage;
+            }
+            bounds = new PageRowBounds(startIndex, perPage);
+        }
+        List<Map<String, Object>> resultList = sqlSession.selectList("query.getAllQueryNamePage",map,bounds);
+        Long totalSize = 0L;
+        if(map!=null && map.size()!=0){
+            totalSize = ((PageRowBounds)bounds).getTotal();
+        }else{
+            totalSize = Long.valueOf(resultList.size());
+        }
+        Map<String,Object> map1=new HashMap<>();
+        map1.put("listFunc",resultList);
+        map1.put("total",totalSize);
+        return map1;
+    }
+
     // 取函数类别
     public List<Map<String, String>> getAllQueryClass(SqlSession sqlSession) {
         return sqlSession.selectList("query.getAllQueryClass");
