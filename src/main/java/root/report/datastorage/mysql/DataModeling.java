@@ -121,22 +121,15 @@ public class DataModeling extends RO
     public String createNewTable2(@RequestBody JSONObject pJson)  {
         String tableName = pJson.getString("tableName");
         String tableFields = pJson.getString("tableFields");
-
         String leftTableFields = pJson.getString("leftTableFields");
-
         JSONArray tableFieldsArray=JSONArray.parseArray(tableFields);
         JSONArray leftTableFieldsArray=JSONArray.parseArray(leftTableFields);
-
-
-
         long tableId =IDUtil.getId();
         long modelId =IDUtil.getId();
         insertBdtableTable(tableName,tableId);
 //        insertBdcolumnTable3( column_name,column_type,modelId,tableName, dbName);
-
         //构建表语句
         StringBuffer tableSql=new StringBuffer();
-
         for(int i=0;i<tableFieldsArray.size();i++){
               JSONObject obj= (JSONObject) tableFieldsArray.get(i);
               String field=obj.get("fieldName").toString();
@@ -159,8 +152,6 @@ public class DataModeling extends RO
             insertBdcolumnTable3( field,fieldtype,modelId,leftTableName, dbName);
 
         }
-
-
 
         Map<String,String> map = new HashMap<String,String>();
         map.put("tableName", tableName);
@@ -281,10 +272,72 @@ public class DataModeling extends RO
         final String modelId= pJson.getString("modelId");
         Map param = new HashMap<>();
         param.put("modelId", modelId);
-        List<Map> tableList = DbFactory.Open("form").selectList("datamodeling.bloodlationshipAnalysisDisplay",param);
+        List<Map> tableList = DbFactory.Open("form").selectList("datamodeling.bloodlationshipAnalysisDisplay2",param);
         return JSON.toJSONString(tableList);
     }
 
 
+    @RequestMapping(value="/createHiveTable",produces = "text/plain;charset=UTF-8")
+    public String createHiveTable(@RequestBody JSONObject pJson)  {
+        String tableName = pJson.getString("tableName");
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        DbFactory.Open("hive").selectList("datamodeling.createHiveTable",map);
+        return "";
+    }
 
+    @RequestMapping(value="/createHiveTable",produces = "text/plain;charset=UTF-8")
+    public String createHiveTable2(@RequestBody JSONObject pJson)  {
+        String tableName = pJson.getString("tableName");
+        String tableFields = pJson.getString("tableFields");
+
+        JSONArray tableFieldsArray=JSONArray.parseArray(tableFields);
+
+        long tableId =IDUtil.getId();
+        long modelId =IDUtil.getId();
+
+        //构建表语句
+        StringBuffer tableSql=new StringBuffer();
+        tableSql.append("CREATE external TABLE IF NOT EXISTS  ");
+        tableSql.append("  ");
+        tableSql.append(tableName);
+
+        tableSql.append("  (");
+        for(int i=0;i<tableFieldsArray.size();i++){
+            JSONObject obj= (JSONObject) tableFieldsArray.get(i);
+            String field=obj.get("fieldName").toString();
+            String fieldtype=obj.get("fieldType").toString();
+            tableSql.append(field);
+            tableSql.append(" ");
+            tableSql.append(fieldtype);
+            tableSql.append(",");
+
+        }
+        tableSql.deleteCharAt(tableSql.length()-1);
+        tableSql.append("  )");
+
+        tableSql.append(" ROW FORMAT   ");
+        tableSql.append("  DELIMITED FIELDS TERMINATED BY ','");
+        tableSql.append("  STORED AS TEXTFILE ");
+
+        String aa =  tableSql.toString();
+
+        Map<String,String> map = new HashMap<String,String>();
+
+        map.put("tableSql", tableSql.toString());
+        DbFactory.Open("hive").selectList("datamodeling.createHiveTable2",map);
+        DbFactory.close("hive");
+        return  tableSql.toString();
+    }
+
+
+    @RequestMapping(value="/createHbaseTable",produces = "text/plain;charset=UTF-8")
+    public String createHbaseTable(@RequestBody JSONObject pJson)  {
+        String tableName = pJson.getString("tableName");
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        DbFactory.Open("hbase").selectList("datamodeling.createHiveTable",map);
+        DbFactory.close("hbase");
+        return "";
+    }
 }

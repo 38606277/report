@@ -195,4 +195,34 @@
             where model_id=#{modelId,jdbcType=INTEGER}
     </select>
 
+    <select id="bloodlationshipAnalysisDisplay2" resultType="Map" parameterType="Map">
+           select a.column_id,a.model_id,a.column_name ,a.column_type,b.table_name
+           from bd_column2  as a
+           join  bd_table  as b on a.table_id =b.table_id
+           WHERE a.model_id=#{modelId,jdbcType=INTEGER}
+           UNION
+           select c.column_id,c.model_id, c.column_name ,c.column_type,c.table_name
+           from bd_column3  as c
+          WHERE c.model_id=#{modelId,jdbcType=INTEGER}
+
+    </select>
+
+    <update id="createHiveTable" parameterType="Map">
+           CREATE external TABLE IF NOT EXISTS lee20210109
+           (id int,name string,age int) ROW FORMAT
+           DELIMITED FIELDS TERMINATED BY ','
+            STORED AS TEXTFILE
+    </update>
+
+    <update id="createHiveTable2" parameterType="Map">
+           ${tableSql}
+    </update>
+
+    <update id="createHbaseTable" parameterType="Map">
+           ${tableSql}
+    </update>
+
+    <update id="createHbaseTable2" parameterType="Map">
+           ${tableSql}
+    </update>
 </mapper>
