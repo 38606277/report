@@ -29,7 +29,9 @@ public class ModelController extends RO {
             Map<String,String> map=new HashMap();
             map.put("startIndex",pJson.getString("startIndex"));
             map.put("perPage",pJson.getString("perPage"));
-            map.put("func_name",pJson.get("searchKeyword")==null?"":pJson.get("searchKeyword").toString());
+            map.put("model_name",pJson.get("model_name")==null?"":pJson.get("model_name").toString());
+            map.put("db_source",pJson.get("db_source")==null?"":pJson.get("db_source").toString());
+            map.put("db_type",pJson.get("db_type")==null?"":pJson.get("db_type").toString());
             Map<String,Object> resultMap = modelService.getListPage(map);
             return SuccessMsg("", resultMap);
         } catch (Exception ex){

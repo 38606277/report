@@ -29,10 +29,10 @@
 			and  bd.model_name like '%${model_name}%'
 		</if>
 		<if  test="db_source != null and db_source!='' ">
-			and  bd.db_source like '%${db_source}%'
+			and  bd.db_source ='${db_source}'
 		</if>
 		<if  test="db_type != null and db_type!='' ">
-			and  bd.db_type like '%${db_type}%'
+			and  bd.db_type = '${db_type}'
 		</if>
     </select>
 
