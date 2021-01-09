@@ -6,7 +6,9 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import root.form.user.UserModel;
 import root.report.db.DbFactory;
+import root.report.sys.SysContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -54,13 +56,14 @@ public class ModelService {
      * 功能描述: 根据JSON数据解析 对应数据，生成func_dict记录
      */
     public String saveOrUpdateBdModel(SqlSession sqlSession,JSONObject jsonObject){
+        UserModel user = SysContext.getRequestUser();
         Map<String,Object> map  = new HashMap<>();
         String id="";
         map.put("model_name",jsonObject.getString("model_name"));
         map.put("db_source",jsonObject.getString("db_source"));
         map.put("db_type",jsonObject.getString("db_type"));
-        map.put("create_by",jsonObject.getString("create_by"));
-        map.put("update_by",jsonObject.getString("update_by"));
+        map.put("create_by",user.getId());
+        map.put("update_by",user.getId());
         if(null==jsonObject.getString("model_id")|| "".equals(jsonObject.getString("model_id"))){
             Integer newId= sqlSession.selectOne("bdmodel.getMaxId");
             newId = newId==null?1:newId;
