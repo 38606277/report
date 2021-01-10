@@ -39,7 +39,7 @@ public class ModelController extends RO {
         }
     }
     @RequestMapping(value = "/getAllList", produces = "text/plain;charset=UTF-8")
-    public String getModelList()  {
+    public String getAllList()  {
         List<Map> list=modelService.getAllList();
         return SuccessMsg("", list);
     }
