@@ -61,9 +61,14 @@ public class ModelController extends RO {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            String id  = this.modelService.saveOrUpdateBdModel(sqlSession,pJson);
-            sqlSession.getConnection().commit();
-            return SuccessMsg("保存成功",id);
+            Map<String,Object> map  = this.modelService.saveOrUpdateBdModel(sqlSession,pJson);
+            if(Boolean.valueOf(map.get("status").toString())){
+                sqlSession.getConnection().commit();
+                return SuccessMsg("保存成功",map.get("info"));
+            }else{
+                return ErrorMsg("保存失败",map.get("info").toString());
+            }
+
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             ex.printStackTrace();
@@ -76,9 +81,13 @@ public class ModelController extends RO {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            String id  = this.modelService.saveOrUpdateBdModel(sqlSession,pJson);
-            sqlSession.getConnection().commit();
-            return SuccessMsg("保存成功",id);
+            Map<String,Object> map  = this.modelService.saveOrUpdateBdModel(sqlSession,pJson);
+            if(Boolean.valueOf(map.get("status").toString())){
+                sqlSession.getConnection().commit();
+                return SuccessMsg("保存成功",map.get("info"));
+            }else{
+                return ErrorMsg("保存失败",map.get("info").toString());
+            }
         }catch (Exception ex){
             sqlSession.getConnection().rollback();
             ex.printStackTrace();

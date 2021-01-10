@@ -55,27 +55,39 @@ public class ModelService {
     /**
      * 功能描述: 根据JSON数据解析 对应数据，生成func_dict记录
      */
-    public String saveOrUpdateBdModel(SqlSession sqlSession,JSONObject jsonObject){
+    public Map saveOrUpdateBdModel(SqlSession sqlSession,JSONObject jsonObject){
         UserModel user = SysContext.getRequestUser();
+        Map<String,Object> resultMap  = new HashMap<>();
+        resultMap.put("status",true);
         Map<String,Object> map  = new HashMap<>();
         String id="";
         map.put("model_name",jsonObject.getString("model_name"));
-        map.put("db_source",jsonObject.getString("db_source"));
-        map.put("db_type",jsonObject.getString("db_type"));
-        map.put("create_by",user.getId());
-        map.put("update_by",user.getId());
-        if(null==jsonObject.getString("model_id")|| "".equals(jsonObject.getString("model_id"))){
-            Integer newId= sqlSession.selectOne("bdmodel.getMaxId");
-            newId = newId==null?1:newId;
-            map.put("model_id",newId);
-            sqlSession.insert("bdmodel.createbdmodel",map);
-            id=String.valueOf(map.get("id"));
+        map.put("model_id",jsonObject.getString("model_id"));
+        Integer count = sqlSession.selectOne("bdmodel.count",map);
+        if(count==0) {
+            map.put("db_source", jsonObject.getString("db_source"));
+            map.put("db_type", jsonObject.getString("db_type"));
+            map.put("create_by", user.getId());
+            map.put("update_by", user.getId());
+            if (null == jsonObject.getString("model_id") || "".equals(jsonObject.getString("model_id"))) {
+                Integer newId = sqlSession.selectOne("bdmodel.getMaxId");
+                newId = newId == null ? 1 : newId;
+                map.put("model_id", newId);
+                sqlSession.insert("bdmodel.createbdmodel", map);
+                id = String.valueOf(map.get("id"));
+            } else {
+
+                sqlSession.update("bdmodel.updatebdmodel", map);
+                id = jsonObject.getString("model_id");
+            }
+            resultMap.put("info",id);
+            return resultMap;
         }else{
-            map.put("model_id",jsonObject.getString("model_id"));
-            sqlSession.update("bdmodel.updatebdmodel",map);
-            id=jsonObject.getString("model_id");
+            resultMap.put("status",false);
+            resultMap.put("info","模型名称已存在");
+            return resultMap;
         }
-        return id;
+
     }
 
 
