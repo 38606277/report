@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/reportServer/bdModel")
+@RequestMapping("/reportServer/bdModelTableColumn")
 public class ModelTableController extends RO {
     @Autowired
     public ModelTableService modelTableService;
