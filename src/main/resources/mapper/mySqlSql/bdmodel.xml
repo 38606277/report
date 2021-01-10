@@ -41,4 +41,8 @@
         delete from bd_model where model_id=#{model_id}
     </delete>
 
+
+	<select id="getAllList" resultType="Map" >
+		select * from bd_model order by create_date desc
+	</select>
 </mapper>

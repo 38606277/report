@@ -38,7 +38,11 @@ public class ModelController extends RO {
             return ExceptionMsg(ex.getMessage());
         }
     }
-
+    @RequestMapping(value = "/getAllList", produces = "text/plain;charset=UTF-8")
+    public String getModelList()  {
+        List<Map> list=modelService.getAllList();
+        return SuccessMsg("", list);
+    }
 
     @RequestMapping(value = "/getModelById", produces = "text/plain;charset=UTF-8")
     public String getModelById(@RequestBody JSONObject pJson)  {

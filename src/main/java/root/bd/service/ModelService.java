@@ -91,4 +91,7 @@ public class ModelService {
     }
 
 
+    public List<Map> getAllList() {
+        return DbFactory.Open(DbFactory.FORM).selectList("bdmodel.getAllList");
+    }
 }
