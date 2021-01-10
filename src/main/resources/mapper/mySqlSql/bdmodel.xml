@@ -45,4 +45,11 @@
 	<select id="getAllList" resultType="Map" >
 		select * from bd_model order by create_date desc
 	</select>
+
+	<select id="count" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from bd_model where  bd.model_name = '${model_name}'
+		<if  test="model_id != null and model_id!='' ">
+			and  bd.model_id !='${model_id}'
+		</if>
+	</select>
 </mapper>
