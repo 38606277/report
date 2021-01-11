@@ -92,7 +92,11 @@ public class ModelTableService {
              * 保存外键
              * table_fk
              * */
-            //insertForeignKeyListItem(sqlSession,foreignKeyList,colId,tableId);
+            JSONArray linkList = jsonObject.getJSONArray(jsonObject.getString("linkList"));
+            Integer linkId= sqlSession.selectOne("dbTableColumn.getLinkMaxId");
+            linkId = linkId==null?1:linkId;
+            String tableName=map.get("table_name").toString();
+            insertLinkListItem(sqlSession,linkList,linkId,tableId,tableName);
             /**
              * 保存触发器
              *table_target
@@ -167,24 +171,23 @@ public class ModelTableService {
     /**
      * 保存外键
      * */
-    public Integer insertForeignKeyListItem (SqlSession sqlSession,JSONArray columnList,Integer colId,Integer tableId) {
-        if (columnList.isEmpty()) {
-            return colId;
+    public Integer insertLinkListItem (SqlSession sqlSession,JSONArray linkList,Integer linkId,Integer tableId,String tableName) {
+        if (linkList.isEmpty()) {
+            return linkId;
         }
-        for (int i = 0; i < columnList.size(); i++) {
-            colId++;
-            JSONObject obj = columnList.getJSONObject(i);
+        for (int i = 0; i < linkList.size(); i++) {
+            linkId++;
+            JSONObject obj = linkList.getJSONObject(i);
             Map mapVal=new HashMap();
-            mapVal.put("id",colId);
+            mapVal.put("id",linkId);
             mapVal.put("table_id",tableId);
+            mapVal.put("table_name",tableName);
             mapVal.put("column_name",obj.getString("column_name"));
-            mapVal.put("column_code",obj.getString("column_code"));
-            mapVal.put("column_type",obj.getString("column_type"));
-            mapVal.put("column_source",obj.getString("column_source"));
-            mapVal.put("column_desc",obj.getString("column_desc"));
-            sqlSession.insert("dbTableColumn.createTableColumn",mapVal);
+            mapVal.put("link_table_name",obj.getString("link_table_name"));
+            mapVal.put("link_column_name",obj.getString("link_column_name"));
+            sqlSession.insert("dbTableColumn.createTableLink",mapVal);
         }
-        return colId;
+        return linkId;
     }
 
     // 功能描述: 根据 dict_id 和 out_id 批量删除 func_dict的信息
@@ -193,7 +196,7 @@ public class ModelTableService {
             map.put("model_id",model_id);
             sqlSession.delete("bdmodelTable.deleteBdModelTableByTableIdOrModelId",map);
 
-            
+
 
     }
 
@@ -211,6 +214,13 @@ public class ModelTableService {
     }
 
     public Map getModelTableById(JSONObject pJson) {
-        return  DbFactory.Open(DbFactory.FORM).selectOne("bdTableColumn.getBdTableById",pJson);
+        Map resMap=new HashMap();
+        Map  table=DbFactory.Open(DbFactory.FORM).selectOne("bdTableColumn.getBdTableById",pJson);
+        List<Map> columnList=DbFactory.Open(DbFactory.FORM).selectList("bdTableColumn.getBdTableColumnByTabId",pJson);
+        List<Map> linkList=DbFactory.Open(DbFactory.FORM).selectList("bdTableColumn.getBdTableLinkByTabId",pJson);
+        resMap.put("table",table);
+        resMap.put("column",columnList);
+        resMap.put("tableLink",linkList);
+        return resMap;
     }
 }
