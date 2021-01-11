@@ -23,19 +23,6 @@
         SELECT bd.* FROM bd_table bd where bd.table_id = #{table_id}
     </select>
 
-    <select id="getListPage" resultType="Map" parameterType="Map">
-        SELECT bd.*  FROM bd_table bd  where  1=1
-		<if  test="table_name != null and table_name!='' ">
-			and  bd.table_name like '%${table_name}%'
-		</if>
-		<if  test="table_title != null and table_title!='' ">
-			and  bd.table_title ='${table_title}'
-		</if>
-		<if  test="model_id != null and model_id!='' ">
-			and  bd.model_id = '${model_id}'
-		</if>
-    </select>
-
 	<!-- 根据model_id 删除表相关信息  -->
 	<delete id="deleteBdTableByID" parameterType="Map">
         delete from bd_table where table_id=#{table_id}
@@ -57,5 +44,19 @@
 		</if>
 	</delete>
 
+
+
+	<select id="getListPage" resultType="Map" parameterType="Map">
+		select bt.* from  bd_model_table bmt INNER JOIN bd_table bt on bmt.table_id=bt.table_id where 1=1
+		<if  test="table_name != null and table_name!='' ">
+			and  bmt.table_name like '%${table_name}%'
+		</if>
+		<if  test="table_title != null and table_title!='' ">
+			and  bmt.table_title ='${table_title}'
+		</if>
+		<if  test="model_id != null and model_id!='' ">
+			and  bt.model_id = '${model_id}'
+		</if>
+	</select>
 
 </mapper>

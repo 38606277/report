@@ -28,9 +28,9 @@ public class ModelTableController extends RO {
             Map<String,String> map=new HashMap();
             map.put("startIndex",pJson.getString("startIndex"));
             map.put("perPage",pJson.getString("perPage"));
-            map.put("model_name",pJson.get("model_name")==null?"":pJson.get("model_name").toString());
-            map.put("db_source",pJson.get("db_source")==null?"":pJson.get("db_source").toString());
-            map.put("db_type",pJson.get("db_type")==null?"":pJson.get("db_type").toString());
+            map.put("table_name",pJson.get("table_name")==null?"":pJson.get("table_name").toString());
+            map.put("table_title",pJson.get("table_title")==null?"":pJson.get("table_title").toString());
+            map.put("model_id",pJson.get("model_id")==null?"":pJson.get("model_id").toString());
             Map<String,Object> resultMap = modelTableService.getListPage(map);
             return SuccessMsg("", resultMap);
         } catch (Exception ex){

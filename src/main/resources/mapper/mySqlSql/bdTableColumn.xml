@@ -19,7 +19,7 @@
         SELECT (MAX(id) +1)as id from bd_table_column
     </select>
 
-	<select id="getBdTableById" parameterType="java.lang.Integer" resultType="map">
+	<select id="getBdTableById" parameterType="map" resultType="map">
         SELECT bd.* FROM bd_table bd where bd.table_id = #{table_id}
     </select>
 

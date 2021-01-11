@@ -37,7 +37,7 @@ public class ModelTableService {
                 }
                 bounds = new PageRowBounds(startIndex, perPage);
             }
-            List<Map<String, Object>> resultList = sqlSession.selectList("dbmodelTable.getListPage", map, bounds);
+            List<Map<String, Object>> resultList = sqlSession.selectList("bdmodelTable.getListPage", map, bounds);
             Long totalSize = 0L;
             if (map != null && map.size() != 0) {
                 totalSize = ((PageRowBounds) bounds).getTotal();
@@ -67,14 +67,14 @@ public class ModelTableService {
         map.put("update_by",user.getId());
         if(null==jsonObject.getString("table_id")|| "".equals(jsonObject.getString("table_id"))){
             map.put("create_by",user.getId());
-            Integer tableId= sqlSession.selectOne("dbmodelTable.getMaxId");
+            Integer tableId= sqlSession.selectOne("bdmodelTable.getMaxId");
             tableId = tableId==null?1:tableId;
             map.put("table_id",tableId);
-            sqlSession.insert("dbmodelTable.createBdTable",map);
+            sqlSession.insert("bdmodelTable.createBdTable",map);
             Map modelTable =new HashMap();
             modelTable.put("model_id",jsonObject.getString("model_id"));
             modelTable.put("table_id",tableId);
-            sqlSession.insert("dbmodelTable.createBdModelTable",modelTable);
+            sqlSession.insert("bdmodelTable.createBdModelTable",modelTable);
             id=String.valueOf(map.get("table_id"));
             /**
              * 保存字段列
@@ -112,7 +112,7 @@ public class ModelTableService {
 
         }else{
             map.put("table_id",jsonObject.getString("table_id"));
-            sqlSession.update("dbmodelTable.updateBdTable",map);
+            sqlSession.update("bdmodelTable.updateBdTable",map);
             id=jsonObject.getString("table_id");
 
 
@@ -191,23 +191,26 @@ public class ModelTableService {
     public void deletedbmodelTableById(SqlSession sqlSession,int model_id){
             Map<String,Object> map=new HashMap();
             map.put("model_id",model_id);
-            sqlSession.delete("dbmodelTable.deletedbmodelTableByID",map);
+            sqlSession.delete("bdmodelTable.deleteBdModelTableByTableIdOrModelId",map);
+
+            
+
     }
 
     public Map getdbmodelTableByID(Map m) {
-        return DbFactory.Open(DbFactory.FORM).selectOne("dbmodelTable.getdbmodelTableById",m);
+        return DbFactory.Open(DbFactory.FORM).selectOne("bdmodelTable.getdbmodelTableById",m);
     }
 
 
     public List<Map> getAllList() {
-        return DbFactory.Open(DbFactory.FORM).selectList("dbmodelTable.getAllList");
+        return DbFactory.Open(DbFactory.FORM).selectList("bdmodelTable.getAllList");
     }
 
     public List<Map> getTableListByModelId(JSONObject pjson) {
-        return DbFactory.Open(DbFactory.FORM).selectList("dbmodelTable.getTableList",pjson);
+        return DbFactory.Open(DbFactory.FORM).selectList("bdmodelTable.getTableList",pjson);
     }
 
     public Map getModelTableById(JSONObject pJson) {
-        return  DbFactory.Open(DbFactory.FORM).selectOne("dbmodelTable.getdbmodelTableById",pJson);
+        return  DbFactory.Open(DbFactory.FORM).selectOne("bdTableColumn.getBdTableById",pJson);
     }
 }
