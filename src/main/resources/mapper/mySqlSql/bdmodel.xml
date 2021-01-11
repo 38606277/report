@@ -19,7 +19,7 @@
         SELECT (MAX(model_id) +1)as model_id from bd_model
     </select>
 
-	<select id="getBdModelById" parameterType="java.lang.Integer" resultType="map">
+	<select id="getBdModelById" parameterType="map" resultType="map">
         SELECT bd.* FROM bd_model bd where bd.model_id = #{model_id}
     </select>
 
