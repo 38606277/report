@@ -19,22 +19,18 @@
         SELECT (MAX(id) +1)as id from bd_table_column
     </select>
 
+	<select id="getLinkMaxId" resultType="java.lang.Integer">
+		SELECT (MAX(id) +1)as id from bd_table_link
+	</select>
+
 	<select id="getBdTableById" parameterType="map" resultType="map">
         SELECT bd.* FROM bd_table bd where bd.table_id = #{table_id}
     </select>
 
-    <select id="getListPage" resultType="Map" parameterType="Map">
-        SELECT bd.*  FROM bd_table bd  where  1=1
-		<if  test="table_name != null and table_name!='' ">
-			and  bd.table_name like '%${table_name}%'
-		</if>
-		<if  test="table_title != null and table_title!='' ">
-			and  bd.table_title ='${table_title}'
-		</if>
-		<if  test="model_id != null and model_id!='' ">
-			and  bd.model_id = '${model_id}'
-		</if>
-    </select>
+	<select id="getBdTableColumnByTabId" parameterType="map" resultType="map">
+		select * from bd_table_column where table_id = #{table_id}
+	</select>
+
 
 	<!-- 根据model_id 删除表相关信息  -->
 	<delete id="deleteBdTableByID" parameterType="Map">
@@ -57,5 +53,21 @@
 		</if>
 	</delete>
 
+	<!-- db_table_link增删改查********************************************************************** -->
+	<!--  创建bd_model信息  -->
+	<insert id="createTableLink" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into bd_table_link(id,table_id,name,table_name,column_name,link_table_name,link_column_name)
+		values (#{id},#{table_id},#{name},#{table_name},#{column_name},#{link_table_name},#{link_column_name})
+	</insert>
+	<!-- 修改 bd_model表的信息 -->
+	<update id="updateTableLink" parameterType="Map">
+		update bd_table_link set name='${name}',table_name='${table_name}',column_name='${column_name}',
+		link_table_name='${link_table_name}',link_column_name='${link_column_name}',
+		where id=#{id,jdbcType=INTEGER}
+	</update>
+
+	<select id="getBdTableLinkByTabId" parameterType="map" resultType="map">
+		select * from bd_table_link where table_id = #{table_id}
+	</select>
 
 </mapper>
