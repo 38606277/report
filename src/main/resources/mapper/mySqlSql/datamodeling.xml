@@ -219,7 +219,13 @@
     </update>
 
     <update id="createHbaseTable" parameterType="Map">
-           ${tableSql}
+         CREATE TABLE IF NOT EXISTS LEE20210108 (
+             HOST CHAR(2) ,
+             DOMAIN VARCHAR ,
+             FEATURE VARCHAR ,
+             DATE DATE
+             CONSTRAINT PK PRIMARY KEY (HOST)
+          )
     </update>
 
     <update id="createHbaseTable2" parameterType="Map">
