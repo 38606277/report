@@ -287,7 +287,7 @@ public class DataModeling extends RO
 //    }
 
     /*
-    * hive数据库中创建表restful
+    * hive数据库中创建表
     * */
     @RequestMapping(value="/createHiveTable",produces = "text/plain;charset=UTF-8")
     public String createHiveTable2(@RequestBody JSONObject pJson)  {
@@ -319,9 +319,15 @@ public class DataModeling extends RO
         String aa =  tableSql.toString();
         Map<String,String> map = new HashMap<String,String>();
         map.put("tableSql", tableSql.toString());
-        DbFactory.Open("hive").selectList("datamodeling.createHiveTable2",map);
-        DbFactory.close("hive");
-        return  tableSql.toString();
+
+        try{
+            DbFactory.Open("hive").selectList("datamodeling.createHiveTable2",map);
+            DbFactory.close("hive");
+            return  tableSql.toString();
+        }catch (Exception e){
+             return "建表失败";
+        }
+
     }
     /*
      * hive数据库中创建表(方法调用)
@@ -352,9 +358,13 @@ public class DataModeling extends RO
         String aa =  tableSql.toString();
         Map<String,String> map = new HashMap<String,String>();
         map.put("tableSql", tableSql.toString());
-        DbFactory.Open("hive").selectList("datamodeling.createHiveTable2",map);
-        DbFactory.close("hive");
-        return  tableSql.toString();
+        try{
+            DbFactory.Open("hive").selectList("datamodeling.createHiveTable2",map);
+            DbFactory.close("hive");
+            return  tableSql.toString();
+        }catch (Exception e){
+            return "建表失败";
+        }
     }
     /*
      * 预览hive数据库中创建表语句
@@ -443,9 +453,14 @@ public class DataModeling extends RO
         Map<String,String> map = new HashMap<String,String>();
 
         map.put("tableSql", tableSql.toString());
-        DbFactory.Open("hbase").selectList("datamodeling.createHbaseTable2",map);
-        DbFactory.close("hbase");
-        return  tableSql.toString();
+        try{
+            DbFactory.Open("hbase").selectList("datamodeling.createHbaseTable2",map);
+            DbFactory.close("hbase");
+            return  tableSql.toString();
+        }catch (Exception e){
+             return "建表失败";
+        }
+
     }
     /*
      * hbase数据库中创建表（方法调用）
@@ -482,9 +497,15 @@ public class DataModeling extends RO
         Map<String,String> map = new HashMap<String,String>();
 
         map.put("tableSql", tableSql.toString());
-        DbFactory.Open("hbase").selectList("datamodeling.createHbaseTable2",map);
-        DbFactory.close("hbase");
-        return  tableSql.toString();
+        try{
+            DbFactory.Open("hbase").selectList("datamodeling.createHbaseTable2",map);
+            DbFactory.close("hbase");
+            return  tableSql.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            return  "建表失败";
+        }
+
     }
     /*
      * 预览hbase数据库中创建表语句
@@ -519,7 +540,6 @@ public class DataModeling extends RO
         tableSql.append(primaryKey);
         tableSql.append("  )");
         tableSql.append("  )");
-//        String aa =  tableSql.toString();
         return  tableSql.toString();
     }
 
