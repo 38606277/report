@@ -7,6 +7,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import root.form.constant.ColumnType;
 import root.form.user.UserModel;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
@@ -66,13 +67,33 @@ public class ModelTableService {
         Integer count = sqlSession.selectOne("bdmodelTable.countTable",map);
         if(count==0) {
             map.put("table_title",jsonObject.getString("table_title"));//注释
-            map.put("table_ddl",jsonObject.getString("table_ddl"));//SQL预览
+
             map.put("update_by",user.getId());
             if (null == jsonObject.getString("table_id") || "".equals(jsonObject.getString("table_id"))) {
                 map.put("create_by", user.getId());
                 Integer tableId = sqlSession.selectOne("bdmodelTable.getMaxId");
                 tableId = tableId == null ? 1 : tableId;
                 map.put("table_id", tableId);
+
+                JSONArray columnList = jsonObject.getJSONArray(jsonObject.getString("columnlist"));
+                StringBuffer sb = new StringBuffer();
+                //sb.append("_id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, ");
+                //拼接建表sql
+                columnList.forEach(col -> {
+                    JSONObject jsonCol = (JSONObject) col;
+                    sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
+                    String length = jsonCol.getString("column_length");
+                    if (null != length && !"".equals(length)) sb.append("(" + length + ")");
+                    String isnull = jsonCol.getString("column_isnull");
+                    if (null != isnull && !"".equals(isnull)){
+                        sb.append(" NOT NULL ");
+                    }else{
+                        sb.append(" NULL ");
+                    }
+                    sb.append(",");
+                });
+                String createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
+                map.put("table_ddl",createSql);//SQL预览
                 sqlSession.insert("bdmodelTable.createBdTable", map);
                 Map modelTable = new HashMap();
                 modelTable.put("model_id", jsonObject.getString("model_id"));
@@ -82,8 +103,8 @@ public class ModelTableService {
                 /**
                  * 保存字段列
                  * */
-                JSONArray columnList = jsonObject.getJSONArray(jsonObject.getString("columnlist"));
-                Integer colId = sqlSession.selectOne("dbTableColumn.getMaxId");
+
+                Integer colId = sqlSession.selectOne("bdmodelTable.getMaxId");
                 colId = colId == null ? 1 : colId;
                 insertColumnListItem(sqlSession, columnList, colId, tableId);
 
@@ -92,10 +113,14 @@ public class ModelTableService {
                  * table_fk
                  * */
                 JSONArray linkList = jsonObject.getJSONArray(jsonObject.getString("linkList"));
-                Integer linkId = sqlSession.selectOne("dbTableColumn.getLinkMaxId");
+                Integer linkId = sqlSession.selectOne("bdmodelTable.getLinkMaxId");
                 linkId = linkId == null ? 1 : linkId;
                 String tableName = map.get("table_name").toString();
                 insertLinkListItem(sqlSession, linkList, linkId, tableId, tableName);
+
+
+                sqlSession.update("bdTableColumn.createNewTable", createSql);
+                sqlSession.commit();
 
                 /**
                  * 保存索引
@@ -155,35 +180,12 @@ public class ModelTableService {
                 mapVal.put("column_title", obj.getString("column_title"));
                 mapVal.put("column_decimal", obj.getString("column_decimal"));
                 mapVal.put("column_isnull", obj.getString("column_isnull"));
-                sqlSession.insert("dbTableColumn.createTableColumn", mapVal);
+                sqlSession.insert("bdmodelTable.createTableColumn", mapVal);
             }
         }
         return colId;
     }
-    /**
-     * 保存索引
-     * */
-    public Integer insertIndexListItem (SqlSession sqlSession,JSONArray columnList,Integer colId,Integer tableId) {
-        if (columnList.isEmpty()) {
-            return colId;
-        }
-        for (int i = 0; i < columnList.size(); i++) {
-            colId++;
-            JSONObject obj = columnList.getJSONObject(i);
-            Map mapVal=new HashMap();
-            mapVal.put("id",colId);
-            mapVal.put("table_id",tableId);
-            mapVal.put("column_name",obj.getString("column_name"));
-            mapVal.put("column_length",obj.getString("column_length"));
-            mapVal.put("column_type",obj.getString("column_type"));
-            mapVal.put("column_source",obj.getString("column_source"));
-            mapVal.put("column_title",obj.getString("column_title"));
-            mapVal.put("column_decimal",obj.getString("column_decimal"));
-            mapVal.put("column_isnull",obj.getString("column_isnull"));
-            sqlSession.insert("dbTableColumn.createTableColumn",mapVal);
-        }
-        return colId;
-    }
+
     /**
      * 保存外键
      * */
@@ -195,34 +197,41 @@ public class ModelTableService {
             linkId++;
             JSONObject obj = linkList.getJSONObject(i);
             Map mapVal=new HashMap();
-            mapVal.put("id",linkId);
+            mapVal.put("id",null);
             mapVal.put("table_id",tableId);
-            mapVal.put("table_name",tableName);
-            mapVal.put("column_name",obj.getString("column_name"));
-            mapVal.put("link_table_name",obj.getString("link_table_name"));
-            mapVal.put("link_column_name",obj.getString("link_column_name"));
-            sqlSession.insert("dbTableColumn.createTableLink",mapVal);
+            mapVal.put("name",obj.getString("name"));
+            Integer count = sqlSession.selectOne("bdTableColumn.countLinkName",mapVal);
+            if(count==0) {
+                mapVal.put("id", linkId);
+                mapVal.put("table_name", tableName);
+                mapVal.put("column_name", obj.getString("column_name"));
+                mapVal.put("link_table_name", obj.getString("link_table_name"));
+                mapVal.put("link_column_name", obj.getString("link_column_name"));
+                sqlSession.insert("bdTableColumn.createTableLink", mapVal);
+            }
         }
         return linkId;
     }
 
+    /**
+     * 保存索引
+     * */
+    public Integer insertIndexListItem (SqlSession sqlSession,JSONArray columnList,Integer colId,Integer tableId) {
+        return colId;
+    }
+
+
     // 功能描述: 根据 dict_id 和 out_id 批量删除 func_dict的信息
-    public void deletedbmodelTableById(SqlSession sqlSession,int model_id){
-            Map<String,Object> map=new HashMap();
-            map.put("model_id",model_id);
-            sqlSession.delete("bdmodelTable.deleteBdModelTableByTableIdOrModelId",map);
+    public void deletedbmodelTableById(SqlSession sqlSession,int table_id){
+        Map<String,Object> map=new HashMap();
+        map.put("table_id",table_id);
+        Map table=sqlSession.selectOne("bdTableColumn.getBdTableById",map);
+        sqlSession.delete("bdmodelTable.deleteBdModelTableByTableId",map);
+        sqlSession.delete("bdmodelTable.deleteBdTableByID",map);
+        sqlSession.delete("bdmodelTable.deleteBdTableColumnByTablId",map);
+        sqlSession.delete("bdmodelTable.deleteBdLinkByTableId",map);
+        sqlSession.delete("dataCollect.dropNewTable", table.get("table_name"));
 
-
-
-    }
-
-    public Map getdbmodelTableByID(Map m) {
-        return DbFactory.Open(DbFactory.FORM).selectOne("bdmodelTable.getdbmodelTableById",m);
-    }
-
-
-    public List<Map> getAllList() {
-        return DbFactory.Open(DbFactory.FORM).selectList("bdmodelTable.getAllList");
     }
 
     public List<Map> getTableListByModelId(JSONObject pjson) {

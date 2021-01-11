@@ -5,6 +5,7 @@ import com.github.pagehelper.PageRowBounds;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import root.form.user.UserModel;
 import root.report.db.DbFactory;
@@ -18,6 +19,9 @@ import java.util.Map;
 public class ModelService {
 
     private static Logger log = Logger.getLogger(ModelService.class);
+
+    @Autowired
+    private ModelTableService modelTableService;
 
     public Map<String,Object> getListPage(Map<String,String> map) {
         Map<String,Object> map1=new HashMap<>();
@@ -95,7 +99,12 @@ public class ModelService {
     public void deleteBdmodelById(SqlSession sqlSession,int model_id){
             Map<String,Object> map=new HashMap();
             map.put("model_id",model_id);
+            List<Integer> tabListId=sqlSession.selectList("bdmodel.getbdmodelId",map);
+            for(int i=0;i<tabListId.size();i++){
+                modelTableService.deletedbmodelTableById(sqlSession,tabListId.get(i));
+            }
             sqlSession.delete("bdmodel.deleteBdModelByID",map);
+
     }
 
     public Map getBdmodelByID(Map m) {
