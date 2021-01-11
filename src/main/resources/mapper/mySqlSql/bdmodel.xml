@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bdmodel">
+
+	<!--  创建bd_model信息  -->
+	<insert id="createBdModel" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into bd_model(model_id,model_name,db_source,db_type,create_date,create_by,update_date,update_by)
+		values (#{model_id},'${model_name}','${db_source}','${db_type}',SYSDATE(),'${create_by}',SYSDATE(),'${update_by}')
+	</insert>
+	<!-- 修改 bd_model表的信息 -->
+	<update id="updateBdModel" parameterType="Map">
+		update bd_model set model_name='${model_name}',db_source='${db_source}',db_type='${db_type}',update_date=SYSDATE(),
+		update_by='${update_by}'
+		where model_id=#{model_id,jdbcType=INTEGER}
+	</update>
+
+	<select id="getMaxId" resultType="java.lang.Integer">
+        SELECT (MAX(model_id) +1)as model_id from bd_model
+    </select>
+
+	<select id="getbdmodelById" parameterType="map" resultType="map">
+        SELECT bd.* FROM bd_model bd where bd.model_id = #{model_id}
+    </select>
+
+    <select id="getListPage" resultType="Map" parameterType="Map">
+        SELECT bd.*  FROM bd_model bd  where  1=1
+		<if  test="model_name != null and model_name!='' ">
+			and  bd.model_name like '%${model_name}%'
+		</if>
+		<if  test="db_source != null and db_source!='' ">
+			and  bd.db_source ='${db_source}'
+		</if>
+		<if  test="db_type != null and db_type!='' ">
+			and  bd.db_type = '${db_type}'
+		</if>
+    </select>
+
+	<!-- 根据model_id 删除表相关信息  -->
+	<delete id="deleteBdModelByID" parameterType="Map">
+        delete from bd_model where model_id=#{model_id}
+    </delete>
+
+
+	<select id="getAllList" resultType="Map" >
+		select * from bd_model order by create_date desc
+	</select>
+
+	<select id="count" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from bd_model where  bd.model_name = '${model_name}'
+		<if  test="model_id != null and model_id!='' ">
+			and  bd.model_id !='${model_id}'
+		</if>
+	</select>
+</mapper>

@@ -80,7 +80,7 @@ public class MenuService {
     public String saveOrUpdateMenu(SqlSession sqlSession,JSONObject jsonObject){
         Map<String,Object> map  = new HashMap<>();
         String id="";
-        map.put("func_id",jsonObject.getString("func_id"));
+
         map.put("func_name",jsonObject.getString("func_name"));
         map.put("func_type",jsonObject.getString("func_type"));
         map.put("func_pid",jsonObject.getString("func_pid"));
@@ -91,9 +91,13 @@ public class MenuService {
         map.put("order",jsonObject.getString("order"));
         map.put("target",jsonObject.getString("target"));
         if(null==jsonObject.getString("func_id")|| "".equals(jsonObject.getString("func_id"))){
+            Integer newId= sqlSession.selectOne("menu.getMaxId");
+            newId = newId==null?1:newId;
+            map.put("func_id",newId);
             sqlSession.insert("menu.createMenu",map);
             id=String.valueOf(map.get("id"));
         }else{
+            map.put("func_id",jsonObject.getString("func_id"));
             sqlSession.update("menu.updateMenu",map);
             id=jsonObject.getString("func_id");
         }

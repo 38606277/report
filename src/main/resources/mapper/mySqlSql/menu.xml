@@ -6,7 +6,7 @@
 	<!--  创建func_dict信息  -->
 	<insert id="createMenu" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
 		insert into fnd_func(func_id,func_name,func_type,func_pid,valid,func_desc,func_icon,func_url,order,target)
-		values (SELECT (MAX(func_id) +1)as id from fnd_func,'${func_name}','${func_type}',
+		values ('${func_id}','${func_name}','${func_type}',
 		<if  test="func_pid == null">NULL</if>
 		<if  test="func_pid != null">'${func_pid}'</if>,
 		<if  test="valid == null">NULL</if>
@@ -56,6 +56,9 @@
 		</if>
     </select>
 
+	<select id="getMaxId" resultType="java.lang.Integer">
+        SELECT (MAX(func_id) +1)as func_id from fnd_func
+    </select>
 	<!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
 	<delete id="deleteMenuByID" parameterType="Map">
         delete from fnd_func where func_id=#{func_id}
