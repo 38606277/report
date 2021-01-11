@@ -327,7 +327,7 @@ public class DataModeling extends RO
      * hive数据库中创建表(方法调用)
      * */
     @RequestMapping(value="/createHiveTableMethod",produces = "text/plain;charset=UTF-8")
-    public String createHiveTable2(final String tableName,final String tableFields)  {
+    public String createHiveTableMethod(final String tableName,final String tableFields)  {
         JSONArray tableFieldsArray=JSONArray.parseArray(tableFields);
         //构建表语句
         StringBuffer tableSql=new StringBuffer();
@@ -450,8 +450,8 @@ public class DataModeling extends RO
     /*
      * hbase数据库中创建表（方法调用）
      * */
-    @RequestMapping(value="/createHbaseTable",produces = "text/plain;charset=UTF-8")
-    public String createHbaseTable2(final String tableName,final String tableFields,final String primaryKey)  {
+    @RequestMapping(value="/createHbaseTableMethod",produces = "text/plain;charset=UTF-8")
+    public String createHbaseTableMethod(final String tableName,final String tableFields,final String primaryKey)  {
         JSONArray tableFieldsArray=JSONArray.parseArray(tableFields);
         //构建表语句
         StringBuffer tableSql=new StringBuffer();
@@ -524,4 +524,10 @@ public class DataModeling extends RO
     }
 
 
+
+    public  static  void main(String args[]){
+         DataModeling dataModeling = new DataModeling();
+//        String createHiveTableSql= dataModeling.createHiveTableMethod("aalee","[{'fieldName':'id','fieldType':'bigint'},{'fieldName':'name','fieldType':'double'}]");
+        String createHbaseTableSql= dataModeling.createHbaseTableMethod("AA20210111_2","[{'fieldName':'ID','fieldType':'bigint'},{'fieldName':'NAME','fieldType':'varchar'}]","ID");
+    }
 }
