@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="dbmodel">
+<mapper namespace="bdmodel">
 
 	<!--  创建bd_model信息  -->
 	<insert id="createBdModel" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
