@@ -228,8 +228,8 @@ public class ModelTableService {
         Map table=sqlSession.selectOne("bdTableColumn.getBdTableById",map);
         sqlSession.delete("bdmodelTable.deleteBdModelTableByTableId",map);
         sqlSession.delete("bdmodelTable.deleteBdTableByID",map);
-        sqlSession.delete("bdmodelTable.deleteBdTableColumnByTablId",map);
-        sqlSession.delete("bdmodelTable.deleteBdLinkByTableId",map);
+        sqlSession.delete("bdTableColumn.deleteBdTableColumnByTablId",map);
+        sqlSession.delete("bdTableColumn.deleteBdLinkByTableId",map);
         sqlSession.delete("dataCollect.dropNewTable", table.get("table_name"));
 
     }
