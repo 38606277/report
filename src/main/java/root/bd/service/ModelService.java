@@ -73,11 +73,11 @@ public class ModelService {
                 Integer newId = sqlSession.selectOne("bdmodel.getMaxId");
                 newId = newId == null ? 1 : newId;
                 map.put("model_id", newId);
-                sqlSession.insert("bdmodel.createbdmodel", map);
+                sqlSession.insert("bdmodel.createBdModel", map);
                 id = String.valueOf(map.get("id"));
             } else {
 
-                sqlSession.update("bdmodel.updatebdmodel", map);
+                sqlSession.update("bdmodel.updateBdModel", map);
                 id = jsonObject.getString("model_id");
             }
             resultMap.put("info",id);
@@ -95,7 +95,7 @@ public class ModelService {
     public void deleteBdmodelById(SqlSession sqlSession,int model_id){
             Map<String,Object> map=new HashMap();
             map.put("model_id",model_id);
-            sqlSession.delete("bdmodel.deletebdmodelByID",map);
+            sqlSession.delete("bdmodel.deleteBdModelByID",map);
     }
 
     public Map getBdmodelByID(Map m) {
