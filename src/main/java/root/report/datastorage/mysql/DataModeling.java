@@ -527,7 +527,9 @@ public class DataModeling extends RO
 
     public  static  void main(String args[]){
          DataModeling dataModeling = new DataModeling();
-//        String createHiveTableSql= dataModeling.createHiveTableMethod("aalee","[{'fieldName':'id','fieldType':'bigint'},{'fieldName':'name','fieldType':'double'}]");
+         //hive创建表
+//       String createHiveTableSql= dataModeling.createHiveTableMethod("aalee","[{'fieldName':'id','fieldType':'bigint'},{'fieldName':'name','fieldType':'double'}]");
+        // 注意：hbase通过phoenix创建表，表名大写，表字段大写
         String createHbaseTableSql= dataModeling.createHbaseTableMethod("AA20210111_2","[{'fieldName':'ID','fieldType':'bigint'},{'fieldName':'NAME','fieldType':'varchar'}]","ID");
     }
 }
