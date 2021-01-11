@@ -5,15 +5,28 @@
 	<!-- db_table增删改查********************************************************************** -->
 	<!--  创建bd_model信息  -->
 	<insert id="createTableColumn" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-		insert into bd_table_column(id,table_id,column_name,column_code,column_type,column_source,column_desc)
-		values (#{id},#{table_id},#{column_name},#{column_code},#{column_type},#{column_source},#{column_desc})
+		insert into bd_table_column(id,table_id,column_name,column_length,column_type,column_source,column_title,column_decimal,column_isnull)
+		values (#{id},#{table_id},#{column_name},#{column_length},#{column_type},#{column_title},#{column_decimal},#{column_isnull})
 	</insert>
 	<!-- 修改 bd_model表的信息 -->
 	<update id="updateTableColumn" parameterType="Map">
-		update bd_table_column set column_name='${column_name}',column_code='${column_code}',column_type='${column_type}',
-		column_source='${column_source}',column_desc='${column_desc}'
+		update bd_table_column set column_name='${column_name}',column_title='${column_title}',column_type='${column_type}',
+		column_source='${column_source}',column_length='${column_length}',column_decimal='${column_decimal}',column_isnull='${column_isnull}'
 		where id=#{id,jdbcType=INTEGER}
 	</update>
+
+	<select id="countColName" resultType="java.lang.Integer">
+        SELECT count(1) from bd_table_column where 1=1
+        <if  test="table_id != null and table_id!='' ">
+			and table_id = #{table_id}
+		</if>
+		<if  test="column_name != null and column_name!='' ">
+			and column_name = #{column_name}
+		</if>
+		<if  test="id != null and id!='' ">
+			and id != #{id}
+		</if>
+    </select>
 
 	<select id="getMaxId" resultType="java.lang.Integer">
         SELECT (MAX(id) +1)as id from bd_table_column
@@ -44,12 +57,12 @@
 	</insert>
 
 	<delete id="deleteBdModelTableByTableIdOrModelId" parameterType="Map" >
-		 delete from  bd_model_table where
+		 delete from  bd_model_table where 1=1
 		 <if  test="table_id != null and table_id!='' ">
-			 table_id = #{table_id}
+			and table_id = #{table_id}
 		</if>
 		<if  test="model_id != null and model_id!='' ">
-			 model_id = #{model_id}
+			and model_id = #{model_id}
 		</if>
 	</delete>
 
