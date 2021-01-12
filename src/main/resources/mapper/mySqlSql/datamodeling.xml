@@ -231,4 +231,16 @@
     <update id="createHbaseTable2" parameterType="Map">
            ${tableSql}
     </update>
+
+    <select id="getHbaseTableStructure" resultType="Map" parameterType="Map">
+       !describe  T_XYSXZQH
+    </select>
+
+    <select id="getFieldTypeByDBType" resultType="Map" parameterType="Map">
+            select a.flex_value_name from fnd_flex_values a INNER JOIN fnd_flex_value_sets b
+            on a.flex_value_set_id =b.flex_value_set_id
+            WHERE a.flex_value_name!='' and b.flex_value_set_code=#{fieldType,jdbcType=VARCHAR}
+    </select>
+
+
 </mapper>

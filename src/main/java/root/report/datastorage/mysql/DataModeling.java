@@ -543,7 +543,15 @@ public class DataModeling extends RO
         return  tableSql.toString();
     }
 
-
+    @RequestMapping(value="/getHbaseTableStructure",produces = "text/plain;charset=UTF-8")
+    public String getHbaseTableStructure(@RequestBody JSONObject pJson)  {
+        String tableName = pJson.getString("tableName");
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("tableName", tableName);
+        List<Map> tableFields =  DbFactory.Open("hbase").selectList("datamodeling.getHbaseTableStructure",map);
+        DbFactory.close("hbase");
+        return "";
+    }
 
     public  static  void main(String args[]){
          DataModeling dataModeling = new DataModeling();

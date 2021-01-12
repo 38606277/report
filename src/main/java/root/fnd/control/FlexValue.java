@@ -9,6 +9,7 @@ import root.fnd.service.TreeBuilder;
 import root.report.common.RO;
 import root.report.db.DbFactory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,16 @@ public class FlexValue extends RO {
     public String get(@RequestBody JSONObject pJson)  {
         List<Map> result = DbFactory.Open("hive").selectList("flexValue.get",pJson);
         return SuccessMsg("",result);
+
+    }
+
+    @RequestMapping(value = "/reportServer/dataModeling/getFieldTypeByDBType", produces = "text/plain;charset=UTF-8")
+    public String getFieldTypeByDBType(@RequestBody JSONObject pJson)  {
+        String fieldType = pJson.getString("fieldType");
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("fieldType", fieldType);
+        List<Map> result = DbFactory.Open("form").selectList("datamodeling.getFieldTypeByDBType",map);
+        return SuccessMsg("result",result);
 
     }
 
