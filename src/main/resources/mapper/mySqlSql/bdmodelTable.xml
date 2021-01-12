@@ -15,6 +15,19 @@
 		where table_id=#{table_id,jdbcType=INTEGER}
 	</update>
 
+	<select id="countTable" resultType="java.lang.Integer">
+		SELECT count(1) from bd_table where 1=1
+		<if  test="table_id != null and table_id!='' ">
+			and table_id != #{table_id}
+		</if>
+		<if  test="table_name != null and table_name!='' ">
+			and table_name = #{table_name}
+		</if>
+		<if  test="model_id != null and model_id!='' ">
+			and model_id = #{model_id}
+		</if>
+	</select>
+
 	<select id="getMaxId" resultType="java.lang.Integer">
         SELECT (MAX(table_id) +1)as table_id from bd_table
     </select>
@@ -34,13 +47,13 @@
 		insert into bd_model_table(model_id,table_id) values (#{model_id},#{table_id})
 	</insert>
 
-	<delete id="deleteBdModelTableByTableIdOrModelId" parameterType="Map" >
-		 delete from  bd_model_table where
+	<delete id="deleteBdModelTableByTableId" parameterType="Map" >
+		 delete from  bd_model_table where 1=1
 		 <if  test="table_id != null and table_id!='' ">
-			 table_id = #{table_id}
+			and table_id = #{table_id}
 		</if>
 		<if  test="model_id != null and model_id!='' ">
-			 model_id = #{model_id}
+			and model_id = #{model_id}
 		</if>
 	</delete>
 
@@ -49,13 +62,13 @@
 	<select id="getListPage" resultType="Map" parameterType="Map">
 		select bt.* from  bd_model_table bmt INNER JOIN bd_table bt on bmt.table_id=bt.table_id where 1=1
 		<if  test="table_name != null and table_name!='' ">
-			and  bmt.table_name like '%${table_name}%'
+			and  bt.table_name like '%${table_name}%'
 		</if>
 		<if  test="table_title != null and table_title!='' ">
-			and  bmt.table_title ='${table_title}'
+			and  bt.table_title ='${table_title}'
 		</if>
 		<if  test="model_id != null and model_id!='' ">
-			and  bt.model_id = '${model_id}'
+			and  bmt.model_id = '${model_id}'
 		</if>
 	</select>
 

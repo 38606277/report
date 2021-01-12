@@ -23,6 +23,10 @@
         SELECT bd.* FROM bd_model bd where bd.model_id = #{model_id}
     </select>
 
+	<select id="getbdmodelId" parameterType="map" resultType="java.lang.Integer">
+        SELECT bd.table_id FROM bd_model_table bd where bd.model_id = #{model_id}
+    </select>
+
     <select id="getListPage" resultType="Map" parameterType="Map">
         SELECT bd.*  FROM bd_model bd  where  1=1
 		<if  test="model_name != null and model_name!='' ">
@@ -47,9 +51,9 @@
 	</select>
 
 	<select id="count" parameterType="map" resultType="java.lang.Integer">
-		select count(1) from bd_model where  bd.model_name = '${model_name}'
+		select count(1) from bd_model where  model_name = '${model_name}'
 		<if  test="model_id != null and model_id!='' ">
-			and  bd.model_id !='${model_id}'
+			and  model_id !='${model_id}'
 		</if>
 	</select>
 </mapper>
