@@ -62,7 +62,9 @@ public class ModelTableService {
         UserModel user = SysContext.getRequestUser();
         Map<String,Object> map  = new HashMap<>();
         String id="";
-
+        Map<String,Object> mapmodel  = new HashMap<>();
+        mapmodel.put("model_id",jsonObject.getString("model_id"));
+        Map model=sqlSession.selectOne("bdmodel.getbdmodelById",mapmodel);
         map.put("table_name",jsonObject.getString("table_name"));
         map.put("table_id", jsonObject.getString("table_id"));
         Integer count = sqlSession.selectOne("bdmodelTable.countTable",map);
@@ -78,27 +80,30 @@ public class ModelTableService {
 
                 JSONArray columnList = jsonObject.getJSONArray("columnlist");
                 String createSql="";
-                if(columnList.size()>0) {
-                    StringBuffer sb = new StringBuffer();
-                    //拼接建表sql
-                    columnList.forEach(col -> {
-                        JSONObject jsonCol = (JSONObject) col;
-                        sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
-                        String length = jsonCol.getString("column_length");
-                        String columnDecimal = jsonCol.getString("column_decimal")==null?"0":jsonCol.getString("column_decimal");
-                        if (null != length && !"".equals(length)) sb.append("(" + length+","+columnDecimal + ")");
-                        String isnull = jsonCol.getString("column_isnull");
-                        if (null != isnull && !"".equals(isnull)) {
-                            sb.append(" NOT NULL ");
-                        } else {
-                            sb.append(" DEFAULT NULL ");
-                        }
-                        sb.append(",");
-                    });
-                     createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
-                    map.put("table_ddl", createSql);//SQL预览
-                }
+                if("mysql".equalsIgnoreCase(model.get("name").toString())) {
+                    if (columnList.size() > 0) {
+                        StringBuffer sb = new StringBuffer();
+                        //拼接建表sql
+                        columnList.forEach(col -> {
+                            JSONObject jsonCol = (JSONObject) col;
+                            sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
+                            String length = jsonCol.getString("column_length");
+                            String columnDecimal = jsonCol.getString("column_decimal") == null ? "0" : jsonCol.getString("column_decimal");
+                            if (null != length && !"".equals(length))
+                                sb.append("(" + length + "," + columnDecimal + ")");
+                            String isnull = jsonCol.getString("column_isnull");
+                            if (null != isnull && !"".equals(isnull)) {
+                                sb.append(" NOT NULL ");
+                            } else {
+                                sb.append(" DEFAULT NULL ");
+                            }
+                            sb.append(",");
+                        });
+                        createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
+                        map.put("table_ddl", createSql);//SQL预览
+                    }
 
+                }
                 sqlSession.insert("bdmodelTable.createBdTable", map);
                 Map modelTable = new HashMap();
                 modelTable.put("model_id", jsonObject.getString("model_id"));
@@ -123,13 +128,15 @@ public class ModelTableService {
                 Integer linkId = sqlSession.selectOne("bdTableColumn.getLinkMaxId");
                 linkId = linkId == null ? 1 : linkId;
                 String tableName = map.get("table_name").toString();
-                insertLinkListItem(sqlSession, linkList, linkId, tableId, tableName);
-
-                if(columnList.size()>0) {
-                    sqlSession.update("bdTableColumn.createNewTable", createSql);
-                    sqlSession.commit();
+                if(linkList.size()>0) {
+                    insertLinkListItem(sqlSession, linkList, linkId, tableId, tableName);
                 }
-
+                if("mysql".equalsIgnoreCase(model.get("name").toString())) {
+                    if (columnList.size() > 0) {
+                        sqlSession.update("bdTableColumn.createNewTable", createSql);
+                        sqlSession.commit();
+                    }
+                }
                 /**
                  * 保存索引
                  * table_index
@@ -187,10 +194,13 @@ public class ModelTableService {
                  * 保存外键
                  * table_fk
                  * */
+
                 JSONArray linkList = jsonObject.getJSONArray("linkList");
 
                 String tableName = map.get("table_name").toString();
-                updateLinkListItem(sqlSession, linkList, null, tableId, tableName);
+                if(linkList.size()>0) {
+                    updateLinkListItem(sqlSession, linkList, null, tableId, tableName);
+                }
             }
         }else{
             id="模型已存在";
