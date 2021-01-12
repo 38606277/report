@@ -163,26 +163,28 @@ public class ModelTableService {
             } else {
                 JSONArray columnList = jsonObject.getJSONArray("columnlist");
                 String createSql="";
-                if(columnList.size()>0) {
-                    StringBuffer sb = new StringBuffer();
-                    //拼接建表sql
-                    columnList.forEach(col -> {
-                        JSONObject jsonCol = (JSONObject) col;
-                        sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
-                        String length = jsonCol.getString("column_length");
-                        if (null != length && !"".equals(length)) sb.append("(" + length + ")");
-                        String isnull = jsonCol.getString("column_isnull");
-                        if (null != isnull && !"".equals(isnull)) {
-                            sb.append(" NOT NULL ");
-                        } else {
-                            sb.append(" DEFAULT NULL ");
-                        }
-                        sb.append(",");
-                    });
-                    createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
-                    map.put("table_ddl", createSql);//SQL预览
+                if("mysql".equalsIgnoreCase(model.get("db_type").toString())) {
+                    if (columnList.size() > 0) {
+                        StringBuffer sb = new StringBuffer();
+                        //拼接建表sql
+                        columnList.forEach(col -> {
+                            JSONObject jsonCol = (JSONObject) col;
+                            sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
+                            String length = jsonCol.getString("column_length");
+                            if (null != length && !"".equals(length)) sb.append("(" + length + ")");
+                            String isnull = jsonCol.getString("column_isnull");
+                            if (null != isnull && !"".equals(isnull)) {
+                                sb.append(" NOT NULL ");
+                            } else {
+                                sb.append(" DEFAULT NULL ");
+                            }
+                            sb.append(",");
+                        });
+                        createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
+                        map.put("table_ddl", createSql);//SQL预览
+                    }
+                    sqlSession.update("bdmodelTable.updateBdTable", map);
                 }
-                sqlSession.update("bdmodelTable.updateBdTable", map);
                 String tableId = jsonObject.getString("table_id");
                 /**
                  * 保存字段列
