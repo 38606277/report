@@ -85,7 +85,8 @@ public class ModelTableService {
                         JSONObject jsonCol = (JSONObject) col;
                         sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
                         String length = jsonCol.getString("column_length");
-                        if (null != length && !"".equals(length)) sb.append("(" + length + ")");
+                        String columnDecimal = jsonCol.getString("column_decimal")==null?"0":jsonCol.getString("column_decimal");
+                        if (null != length && !"".equals(length)) sb.append("(" + length+","+columnDecimal + ")");
                         String isnull = jsonCol.getString("column_isnull");
                         if (null != isnull && !"".equals(isnull)) {
                             sb.append(" NOT NULL ");
