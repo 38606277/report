@@ -5,14 +5,14 @@
 	<!-- db_table增删改查********************************************************************** -->
 	<!--  创建bd_model信息  -->
 	<insert id="createTableColumn" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-		insert into bd_table_column(id,table_id,column_name,column_length,column_type,column_source,column_title,column_decimal,column_isnull)
+		insert into bd_table_column(id,table_id,column_name,column_length,column_type,column_title,column_decimal,column_isnull)
 		values (#{id},#{table_id},#{column_name},#{column_length},#{column_type},#{column_title},#{column_decimal},#{column_isnull})
 	</insert>
 	<!-- 修改 bd_model表的信息 -->
 	<update id="updateTableColumn" parameterType="Map">
 		update bd_table_column set column_name='${column_name}',column_title='${column_title}',column_type='${column_type}',
-		column_source='${column_source}',column_length='${column_length}',column_decimal='${column_decimal}',column_isnull='${column_isnull}'
-		where id=#{id,jdbcType=INTEGER}
+		column_length='${column_length}',column_decimal='${column_decimal}',column_isnull='${column_isnull}'
+		where id=#{id}
 	</update>
 
 	<select id="countColName" resultType="java.lang.Integer">
@@ -44,6 +44,9 @@
 		select * from bd_table_column where table_id = #{table_id}
 	</select>
 
+	<select id="getBdTableColumnById" parameterType="java.lang.Integer" resultType="map">
+		select * from bd_table_column where id = #{id}
+	</select>
 
 	<!-- 根据model_id 删除表相关信息  -->
 	<delete id="deleteBdTableByID" parameterType="Map">
@@ -126,6 +129,11 @@
 	<!-- drop掉新添加的表 -->
 	<update id="dropNewTable" parameterType="string">
     	drop table if EXISTS ${_parameter}
+    </update>
+
+
+	<update id="updateTableColumnForDB" parameterType="string">
+        ${_parameter}
     </update>
 
 </mapper>

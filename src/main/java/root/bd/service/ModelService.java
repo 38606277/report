@@ -99,7 +99,7 @@ public class ModelService {
     public void deleteBdmodelById(SqlSession sqlSession,int model_id){
             Map<String,Object> map=new HashMap();
             map.put("model_id",model_id);
-            List<Integer> tabListId=sqlSession.selectList("bdmodel.getbdmodelId",map);
+            List<String> tabListId=sqlSession.selectList("bdmodel.getbdmodelId",map);
             for(int i=0;i<tabListId.size();i++){
                 modelTableService.deletedbmodelTableById(sqlSession,tabListId.get(i));
             }

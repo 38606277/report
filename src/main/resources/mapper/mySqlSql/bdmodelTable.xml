@@ -5,14 +5,14 @@
 	<!-- db_table增删改查********************************************************************** -->
 	<!--  创建bd_model信息  -->
 	<insert id="createBdTable" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-		insert into bd_table(table_id,table_name,table_title,model_id,table_ddl,create_date,create_by,update_date,update_by)
-		values (#{table_id},'${table_name}','${table_title}','${model_id}','${table_ddl}',SYSDATE(),'${create_by}',SYSDATE(),'${update_by}')
+		insert into bd_table(table_id,table_name,table_title,table_ddl,create_date,create_by,update_date,update_by)
+		values ('${table_id}','${table_name}','${table_title}','${table_ddl}',SYSDATE(),'${create_by}',SYSDATE(),'${update_by}')
 	</insert>
 	<!-- 修改 bd_model表的信息 -->
 	<update id="updateBdTable" parameterType="Map">
-		update bd_table set table_name='${table_name}',table_title='${table_title}',model_id='${model_id}',
+		update bd_table set table_name='${table_name}',table_title='${table_title}',
 		table_ddl='${table_ddl}',update_date=SYSDATE(),	update_by='${update_by}'
-		where table_id=#{table_id,jdbcType=INTEGER}
+		where table_id=#{table_id}
 	</update>
 
 	<select id="countTable" resultType="java.lang.Integer">
@@ -23,16 +23,13 @@
 		<if  test="table_name != null and table_name!='' ">
 			and table_name = #{table_name}
 		</if>
-		<if  test="model_id != null and model_id!='' ">
-			and model_id = #{model_id}
-		</if>
 	</select>
 
-	<select id="getMaxId" resultType="java.lang.Integer">
+	<select id="getMaxId" resultType="java.lang.String">
         SELECT (MAX(table_id) +1)as table_id from bd_table
     </select>
 
-	<select id="getBdTableById" parameterType="java.lang.Integer" resultType="map">
+	<select id="getBdTableById" parameterType="java.lang.String" resultType="map">
         SELECT bd.* FROM bd_table bd where bd.table_id = #{table_id}
     </select>
 

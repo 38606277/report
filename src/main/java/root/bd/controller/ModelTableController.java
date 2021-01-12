@@ -55,6 +55,18 @@ public class ModelTableController extends RO {
 
     }
 
+    @RequestMapping(value = "/table/getTableColumnById", produces = "text/plain;charset=UTF-8")
+    public String getTableColumnById(@RequestBody JSONObject pJson)  {
+        try{
+            Map resultObject =modelTableService.getTableColumnById(pJson);
+            return SuccessMsg("",resultObject);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }
+
+    }
+
     @RequestMapping(value = "/table/createModelTable", produces = "text/plain;charset=UTF-8")
     public String createModelTable(@RequestBody JSONObject pJson) throws SQLException {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
@@ -94,7 +106,7 @@ public class ModelTableController extends RO {
             JSONArray jsonArray =  JSONObject.parseArray(pJson);
             for(int i = 0; i < jsonArray.size(); i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                int model_id=jsonObject.getInteger("model_id");
+                String model_id=jsonObject.getString("model_id");
                 //删除
                 this.modelTableService.deletedbmodelTableById(sqlSession,model_id);
             }

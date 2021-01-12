@@ -12,6 +12,7 @@ import root.form.user.UserModel;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class ModelTableService {
         UserModel user = SysContext.getRequestUser();
         Map<String,Object> map  = new HashMap<>();
         String id="";
-        map.put("model_id",jsonObject.getString("model_id"));
+
         map.put("table_name",jsonObject.getString("table_name"));
         map.put("table_id", jsonObject.getString("table_id"));
         Integer count = sqlSession.selectOne("bdmodelTable.countTable",map);
@@ -71,40 +72,45 @@ public class ModelTableService {
             map.put("update_by",user.getId());
             if (null == jsonObject.getString("table_id") || "".equals(jsonObject.getString("table_id"))) {
                 map.put("create_by", user.getId());
-                Integer tableId = sqlSession.selectOne("bdmodelTable.getMaxId");
-                tableId = tableId == null ? 1 : tableId;
+                String tableId = sqlSession.selectOne("bdmodelTable.getMaxId");
+                tableId = tableId == null ? "1" : tableId;
                 map.put("table_id", tableId);
 
-                JSONArray columnList = jsonObject.getJSONArray(jsonObject.getString("columnlist"));
-                StringBuffer sb = new StringBuffer();
-                //sb.append("_id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT, ");
-                //拼接建表sql
-                columnList.forEach(col -> {
-                    JSONObject jsonCol = (JSONObject) col;
-                    sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
-                    String length = jsonCol.getString("column_length");
-                    if (null != length && !"".equals(length)) sb.append("(" + length + ")");
-                    String isnull = jsonCol.getString("column_isnull");
-                    if (null != isnull && !"".equals(isnull)){
-                        sb.append(" NOT NULL ");
-                    }else{
-                        sb.append(" NULL ");
-                    }
-                    sb.append(",");
-                });
-                String createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
-                map.put("table_ddl",createSql);//SQL预览
+                JSONArray columnList = jsonObject.getJSONArray("columnlist");
+                String createSql="";
+                if(columnList.size()>0) {
+                    StringBuffer sb = new StringBuffer();
+                    //拼接建表sql
+                    columnList.forEach(col -> {
+                        JSONObject jsonCol = (JSONObject) col;
+                        sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
+                        String length = jsonCol.getString("column_length");
+                        if (null != length && !"".equals(length)) sb.append("(" + length + ")");
+                        String isnull = jsonCol.getString("column_isnull");
+                        if (null != isnull && !"".equals(isnull)) {
+                            sb.append(" NOT NULL ");
+                        } else {
+                            sb.append(" DEFAULT NULL ");
+                        }
+                        sb.append(",");
+                    });
+                     createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
+                    map.put("table_ddl", createSql);//SQL预览
+                }
+
                 sqlSession.insert("bdmodelTable.createBdTable", map);
                 Map modelTable = new HashMap();
                 modelTable.put("model_id", jsonObject.getString("model_id"));
                 modelTable.put("table_id", tableId);
                 sqlSession.insert("bdmodelTable.createBdModelTable", modelTable);
+
+
                 id = String.valueOf(map.get("table_id"));
                 /**
                  * 保存字段列
                  * */
 
-                Integer colId = sqlSession.selectOne("bdmodelTable.getMaxId");
+                Integer colId = sqlSession.selectOne("bdTableColumn.getMaxId");
                 colId = colId == null ? 1 : colId;
                 insertColumnListItem(sqlSession, columnList, colId, tableId);
 
@@ -112,15 +118,16 @@ public class ModelTableService {
                  * 保存外键
                  * table_fk
                  * */
-                JSONArray linkList = jsonObject.getJSONArray(jsonObject.getString("linkList"));
-                Integer linkId = sqlSession.selectOne("bdmodelTable.getLinkMaxId");
+                JSONArray linkList = jsonObject.getJSONArray("linkList");
+                Integer linkId = sqlSession.selectOne("bdTableColumn.getLinkMaxId");
                 linkId = linkId == null ? 1 : linkId;
                 String tableName = map.get("table_name").toString();
                 insertLinkListItem(sqlSession, linkList, linkId, tableId, tableName);
 
-
-                sqlSession.update("bdTableColumn.createNewTable", createSql);
-                sqlSession.commit();
+                if(columnList.size()>0) {
+                    sqlSession.update("bdTableColumn.createNewTable", createSql);
+                    sqlSession.commit();
+                }
 
                 /**
                  * 保存索引
@@ -146,10 +153,43 @@ public class ModelTableService {
                  * */
 
             } else {
+                JSONArray columnList = jsonObject.getJSONArray("columnlist");
+                String createSql="";
+                if(columnList.size()>0) {
+                    StringBuffer sb = new StringBuffer();
+                    //拼接建表sql
+                    columnList.forEach(col -> {
+                        JSONObject jsonCol = (JSONObject) col;
+                        sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
+                        String length = jsonCol.getString("column_length");
+                        if (null != length && !"".equals(length)) sb.append("(" + length + ")");
+                        String isnull = jsonCol.getString("column_isnull");
+                        if (null != isnull && !"".equals(isnull)) {
+                            sb.append(" NOT NULL ");
+                        } else {
+                            sb.append(" DEFAULT NULL ");
+                        }
+                        sb.append(",");
+                    });
+                    createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
+                    map.put("table_ddl", createSql);//SQL预览
+                }
                 sqlSession.update("bdmodelTable.updateBdTable", map);
-                id = jsonObject.getString("table_id");
+                String tableId = jsonObject.getString("table_id");
+                /**
+                 * 保存字段列
+                 * */
 
+                updateColumnListItem(sqlSession, columnList, null, tableId,jsonObject.getString("table_name"));
 
+                /**
+                 * 保存外键
+                 * table_fk
+                 * */
+                JSONArray linkList = jsonObject.getJSONArray("linkList");
+
+                String tableName = map.get("table_name").toString();
+                updateLinkListItem(sqlSession, linkList, null, tableId, tableName);
             }
         }else{
             id="模型已存在";
@@ -160,7 +200,7 @@ public class ModelTableService {
     /**
      * 保存字段
      * */
-    public Integer insertColumnListItem (SqlSession sqlSession,JSONArray columnList,Integer colId,Integer tableId) {
+    public Integer insertColumnListItem (SqlSession sqlSession,JSONArray columnList,Integer colId,String tableId) {
         if (columnList.isEmpty()) {
             return colId;
         }
@@ -180,16 +220,123 @@ public class ModelTableService {
                 mapVal.put("column_title", obj.getString("column_title"));
                 mapVal.put("column_decimal", obj.getString("column_decimal"));
                 mapVal.put("column_isnull", obj.getString("column_isnull"));
-                sqlSession.insert("bdmodelTable.createTableColumn", mapVal);
+                sqlSession.insert("bdTableColumn.createTableColumn", mapVal);
             }
         }
         return colId;
     }
 
+
+    /**
+     * 编辑字段列
+     * */
+    public Integer updateColumnListItem (SqlSession sqlSession,JSONArray columnList,Integer newcolId,String tableId,String tablename) {
+        if (columnList.isEmpty()) {
+            return 0;
+        }
+        List<String> one = Arrays.asList("int", "tinyint", "integer","bigint","varchar","varchar2","char","");
+        List<String> two = Arrays.asList("double", "float", "decimal","numeric");
+        List<String> three = Arrays.asList("date", "datetime", "blob","text","tinytext","longtext","longblob","tinyblob");
+        for (int i = 0; i < columnList.size(); i++) {
+            JSONObject obj = columnList.getJSONObject(i);
+            if(null!=obj.getString("id") && !"".equals(obj.getString("id"))){
+                Map columnMap = sqlSession.selectOne("bdTableColumn.getBdTableColumnById",Integer.parseInt(obj.getString("id")));
+                Map mapVal=new HashMap();
+                mapVal.put("id",obj.getString("id"));
+                mapVal.put("table_id",obj.getString("table_id"));
+                mapVal.put("column_length", obj.getString("column_length"));
+                mapVal.put("column_type", obj.getString("column_type"));
+                mapVal.put("column_source", obj.getString("column_source"));
+                mapVal.put("column_title", obj.getString("column_title"));
+                mapVal.put("column_decimal", obj.getString("column_decimal"));
+                mapVal.put("column_isnull", obj.getString("column_isnull"));
+                sqlSession.update("bdTableColumn.updateTableColumn", mapVal);
+
+
+                String sql=  "ALTER TABLE "+tablename;
+                if(columnMap.get("column_name").toString().equalsIgnoreCase(obj.getString("column_name"))){
+                  sql= sql+ " MODIFY "+obj.getString("column_name")+" ";
+                }else{
+                    sql=sql+" MODIFY "+ columnMap.get("column_name")+" " +obj.getString("column_name")+" ";
+                }
+                String colname="",columnLength="",columnType="",columnTitle="",columnDecimal="",columnIsnull="";
+                columnType = obj.getString("column_type");
+                columnDecimal = obj.getString("column_decimal");
+                columnLength = obj.getString("column_length");
+                columnIsnull = obj.getString("columnIsnull");
+                columnTitle = obj.getString("column_title");
+                if(one.contains(columnType)){
+                    sql= sql+columnType+"("+columnLength+")";
+                }
+                if(two.contains("columnType")) {
+                    sql = sql +columnType + "(" + columnLength+","+columnDecimal+") ";
+                }
+                if(three.contains("columnType")) {
+                    sql = sql + columnType;
+                }
+                if("2".equalsIgnoreCase(columnIsnull)){
+                    sql = sql + " DEFAULT NULL ";
+                }else{
+                    sql = sql + " NOT NULL ";
+                }
+                if(!"".equalsIgnoreCase(columnTitle)) {
+                    sql = sql + " COMMENT '" + columnTitle + "'";
+                }
+                sqlSession.update("bdTableColumn.updateTableColumnForDB", sql);
+
+            }else{
+                String colname="",columnLength="",columnType="",columnTitle="",columnDecimal="",columnIsnull="";
+                Map mapVal=new HashMap();
+                mapVal.put("id",null);
+                mapVal.put("table_id",tableId);
+                mapVal.put("column_name",obj.getString("column_name"));
+                Integer count = sqlSession.selectOne("bdTableColumn.countColName",mapVal);
+                if(count==0) {
+                    Integer colId = sqlSession.selectOne("bdTableColumn.getMaxId");
+                    colId = colId == null ? 1 : colId;
+                    mapVal.put("id",colId);
+                    mapVal.put("column_length", obj.getString("column_length"));
+                    mapVal.put("column_type", obj.getString("column_type"));
+                    mapVal.put("column_source", obj.getString("column_source"));
+                    mapVal.put("column_title", obj.getString("column_title"));
+                    mapVal.put("column_decimal", obj.getString("column_decimal"));
+                    mapVal.put("column_isnull", obj.getString("column_isnull"));
+                    sqlSession.insert("bdTableColumn.createTableColumn", mapVal);
+
+                    columnType=obj.getString("column_type");
+                    columnDecimal=obj.getString("column_decimal");
+                    columnLength=obj.getString("column_length");
+                    columnIsnull=obj.getString("columnIsnull");
+                    columnTitle=obj.getString("column_title");
+                    String sql=  "ALTER TABLE "+tablename+" ADD COLUMN "+ obj.getString("column_name")+" ";
+                    if(one.contains(columnType)){
+                        sql= sql+columnType+"("+columnLength+")";
+                    }
+                    if(two.contains(columnType)) {
+                        sql = sql +columnType + "(" + columnLength+","+columnDecimal+") ";
+                    }
+                    if(three.contains(columnType)) {
+                        sql = sql + columnType;
+                    }
+                    if("2".equalsIgnoreCase(columnIsnull)){
+                        sql = sql + " DEFAULT NULL ";
+                    }else{
+                        sql = sql + " NOT NULL ";
+                    }
+                    if(!"".equalsIgnoreCase(columnTitle)) {
+                        sql = sql + " COMMENT '" + columnTitle + "'";
+                    }
+                    sqlSession.update("bdTableColumn.updateTableColumnForDB", sql);
+                }
+            }
+
+        }
+        return 0;
+    }
     /**
      * 保存外键
      * */
-    public Integer insertLinkListItem (SqlSession sqlSession,JSONArray linkList,Integer linkId,Integer tableId,String tableName) {
+    public Integer insertLinkListItem (SqlSession sqlSession,JSONArray linkList,Integer linkId,String tableId,String tableName) {
         if (linkList.isEmpty()) {
             return linkId;
         }
@@ -214,6 +361,52 @@ public class ModelTableService {
     }
 
     /**
+     * 编辑外键
+     * */
+    public Integer updateLinkListItem (SqlSession sqlSession,JSONArray linkList,Integer ollinkId,String tableId,String tableName) {
+        if (linkList.isEmpty()) {
+            return ollinkId;
+        }
+        for (int i = 0; i < linkList.size(); i++) {
+            JSONObject obj = linkList.getJSONObject(i);
+            if(null!=obj.getString("id") && !"".equalsIgnoreCase(obj.getString("id"))){
+                Map mapVal = new HashMap();
+                mapVal.put("id", obj.getString("id"));
+                mapVal.put("table_id", tableId);
+                mapVal.put("name", obj.getString("name"));
+                Integer count = sqlSession.selectOne("bdTableColumn.countLinkName", mapVal);
+                if (count == 0) {
+                    Integer linkId = sqlSession.selectOne("bdTableColumn.getLinkMaxId");
+                    linkId = linkId == null ? 1 : linkId;
+                    mapVal.put("id", linkId);
+                    mapVal.put("table_name", tableName);
+                    mapVal.put("column_name", obj.getString("column_name"));
+                    mapVal.put("link_table_name", obj.getString("link_table_name"));
+                    mapVal.put("link_column_name", obj.getString("link_column_name"));
+                    sqlSession.update("bdTableColumn.createTableLink", mapVal);
+                }
+            }else {
+                Map mapVal = new HashMap();
+                mapVal.put("id", null);
+                mapVal.put("table_id", tableId);
+                mapVal.put("name", obj.getString("name"));
+                Integer count = sqlSession.selectOne("bdTableColumn.countLinkName", mapVal);
+                if (count == 0) {
+                    Integer linkId = sqlSession.selectOne("bdTableColumn.getLinkMaxId");
+                    linkId = linkId == null ? 1 : linkId;
+                    mapVal.put("id", linkId);
+                    mapVal.put("table_name", tableName);
+                    mapVal.put("column_name", obj.getString("column_name"));
+                    mapVal.put("link_table_name", obj.getString("link_table_name"));
+                    mapVal.put("link_column_name", obj.getString("link_column_name"));
+                    sqlSession.insert("bdTableColumn.createTableLink", mapVal);
+                }
+            }
+        }
+        return ollinkId;
+    }
+
+    /**
      * 保存索引
      * */
     public Integer insertIndexListItem (SqlSession sqlSession,JSONArray columnList,Integer colId,Integer tableId) {
@@ -222,7 +415,7 @@ public class ModelTableService {
 
 
     // 功能描述: 根据 dict_id 和 out_id 批量删除 func_dict的信息
-    public void deletedbmodelTableById(SqlSession sqlSession,int table_id){
+    public void deletedbmodelTableById(SqlSession sqlSession,String table_id){
         Map<String,Object> map=new HashMap();
         map.put("table_id",table_id);
         Map table=sqlSession.selectOne("bdTableColumn.getBdTableById",map);
@@ -230,7 +423,7 @@ public class ModelTableService {
         sqlSession.delete("bdmodelTable.deleteBdTableByID",map);
         sqlSession.delete("bdTableColumn.deleteBdTableColumnByTablId",map);
         sqlSession.delete("bdTableColumn.deleteBdLinkByTableId",map);
-        sqlSession.delete("dataCollect.dropNewTable", table.get("table_name"));
+        sqlSession.delete("bdTableColumn.dropNewTable", table.get("table_name"));
 
     }
 
@@ -247,5 +440,10 @@ public class ModelTableService {
         resMap.put("column",columnList);
         resMap.put("tableLink",linkList);
         return resMap;
+    }
+
+    public Map getTableColumnById(JSONObject pJson) {
+        Map columnMap = DbFactory.Open(DbFactory.FORM).selectOne("bdTableColumn.getBdTableColumnById",Integer.parseInt(pJson.getString("id")));
+        return columnMap;
     }
 }
