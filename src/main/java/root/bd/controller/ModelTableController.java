@@ -121,6 +121,25 @@ public class ModelTableController extends RO {
         }
 
     }
+    @RequestMapping(value = "/table/deleteTableId", produces = "text/plain;charset=UTF-8")
+    public String deleteTableId(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject jsonObject = JSONObject.parseObject(pJson);
+            String table_id=jsonObject.getString("table_id");
+            //删除
+            this.modelTableService.deletedbmodelTableById(sqlSession,table_id);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("删除成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }finally {
+            sqlSession.getConnection().setAutoCommit(true);
+        }
 
+    }
 
 }
