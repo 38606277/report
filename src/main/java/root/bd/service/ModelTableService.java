@@ -80,7 +80,7 @@ public class ModelTableService {
 
                 JSONArray columnList = jsonObject.getJSONArray("columnlist");
                 String createSql="";
-                if("mysql".equalsIgnoreCase(model.get("name").toString())) {
+                if("mysql".equalsIgnoreCase(model.get("db_type").toString())) {
                     if (columnList.size() > 0) {
                         StringBuffer sb = new StringBuffer();
                         //拼接建表sql
@@ -131,7 +131,7 @@ public class ModelTableService {
                 if(linkList.size()>0) {
                     insertLinkListItem(sqlSession, linkList, linkId, tableId, tableName);
                 }
-                if("mysql".equalsIgnoreCase(model.get("name").toString())) {
+                if("mysql".equalsIgnoreCase(model.get("db_type").toString())) {
                     if (columnList.size() > 0) {
                         sqlSession.update("bdTableColumn.createNewTable", createSql);
                         sqlSession.commit();
