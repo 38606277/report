@@ -37,11 +37,11 @@
 	</select>
 
 	<select id="getBdTableById" parameterType="map" resultType="map">
-        SELECT bd.* FROM bd_table bd where bd.table_id = #{table_id}
+        SELECT bd.* FROM bd_table bd where bd.table_id = '${table_id}'
     </select>
 
 	<select id="getBdTableColumnByTabId" parameterType="map" resultType="map">
-		select * from bd_table_column where table_id = #{table_id}
+		select * from bd_table_column where table_id = '${table_id}'
 	</select>
 
 	<select id="getBdTableColumnById" parameterType="java.lang.Integer" resultType="map">
@@ -50,19 +50,19 @@
 
 	<!-- 根据model_id 删除表相关信息  -->
 	<delete id="deleteBdTableByID" parameterType="Map">
-        delete from bd_table where table_id=#{table_id}
+        delete from bd_table where table_id='${table_id}'
     </delete>
 
 	<!-- bd_model_table 增删查 ***********************************************************-->
 
 	<insert id="createBdModelTable" parameterType="Map" >
-		insert into bd_model_table(model_id,table_id) values (#{model_id},#{table_id})
+		insert into bd_model_table(model_id,table_id) values (#{model_id},'${table_id}')
 	</insert>
 
 	<delete id="deleteBdModelTableByTableId" parameterType="Map" >
 		 delete from  bd_model_table where 1=1
 		 <if  test="table_id != null and table_id!='' ">
-			and table_id = #{table_id}
+			and table_id = '${table_id}'
 		</if>
 		<if  test="model_id != null and model_id!='' ">
 			and model_id = #{model_id}
@@ -72,7 +72,7 @@
 	<delete id="deleteBdTableColumnByTablId" parameterType="Map" >
 		delete from  bd_table_column where 1=1
 		<if  test="table_id != null and table_id!='' ">
-			and table_id = #{table_id}
+			and table_id = '${table_id}'
 		</if>
 	</delete>
 
@@ -82,7 +82,7 @@
 	<delete id="deleteBdLinkByTableId" parameterType="Map" >
 		delete from  bd_table_link where 1=1
 		<if  test="table_id != null and table_id!='' ">
-			and table_id = #{table_id}
+			and table_id = '${table_id}'
 		</if>
 		<if  test="id != null and id!='' ">
 			and id = #{id}
@@ -94,7 +94,7 @@
 	<!--  创建bd_model信息  -->
 	<insert id="createTableLink" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
 		insert into bd_table_link(id,table_id,name,table_name,column_name,link_table_name,link_column_name)
-		values (#{id},#{table_id},#{name},#{table_name},#{column_name},#{link_table_name},#{link_column_name})
+		values (#{id},'${table_id}',#{name},#{table_name},#{column_name},#{link_table_name},#{link_column_name})
 	</insert>
 	<!-- 修改 bd_model表的信息 -->
 	<update id="updateTableLink" parameterType="Map">
@@ -104,13 +104,13 @@
 	</update>
 
 	<select id="getBdTableLinkByTabId" parameterType="map" resultType="map">
-		select * from bd_table_link where table_id = #{table_id}
+		select * from bd_table_link where table_id = '${table_id}'
 	</select>
 
 	<select id="countLinkName" resultType="java.lang.Integer">
 		SELECT count(1) from bd_table_link where 1=1
 		<if  test="table_id != null and table_id!='' ">
-			and table_id = #{table_id}
+			and table_id = '${table_id}'
 		</if>
 		<if  test="name != null and name!='' ">
 			and name = #{name}

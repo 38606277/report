@@ -12,7 +12,7 @@
 	<update id="updateBdTable" parameterType="Map">
 		update bd_table set table_name='${table_name}',table_title='${table_title}',
 		table_ddl='${table_ddl}',update_date=SYSDATE(),	update_by='${update_by}'
-		where table_id=#{table_id}
+		where table_id='${table_id}'
 	</update>
 
 	<select id="countTable" resultType="java.lang.String" parameterType="map">
@@ -30,11 +30,11 @@
     </select>
 
 	<select id="getBdTableById" parameterType="java.lang.String" resultType="map">
-        SELECT bd.* FROM bd_table bd where bd.table_id = #{table_id}
+        SELECT bd.* FROM bd_table bd where bd.table_id = '${table_id}'
     </select>
 
 	<select id="getModelBytabId" parameterType="java.lang.String" resultType="map">
-		SELECT DISTINCT model.* from bd_model_table bmt INNER JOIN bd_model model on model.model_id=bmt.model_id where bmt.table_id=#{table_id}
+		SELECT DISTINCT model.* from bd_model_table bmt INNER JOIN bd_model model on model.model_id=bmt.model_id where bmt.table_id='${table_id}'
 	</select>
 
 	<!-- 根据model_id 删除表相关信息  -->

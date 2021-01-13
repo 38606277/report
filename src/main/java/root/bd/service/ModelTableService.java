@@ -22,6 +22,9 @@ public class ModelTableService {
     private static Logger log = Logger.getLogger(ModelTableService.class);
     @Autowired
     private DataModelingService dataModelingService;
+    List<String> one = Arrays.asList("int", "tinyint", "integer","bigint","varchar","smallint","varchar2","char");
+    List<String> two = Arrays.asList("double", "float", "decimal","numeric");
+    List<String> three = Arrays.asList("date", "datetime", "time","timestamp","blob","bit","big","text","tinytext","longtext","longblob","tinyblob");
 
     public Map<String,Object> getListPage(Map<String,String> map) {
         Map<String,Object> map1=new HashMap<>();
@@ -91,17 +94,31 @@ public class ModelTableService {
                             sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
                             String length = jsonCol.getString("column_length");
                             String columnDecimal = jsonCol.getString("column_decimal") == null ? "" : jsonCol.getString("column_decimal");
-                            if (null != length && !"".equals(length) && columnDecimal!=null && !"0".equalsIgnoreCase(columnDecimal) && !"".equalsIgnoreCase(columnDecimal)) {
-                                sb.append("(" + length + "," + columnDecimal + ")");
-                            }else if (null != length && !"".equals(length)){
-                                sb.append("(" + length +  ")");
+
+                            String columnType = "", columnTitle = "", columnIsnull = "";
+                            columnType = jsonCol.getString("column_type");
+                            columnIsnull = jsonCol.getString("columnIsnull");
+                            columnTitle = jsonCol.getString("column_title");
+                            if (one.contains(columnType)) {
+                                sb.append("(" + length + ") ");
+                            }else if (two.contains("columnType")) {
+                                sb.append("(" + length + "," + columnDecimal + ") ");
                             }
-                            String isnull = jsonCol.getString("column_isnull");
-                            if (null != isnull && !"".equals(isnull)) {
-                                sb.append(" NOT NULL ");
-                            } else {
+
+                            if ("true".equalsIgnoreCase(columnIsnull)) {
                                 sb.append(" DEFAULT NULL ");
+                            } else {
+                                sb.append(" NOT NULL ");
                             }
+//                            if (!"".equalsIgnoreCase(columnTitle)) {
+//                                sb.append(" COMMENT '"+columnTitle+"'");
+//                            }
+//                            String isnull = jsonCol.getString("column_isnull");
+//                            if (null != isnull && !"".equals(isnull)) {
+//                                sb.append(" NOT NULL ");
+//                            } else {
+//                                sb.append(" DEFAULT NULL ");
+//                            }
                             sb.append(",");
                         });
                         createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
@@ -122,7 +139,7 @@ public class ModelTableService {
                             objectList.add(newjson);
                         });
                     }
-                    maphive.put("tableFields",objectList);
+                    maphive.put("tableFields",objectList.toString());
                     try {
                         createSql=dataModelingService.createHiveTable(maphive);
                         if(!createSql.equals("建表失败")){
@@ -169,29 +186,6 @@ public class ModelTableService {
                         sqlSession.commit();
                     }
                 }
-                /**
-                 * 保存索引
-                 * table_index
-                 * */
-                //insertIndexListItem(sqlSession,indexList,colId,tableId);
-
-                /**
-                 * 保存触发器
-                 *table_target
-                 * */
-
-                /**
-                 * 保存选项
-                 *
-                 * */
-
-                /**
-                 * 保存注释
-                 * bd_table 表 table_title
-                 * 保存SQL预览
-                 * bd_table 表 table_ddl
-                 * */
-
             } else {
                 JSONArray columnList = jsonObject.getJSONArray("columnlist");
                 String createSql="";
@@ -203,13 +197,32 @@ public class ModelTableService {
                             JSONObject jsonCol = (JSONObject) col;
                             sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
                             String length = jsonCol.getString("column_length");
-                            if (null != length && !"".equals(length)) sb.append("(" + length + ")");
-                            String isnull = jsonCol.getString("column_isnull");
-                            if (null != isnull && !"".equals(isnull)) {
-                                sb.append(" NOT NULL ");
-                            } else {
-                                sb.append(" DEFAULT NULL ");
+                            String columnDecimal = jsonCol.getString("column_decimal") == null ? "" : jsonCol.getString("column_decimal");
+
+                            String columnLength = "", columnType = "", columnTitle = "", columnIsnull = "";
+                            columnType = jsonCol.getString("column_type");
+                            columnIsnull = jsonCol.getString("columnIsnull");
+                            columnTitle = jsonCol.getString("column_title");
+                            if (one.contains(columnType)) {
+                                sb.append("(" + length + ") ");
+                            }else if (two.contains("columnType")) {
+                                sb.append("(" + length + "," + columnDecimal + ") ");
                             }
+
+                            if ("true".equalsIgnoreCase(columnIsnull)) {
+                                sb.append(" DEFAULT NULL ");
+                            } else {
+                                sb.append(" NOT NULL ");
+                            }
+//                            if (!"".equalsIgnoreCase(columnTitle)) {
+//                                sb.append(" COMMENT '"+columnTitle+"'");
+//                            }
+//                            String isnull = jsonCol.getString("column_isnull");
+//                            if (null != isnull && !"".equals(isnull)) {
+//                                sb.append(" NOT NULL ");
+//                            } else {
+//                                sb.append(" DEFAULT NULL ");
+//                            }
                             sb.append(",");
                         });
                         createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
@@ -230,8 +243,8 @@ public class ModelTableService {
                             objectList.add(newjson);
                         });
                     }
-                    maphive.put("tableFields",objectList);
-                    dataModelingService.createHiveTable(maphive);
+                    maphive.put("tableFields",objectList.toString());
+                   // dataModelingService.createHiveTable(maphive);
                 }
                 String tableId = jsonObject.getString("table_id");
                 /**
@@ -294,9 +307,7 @@ public class ModelTableService {
             return 0;
         }
         String dbtype=model.get("db_type").toString();
-        List<String> one = Arrays.asList("int", "tinyint", "integer","bigint","varchar","varchar2","char","");
-        List<String> two = Arrays.asList("double", "float", "decimal","numeric");
-        List<String> three = Arrays.asList("date", "datetime", "blob","text","tinytext","longtext","longblob","tinyblob");
+
         for (int i = 0; i < columnList.size(); i++) {
             JSONObject obj = columnList.getJSONObject(i);
             if(null!=obj.getString("id") && !"".equals(obj.getString("id")) && !obj.getString("id").contains("NEW")){
