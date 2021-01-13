@@ -67,7 +67,7 @@ public class ModelTableService {
         Map model=sqlSession.selectOne("bdmodel.getbdmodelById",mapmodel);
         map.put("table_name",jsonObject.getString("table_name"));
         map.put("table_id", jsonObject.getString("table_id"));
-        Integer count = sqlSession.selectOne("bdmodelTable.countTable",map);
+        Integer count = Integer.parseInt(sqlSession.selectOne("bdmodelTable.countTable",map));
         if(count==0) {
             map.put("table_title",jsonObject.getString("table_title"));//注释
 
