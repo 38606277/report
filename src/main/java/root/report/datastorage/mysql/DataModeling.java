@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.springframework.beans.factory.annotation.Autowired;
 import root.report.leeutils.Node;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
@@ -37,6 +38,9 @@ public class DataModeling extends RO
     private static final Logger log = Logger.getLogger(MysqlMetadata.class);
     private static ErpUtil erpUtil = new ErpUtil();
     private static final String DB_CONFIG_PATH = System.getProperty("user.dir")+"/config/DBConfig.xml";
+
+    @Autowired
+    private DataModelingService dataModelingService;
 
     @RequestMapping(value = "/getDatabaseList", produces = "text/plain;charset=UTF-8")
     public List<String>  getDatabaseList(@RequestBody JSONObject pJson) {
@@ -291,43 +295,7 @@ public class DataModeling extends RO
     * */
     @RequestMapping(value="/createHiveTable",produces = "text/plain;charset=UTF-8")
     public String createHiveTable2(@RequestBody JSONObject pJson)  {
-        String tableName = pJson.getString("tableName");
-        String tableFields = pJson.getString("tableFields");
-        JSONArray tableFieldsArray=JSONArray.parseArray(tableFields);
-        long tableId =IDUtil.getId();
-        long modelId =IDUtil.getId();
-        //构建表语句
-        StringBuffer tableSql=new StringBuffer();
-        tableSql.append("CREATE external TABLE IF NOT EXISTS  ");
-        tableSql.append("  ");
-        tableSql.append(tableName);
-        tableSql.append("  (");
-        for(int i=0;i<tableFieldsArray.size();i++){
-            JSONObject obj= (JSONObject) tableFieldsArray.get(i);
-            String field=obj.get("fieldName").toString();
-            String fieldtype=obj.get("fieldType").toString();
-            tableSql.append(field);
-            tableSql.append(" ");
-            tableSql.append(fieldtype);
-            tableSql.append(",");
-        }
-        tableSql.deleteCharAt(tableSql.length()-1);
-        tableSql.append("  )");
-        tableSql.append(" ROW FORMAT   ");
-        tableSql.append("  DELIMITED FIELDS TERMINATED BY ','");
-        tableSql.append("  STORED AS TEXTFILE ");
-        String aa =  tableSql.toString();
-        Map<String,String> map = new HashMap<String,String>();
-        map.put("tableSql", tableSql.toString());
-
-        try{
-            DbFactory.Open("hive").selectList("datamodeling.createHiveTable2",map);
-            DbFactory.close("hive");
-            return  tableSql.toString();
-        }catch (Exception e){
-             return "建表失败";
-        }
-
+        return dataModelingService.createHiveTable(pJson);
     }
     /*
      * hive数据库中创建表(方法调用)

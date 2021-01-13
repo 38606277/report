@@ -6,21 +6,22 @@ import com.github.pagehelper.PageRowBounds;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import root.form.constant.ColumnType;
 import root.form.user.UserModel;
+import root.report.datastorage.mysql.DataModelingService;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ModelTableService {
 
     private static Logger log = Logger.getLogger(ModelTableService.class);
+    @Autowired
+    private DataModelingService dataModelingService;
 
     public Map<String,Object> getListPage(Map<String,String> map) {
         Map<String,Object> map1=new HashMap<>();
@@ -70,17 +71,18 @@ public class ModelTableService {
         Integer count = Integer.parseInt(sqlSession.selectOne("bdmodelTable.countTable",map));
         if(count==0) {
             map.put("table_title",jsonObject.getString("table_title"));//注释
-
             map.put("update_by",user.getId());
+            String tableName = jsonObject.getString("table_name");
+            String dbType=model.get("db_type").toString();
             if (null == jsonObject.getString("table_id") || "".equals(jsonObject.getString("table_id"))) {
                 map.put("create_by", user.getId());
                 String tableId = sqlSession.selectOne("bdmodelTable.getMaxId");
                 tableId = tableId == null ? "1" : tableId;
                 map.put("table_id", tableId);
-
                 JSONArray columnList = jsonObject.getJSONArray("columnlist");
                 String createSql="";
-                if("mysql".equalsIgnoreCase(model.get("db_type").toString())) {
+
+                if("mysql".equalsIgnoreCase(dbType)) {
                     if (columnList.size() > 0) {
                         StringBuffer sb = new StringBuffer();
                         //拼接建表sql
@@ -106,6 +108,22 @@ public class ModelTableService {
                         map.put("table_ddl", createSql);//SQL预览
                     }
 
+                }else  if("hive".equalsIgnoreCase(dbType)) {
+                    JSONObject maphive=new JSONObject();
+                    maphive.put("tableName",tableName);
+                    List<JSONObject> objectList=new ArrayList<>();
+                    if (columnList.size() > 0) {
+                        //拼接建表sql
+                        columnList.forEach(col -> {
+                            JSONObject jsonCol = (JSONObject) col;
+                            JSONObject newjson = new JSONObject();
+                            newjson.put("fieldName", jsonCol.getString("column_name"));
+                            newjson.put("fieldType", jsonCol.getString("column_type"));
+                            objectList.add(newjson);
+                        });
+                    }
+                    maphive.put("tableFields",objectList);
+                    dataModelingService.createHiveTable(maphive);
                 }
                 sqlSession.insert("bdmodelTable.createBdTable", map);
                 Map modelTable = new HashMap();
@@ -130,11 +148,11 @@ public class ModelTableService {
                 JSONArray linkList = jsonObject.getJSONArray("linkList");
                 Integer linkId = sqlSession.selectOne("bdTableColumn.getLinkMaxId");
                 linkId = linkId == null ? 1 : linkId;
-                String tableName = map.get("table_name").toString();
+
                 if(linkList.size()>0) {
                     insertLinkListItem(sqlSession, linkList, linkId, tableId, tableName);
                 }
-                if("mysql".equalsIgnoreCase(model.get("db_type").toString())) {
+                if("mysql".equalsIgnoreCase(dbType)) {
                     if (columnList.size() > 0) {
                         sqlSession.update("bdTableColumn.createNewTable", createSql);
                         sqlSession.commit();
@@ -166,7 +184,7 @@ public class ModelTableService {
             } else {
                 JSONArray columnList = jsonObject.getJSONArray("columnlist");
                 String createSql="";
-                if("mysql".equalsIgnoreCase(model.get("db_type").toString())) {
+                if("mysql".equalsIgnoreCase(dbType)) {
                     if (columnList.size() > 0) {
                         StringBuffer sb = new StringBuffer();
                         //拼接建表sql
@@ -187,13 +205,29 @@ public class ModelTableService {
                         map.put("table_ddl", createSql);//SQL预览
                     }
                     sqlSession.update("bdmodelTable.updateBdTable", map);
+                }else  if("hive".equalsIgnoreCase(dbType)) {
+                    JSONObject maphive=new JSONObject();
+                    maphive.put("tableName",tableName);
+                    List<JSONObject> objectList=new ArrayList<>();
+                    if (columnList.size() > 0) {
+                        //拼接建表sql
+                        columnList.forEach(col -> {
+                            JSONObject jsonCol = (JSONObject) col;
+                            JSONObject newjson = new JSONObject();
+                            newjson.put("fieldName", jsonCol.getString("column_name"));
+                            newjson.put("fieldType", jsonCol.getString("column_type"));
+                            objectList.add(newjson);
+                        });
+                    }
+                    maphive.put("tableFields",objectList);
+                    dataModelingService.createHiveTable(maphive);
                 }
                 String tableId = jsonObject.getString("table_id");
                 /**
                  * 保存字段列
                  * */
                 if(columnList.size()>0) {
-                    updateColumnListItem(sqlSession, columnList, null, tableId, jsonObject.getString("table_name"),model);
+                    updateColumnListItem(sqlSession, columnList, null, tableId, tableName,model);
                 }
                 /**
                  * 保存外键
@@ -201,8 +235,6 @@ public class ModelTableService {
                  * */
 
                 JSONArray linkList = jsonObject.getJSONArray("linkList");
-
-                String tableName = map.get("table_name").toString();
                 if(linkList.size()>0) {
                     updateLinkListItem(sqlSession, linkList, null, tableId, tableName);
                 }
