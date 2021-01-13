@@ -973,67 +973,79 @@ public class QueryService {
             List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
             List<Map> aResult = new ArrayList<Map>();
             Long totalSize = 0L;
-            JSONArray arr = JSON.parseArray(pJson);
-            JSONObject params = arr.getJSONObject(0);//查询参数
+            JSONObject objin =null;
             JSONObject page = null;
-            if (arr.size() > 1) {
-                page = arr.getJSONObject(1);  //分页对象
-            }
-            JSONObject objin = params.getJSONObject("in");
+            int startIndex=0;
+            int perPage =10;
             RowBounds bounds = null;
-            if (page == null || page.size() == 0) {
-                bounds = RowBounds.DEFAULT;
-            } else {
-                int startIndex = page.getIntValue("startIndex");
-                int perPage = page.getIntValue("perPage");
-                if (startIndex == 1 || startIndex == 0) {
-                    startIndex = 0;
+            if(null!=pJson) {
+                JSONArray arr = JSON.parseArray(pJson);
+                JSONObject params = arr.getJSONObject(0);//查询参数
+
+                if (arr.size() > 1) {
+                    page = arr.getJSONObject(1);  //分页对象
+                }
+                objin = params.getJSONObject("in");
+            }else{
+                page =new JSONObject();
+                page.put("startIndex",startIndex);
+                page.put("perPage",perPage);
+            }
+
+                if (page == null || page.size() == 0) {
+                    bounds = RowBounds.DEFAULT;
                 } else {
-                    startIndex = (startIndex - 1) * perPage;
+                    startIndex = page.getIntValue("startIndex");
+                    perPage = page.getIntValue("perPage");
+                    if (startIndex == 1 || startIndex == 0) {
+                        startIndex = 0;
+                    } else {
+                        startIndex = (startIndex - 1) * perPage;
+                    }
+                    bounds = new PageRowBounds(startIndex, perPage);
                 }
-                bounds = new PageRowBounds(startIndex, perPage);
-            }
-            Map map = new HashMap();
-            if (objin != null) {
-                String value = null, key = null;
-                java.util.Iterator it = objin.entrySet().iterator();
-                while (it.hasNext()) {
-                    java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
-                    key = entry.getKey().toString(); //返回与此项对应的键
-                    value = entry.getValue().toString(); //返回与此项对应的值
-                    map.put(key, value);
+                Map map = new HashMap();
+                if (objin != null) {
+                    String value = null, key = null;
+                    java.util.Iterator it = objin.entrySet().iterator();
+                    while (it.hasNext()) {
+                        java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
+                        key = entry.getKey().toString(); //返回与此项对应的键
+                        value = entry.getValue().toString(); //返回与此项对应的值
+                        map.put(key, value);
+                    }
                 }
-            }
-            String db = template.getDb();
-            String namespace = template.getNamespace();
-            String qryId = template.getId();
-            Boolean cached = false;
-            if (null != template.getCached() && "1".equals(template.getCached())) {
-                cached = true;
-            }
-            // 强转成自己想要的类型
-            SqlSession targetSqlSession = DbFactory.Open(db);
-            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(), targetSqlSession, namespace, qryId, bounds,
-                    Map.class, Map.class, map, StatementType.PREPARED, cached, db, null);
-            //将集合遍历
-            for (int i = 0; i < aResult.size(); i++) {
-                //循环new  map集合
-                Map<String, Object> obdmap = new HashMap<String, Object>();
-                Set<String> se = aResult.get(i).keySet();
-                for (String set : se) {
-                    //在循环将大写的KEY和VALUE 放到新的Map
-                    obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                String db = template.getDb();
+                String namespace = template.getNamespace();
+                String qryId = template.getId();
+                Boolean cached = false;
+                if (null != template.getCached() && "1".equals(template.getCached())) {
+                    cached = true;
                 }
-                //将Map放进List集合里
-                newList.add(obdmap);
-            }
-            if (page != null && page.size() != 0) {
-                totalSize = ((PageRowBounds) bounds).getTotal();
-            } else {
-                totalSize = Long.valueOf(newList.size());
-            }
-            result.put("list", newList);
-            result.put("totalSize", totalSize);
+                // 强转成自己想要的类型
+                SqlSession targetSqlSession = DbFactory.Open(db);
+                aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(), targetSqlSession, namespace, qryId, bounds,
+                        Map.class, Map.class, map, StatementType.PREPARED, cached, db, null);
+                //将集合遍历
+                for (int i = 0; i < aResult.size(); i++) {
+                    //循环new  map集合
+                    Map<String, Object> obdmap = new HashMap<String, Object>();
+                    Set<String> se = aResult.get(i).keySet();
+                    for (String set : se) {
+                        //在循环将大写的KEY和VALUE 放到新的Map
+                        obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
+                    }
+                    //将Map放进List集合里
+                    newList.add(obdmap);
+                }
+                if (page != null && page.size() != 0) {
+                    totalSize = ((PageRowBounds) bounds).getTotal();
+                } else {
+                    totalSize = Long.valueOf(newList.size());
+                }
+                result.put("list", newList);
+                result.put("totalSize", totalSize);
+
         }catch (Exception e){
             throw e;
         }

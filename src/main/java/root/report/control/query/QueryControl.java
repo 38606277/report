@@ -9,7 +9,6 @@ import com.googlecode.aviator.Expression;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -393,7 +392,7 @@ public class QueryControl extends RO {
     // 执行excute的代码 ： 版本2
     @RequestMapping(value = "/execQuery/{QueryClassName}/{QueryID}", produces = "text/plain;charset=UTF-8")
     public String execQuery(@PathVariable("QueryClassName") String queryClassName,
-                               @PathVariable("QueryID") String queryID, @RequestBody String pJson) {
+                               @PathVariable("QueryID") String queryID,  @RequestParam(required = false) String pJson) {
         System.out.println("开始执行查询:" + "selectClassName:" + queryClassName + "," + "selectID:" + queryID + ","
                 + "pJson:" + pJson + ",");
         long t1 = System.nanoTime();
@@ -401,76 +400,7 @@ public class QueryControl extends RO {
         JSONObject result = null;
         try{
             result = new JSONObject(this.queryService.executeSql(queryClassName,queryID,pJson));
-/*            JSONArray arr = JSON.parseArray(pJson);
-            JSONObject params = arr.getJSONObject(0);//查询参数
-            JSONObject page = null;
-            if(arr.size()>1){
-                page = arr.getJSONObject(1);  //分页对象
-            }
-            SqlTemplate template = new SqlTemplate();
-            queryService.assemblySqlTemplateTwo(template,queryClassName,queryID);
-            if(StringUtils.isBlank(template.getSql())){
-                return ErrorMsg("3000","数据库查询SQL为空,无法继续操作");
-            }
-            // 输入参数放入map中
-            // JSONArray inTemplate = template.getIn();
 
-            JSONObject objin=params.getJSONObject("in");
-            RowBounds bounds = null;
-            if(page==null || page.size()==0){
-                bounds = RowBounds.DEFAULT;
-            }else{
-                int startIndex=page.getIntValue("startIndex");
-                int perPage=page.getIntValue("perPage");
-                if(startIndex==1 || startIndex==0){
-                    startIndex=0;
-                }else{
-                    startIndex=(startIndex-1)*perPage;
-                }
-                bounds = new PageRowBounds(startIndex, perPage);
-            }
-            Map map = new HashMap();
-            if(objin!=null){
-                String value = null,key=null;
-                java.util.Iterator it = objin.entrySet().iterator();
-                while(it.hasNext()) {
-                    java.util.Map.Entry entry = (java.util.Map.Entry) it.next();
-                    key=entry.getKey().toString(); //返回与此项对应的键
-                    value=entry.getValue().toString(); //返回与此项对应的值
-                    map.put(key, value);
-                }
-            }
-            List<Map> aResult = new ArrayList<Map>();
-            Long totalSize = 0L;
-            String db = template.getDb();
-            String namespace = template.getNamespace();
-            String qryId = template.getId();
-            // 改写掉  用新的方式 VERSION TWO 版本
-            // aResult = DbFactory.Open(db).selectList(namespace + "." + qryId, map, bounds);
-            SqlSession targetSqlSession = DbFactory.Open(db);
-            // 强转成自己想要的类型
-            aResult = (List<Map>) ExecuteSqlUtil.executeDataBaseSql(template.getSql(),targetSqlSession,namespace,qryId,bounds,
-                    Map.class,Map.class,map,StatementType.PREPARED,true);
-            List<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
-            //将集合遍历
-            for(int i=0;i<aResult.size();i++) {
-                //循环new  map集合
-                Map<String, Object> obdmap = new HashMap<String, Object>();
-                Set<String> se = aResult.get(i).keySet();
-                for (String set : se) {
-                    //在循环将大写的KEY和VALUE 放到新的Map
-                    obdmap.put(set.toUpperCase(), aResult.get(i).get(set));
-                }
-                //将Map放进List集合里
-                newList.add(obdmap);
-            }
-            if(page!=null && page.size()!=0){
-                totalSize = ((PageRowBounds)bounds).getTotal();
-            }else{
-                totalSize = Long.valueOf(newList.size());
-            }
-            result.put("list", newList);
-            result.put("totalSize", totalSize);*/
         }catch (Exception e){
             e.printStackTrace();
             return ExceptionMsg(e.getCause().getMessage());
