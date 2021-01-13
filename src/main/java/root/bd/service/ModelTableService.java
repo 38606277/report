@@ -89,8 +89,11 @@ public class ModelTableService {
                             sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
                             String length = jsonCol.getString("column_length");
                             String columnDecimal = jsonCol.getString("column_decimal") == null ? "0" : jsonCol.getString("column_decimal");
-                            if (null != length && !"".equals(length))
+                            if (null != length && !"".equals(length) && columnDecimal!=null && !"".equalsIgnoreCase(columnDecimal)) {
                                 sb.append("(" + length + "," + columnDecimal + ")");
+                            }else if (null != length && !"".equals(length)){
+                                sb.append("(" + length +  ")");
+                            }
                             String isnull = jsonCol.getString("column_isnull");
                             if (null != isnull && !"".equals(isnull)) {
                                 sb.append(" NOT NULL ");
@@ -189,9 +192,9 @@ public class ModelTableService {
                 /**
                  * 保存字段列
                  * */
-
-                updateColumnListItem(sqlSession, columnList, null, tableId,jsonObject.getString("table_name"));
-
+                if(columnList.size()>0) {
+                    updateColumnListItem(sqlSession, columnList, null, tableId, jsonObject.getString("table_name"));
+                }
                 /**
                  * 保存外键
                  * table_fk
