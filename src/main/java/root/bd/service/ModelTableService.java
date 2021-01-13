@@ -90,8 +90,8 @@ public class ModelTableService {
                             JSONObject jsonCol = (JSONObject) col;
                             sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
                             String length = jsonCol.getString("column_length");
-                            String columnDecimal = jsonCol.getString("column_decimal") == null ? "0" : jsonCol.getString("column_decimal");
-                            if (null != length && !"".equals(length) && columnDecimal!=null && !"".equalsIgnoreCase(columnDecimal)) {
+                            String columnDecimal = jsonCol.getString("column_decimal") == null ? "" : jsonCol.getString("column_decimal");
+                            if (null != length && !"".equals(length) && columnDecimal!=null && !"0".equalsIgnoreCase(columnDecimal) && !"".equalsIgnoreCase(columnDecimal)) {
                                 sb.append("(" + length + "," + columnDecimal + ")");
                             }else if (null != length && !"".equals(length)){
                                 sb.append("(" + length +  ")");
@@ -123,7 +123,18 @@ public class ModelTableService {
                         });
                     }
                     maphive.put("tableFields",objectList);
-                    dataModelingService.createHiveTable(maphive);
+                    try {
+                        createSql=dataModelingService.createHiveTable(maphive);
+                        if(!createSql.equals("建表失败")){
+                            map.put("table_ddl", createSql);//SQL预览
+                        }else {
+
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+
                 }
                 sqlSession.insert("bdmodelTable.createBdTable", map);
                 Map modelTable = new HashMap();
@@ -288,7 +299,7 @@ public class ModelTableService {
         List<String> three = Arrays.asList("date", "datetime", "blob","text","tinytext","longtext","longblob","tinyblob");
         for (int i = 0; i < columnList.size(); i++) {
             JSONObject obj = columnList.getJSONObject(i);
-            if(null!=obj.getString("id") && !"".equals(obj.getString("id"))){
+            if(null!=obj.getString("id") && !"".equals(obj.getString("id")) && !obj.getString("id").contains("NEW")){
                 Map columnMap = sqlSession.selectOne("bdTableColumn.getBdTableColumnById",Integer.parseInt(obj.getString("id")));
                 Map mapVal=new HashMap();
                 mapVal.put("id",obj.getString("id"));
