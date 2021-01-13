@@ -15,13 +15,13 @@
 		where table_id=#{table_id}
 	</update>
 
-	<select id="countTable" resultType="java.lang.String">
+	<select id="countTable" resultType="java.lang.String" parameterType="map">
 		SELECT count(1) from bd_table where 1=1
 		<if  test="table_id != null and table_id!='' ">
-			and table_id != #{table_id}
+			and table_id != '${table_id}'
 		</if>
 		<if  test="table_name != null and table_name!='' ">
-			and table_name = #{table_name}
+			and table_name = '${table_name}'
 		</if>
 	</select>
 
@@ -39,19 +39,19 @@
 
 	<!-- 根据model_id 删除表相关信息  -->
 	<delete id="deleteBdTableByID" parameterType="Map">
-        delete from bd_table where table_id=#{table_id}
+        delete from bd_table where table_id='${table_id}'
     </delete>
 
 	<!-- bd_model_table 增删查 ***********************************************************-->
 
 	<insert id="createBdModelTable" parameterType="Map" >
-		insert into bd_model_table(model_id,table_id) values (#{model_id},#{table_id})
+		insert into bd_model_table(model_id,table_id) values (#{model_id},'${table_id}')
 	</insert>
 
 	<delete id="deleteBdModelTableByTableId" parameterType="Map" >
 		 delete from  bd_model_table where 1=1
 		 <if  test="table_id != null and table_id!='' ">
-			and table_id = #{table_id}
+			and table_id = '${table_id}'
 		</if>
 		<if  test="model_id != null and model_id!='' ">
 			and model_id = #{model_id}

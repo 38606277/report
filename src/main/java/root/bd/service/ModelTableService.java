@@ -443,7 +443,14 @@ public class ModelTableService {
         sqlSession.delete("bdTableColumn.deleteBdTableColumnByTablId",map);
         sqlSession.delete("bdTableColumn.deleteBdLinkByTableId",map);
         if("mysql".equalsIgnoreCase(model.get("db_type").toString())) {
-            sqlSession.delete("bdTableColumn.dropNewTable", table.get("table_name"));
+            try {
+                sqlSession.delete("bdTableColumn.dropNewTable", table.get("table_name"));
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+
+            }
+
         }
 
     }
