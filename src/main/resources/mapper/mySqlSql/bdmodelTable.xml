@@ -33,6 +33,10 @@
         SELECT bd.* FROM bd_table bd where bd.table_id = #{table_id}
     </select>
 
+	<select id="getModelBytabId" parameterType="java.lang.String" resultType="map">
+		SELECT DISTINCT model.* from bd_model_table bmt INNER JOIN bd_model model on model.model_id=bmt.model_id where bmt.table_id=#{table_id}
+	</select>
+
 	<!-- 根据model_id 删除表相关信息  -->
 	<delete id="deleteBdTableByID" parameterType="Map">
         delete from bd_table where table_id=#{table_id}

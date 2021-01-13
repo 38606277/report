@@ -193,7 +193,7 @@ public class ModelTableService {
                  * 保存字段列
                  * */
                 if(columnList.size()>0) {
-                    updateColumnListItem(sqlSession, columnList, null, tableId, jsonObject.getString("table_name"));
+                    updateColumnListItem(sqlSession, columnList, null, tableId, jsonObject.getString("table_name"),model);
                 }
                 /**
                  * 保存外键
@@ -246,10 +246,11 @@ public class ModelTableService {
     /**
      * 编辑字段列
      * */
-    public Integer updateColumnListItem (SqlSession sqlSession,JSONArray columnList,Integer newcolId,String tableId,String tablename) {
+    public Integer updateColumnListItem (SqlSession sqlSession,JSONArray columnList,Integer newcolId,String tableId,String tablename,Map model) {
         if (columnList.isEmpty()) {
             return 0;
         }
+        String dbtype=model.get("db_type").toString();
         List<String> one = Arrays.asList("int", "tinyint", "integer","bigint","varchar","varchar2","char","");
         List<String> two = Arrays.asList("double", "float", "decimal","numeric");
         List<String> three = Arrays.asList("date", "datetime", "blob","text","tinytext","longtext","longblob","tinyblob");
@@ -268,38 +269,38 @@ public class ModelTableService {
                 mapVal.put("column_isnull", obj.getString("column_isnull"));
                 sqlSession.update("bdTableColumn.updateTableColumn", mapVal);
 
-
-                String sql=  "ALTER TABLE "+tablename;
-                if(columnMap.get("column_name").toString().equalsIgnoreCase(obj.getString("column_name"))){
-                  sql= sql+ " MODIFY "+obj.getString("column_name")+" ";
-                }else{
-                    sql=sql+" MODIFY "+ columnMap.get("column_name")+" " +obj.getString("column_name")+" ";
+                if("mysql".equalsIgnoreCase(dbtype)) {
+                    String sql = "ALTER TABLE " + tablename;
+                    if (columnMap.get("column_name").toString().equalsIgnoreCase(obj.getString("column_name"))) {
+                        sql = sql + " MODIFY " + obj.getString("column_name") + " ";
+                    } else {
+                        sql = sql + " MODIFY " + columnMap.get("column_name") + " " + obj.getString("column_name") + " ";
+                    }
+                    String colname = "", columnLength = "", columnType = "", columnTitle = "", columnDecimal = "", columnIsnull = "";
+                    columnType = obj.getString("column_type");
+                    columnDecimal = obj.getString("column_decimal");
+                    columnLength = obj.getString("column_length");
+                    columnIsnull = obj.getString("columnIsnull");
+                    columnTitle = obj.getString("column_title");
+                    if (one.contains(columnType)) {
+                        sql = sql + columnType + "(" + columnLength + ")";
+                    }
+                    if (two.contains("columnType")) {
+                        sql = sql + columnType + "(" + columnLength + "," + columnDecimal + ") ";
+                    }
+                    if (three.contains("columnType")) {
+                        sql = sql + columnType;
+                    }
+                    if ("2".equalsIgnoreCase(columnIsnull)) {
+                        sql = sql + " DEFAULT NULL ";
+                    } else {
+                        sql = sql + " NOT NULL ";
+                    }
+                    if (!"".equalsIgnoreCase(columnTitle)) {
+                        sql = sql + " COMMENT '" + columnTitle + "'";
+                    }
+                    sqlSession.update("bdTableColumn.updateTableColumnForDB", sql);
                 }
-                String colname="",columnLength="",columnType="",columnTitle="",columnDecimal="",columnIsnull="";
-                columnType = obj.getString("column_type");
-                columnDecimal = obj.getString("column_decimal");
-                columnLength = obj.getString("column_length");
-                columnIsnull = obj.getString("columnIsnull");
-                columnTitle = obj.getString("column_title");
-                if(one.contains(columnType)){
-                    sql= sql+columnType+"("+columnLength+")";
-                }
-                if(two.contains("columnType")) {
-                    sql = sql +columnType + "(" + columnLength+","+columnDecimal+") ";
-                }
-                if(three.contains("columnType")) {
-                    sql = sql + columnType;
-                }
-                if("2".equalsIgnoreCase(columnIsnull)){
-                    sql = sql + " DEFAULT NULL ";
-                }else{
-                    sql = sql + " NOT NULL ";
-                }
-                if(!"".equalsIgnoreCase(columnTitle)) {
-                    sql = sql + " COMMENT '" + columnTitle + "'";
-                }
-                sqlSession.update("bdTableColumn.updateTableColumnForDB", sql);
-
             }else{
                 String colname="",columnLength="",columnType="",columnTitle="",columnDecimal="",columnIsnull="";
                 Map mapVal=new HashMap();
@@ -318,31 +319,32 @@ public class ModelTableService {
                     mapVal.put("column_decimal", obj.getString("column_decimal"));
                     mapVal.put("column_isnull", obj.getString("column_isnull"));
                     sqlSession.insert("bdTableColumn.createTableColumn", mapVal);
-
-                    columnType=obj.getString("column_type");
-                    columnDecimal=obj.getString("column_decimal");
-                    columnLength=obj.getString("column_length");
-                    columnIsnull=obj.getString("columnIsnull");
-                    columnTitle=obj.getString("column_title");
-                    String sql=  "ALTER TABLE "+tablename+" ADD COLUMN "+ obj.getString("column_name")+" ";
-                    if(one.contains(columnType)){
-                        sql= sql+columnType+"("+columnLength+")";
+                    if("mysql".equalsIgnoreCase(dbtype)) {
+                        columnType = obj.getString("column_type");
+                        columnDecimal = obj.getString("column_decimal");
+                        columnLength = obj.getString("column_length");
+                        columnIsnull = obj.getString("columnIsnull");
+                        columnTitle = obj.getString("column_title");
+                        String sql = "ALTER TABLE " + tablename + " ADD COLUMN " + obj.getString("column_name") + " ";
+                        if (one.contains(columnType)) {
+                            sql = sql + columnType + "(" + columnLength + ")";
+                        }
+                        if (two.contains(columnType)) {
+                            sql = sql + columnType + "(" + columnLength + "," + columnDecimal + ") ";
+                        }
+                        if (three.contains(columnType)) {
+                            sql = sql + columnType;
+                        }
+                        if ("2".equalsIgnoreCase(columnIsnull)) {
+                            sql = sql + " DEFAULT NULL ";
+                        } else {
+                            sql = sql + " NOT NULL ";
+                        }
+                        if (!"".equalsIgnoreCase(columnTitle)) {
+                            sql = sql + " COMMENT '" + columnTitle + "'";
+                        }
+                        sqlSession.update("bdTableColumn.updateTableColumnForDB", sql);
                     }
-                    if(two.contains(columnType)) {
-                        sql = sql +columnType + "(" + columnLength+","+columnDecimal+") ";
-                    }
-                    if(three.contains(columnType)) {
-                        sql = sql + columnType;
-                    }
-                    if("2".equalsIgnoreCase(columnIsnull)){
-                        sql = sql + " DEFAULT NULL ";
-                    }else{
-                        sql = sql + " NOT NULL ";
-                    }
-                    if(!"".equalsIgnoreCase(columnTitle)) {
-                        sql = sql + " COMMENT '" + columnTitle + "'";
-                    }
-                    sqlSession.update("bdTableColumn.updateTableColumnForDB", sql);
                 }
             }
 
@@ -434,12 +436,15 @@ public class ModelTableService {
     public void deletedbmodelTableById(SqlSession sqlSession,String table_id){
         Map<String,Object> map=new HashMap();
         map.put("table_id",table_id);
+        Map model =sqlSession.selectOne("bdmodelTable.getModelBytabId",table_id);
         Map table=sqlSession.selectOne("bdTableColumn.getBdTableById",map);
         sqlSession.delete("bdmodelTable.deleteBdModelTableByTableId",map);
         sqlSession.delete("bdmodelTable.deleteBdTableByID",map);
         sqlSession.delete("bdTableColumn.deleteBdTableColumnByTablId",map);
         sqlSession.delete("bdTableColumn.deleteBdLinkByTableId",map);
-        sqlSession.delete("bdTableColumn.dropNewTable", table.get("table_name"));
+        if("mysql".equalsIgnoreCase(model.get("db_type").toString())) {
+            sqlSession.delete("bdTableColumn.dropNewTable", table.get("table_name"));
+        }
 
     }
 
