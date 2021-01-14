@@ -172,6 +172,7 @@ public class QueryControl extends RO {
             return SuccessMsg("修改报表成功","");
 
         }catch (Exception ex){
+            ex.printStackTrace();
             sqlSession.getConnection().rollback();
             return ExceptionMsg(ex.getMessage());
         }finally {
