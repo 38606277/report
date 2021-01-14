@@ -91,7 +91,7 @@ public class ModelTableService {
                         //拼接建表sql
                         columnList.forEach(col -> {
                             JSONObject jsonCol = (JSONObject) col;
-                            sb.append(jsonCol.getString("column_name") + " " + ColumnType.getDbType(jsonCol.getString("column_type")));
+                            sb.append("`"+jsonCol.getString("column_name") + "` " + ColumnType.getDbType(jsonCol.getString("column_type")));
                             String length = jsonCol.getString("column_length");
                             String columnDecimal = jsonCol.getString("column_decimal") == null ? "" : jsonCol.getString("column_decimal");
 
@@ -101,7 +101,7 @@ public class ModelTableService {
                             columnTitle = jsonCol.getString("column_title");
                             if (one.contains(columnType)) {
                                 sb.append("(" + length + ") ");
-                            }else if (two.contains("columnType")) {
+                            }else if (two.contains(columnType)) {
                                 sb.append("(" + length + "," + columnDecimal + ") ");
                             }
 
@@ -110,19 +110,14 @@ public class ModelTableService {
                             } else {
                                 sb.append(" NOT NULL ");
                             }
-//                            if (!"".equalsIgnoreCase(columnTitle)) {
-//                                sb.append(" COMMENT '"+columnTitle+"'");
-//                            }
-//                            String isnull = jsonCol.getString("column_isnull");
-//                            if (null != isnull && !"".equals(isnull)) {
-//                                sb.append(" NOT NULL ");
-//                            } else {
-//                                sb.append(" DEFAULT NULL ");
-//                            }
+
+                            if (!"".equalsIgnoreCase(columnTitle)) {
+                                sb.append(" COMMENT '"+columnTitle+"'");
+                            }
                             sb.append(",");
                         });
                         createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
-                        map.put("table_ddl", createSql);//SQL预览
+                       // map.put("table_ddl", createSql);//SQL预览
                     }
 
                 }else  if("hive".equalsIgnoreCase(dbType)) {
@@ -227,7 +222,7 @@ public class ModelTableService {
                             sb.append(",");
                         });
                         createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
-                        map.put("table_ddl", createSql);//SQL预览
+                       // map.put("table_ddl", createSql);//SQL预览
                     }
                     sqlSession.update("bdmodelTable.updateBdTable", map);
                 }else  if("hive".equalsIgnoreCase(dbType)) {
@@ -311,7 +306,7 @@ public class ModelTableService {
 
         for (int i = 0; i < columnList.size(); i++) {
             JSONObject obj = columnList.getJSONObject(i);
-            if(null!=obj.getString("id") && !"".equals(obj.getString("id")) && !obj.getString("id").contains("NEW")){
+            if(null!=obj.getString("id") && !"".equals(obj.getString("id")) && !obj.getString("id").contains("xxx")){
                 Map columnMap = sqlSession.selectOne("bdTableColumn.getBdTableColumnById",Integer.parseInt(obj.getString("id")));
                 Map mapVal=new HashMap();
                 mapVal.put("id",obj.getString("id"));
@@ -442,7 +437,7 @@ public class ModelTableService {
         }
         for (int i = 0; i < linkList.size(); i++) {
             JSONObject obj = linkList.getJSONObject(i);
-            if(null!=obj.getString("id") && !"".equalsIgnoreCase(obj.getString("id"))){
+            if(null!=obj.getString("id") && !"".equalsIgnoreCase(obj.getString("id")) && !obj.getString("id").contains("xxx")){
                 Map mapVal = new HashMap();
                 mapVal.put("id", obj.getString("id"));
                 mapVal.put("table_id", tableId);
