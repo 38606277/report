@@ -63,10 +63,10 @@
 	<select id="getListPage" resultType="Map" parameterType="Map">
 		select bt.* from  bd_model_table bmt INNER JOIN bd_table bt on bmt.table_id=bt.table_id where 1=1
 		<if  test="table_name != null and table_name!='' ">
-			and  bt.table_name like '%${table_name}%'
+			and  bt.table_name='${table_name}'
 		</if>
 		<if  test="table_title != null and table_title!='' ">
-			and  bt.table_title ='${table_title}'
+			and  bt.table_title like '%${table_title}%'
 		</if>
 		<if  test="model_id != null and model_id!='' ">
 			and  bmt.model_id = '${model_id}'
