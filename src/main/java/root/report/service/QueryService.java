@@ -1058,14 +1058,25 @@ public class QueryService {
             List<Map<String, Object>> newList = new ArrayList<Map<String, Object>>();
             List<Map> aResult = new ArrayList<Map>();
             Long totalSize = 0L;
-            JSONArray arr = JSON.parseArray(pJson);
-            JSONObject params = arr.getJSONObject(0);//查询参数
+            JSONObject objin =null;
             JSONObject page = null;
-            if (arr.size() > 1) {
-                page = arr.getJSONObject(1);  //分页对象
-            }
-            JSONObject objin = params.getJSONObject("in");
+            int startIndex=0;
+            int perPage =10;
             RowBounds bounds = null;
+            if(null!=pJson) {
+                JSONArray arr = JSON.parseArray(pJson);
+                JSONObject params = arr.getJSONObject(0);//查询参数
+
+                if (arr.size() > 1) {
+                    page = arr.getJSONObject(1);  //分页对象
+                }
+                objin = params.getJSONObject("in");
+            }else{
+                page =new JSONObject();
+                page.put("startIndex",startIndex);
+                page.put("perPage",perPage);
+            }
+
     //                if (page == null || page.size() == 0) {
     //                    bounds = RowBounds.DEFAULT;
     //                } else {
