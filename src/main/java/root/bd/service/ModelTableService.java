@@ -148,6 +148,33 @@ public class ModelTableService {
                     }
 
 
+                }else if("hbase".equalsIgnoreCase(dbType)){
+                    JSONObject maphabse=new JSONObject();
+                    maphabse.put("tableName",tableName.trim().toUpperCase());
+                    List<JSONObject> objectList=new ArrayList<>();
+                    if (columnList.size() > 0) {
+                        //拼接建表sql
+                        columnList.forEach(col -> {
+                            JSONObject jsonCol = (JSONObject) col;
+                            JSONObject newjson = new JSONObject();
+                            newjson.put("fieldName", jsonCol.getString("column_name").trim().toUpperCase());
+                            newjson.put("fieldType", jsonCol.getString("column_type").trim().toUpperCase());
+                            objectList.add(newjson);
+                        });
+                    }
+                    maphabse.put("tableFields",objectList.toString());
+                    maphabse.put("primaryKey","ID");
+                    try {
+                        createSql=dataModelingService.createHbaseTable2(maphabse);
+                        if(!createSql.equals("建表失败")){
+                            // map.put("table_ddl", createSql);//SQL预览
+                            map.put("table_ddl", "SQL包含逗号需要处理");
+                        }else {
+
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
                 sqlSession.insert("bdmodelTable.createBdTable", map);
                 Map modelTable = new HashMap();
