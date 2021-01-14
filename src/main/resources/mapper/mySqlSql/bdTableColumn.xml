@@ -79,15 +79,7 @@
 	<delete id="deleteBdTableColumnByColId" parameterType="Map" >
 		delete from  bd_table_column where id = #{id}
 	</delete>
-	<delete id="deleteBdLinkByTableId" parameterType="Map" >
-		delete from  bd_table_link where 1=1
-		<if  test="table_id != null and table_id!='' ">
-			and table_id = '${table_id}'
-		</if>
-		<if  test="id != null and id!='' ">
-			and id = #{id}
-		</if>
-	</delete>
+
 
 
 	<!-- db_table_link增删改查********************************************************************** -->
@@ -119,8 +111,23 @@
 			and id != #{id}
 		</if>
 	</select>
+	<delete id="deleteBdTableLinkById" parameterType="Map" >
+		delete from  bd_table_link where id = #{id}
+	</delete>
 
+	<delete id="deleteBdTableLinkByTableId" parameterType="Map" >
+		delete from  bd_table_link where table_id = '${table_id}'
+	</delete>
 
+	<delete id="deleteBdLinkByTableId" parameterType="Map" >
+		delete from  bd_table_link where 1=1
+		<if  test="table_id != null and table_id!='' ">
+			and table_id = '${table_id}'
+		</if>
+		<if  test="id != null and id!='' ">
+			and id = #{id}
+		</if>
+	</delete>
 
 	<!--根据建表sql动态建表-->
 	<update id="createNewTable" parameterType="string">

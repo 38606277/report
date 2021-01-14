@@ -93,7 +93,7 @@ public class ModelTableService {
                             JSONObject jsonCol = (JSONObject) col;
                             sb.append("`"+jsonCol.getString("column_name") + "` " + ColumnType.getDbType(jsonCol.getString("column_type")));
                             String length = jsonCol.getString("column_length");
-                            String columnDecimal = jsonCol.getString("column_decimal") == null ? "" : jsonCol.getString("column_decimal");
+                            String columnDecimal = jsonCol.getString("column_decimal") == null ? "0" : jsonCol.getString("column_decimal");
 
                             String columnType = "", columnTitle = "", columnIsnull = "";
                             columnType = jsonCol.getString("column_type");
@@ -184,6 +184,32 @@ public class ModelTableService {
                 }
             } else {
                 JSONArray columnList = jsonObject.getJSONArray("columnlist");
+                JSONArray linkList = jsonObject.getJSONArray("linkList");
+                JSONArray deleteColumnList = jsonObject.getJSONArray("deleteColumnList");
+                JSONArray deleteTableLinkList = jsonObject.getJSONArray("deleteTableLinkList");
+
+                if(deleteColumnList.size()>0){
+                    for(int ii=0;ii<deleteColumnList.size();ii++) {
+                        JSONObject obj = deleteColumnList.getJSONObject(ii);
+                        if (null != obj.getString("id") && !"".equalsIgnoreCase(obj.getString("id")) && !obj.getString("id").contains("xxx")) {
+                           String delteSql=" ALTER TABLE "+tableName+" DROP COLUMN `"+ obj.getString("column_name")+"`";
+                           sqlSession.update("bdTableColumn.updateTableColumnForDB", delteSql);
+                           Map delColMap=new HashMap();
+                            delColMap.put("id",obj.getString("id"));
+                           sqlSession.delete("bdTableColumn.deleteBdTableColumnByColId", delColMap);
+                        }
+                    }
+                }
+                if(deleteTableLinkList.size()>0){
+                    for(int ii=0;ii<deleteColumnList.size();ii++) {
+                        JSONObject obj = deleteColumnList.getJSONObject(ii);
+                        if (null != obj.getString("id") && !"".equalsIgnoreCase(obj.getString("id")) && !obj.getString("id").contains("xxx")) {
+                            Map delLinkMap=new HashMap();
+                            delLinkMap.put("id",obj.getString("id"));
+                            sqlSession.delete("bdTableColumn.deleteBdTableLinkById", delLinkMap);
+                        }
+                    }
+                }
                 String createSql="";
                 if("mysql".equalsIgnoreCase(dbType)) {
                     if (columnList.size() > 0) {
@@ -254,7 +280,7 @@ public class ModelTableService {
                  * table_fk
                  * */
 
-                JSONArray linkList = jsonObject.getJSONArray("linkList");
+
                 if(linkList.size()>0) {
                     updateLinkListItem(sqlSession, linkList, null, tableId, tableName);
                 }
@@ -322,9 +348,9 @@ public class ModelTableService {
                 if("mysql".equalsIgnoreCase(dbtype)) {
                     String sql = "ALTER TABLE " + tablename;
                     if (columnMap.get("column_name").toString().equalsIgnoreCase(obj.getString("column_name"))) {
-                        sql = sql + " MODIFY " + obj.getString("column_name") + " ";
+                        sql = sql + " MODIFY " + obj.getString("column_name") + " "+obj.getString("column_type");
                     } else {
-                        sql = sql + " MODIFY " + columnMap.get("column_name") + " " + obj.getString("column_name") + " ";
+                        sql = sql + " MODIFY " + columnMap.get("column_name") + " " + obj.getString("column_name") + " "+obj.getString("column_type");
                     }
                     String colname = "", columnLength = "", columnType = "", columnTitle = "", columnDecimal = "", columnIsnull = "";
                     columnType = obj.getString("column_type");
@@ -333,14 +359,14 @@ public class ModelTableService {
                     columnIsnull = obj.getString("columnIsnull");
                     columnTitle = obj.getString("column_title");
                     if (one.contains(columnType)) {
-                        sql = sql + columnType + "(" + columnLength + ")";
+                        sql = sql + "(" + columnLength + ")";
                     }
                     if (two.contains("columnType")) {
-                        sql = sql + columnType + "(" + columnLength + "," + columnDecimal + ") ";
+                        sql = sql +  "(" + columnLength + "," + columnDecimal + ") ";
                     }
-                    if (three.contains("columnType")) {
-                        sql = sql + columnType;
-                    }
+//                    if (three.contains("columnType")) {
+//                        sql = sql + columnType;
+//                    }
                     if ("2".equalsIgnoreCase(columnIsnull)) {
                         sql = sql + " DEFAULT NULL ";
                     } else {
@@ -375,16 +401,16 @@ public class ModelTableService {
                         columnLength = obj.getString("column_length");
                         columnIsnull = obj.getString("columnIsnull");
                         columnTitle = obj.getString("column_title");
-                        String sql = "ALTER TABLE " + tablename + " ADD COLUMN " + obj.getString("column_name") + " ";
+                        String sql = "ALTER TABLE " + tablename + " ADD COLUMN " + obj.getString("column_name") + " "+columnType;
                         if (one.contains(columnType)) {
-                            sql = sql + columnType + "(" + columnLength + ")";
+                            sql = sql +  "(" + columnLength + ")";
                         }
                         if (two.contains(columnType)) {
-                            sql = sql + columnType + "(" + columnLength + "," + columnDecimal + ") ";
+                            sql = sql +   "(" + columnLength + "," + columnDecimal + ") ";
                         }
-                        if (three.contains(columnType)) {
-                            sql = sql + columnType;
-                        }
+//                        if (three.contains(columnType)) {
+//                            sql = sql + columnType;
+//                        }
                         if ("2".equalsIgnoreCase(columnIsnull)) {
                             sql = sql + " DEFAULT NULL ";
                         } else {
@@ -473,14 +499,6 @@ public class ModelTableService {
         }
         return ollinkId;
     }
-
-    /**
-     * 保存索引
-     * */
-    public Integer insertIndexListItem (SqlSession sqlSession,JSONArray columnList,Integer colId,Integer tableId) {
-        return colId;
-    }
-
 
     // 功能描述: 根据 dict_id 和 out_id 批量删除 func_dict的信息
     public void deletedbmodelTableById(SqlSession sqlSession,String table_id){
