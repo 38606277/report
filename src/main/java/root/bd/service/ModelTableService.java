@@ -531,7 +531,7 @@ public class ModelTableService {
     public void deletedbmodelTableById(SqlSession sqlSession,String table_id){
         Map<String,Object> map=new HashMap();
         map.put("table_id",table_id);
-        Map model =sqlSession.selectOne("bdmodelTable.getModelBytabId",table_id);
+        Map model =sqlSession.selectOne("bdmodelTable.getModelBytabId",map);
         Map table=sqlSession.selectOne("bdTableColumn.getBdTableById",map);
         sqlSession.delete("bdmodelTable.deleteBdModelTableByTableId",map);
         sqlSession.delete("bdmodelTable.deleteBdTableByID",map);

@@ -29,11 +29,11 @@
         SELECT (MAX(CONVERT(table_id,SIGNED)) +1)as table_id from bd_table
     </select>
 
-	<select id="getBdTableById" parameterType="java.lang.String" resultType="map">
+	<select id="getBdTableById" parameterType="map" resultType="map">
         SELECT bd.* FROM bd_table bd where bd.table_id = '${table_id}'
     </select>
 
-	<select id="getModelBytabId" parameterType="java.lang.String" resultType="map">
+	<select id="getModelBytabId" parameterType="map" resultType="map">
 		SELECT DISTINCT model.* from bd_model_table bmt INNER JOIN bd_model model on model.model_id=bmt.model_id where bmt.table_id='${table_id}'
 	</select>
 
