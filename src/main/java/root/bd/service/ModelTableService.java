@@ -143,7 +143,8 @@ public class ModelTableService {
                     try {
                         createSql=dataModelingService.createHiveTable(maphive);
                         if(!createSql.equals("建表失败")){
-                            map.put("table_ddl", createSql);//SQL预览
+                           // map.put("table_ddl", createSql);//SQL预览
+                            map.put("table_ddl", "SQL包含逗号需要处理");
                         }else {
 
                         }
