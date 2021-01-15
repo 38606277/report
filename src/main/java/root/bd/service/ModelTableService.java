@@ -161,19 +161,19 @@ public class ModelTableService {
                             newjson.put("fieldType", jsonCol.getString("column_type").trim().toUpperCase());
                             objectList.add(newjson);
                         });
-                    }
-                    maphabse.put("tableFields",objectList.toString());
-                    maphabse.put("primaryKey","ID");
-                    try {
-                        createSql=dataModelingService.createHbaseTable2(maphabse);
-                        if(!createSql.equals("建表失败")){
-                            // map.put("table_ddl", createSql);//SQL预览
-                            map.put("table_ddl", "SQL包含逗号需要处理");
-                        }else {
+                        maphabse.put("tableFields",objectList.toString());
+                        maphabse.put("primaryKey",objectList.get(0).getString("fieldName"));
+                        try {
+                            createSql=dataModelingService.createHbaseTable2(maphabse);
+                            if(!createSql.equals("建表失败")){
+                                // map.put("table_ddl", createSql);//SQL预览
+                                map.put("table_ddl", "SQL包含逗号需要处理");
+                            }else {
 
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
-                    }catch (Exception e){
-                        e.printStackTrace();
                     }
                 }
                 sqlSession.insert("bdmodelTable.createBdTable", map);
