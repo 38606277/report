@@ -119,16 +119,16 @@ public class ModelTableService {
                             }
                             sb.append(",");
                             if(!"".equalsIgnoreCase(jsonCol.getString("column_primaryKey")) && "true".equalsIgnoreCase(jsonCol.getString("column_primaryKey"))){
-                                sbprimarykeys.append("`"+jsonCol.getString("column_name") + "`, ");
+                                sbprimarykeys.append("`"+jsonCol.getString("column_name") + "`,");
                             }
                         });
                         if(null!=sbprimarykeys && !"".equalsIgnoreCase(sbprimarykeys.toString())) {
                             sb.append(" PRIMARY KEY (" + sbprimarykeys.deleteCharAt(sbprimarykeys.length() - 1) + "),");
                         }
                         System.out.println(sb);
-                        System.out.println(sb.deleteCharAt(sb.length() - 1));
+                       // System.out.println(sb.deleteCharAt(sb.length() - 1));
                         //String pkey=" PRIMARY KEY (" +sb.deleteCharAt(sb.length() - 1)+"),";
-                        createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
+                        createSql = "create table `" + jsonObject.getString("table_name").trim() + "` (" + sb.deleteCharAt(sb.length() - 1) + ")";
                        // map.put("table_ddl", createSql);//SQL预览
                     }
 
@@ -164,6 +164,7 @@ public class ModelTableService {
                     JSONObject maphabse=new JSONObject();
                     maphabse.put("tableName",tableName.trim().toUpperCase());
                     List<JSONObject> objectList=new ArrayList<>();
+                    List<String> pkIdList = new ArrayList<>();
                     if (columnList.size() > 0) {
                         //拼接建表sql
                         columnList.forEach(col -> {
@@ -172,9 +173,16 @@ public class ModelTableService {
                             newjson.put("fieldName", jsonCol.getString("column_name").trim().toUpperCase());
                             newjson.put("fieldType", jsonCol.getString("column_type").trim().toUpperCase());
                             objectList.add(newjson);
+                            if(!"".equalsIgnoreCase(jsonCol.getString("column_primaryKey")) && "true".equalsIgnoreCase(jsonCol.getString("column_primaryKey"))){
+                                pkIdList.add(jsonCol.getString("column_name").trim().toUpperCase());
+                            }
                         });
                         maphabse.put("tableFields",objectList.toString());
-                        maphabse.put("primaryKey",objectList.get(0).getString("fieldName"));
+                        if(null!=pkIdList && !pkIdList.isEmpty()) {
+                            maphabse.put("primaryKey", pkIdList.get(0));
+                        }else {
+                            maphabse.put("primaryKey", objectList.get(0).getString("fieldName"));
+                        }
                         try {
                             createSql=dataModelingService.createHbaseTable2(maphabse);
                             if(!createSql.equals("建表失败")){
