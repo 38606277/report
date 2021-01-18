@@ -4,9 +4,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import root.mqtt.configure.MyMqttPahoMessageDrivenChannelAdapter;
-import root.mqtt.test.configure.MyMqttPahoMessageDrivenChannelTestAdapter;
 import root.report.db.DbFactory;
-import root.report.service.NLPService;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -21,10 +19,6 @@ public class MyApplicationRunner implements ApplicationRunner {
     @Resource
     private MyMqttPahoMessageDrivenChannelAdapter myMqttPahoMessageDrivenChannelAdapter;
 
-    @Resource
-    private MyMqttPahoMessageDrivenChannelTestAdapter myMqttPahoMessageDrivenChannelTestAdapter;
-
-
     @Override
     public void run(ApplicationArguments var1) throws Exception {
         System.out.println("reportServer启动成功!");
@@ -34,7 +28,7 @@ public class MyApplicationRunner implements ApplicationRunner {
             DbFactory.initializeDB("form");
 
             System.out.println("初始化系统数据库成功!");
-            myMqttPahoMessageDrivenChannelAdapter.addTopicByGateway("1320040004");
+           // myMqttPahoMessageDrivenChannelAdapter.addTopicByGateway("1320040004");
         } catch (Exception ex) {
             System.out.println("初始化系统数据库失败!");
             ex.printStackTrace();
@@ -54,21 +48,5 @@ public class MyApplicationRunner implements ApplicationRunner {
             }
         }
     }
-
-    /**
-     * 初始化测试网关主题
-     */
-    private void initTopicTest(){
-        List<Map<String,Object>> eamGatewayList = DbFactory.Open(DbFactory.FORM).selectList("eam_gateway_test.listEamGateway");
-        if(eamGatewayList!=null && 0 < eamGatewayList.size()){
-            for(Map<String,Object> map : eamGatewayList){
-                if(map.containsKey("gateway_id")){
-                    myMqttPahoMessageDrivenChannelTestAdapter.addTopicByGateway(String.valueOf(map.get("gateway_id")));
-                }
-            }
-        }
-    }
-
-
 
 }
