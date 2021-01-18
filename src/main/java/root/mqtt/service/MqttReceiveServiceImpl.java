@@ -13,6 +13,7 @@ import root.report.service.webchat.HttpRequestUtil;
 import root.report.temperature.http;
 
 import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -32,10 +33,15 @@ public class MqttReceiveServiceImpl implements MqttReceiveService{
 		// TODO Auto-generated method stub
 	
 		System.out.println("MqttReceiveServiceImpl - topic：" + topic);
-		String pJson =new String(payload);
+		String pJson = null;
+		try {
+			pJson = new String(payload,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		JSONObject jsonValue=JSONObject.parseObject(pJson);
 
-
+		System.out.println("MqttReceiveServiceImpl - topic jsonValue：" + jsonValue);
 		String[] data  = topic.substring(1).split("/");
 		
 		if(data.length !=3) {

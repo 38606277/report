@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mqtttask">
+
+	<!--  创建bd_model信息  -->
+	<insert id="createMqttTask" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into mqtt_task(id,host,topic,topic_id,username,password,clientinid,timeout,keepalibe,targetDB,targetTable,sql_script,state)
+		values (#{id},'${host}','${topic}','${topic_id}','${username}','${password}','${clientinid}','${timeout}','${keepalibe}',
+		'${targetDB}','${targetTable}','${sql_script}','${state}')
+	</insert>
+	<!-- 修改 mqtt_task表的信息 -->
+	<update id="updateMqttTask" parameterType="Map">
+		update mqtt_task set host='${host}',topic='${topic}',topic_id='${topic_id}',username='${username}',
+		password='${password}',clientinid='${clientinid}',timeout='${timeout}',keepalibe='${keepalibe}',targetDB='${targetDB}',
+		,targetTable='${targetTable}',sql_script='${sql_script}',state='${state}'
+		where id=#{id}
+	</update>
+
+	<select id="getMaxId" resultType="java.lang.Integer">
+        SELECT (MAX(id) +1)as id from mqtt_task
+    </select>
+
+	<select id="getMqttTaskById" parameterType="map" resultType="map">
+        SELECT bd.* FROM mqtt_task bd where bd.id = #{id}
+    </select>
+
+    <select id="getListPage" resultType="Map" parameterType="Map">
+        SELECT bd.*  FROM mqtt_task bd  where  1=1
+		<if  test="topic != null and topic!='' ">
+			and  bd.topic like '%${topic}%'
+		</if>
+		<if  test="clientinid != null and clientinid!='' ">
+			and  bd.clientinid like '%${clientinid}%'
+		</if>
+		<if  test="targetDB != null and targetDB!='' ">
+			and  bd.targetDB like '%${targetDB}%'
+		</if>
+		<if  test="targetTable != null and targetTable!='' ">
+			and  bd.targetTable like '%${targetTable}%'
+		</if>
+    </select>
+
+	<!-- 根据model_id 删除表相关信息  -->
+	<delete id="deleteBdModelByID" parameterType="Map">
+        delete from mqtt_task where id=#{id}
+    </delete>
+
+	<select id="count" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from mqtt_task where  1=1
+		<if  test="topic != null and topic!='' ">
+			and  topic !='${topic}'
+		</if>
+		<if  test="clientinid != null and clientinid!='' ">
+			and  clientinid !='${clientinid}'
+		</if>
+	</select>
+</mapper>

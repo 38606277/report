@@ -87,7 +87,10 @@ public class ModelTableService {
 
                 if("mysql".equalsIgnoreCase(dbType)) {
                     if (columnList.size() > 0) {
+                        String primaryKeyBegin="PRIMARY KEY (";
+                        String primaryKeyEnd=")";
                         StringBuffer sb = new StringBuffer();
+                        StringBuffer sbprimarykeys = new StringBuffer();
                         //拼接建表sql
                         columnList.forEach(col -> {
                             JSONObject jsonCol = (JSONObject) col;
@@ -115,7 +118,14 @@ public class ModelTableService {
                                 sb.append(" COMMENT '"+columnTitle+"'");
                             }
                             sb.append(",");
+                            if(!"".equalsIgnoreCase(jsonCol.getString("column_primaryKey")) && "true".equalsIgnoreCase(jsonCol.getString("column_primaryKey"))){
+                                sbprimarykeys.append("`"+jsonCol.getString("column_name") + "`, ");
+                            }
                         });
+                        sb.append(" PRIMARY KEY (" +sb.deleteCharAt(sb.length() - 1)+"),");
+                        System.out.println(sb);
+                        System.out.println(sb.deleteCharAt(sb.length() - 1));
+                        //String pkey=" PRIMARY KEY (" +sb.deleteCharAt(sb.length() - 1)+"),";
                         createSql = "create table " + jsonObject.getString("table_name") + "(" + sb.deleteCharAt(sb.length() - 1) + ")";
                        // map.put("table_ddl", createSql);//SQL预览
                     }
