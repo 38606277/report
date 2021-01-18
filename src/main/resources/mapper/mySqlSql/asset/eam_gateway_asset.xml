@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="eam_gateway_asset">
+
+
+	<select id="queryAssetListByGatewayId" resultType="Map" parameterType="Map">
+		SELECT
+		a.gateway_id ,
+		b.*,
+		c.*
+		FROM
+		eam_gateway_asset a
+		LEFT JOIN eam_asset b ON a.asset_id = b.asset_id
+		LEFT JOIN eam_asset_status c ON b.iot_num = c.tag_id
+		WHERE
+		a.gateway_id = #{gateway_id}
+	</select>
+
+
+
+	<select id="queryAssetListPageByGatewayId" resultType="Map" parameterType="Map">
+		SELECT
+		a.gateway_id , b.*,
+		c.electricity,c.signalIntensity,c.receive_time,c.tag_id,c.status
+		FROM
+		eam_gateway_asset a
+		LEFT JOIN eam_asset b ON a.asset_id = b.asset_id
+		LEFT JOIN eam_asset_status c ON b.iot_num = c.tag_id
+		WHERE
+		a.gateway_id = #{gateway_id}
+		limit #{startIndex},#{perPage}
+	</select>
+
+	<select id="countAssetByGatewayId" resultType="int" parameterType="Map">
+		SELECT
+		count(*)
+		FROM
+		eam_gateway_asset a
+		LEFT JOIN eam_asset b ON a.asset_id = b.asset_id
+		LEFT JOIN eam_asset_status c ON b.iot_num = c.tag_id
+		WHERE
+		a.gateway_id = #{gateway_id}
+	</select>
+
+
+	<!-- 批量更新第一种方法，通过接收传进来的参数list进行循环着组装sql -->
+	<insert id="bingAssetByGateway" parameterType="Map" >
+		<selectKey keyProperty="count" resultType="int" order="BEFORE">
+			select count(*) from eam_gateway_asset where asset_id = #{asset_id}
+		</selectKey>
+		<if test="count > 0">
+			update eam_gateway_asset
+			set asset_id = #{asset_id}
+			where gateway_id = #{gateway_id}
+		</if>
+		<if test="count==0">
+			insert into eam_gateway_asset(gateway_id,asset_id) values(#{gateway_id},#{asset_id})
+		</if>
+	</insert>
+
+	<delete id="rmAssetByGatewayId" parameterType="Map">
+		delete from eam_gateway_asset where gateway_id=#{gateway_id}
+	</delete>
+
+</mapper>

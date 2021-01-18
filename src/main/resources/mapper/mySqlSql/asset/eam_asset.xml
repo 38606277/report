@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="eam_asset">
+
+	<insert id="addAsset"   useGeneratedKeys="true" keyProperty="id" parameterType="Map">
+		insert into eam_asset
+		 (asset_tag,asset_name,iot_num,image)
+		values
+		 (#{asset_tag}, #{asset_name}, #{iot_num},#{image})
+	</insert>
+
+	<insert id="addAssetImport"   useGeneratedKeys="true" keyProperty="id" parameterType="Map">
+		insert into eam_asset
+		(asset_num,
+		iot_num,
+		asset_tag,
+		asset_name,
+		asset_type,
+		class_code,
+		asset_class,
+		productor,
+		supplier,
+		model,
+		序列号,
+		应用领域编码,
+		应用领域名称,
+		lifeInMonth,
+		lifeInYears,
+		是否重要资产,
+		备注,
+		`erp创建时间`,
+		amount,
+		`计量单位`  ,
+		`传输线路资源量`  ,
+		`传输线路资源量单位`  ,
+		`资产状态`  ,
+		`资产子状态`  ,
+		`dutyCode`  ,
+		`dutyName`  ,
+		`userCode`  ,
+		`userName`  ,
+		`责任部门编码`  ,
+		`dutyDeptName`  ,
+		`实物管理部门编码`  ,
+		`实物管理部门`  ,
+		`addressCode`  ,
+		`addressName`  ,
+		`base_station_code`  ,
+		`base_station_name`  ,
+		`对应综资站点状态`  ,
+		`基站/营业厅/仓库编码`  ,
+		`基站/营业厅/仓库`  ,
+		`责任人确认`  ,
+		`使用人确认`  ,
+		`是否共享设备`  ,
+		`是否共建设备`  ,
+		`startDate`  ,
+		`合同编号`  ,
+		`租金`  ,
+		`起租日期`  ,
+		`止租日期/报废日期`  ,
+		`老资产标签号`  ,
+		`资产使用状态`  ,
+		`是否机密`  ,
+		`购置日期`  ,
+		`cost`  ,
+		`netValue`  ,
+		`netQuota`  ,
+		`residualValue`  ,
+		`periodDepreciation`  ,
+		`yearDepreciation`  ,
+		`cumulativeDepreciation`  ,
+		`periodImpairment`  ,
+		`yearImpairment`  ,
+		`cumulativeImpairment`  ,
+		`网络元素编码`  ,
+		`网络元素名称`  ,
+		`投资分类编码`  ,
+		`投资分类名称`  ,
+		`业务平台编码`  ,
+		`业务平台名称`  ,
+		`网络层次编码`  ,
+		`网络层次名称`  ,
+		`支撑网设备类型编码`  ,
+		`支撑网设备类型名称`  ,
+		`项目编号`  ,
+		`项目名称`  ,
+		`项目小类`  ,
+		`是否抵扣`  ,
+		`原规格型号`
+
+		)
+		values
+		 (  #{column1},
+			#{column2},
+			#{column3},
+			#{column4},
+			#{column5},
+			#{column6},
+			#{column7},
+			#{column8},
+			#{column9},
+			#{column10},
+			#{column11},
+			#{column12},
+			#{column13},
+			'0',
+			#{column14},
+			#{column15},
+			#{column16},
+			#{column17},
+			#{column18},
+			#{column19},
+			#{column20},
+			#{column21},
+			#{column22},
+			#{column23},
+			#{column24},
+			#{column25},
+			#{column26},
+			#{column27},
+			#{column28},
+			#{column29},
+			#{column30},
+			#{column31},
+			#{column32},
+			#{column33},
+			#{column34},
+			#{column35},
+			#{column36},
+			#{column37},
+			#{column38},
+			#{column39},
+			#{column40},
+			#{column41},
+			#{column42},
+			#{column43},
+			#{column44},
+			#{column45},
+			#{column46},
+			#{column47},
+			#{column48},
+			#{column49},
+			#{column50},
+			#{column51},
+			#{column52},
+			#{column53},
+			#{column54},
+			#{column55},
+			#{column56},
+			#{column57},
+			#{column58},
+			#{column59},
+			#{column60},
+			#{column61},
+			#{column62},
+			#{column63},
+			#{column64},
+			#{column65},
+			#{column66},
+			#{column67},
+			#{column68},
+			#{column69},
+			#{column70},
+			#{column71},
+			#{column72},
+			#{column73},
+			#{column74},
+			#{column75},
+			#{column76})
+	</insert>
+
+	<update id="updateAsset" parameterType="Map">
+		update eam_asset set asset_tag=#{asset_tag}, asset_name=#{asset_name}, iot_num=#{iot_num},image = #{image} where asset_id=#{asset_id}
+	</update>
+
+	<delete id="deleteAsset" parameterType="map">
+		delete from eam_asset where asset_id in (${asset_ids})
+	</delete>
+
+	<select id="getAssetById" resultType="map" parameterType="map">
+		select e.* from eam_asset e where e.asset_id = #{asset_id}
+	</select>
+
+	<select id="getAssetByTag" resultType="map" parameterType="map">
+		select e.* from eam_asset e where e.asset_tag = #{asset_tag}
+	</select>
+
+	<delete id="rmEamAsset" parameterType="int">
+		delete from eam_asset where asset_id=#{assetId}
+	</delete>
+
+
+	<update id="bindEamTag" parameterType="Map">
+		update eam_asset set iot_num = #{iot_num} where asset_id=#{asset_id}
+	</update>
+
+
+	<select id="listEamAssetByIotNum" resultType="Map" parameterType="Map">
+		select * from eam_asset e where iot_num=#{iot_num}
+
+	</select>
+
+	<select id="countEamAssetByPage" resultType="int" parameterType="Map">
+		select count(*) from eam_asset e
+		where 1=1
+		<if test="keyword != null and keyword!=''">
+			and (e.asset_id like '%${keyword}%' or e.asset_num like '%${keyword}%' or e.asset_tag like '%${keyword}%' or e.asset_name like '%${keyword}%' or e.iot_num like '%${keyword}%')
+		</if>
+	</select>
+
+	<select id="listEamAssetByPage" resultType="Map" parameterType="Map">
+		select *  from eam_asset e
+		where 1=1
+		<if test="keyword != null and keyword!=''">
+			and (e.asset_id like '%${keyword}%' or e.asset_num like '%${keyword}%' or e.asset_tag like '%${keyword}%' or e.asset_name like '%${keyword}%' or e.iot_num like '%${keyword}%')
+		</if>
+		limit #{startIndex},#{perPage}
+	</select>
+
+	<select id="countBindingEamAssetByPage" resultType="int" parameterType="Map">
+		SELECT
+		count(1)
+		FROM
+		eam_asset e
+		LEFT JOIN eam_gateway_asset g ON g.asset_id = e.asset_id
+		<if test="asset_id != null and asset_id!=''">  and e.asset_id like '%${asset_id}%' </if>
+
+	</select>
+
+	<select id="listBindingEamAssetByPage" resultType="Map" parameterType="Map">
+		SELECT
+		e.*,
+		g.gateway_id
+		FROM
+		eam_asset e
+		LEFT JOIN eam_gateway_asset g ON g.asset_id = e.asset_id
+		<if test="asset_id != null and asset_id!=''">  and e.asset_id like '%${asset_id}%' </if>
+		limit #{startIndex},#{perPage}
+	</select>
+
+
+	<select id="countAssetNoBindGateway" resultType="int" parameterType="Map">
+		SELECT count(1) FROM eam_asset e
+		WHERE NOT EXISTS
+		(SELECT 1 FROM eam_gateway_asset g
+		WHERE e.asset_id = g.asset_id
+		)
+
+	</select>
+
+	<select id="listAssetNoBindGateway" resultType="Map" parameterType="Map">
+		SELECT e.* FROM eam_asset e
+		WHERE NOT EXISTS
+		(SELECT 1 FROM eam_gateway_asset g
+		WHERE e.asset_id = g.asset_id
+		)
+		limit #{startIndex},#{perPage}
+	</select>
+	<select id="getAssetInventory" resultType="Map" parameterType="map">
+		SELECT
+			ea.*,
+			ega.gateway_id,
+			eg.address,
+			eas.receive_time,
+			eas.`status`,
+			sa.`code`,
+			sa.`name` ,
+			sa.city_code
+		FROM
+			eam_asset ea
+			LEFT JOIN eam_gateway_asset ega ON ea.asset_id = ega.asset_id
+			LEFT JOIN eam_gateway eg ON ega.gateway_id = eg.gateway_id
+			LEFT JOIN eam_asset_status eas ON ea.iot_num = eas.tag_id
+			LEFT JOIN sys_area sa ON sa.`code` = eg.address_id
+		where 1=1
+		<if test="receiveTime != null and receiveTime != ''">
+			and eas.receive_time &lt;'${receiveTime}' </if>
+		<if test="cityCode != null and cityCode != ''">
+			and FIND_IN_SET(sa.city_code,'${cityCode}')
+		</if>
+	</select>
+	<select id="countAssetInventory" resultType="int" parameterType="Map">
+		SELECT count(1) FROM (SELECT
+		ea.asset_id,
+		ea.iot_num,
+		ea.asset_name,
+		ea.asset_num,
+		ega.gateway_id,
+		eg.address,
+		eas.receive_time,
+		eas.`status`,
+		sa.`code`,
+		sa.`name` ,
+		sa.city_code
+		FROM
+		( eam_asset ea LEFT JOIN eam_gateway_asset ega ON ea.asset_id = ega.asset_id )
+		LEFT JOIN eam_gateway eg ON ega.gateway_id = eg.gateway_id
+		LEFT JOIN eam_asset_status eas ON ea.iot_num = eas.tag_id
+		LEFT JOIN sys_area sa ON sa.`code` = eg.address_id
+		-- where sa.city_code='130400000000'
+		) a
+	</select>
+
+
+</mapper>
