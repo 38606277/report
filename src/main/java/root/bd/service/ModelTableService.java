@@ -122,7 +122,9 @@ public class ModelTableService {
                                 sbprimarykeys.append("`"+jsonCol.getString("column_name") + "`, ");
                             }
                         });
-                        sb.append(" PRIMARY KEY (" +sb.deleteCharAt(sb.length() - 1)+"),");
+                        if(null!=sbprimarykeys && !"".equalsIgnoreCase(sbprimarykeys.toString())) {
+                            sb.append(" PRIMARY KEY (" + sbprimarykeys.deleteCharAt(sbprimarykeys.length() - 1) + "),");
+                        }
                         System.out.println(sb);
                         System.out.println(sb.deleteCharAt(sb.length() - 1));
                         //String pkey=" PRIMARY KEY (" +sb.deleteCharAt(sb.length() - 1)+"),";
