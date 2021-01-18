@@ -350,11 +350,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web-services</artifactId>
         </dependency>
-             <!-- <dependency>
-                  <groupId>org.apache.hive</groupId>
-                  <artifactId>hive-exec</artifactId>
-                  <version>${hive.version}</version>
-              </dependency>-->
+        <!-- <dependency>
+             <groupId>org.apache.hive</groupId>
+             <artifactId>hive-exec</artifactId>
+             <version>${hive.version}</version>
+         </dependency>-->
+
 
               <dependency>
                   <groupId>org.apache.hive</groupId>
@@ -398,15 +399,15 @@
 
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <mainClass>root.ReportServerApplication</mainClass>-->
-<!--                    <fork>true</fork>-->
-<!--                    <includeSystemScope>true</includeSystemScope>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.springframework.boot</groupId>-->
+            <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <mainClass>root.ReportServerApplication</mainClass>-->
+            <!--                    <fork>true</fork>-->
+            <!--                    <includeSystemScope>true</includeSystemScope>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -454,7 +455,6 @@
                     </archive>
                 </configuration>
             </plugin>
-
 
 
         </plugins>
