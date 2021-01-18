@@ -87,8 +87,6 @@ public class ModelTableService {
 
                 if("mysql".equalsIgnoreCase(dbType)) {
                     if (columnList.size() > 0) {
-                        String primaryKeyBegin="PRIMARY KEY (";
-                        String primaryKeyEnd=")";
                         StringBuffer sb = new StringBuffer();
                         StringBuffer sbprimarykeys = new StringBuffer();
                         //拼接建表sql
@@ -125,9 +123,6 @@ public class ModelTableService {
                         if(null!=sbprimarykeys && !"".equalsIgnoreCase(sbprimarykeys.toString())) {
                             sb.append(" PRIMARY KEY (" + sbprimarykeys.deleteCharAt(sbprimarykeys.length() - 1) + "),");
                         }
-                        System.out.println(sb);
-                       // System.out.println(sb.deleteCharAt(sb.length() - 1));
-                        //String pkey=" PRIMARY KEY (" +sb.deleteCharAt(sb.length() - 1)+"),";
                         createSql = "create table `" + jsonObject.getString("table_name").trim() + "` (" + sb.deleteCharAt(sb.length() - 1) + ")";
                        // map.put("table_ddl", createSql);//SQL预览
                     }
@@ -147,17 +142,15 @@ public class ModelTableService {
                         });
                     }
                     maphive.put("tableFields",objectList.toString());
-                    try {
+//                    try {
                         createSql=dataModelingService.createHiveTable(maphive);
                         if(!createSql.equals("建表失败")){
                            // map.put("table_ddl", createSql);//SQL预览
                             map.put("table_ddl", "SQL包含逗号需要处理");
-                        }else {
-
                         }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
 
 
                 }else if("hbase".equalsIgnoreCase(dbType)){
@@ -183,17 +176,15 @@ public class ModelTableService {
                         }else {
                             maphabse.put("primaryKey", objectList.get(0).getString("fieldName"));
                         }
-                        try {
+//                        try {
                             createSql=dataModelingService.createHbaseTable2(maphabse);
                             if(!createSql.equals("建表失败")){
                                 // map.put("table_ddl", createSql);//SQL预览
                                 map.put("table_ddl", "SQL包含逗号需要处理");
-                            }else {
-
                             }
-                        }catch (Exception e){
+                       /* }catch (Exception e){
                             e.printStackTrace();
-                        }
+                        }*/
                     }
                 }
                 sqlSession.insert("bdmodelTable.createBdTable", map);
