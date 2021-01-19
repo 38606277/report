@@ -1,4 +1,4 @@
-package root.mqtt.configure;
+package root.mqtt.old.configure;
 
 import org.springframework.integration.mqtt.core.MqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;

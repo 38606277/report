@@ -25,6 +25,10 @@
         SELECT bd.* FROM mqtt_task bd where bd.id = #{id}
     </select>
 
+	<select id="findMqttTaskById" parameterType="java.lang.String" resultType="map">
+		 SELECT * FROM mqtt_task where id = #{id}
+	</select>
+
     <select id="getListPage" resultType="Map" parameterType="Map">
         SELECT bd.*  FROM mqtt_task bd  where  1=1
 		<if  test="topic != null and topic!='' ">
@@ -42,7 +46,7 @@
     </select>
 
 	<!-- 根据model_id 删除表相关信息  -->
-	<delete id="deleteBdModelByID" parameterType="Map">
+	<delete id="deleteMqttTaskById" parameterType="Map">
         delete from mqtt_task where id=#{id}
     </delete>
 
@@ -55,4 +59,8 @@
 			and  clientinid !='${clientinid}'
 		</if>
 	</select>
+
+	<update id="updateState" parameterType="map">
+		update mqtt_task set state='${state}' where id='${id}'
+	</update>
 </mapper>

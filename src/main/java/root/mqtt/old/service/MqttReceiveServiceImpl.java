@@ -1,11 +1,10 @@
-package root.mqtt.service;
+package root.mqtt.old.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import root.mqtt.bean.*;
+import root.mqtt.old.bean.*;
 import root.mqtt.util.HexUtils;
 import root.report.common.DbSession;
 import root.report.db.DbFactory;
@@ -171,7 +170,7 @@ public class MqttReceiveServiceImpl implements MqttReceiveService{
 			MQTTSetResMessage mqttSetRexMessageBean  = JSON.parseObject(payload, MQTTSetResMessage.class);
 			System.out.println(mqttSetRexMessageBean.toString());
 		}else if("alarm".equals(type)){
-			MQTTAlarmMessage  mqttAlarmMessageBean = JSON.parseObject(payload, MQTTAlarmMessage.class);
+			MQTTAlarmMessage mqttAlarmMessageBean = JSON.parseObject(payload, MQTTAlarmMessage.class);
 			System.out.println(mqttAlarmMessageBean.toString());
 		}else{
 			System.out.println(new String (payload));

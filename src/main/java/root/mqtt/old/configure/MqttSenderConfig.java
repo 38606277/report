@@ -1,4 +1,4 @@
-package root.mqtt.configure;
+package root.mqtt.old.configure;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Value;

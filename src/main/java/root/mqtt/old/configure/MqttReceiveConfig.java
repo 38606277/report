@@ -1,4 +1,4 @@
-package root.mqtt.configure;
+package root.mqtt.old.configure;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,12 +14,9 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
-import root.mqtt.service.MqttReceiveService;
-import root.report.db.DbFactory;
+import root.mqtt.old.service.MqttReceiveService;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 接收者配置

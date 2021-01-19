@@ -1,43 +1,29 @@
 package root.mqtt.service;
 
-import javax.annotation.Resource;
-
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageRowBounds;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.log4j.Logger;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.springframework.stereotype.Service;
 import root.form.user.UserModel;
-import root.mqtt.configure.MyMqttPahoMessageDrivenChannelAdapter;
+import root.mqtt.configure.MqttPushClient;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 @Service
-public class TopicService {
-	
-	@Resource
-	private MyMqttPahoMessageDrivenChannelAdapter myMqttPahoMessageDrivenChannelAdapter;
-	
-	/**
-	 * 按网关添加订阅
-	 * @param gateway
-	 */
-	public void addTopicByGateway(String gateway) {
-		myMqttPahoMessageDrivenChannelAdapter.addTopicByGateway(gateway);
-	}
+public class MqttTaskService {
 
-	/**
-	 * 按网关移除订阅
-	 * @param gateway
-	 */
-	public void removeTopicByGateway(String gateway) {
-		myMqttPahoMessageDrivenChannelAdapter.removeTopicByGateway(gateway);
-	}
+	public List<Map<String,MqttClient>> clinetList = new ArrayList<>();
+	private static Logger log = Logger.getLogger(MqttTaskService.class);
 
 	public Map<String, Object> getListPage(Map<String, String> map) {
 			Map<String,Object> map1=new HashMap<>();
@@ -75,6 +61,13 @@ public class TopicService {
 
 	public Map getMqttTaskByID(Map m) {
 		return DbFactory.Open(DbFactory.FORM).selectOne("mqtttask.getMqttTaskById",m);
+	}
+
+	public Map findMqttTaskById(String id) {
+		return DbFactory.Open(DbFactory.FORM).selectOne("mqtttask.findMqttTaskById",id);
+	}
+	public void deleteMqttTaskById(Map map) {
+		 DbFactory.Open(DbFactory.FORM).delete("mqtttask.deleteMqttTaskById",map);
 	}
 
 	public Map<String, Object> saveOrUpdate(SqlSession sqlSession, JSONObject jsonObject) {
@@ -116,4 +109,62 @@ public class TopicService {
 		}
 
 	}
+
+	/**
+	 * 启用：1、停用：0
+	 * */
+	public Map<String, Object> updateState(SqlSession sqlSession, Map map) {
+		Map<String,Object> resultMap  = new HashMap<>();
+		resultMap.put("status",true);
+		try {
+			sqlSession.update("mqtttask.updateState", map);
+			Map info = this.findMqttTaskById(map.get("id").toString());
+			String clientinid=info.get("clientinid").toString();
+			Boolean isConn=false;
+			if(clinetList.size()>0) {
+				for (int i = 0; i < clinetList.size(); i++) {
+					if (null != clinetList.get(i).get(clientinid) && !"".equalsIgnoreCase(clinetList.get(i).get(clientinid).toString())) {
+						isConn = true;
+						if ("0".equalsIgnoreCase(map.get("state").toString())) {
+							MqttClient client = clinetList.get(i).get(clientinid);
+							try {
+								if(null!=client) {
+									client.disconnect();
+								}
+							} catch (MqttException e) {
+								e.printStackTrace();
+							}
+						} else {
+							MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+							clinetList = mqttPushClient.start(info);
+							mqttPushClient.subscribe(info.get("topic").toString());
+						}
+					}
+				}
+				if(!isConn){
+					if ("1".equalsIgnoreCase(map.get("state").toString())) {
+						MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+						clinetList = mqttPushClient.start(info);
+						mqttPushClient.subscribe(info.get("topic").toString());
+					}
+				}
+				/*mqttPushClient.disConnect(info.get("clientinid").toString());*/
+			}else{
+				if ("1".equalsIgnoreCase(map.get("state").toString())) {
+					MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+					clinetList = mqttPushClient.start(info);
+					mqttPushClient.subscribe(info.get("topic").toString());
+				}
+			}
+			log.info(clinetList);
+			resultMap.put("info","修改成功");
+		}catch (Exception e) {
+			resultMap.put("status",false);
+			resultMap.put("info","修改失败");
+			e.printStackTrace();
+		}
+
+		return  resultMap;
+	}
+
 }

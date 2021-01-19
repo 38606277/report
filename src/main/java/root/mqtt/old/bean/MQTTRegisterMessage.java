@@ -1,4 +1,4 @@
-package root.mqtt.bean;
+package root.mqtt.old.bean;
 
 public class MQTTRegisterMessage {
 	

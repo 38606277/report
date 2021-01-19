@@ -1,4 +1,4 @@
-package root.mqtt.configure;
+package root.mqtt.old.configure;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessagingException;

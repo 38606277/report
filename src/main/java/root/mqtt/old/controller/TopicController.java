@@ -1,25 +1,17 @@
-package root.mqtt.controller;
+package root.mqtt.old.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.apache.ibatis.session.SqlSession;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import root.mqtt.configure.MqttSendMessage;
-import root.mqtt.service.TopicService;
+import root.mqtt.old.configure.MqttSendMessage;
+import root.mqtt.old.service.TopicService;
 import root.report.common.RO;
-import root.report.db.DbFactory;
 
 
 /**
@@ -68,5 +60,31 @@ public class TopicController extends RO {
 //    	mqttSendMessage.sendMessage(pJson.toJSONString(), topic);
 //        return SuccessMsg("修改成功", "");
 //    }
+	/*public static void main(String [] args){
+		List<String> ss=new ArrayList<>();
+		Map info = new HashMap();
+		info.put("host","tcp://132.232.111.110:1883");
+		info.put("topic","/001/1320040017/bt");
+		info.put("username","eam");
+		info.put("password","Eam#2020");
+		info.put("clientinid","gao");
+		info.put("timeout","10000");
+		info.put("keepalibe","20");
+		info.put("state","1");
+		//this.addTopicByGateway();
+		MqttPushClient mqttPushClient = new MqttPushClient();
+		try {
+			//System.out.println(mqttPushClient.isConnected());
+			mqttPushClient.start(info);
 
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
+		mqttPushClient.subscribe(info.get("topic").toString());
+		mqttPushClient.subscribe("/001/1320040014/bt");
+		mqttPushClient.subscribe("/001/1320040003/bt");
+		mqttPushClient.subscribe("/001/1320040005/bt");
+
+
+	}*/
 }

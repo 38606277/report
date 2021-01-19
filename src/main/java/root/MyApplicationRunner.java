@@ -3,12 +3,7 @@ package root;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-import root.mqtt.configure.MyMqttPahoMessageDrivenChannelAdapter;
 import root.report.db.DbFactory;
-
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by pangkunkun on 2017/9/3.
@@ -16,9 +11,9 @@ import java.util.Map;
 @Component
 public class MyApplicationRunner implements ApplicationRunner {
 
-    @Resource
+   /* @Resource
     private MyMqttPahoMessageDrivenChannelAdapter myMqttPahoMessageDrivenChannelAdapter;
-
+*/
     @Override
     public void run(ApplicationArguments var1) throws Exception {
         System.out.println("reportServer启动成功!");
@@ -38,7 +33,7 @@ public class MyApplicationRunner implements ApplicationRunner {
     /**
      * 初始化网关主题
      */
-    private void initTopic(){
+   /* private void initTopic(){
         List<Map<String,Object>> eamGatewayList = DbFactory.Open(DbFactory.FORM).selectList("eam_gateway.listEamGateway");
         if(eamGatewayList!=null && 0 < eamGatewayList.size()){
             for(Map<String,Object> map : eamGatewayList){
@@ -47,6 +42,6 @@ public class MyApplicationRunner implements ApplicationRunner {
                 }
             }
         }
-    }
+    }*/
 
 }
