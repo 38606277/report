@@ -1,15 +1,18 @@
 package root.mqtt.configure;
+
 import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.session.SqlSession;
 import org.eclipse.paho.client.mqttv3.*;
 import root.mqtt.service.MqttTaskService;
 import root.report.db.DbFactory;
-
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 public class PushCallback implements MqttCallback,MqttCallbackExtended {
+
+    private static Logger log = Logger.getLogger(PushCallback.class);
+
     private MqttClient client;
     private String clientinid;
     private MqttConnectOptions options;
@@ -30,7 +33,7 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
 
     @Override
     public void connectionLost(Throwable cause) {
-        System.out.println("连接断开，重连");
+        log.info("连接断开，重连");
         try {
             client.reconnect();
         } catch (MqttException e) {
@@ -40,7 +43,8 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
     @Override
     public void connectComplete(boolean b, String s) {
         // 客户端连接成功
-        System.out.println("再次连接成功，重新订阅主题...");
+        log.info("再次连接成功，重新订阅主题...");
+        log.info(s);
         try {
             client.subscribe(topic, qos);
         } catch (MqttException e) {
@@ -49,11 +53,11 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
     }
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        System.out.println("接收消息主题 : " + topic);
-        System.out.println("接收消息clientinid : " + clientinid);
-        System.out.println("接收消息message : " + message);
-        System.out.println("接收消息Qos : " + message.getQos());
-        System.out.println("接收消息内容 : " + new String(message.getPayload(),"UTF-8"));
+        log.info("接收消息主题 : " + topic);
+        log.info("接收消息clientinid : " + clientinid);
+        log.info("接收消息message : " + message);
+        log.info("接收消息Qos : " + message.getQos());
+        log.info("接收消息内容 : " + new String(message.getPayload(),"UTF-8"));
         String pJson = null;
         byte[] payload=message.getPayload();
         try {
@@ -69,7 +73,7 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
         SqlSession sqlSession=DbFactory.Open(dbname);
         if(null!=jsonObject) {
             for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
-                System.out.println(entry.getKey() + "=" + entry.getValue());
+                log.info(entry.getKey() + "=" + entry.getValue());
                 sb.append("`"+entry.getKey() + "`,");
                 if(entry.getKey().equals("id")){
                     Integer newId = sqlSession.selectOne("mqtttask.getMaxId");
@@ -82,32 +86,18 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
             String targetTable=paramMap.get("targetTable").toString().trim();
 
             insertSql = "insert into `"+targetTable+"` (" + sb.deleteCharAt(sb.length() - 1) + ")values(" + sv.deleteCharAt(sv.length() - 1) + ")";
-            System.out.println("接收消息内容 :" + insertSql);
-            System.out.println("接收消息内容 :" + jsonObject);
+            log.info("接收消息内容 :" + insertSql);
             //mqttTaskService.inserSql(dbname,insertString);
             sqlSession.update("mqtttask.insertSql", insertSql);
         }
-        String[] data  = topic.substring(1).split("/");
-
-        if(data.length !=3) {
-            System.out.println("非物联网订阅信息：" + topic);
-            return ;
-        }
-
-        String prefix = data[0];//固定前缀
-        long gatewayId = Long.parseLong(data[1]);//网关编号
-        String type = data[2];//订阅类型
-
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        //String receiveTime = df.format(new Date(timestamp));
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
-        System.out.println(token);
-        System.out.println("消息发送成功");
+        log.info(token);
+        log.info("消息发送成功");
         try {
-            System.out.println(token.getMessage());
+            log.info(token.getMessage());
         } catch (MqttException e) {
             e.printStackTrace();
         }
