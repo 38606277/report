@@ -1,7 +1,9 @@
 package root.mqtt.configure;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import root.mqtt.service.MqttTaskService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MqttPushClient {
+    private static Logger log = Logger.getLogger(MqttPushClient.class);
 
     public List<Map<String,MqttClient>> clinetList = new ArrayList<>();
 
@@ -25,23 +28,10 @@ public class MqttPushClient {
         try {
             String url=paramMap.get("host").toString();
             String clientId=paramMap.get("clientinid").toString();
+            String topic = paramMap.get("topic").toString();
             client = new MqttClient(url, clientId, new MemoryPersistence());
-            MqttConnectOptions options = new MqttConnectOptions();
-            // 设置是否清空session,这里如果设置为false表示服务器会保留客户端的连接记录，
-            // 这里设置为true表示每次连接到服务器都以新的身份连接
-            options.setCleanSession(true);
-            // 设置连接的用户名
-            options.setUserName(paramMap.get("username").toString());
-            // 设置连接的密码
-            options.setPassword(paramMap.get("password").toString().toCharArray());
-            options.setServerURIs(StringUtils.split(paramMap.get("host").toString(), ","));
-            // 设置超时时间 单位为秒
-            options.setConnectionTimeout(Integer.parseInt(paramMap.get("timeout").toString()));
-            // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送心跳判断客户端是否在线，但这个方法并没有重连的机制
-            options.setKeepAliveInterval(Integer.parseInt(paramMap.get("keepalibe").toString()));
-            // 设置“遗嘱”消息的话题，若客户端与服务器之间的连接意外中断，服务器将发布客户端的“遗嘱”消息。
-            options.setWill("willTopic", WILL_DATA, 2, false);
-            client.setCallback(new PushCallback(client));
+            MqttConnectOptions options = getOptions(paramMap);
+            client.setCallback(new PushCallback(client,options, topic,0));
             client.connect(options);
             Map<String,MqttClient> mapClient = new HashMap<String,MqttClient>();
             mapClient.put(clientId, client);
@@ -52,14 +42,24 @@ public class MqttPushClient {
         return clinetList;
     }
 
-    public Boolean isConnected(String clientinid){
-        Boolean isConn=false;
-        for(int i = 0;i<clinetList.size();i++) {
-            if (null != clinetList.get(i).get(clientinid) && !"".equalsIgnoreCase(clinetList.get(i).get(clientinid).toString())) {
-                isConn = true;
-            }
-        }
-        return isConn;
+    public MqttConnectOptions getOptions(Map paramMap) {
+        MqttConnectOptions options = new MqttConnectOptions();
+        // 设置是否清空session,这里如果设置为false表示服务器会保留客户端的连接记录，
+        // 这里设置为true表示每次连接到服务器都以新的身份连接
+        //options.setAutomaticReconnect(true);
+        options.setCleanSession(true);
+        // 设置连接的用户名
+        options.setUserName(paramMap.get("username").toString());
+        // 设置连接的密码
+        options.setPassword(paramMap.get("password").toString().toCharArray());
+        options.setServerURIs(StringUtils.split(paramMap.get("host").toString(), ","));
+        // 设置超时时间 单位为秒
+        options.setConnectionTimeout(Integer.parseInt(paramMap.get("timeout").toString()));
+        // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送心跳判断客户端是否在线，但这个方法并没有重连的机制
+        options.setKeepAliveInterval(Integer.parseInt(paramMap.get("keepalibe").toString()));
+        // 设置“遗嘱”消息的话题，若客户端与服务器之间的连接意外中断，服务器将发布客户端的“遗嘱”消息。
+        options.setWill("willTopic", WILL_DATA, 2, false);
+        return options;
     }
 
     /**
@@ -87,7 +87,7 @@ public class MqttPushClient {
         message.setPayload(pushMessage.getBytes());
         MqttTopic mTopic = client.getTopic(topic);
         if (null == mTopic) {
-            //log.error("topic not exist");
+            log.error("topic not exist");
         }
         MqttDeliveryToken token;
         try {

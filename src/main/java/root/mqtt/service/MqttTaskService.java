@@ -75,8 +75,10 @@ public class MqttTaskService {
 		String id="";
 		map.put("clientinid",jsonObject.getString("clientinid"));
 		map.put("topic",jsonObject.getString("topic"));
+		map.put("id", jsonObject.getString("id"));
 		Integer count = sqlSession.selectOne("mqtttask.count",map);
 		if(count==0) {
+			map.put("topic_id",jsonObject.getString("topic_id"));
 			map.put("host", jsonObject.getString("host"));
 			map.put("username", jsonObject.getString("username"));
 			map.put("password", jsonObject.getString("password"));
@@ -127,6 +129,7 @@ public class MqttTaskService {
 							try {
 								if(null!=client) {
 									client.disconnect();
+									client.close();
 									clinetList.remove(i);
 									break;
 								}
@@ -135,13 +138,22 @@ public class MqttTaskService {
 							}
 						} else {
 							MqttClient client = clinetList.get(i).get(clientinid);
-							client.disconnect();
-							client.close();
-							clinetList.remove(i);
-							MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
-							clinetList = mqttPushClient.start(info);
-							mqttPushClient.subscribe(info.get("topic").toString());
-							break;
+							try {
+								client.disconnect();
+								client.close();
+								clinetList.remove(i);
+								MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+								clinetList = mqttPushClient.start(info);
+								mqttPushClient.subscribe(info.get("topic").toString());
+								break;
+							}catch (Exception e){
+								clinetList.remove(i);
+								MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+								clinetList = mqttPushClient.start(info);
+								mqttPushClient.subscribe(info.get("topic").toString());
+								break;
+							}
+
 						}
 					}
 				}

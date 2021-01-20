@@ -49,14 +49,19 @@
 	<delete id="deleteMqttTaskById" parameterType="Map">
         delete from mqtt_task where id=#{id}
     </delete>
-
+	<select id="findMqttTaskByClientinId" parameterType="java.lang.String" resultType="map">
+		select * from mqtt_task where   clientinid ='${clientinid}'
+	</select>
 	<select id="count" parameterType="map" resultType="java.lang.Integer">
 		select count(1) from mqtt_task where  1=1
 		<if  test="topic != null and topic!='' ">
-			and  topic !='${topic}'
+			and  topic ='${topic}'
 		</if>
 		<if  test="clientinid != null and clientinid!='' ">
-			and  clientinid !='${clientinid}'
+			and  clientinid ='${clientinid}'
+		</if>
+		<if  test="id != null and id!='' ">
+			and  id !='${id}'
 		</if>
 	</select>
 

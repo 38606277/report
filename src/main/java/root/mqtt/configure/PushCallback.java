@@ -1,16 +1,26 @@
 package root.mqtt.configure;
 import com.alibaba.fastjson.JSONObject;
 import org.eclipse.paho.client.mqttv3.*;
+import root.report.db.DbFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
 
-public class PushCallback implements MqttCallback {
+public class PushCallback implements MqttCallback,MqttCallbackExtended {
     private MqttClient client;
     private String clientinid;
+    private MqttConnectOptions options;
+    private String topic;
+    private int qos;
 
-    public PushCallback(MqttClient client) {
+    public PushCallback(MqttClient client,MqttConnectOptions options, String topic, int qos) {
             this.client= client;
             this.clientinid = client.getClientId();
+            this.options=options;
+            this.topic=topic;
+            this.qos=qos;
     }
 
     @Override
@@ -18,13 +28,20 @@ public class PushCallback implements MqttCallback {
         System.out.println("连接断开，重连");
         try {
             client.reconnect();
-            System.out.println("再次连接成功");
         } catch (MqttException e) {
-            System.out.println("再次连接失败");
             e.printStackTrace();
         }
     }
-
+    @Override
+    public void connectComplete(boolean b, String s) {
+        // 客户端连接成功
+        System.out.println("再次连接成功，重新订阅主题...");
+        try {
+            client.subscribe(topic, qos);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
         System.out.println("接收消息主题 : " + topic);
@@ -42,7 +59,19 @@ public class PushCallback implements MqttCallback {
         JSONObject jsonValue=JSONObject.parseObject(pJson);
 
         System.out.println("接收消息内容 jsonValue：" + jsonValue);
+        String[] data  = topic.substring(1).split("/");
 
+        if(data.length !=3) {
+            System.out.println("非物联网订阅信息：" + topic);
+            return ;
+        }
+
+        String prefix = data[0];//固定前缀
+        long gatewayId = Long.parseLong(data[1]);//网关编号
+        String type = data[2];//订阅类型
+
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+        //String receiveTime = df.format(new Date(timestamp));
     }
 
     @Override
