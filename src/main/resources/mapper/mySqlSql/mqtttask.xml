@@ -37,12 +37,12 @@
 		<if  test="clientinid != null and clientinid!='' ">
 			and  bd.clientinid like '%${clientinid}%'
 		</if>
-		<if  test="targetDB != null and targetDB!='' ">
+		<!--<if  test="targetDB != null and targetDB!='' ">
 			and  bd.targetDB like '%${targetDB}%'
 		</if>
 		<if  test="targetTable != null and targetTable!='' ">
 			and  bd.targetTable like '%${targetTable}%'
-		</if>
+		</if>-->
     </select>
 
 	<!-- 根据model_id 删除表相关信息  -->

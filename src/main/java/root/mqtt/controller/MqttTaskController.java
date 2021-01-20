@@ -32,9 +32,10 @@ public class MqttTaskController extends RO {
 			Map<String,String> map=new HashMap();
 			map.put("startIndex",pJson.getString("startIndex"));
 			map.put("perPage",pJson.getString("perPage"));
-			map.put("model_name",pJson.get("model_name")==null?"":pJson.get("model_name").toString());
-			map.put("db_source",pJson.get("db_source")==null?"":pJson.get("db_source").toString());
-			map.put("db_type",pJson.get("db_type")==null?"":pJson.get("db_type").toString());
+			map.put("topic",pJson.get("topic")==null?"":pJson.get("topic").toString());
+			map.put("clientinid",pJson.get("clientinid")==null?"":pJson.get("clientinid").toString());
+//			map.put("targetDB",pJson.get("targetDB")==null?"":pJson.get("targetDB").toString());
+//			map.put("targetTable",pJson.get("targetTable")==null?"":pJson.get("targetTable").toString());
 			Map<String,Object> resultMap = mqttTaskService.getListPage(map);
 			return SuccessMsg("", resultMap);
 		} catch (Exception ex){
