@@ -134,9 +134,14 @@ public class MqttTaskService {
 								e.printStackTrace();
 							}
 						} else {
+							MqttClient client = clinetList.get(i).get(clientinid);
+							client.disconnect();
+							client.close();
+							clinetList.remove(i);
 							MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
 							clinetList = mqttPushClient.start(info);
 							mqttPushClient.subscribe(info.get("topic").toString());
+							break;
 						}
 					}
 				}
