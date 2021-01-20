@@ -13,10 +13,7 @@ import root.mqtt.configure.MqttPushClient;
 import root.report.db.DbFactory;
 import root.report.sys.SysContext;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -130,6 +127,8 @@ public class MqttTaskService {
 							try {
 								if(null!=client) {
 									client.disconnect();
+									clinetList.remove(i);
+									break;
 								}
 							} catch (MqttException e) {
 								e.printStackTrace();
