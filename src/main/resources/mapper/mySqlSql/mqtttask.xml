@@ -13,8 +13,8 @@
 	<update id="updateMqttTask" parameterType="Map">
 		update mqtt_task set host='${host}',topic='${topic}',topic_id='${topic_id}',username='${username}',
 		password='${password}',clientinid='${clientinid}',timeout='${timeout}',keepalibe='${keepalibe}',targetDB='${targetDB}',
-		,targetTable='${targetTable}',sql_script='${sql_script}',state='${state}'
-		where id=#{id}
+		targetTable='${targetTable}',sql_script='${sql_script}',state='${state}'
+		where id='${id}'
 	</update>
 
 	<select id="getMaxId" resultType="java.lang.Integer">
