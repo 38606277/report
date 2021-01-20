@@ -142,13 +142,13 @@ public class MqttTaskService {
 								client.disconnect();
 								client.close();
 								clinetList.remove(i);
-								MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+								MqttPushClient mqttPushClient = new MqttPushClient(clinetList,MqttTaskService.this);
 								clinetList = mqttPushClient.start(info);
 								mqttPushClient.subscribe(info.get("topic").toString());
 								break;
 							}catch (Exception e){
 								clinetList.remove(i);
-								MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+								MqttPushClient mqttPushClient = new MqttPushClient(clinetList,MqttTaskService.this);
 								clinetList = mqttPushClient.start(info);
 								mqttPushClient.subscribe(info.get("topic").toString());
 								break;
@@ -159,7 +159,7 @@ public class MqttTaskService {
 				}
 				if(!isConn){
 					if ("1".equalsIgnoreCase(map.get("state").toString())) {
-						MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+						MqttPushClient mqttPushClient = new MqttPushClient(clinetList,MqttTaskService.this);
 						clinetList = mqttPushClient.start(info);
 						mqttPushClient.subscribe(info.get("topic").toString());
 					}
@@ -167,7 +167,7 @@ public class MqttTaskService {
 				/*mqttPushClient.disConnect(info.get("clientinid").toString());*/
 			}else{
 				if ("1".equalsIgnoreCase(map.get("state").toString())) {
-					MqttPushClient mqttPushClient = new MqttPushClient(clinetList);
+					MqttPushClient mqttPushClient = new MqttPushClient(clinetList,MqttTaskService.this);
 					clinetList = mqttPushClient.start(info);
 					mqttPushClient.subscribe(info.get("topic").toString());
 				}
@@ -183,4 +183,13 @@ public class MqttTaskService {
 		return  resultMap;
 	}
 
+	public void inserSql(String dbname,String insertSql){
+		try {
+			DbFactory.Open(dbname).update("mqtttask.insertSql", insertSql);
+			System.out.println("插入成功");
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+
+	}
 }

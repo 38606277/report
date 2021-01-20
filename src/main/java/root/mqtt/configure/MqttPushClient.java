@@ -13,10 +13,12 @@ import java.util.Map;
 public class MqttPushClient {
     private static Logger log = Logger.getLogger(MqttPushClient.class);
 
+    private MqttTaskService mqttTaskService;
     public List<Map<String,MqttClient>> clinetList = new ArrayList<>();
 
-    public MqttPushClient(List<Map<String,MqttClient>> clinetList) {
+    public MqttPushClient(List<Map<String,MqttClient>> clinetList,MqttTaskService mqttTaskService) {
         this.clinetList= clinetList;
+        this.mqttTaskService=mqttTaskService;
     }
 
     private static final byte[] WILL_DATA;
@@ -31,7 +33,7 @@ public class MqttPushClient {
             String topic = paramMap.get("topic").toString();
             client = new MqttClient(url, clientId, new MemoryPersistence());
             MqttConnectOptions options = getOptions(paramMap);
-            client.setCallback(new PushCallback(client,options, topic,0));
+            client.setCallback(new PushCallback(client,options, topic,0,paramMap,mqttTaskService));
             client.connect(options);
             Map<String,MqttClient> mapClient = new HashMap<String,MqttClient>();
             mapClient.put(clientId, client);
