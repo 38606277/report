@@ -27,15 +27,15 @@ public class MqttTaskController extends RO {
 	private MqttTaskService mqttTaskService;
 	
 	@RequestMapping(value = "/getMqttTaskList", produces = "text/plain;charset=UTF-8")
-	public String getModelList(@RequestBody JSONObject pJson)  {
+	public String getMqttTaskList(@RequestBody JSONObject pJson)  {
 		try {
 			Map<String,String> map=new HashMap();
 			map.put("startIndex",pJson.getString("startIndex"));
 			map.put("perPage",pJson.getString("perPage"));
-			map.put("topic",pJson.get("topic")==null?"":pJson.get("topic").toString());
-			map.put("clientinid",pJson.get("clientinid")==null?"":pJson.get("clientinid").toString());
-//			map.put("targetDB",pJson.get("targetDB")==null?"":pJson.get("targetDB").toString());
-//			map.put("targetTable",pJson.get("targetTable")==null?"":pJson.get("targetTable").toString());
+			map.put("topic",pJson.get("topic")==null?"":pJson.getString("topic"));
+			map.put("clientinid",pJson.get("clientinid")==null?"":pJson.getString("clientinid"));
+/*			map.put("targetDB",pJson.get("targetDB")==null?"":pJson.get("targetDB").toString());
+			map.put("targetTable",pJson.get("targetTable")==null?"":pJson.get("targetTable").toString());*/
 			Map<String,Object> resultMap = mqttTaskService.getListPage(map);
 			return SuccessMsg("", resultMap);
 		} catch (Exception ex){
@@ -44,7 +44,7 @@ public class MqttTaskController extends RO {
 	}
 
 	@RequestMapping(value = "/getMqttTaskById", produces = "text/plain;charset=UTF-8")
-	public String getModelById(@RequestBody JSONObject pJson)  {
+	public String getMqttTaskById(@RequestBody JSONObject pJson)  {
 		try{
 			Map resultObject =mqttTaskService.getMqttTaskByID(pJson);
 			return SuccessMsg("",resultObject);
@@ -56,7 +56,7 @@ public class MqttTaskController extends RO {
 	}
 
 	@RequestMapping(value = "/createMqttTask", produces = "text/plain;charset=UTF-8")
-	public String getTablesBySource(@RequestBody JSONObject pJson) throws SQLException {
+	public String createMqttTask(@RequestBody JSONObject pJson) throws SQLException {
 		SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
 		try{
 			sqlSession.getConnection().setAutoCommit(false);
