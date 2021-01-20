@@ -97,4 +97,19 @@ public class MqttTaskController extends RO {
 			return ExceptionMsg(ex.getMessage());
 		}
 	}
+
+	@RequestMapping(value = "/deleteMqttTaskById", produces = "text/plain;charset=UTF-8")
+	public String deleteMqttTaskById(@RequestBody JSONObject pJson) throws SQLException {
+		try{
+
+			Map param = new HashMap();
+			param.put("id",pJson.getString("id"));
+			this.mqttTaskService.deleteMqttTaskById(param);
+
+		}catch (Exception ex){
+			ex.printStackTrace();
+			return ExceptionMsg(ex.getMessage());
+		}
+		return "";
+	}
 }

@@ -6,6 +6,7 @@ import root.report.db.DbFactory;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 
 public class PushCallback implements MqttCallback,MqttCallbackExtended {
@@ -56,9 +57,21 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        JSONObject jsonValue=JSONObject.parseObject(pJson);
-
-        System.out.println("接收消息内容 jsonValue：" + jsonValue);
+        JSONObject jsonObject=JSONObject.parseObject(pJson);
+        StringBuilder sb = new StringBuilder();
+        StringBuilder sv = new StringBuilder();
+        String insertString="";
+        if(null!=jsonObject) {
+            for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+                System.out.println(entry.getKey() + "=" + entry.getValue());
+                sb.append("`"+entry.getKey() + "`,");
+                sv.append("'" + entry.getValue() + "',");
+            }
+            insertString = "insert into mqtt_task (" + sb.deleteCharAt(sb.length() - 1) + ")values(" + sv.deleteCharAt(sv.length() - 1) + ")";
+            System.out.println("接收消息内容 :" + insertString);
+            System.out.println("接收消息内容 :" + jsonObject);
+            //DbFactory.Open(jsonObject.getString("targetDB")).insert("mqtttask.insertSql", insertString);
+        }
         String[] data  = topic.substring(1).split("/");
 
         if(data.length !=3) {

@@ -47,7 +47,7 @@
 
 	<!-- 根据model_id 删除表相关信息  -->
 	<delete id="deleteMqttTaskById" parameterType="Map">
-        delete from mqtt_task where id=#{id}
+        delete from mqtt_task where id='${id}'
     </delete>
 	<select id="findMqttTaskByClientinId" parameterType="java.lang.String" resultType="map">
 		select * from mqtt_task where   clientinid ='${clientinid}'
@@ -68,4 +68,8 @@
 	<update id="updateState" parameterType="map">
 		update mqtt_task set state='${state}' where id='${id}'
 	</update>
+
+	<update id="insertSql" parameterType="string">
+        ${_parameter}
+    </update>
 </mapper>
