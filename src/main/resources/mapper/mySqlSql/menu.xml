@@ -46,7 +46,7 @@
     </select>
 
 	<select id="getMenuByPId" parameterType="java.lang.String" resultType="map">
-        SELECT u.* FROM fnd_func u where u.func_pid = #{func_pid}
+        SELECT u.*,u.func_id as 'key' FROM fnd_func u where u.func_pid = #{func_pid}
     </select>
 
     <select id="getAllPage" resultType="Map" parameterType="Map">
