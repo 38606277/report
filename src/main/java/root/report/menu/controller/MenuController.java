@@ -69,6 +69,19 @@ public class MenuController extends RO {
         }
     }
 
+    @RequestMapping(value = "/getAllList", produces = "text/plain;charset=UTF-8")
+    public String getAllList() {
+        try {
+//            JSONObject jsonFunc = JSONObject.parseObject(pJson);
+//            Map<String,String> map=new HashMap();
+//            map.put("func_id","-1");
+            List<Map> map1 = menuService.getAllList("0");
+            return SuccessMsg("", map1);
+        } catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
+
 
      //返回数据
     @RequestMapping(value = "/getMenuByID", produces = "text/plain;charset=UTF-8")

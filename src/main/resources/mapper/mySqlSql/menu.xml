@@ -57,7 +57,7 @@
     </select>
 
 	<select id="getMaxId" resultType="java.lang.Integer">
-        SELECT (MAX(func_id) +1)as func_id from fnd_func
+        SELECT (MAX(CONVERT(func_id,SIGNED) +1)) as func_id from fnd_func
     </select>
 	<!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
 	<delete id="deleteMenuByID" parameterType="Map">

@@ -109,7 +109,7 @@ public class MenuService {
     // 功能描述: 根据 dict_id 和 out_id 批量删除 func_dict的信息
     public void deleteMenuById(SqlSession sqlSession,int func_id){
             Map<String,Object> map=new HashMap();
-            map.put("func_id",func_id);
+            map.put("func_pid",func_id);
             sqlSession.delete("menu.deleteMenuByID",map);
     }
 
@@ -118,4 +118,30 @@ public class MenuService {
     }
 
 
+    public List<Map> getAllList(String parmap) {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        List<Map> list= sqlSession.selectList("menu.getMenuByPId",parmap);
+        for(int i=0;i<list.size();i++){
+            Map map=new HashMap();
+            List<Map> chilerenlist= sqlSession.selectList("menu.getMenuByPId",list.get(i).get("func_id").toString());
+            if(null!=chilerenlist && chilerenlist.size()>0){
+                list.get(i).put("children",childrenListItem(sqlSession,chilerenlist));
+            }
+        }
+        return list;
+    }
+
+    public List<Map> childrenListItem (SqlSession sqlSession,List<Map> list) {
+        if (list.isEmpty()) {
+            return list;
+        }
+        for(int i=0;i<list.size();i++){
+            Map map=new HashMap();
+            List<Map> chilerenlist= sqlSession.selectList("menu.getMenuByPId",list.get(i).get("func_id").toString());
+            if(null!=chilerenlist && chilerenlist.size()>0){
+                list.get(i).put("children",childrenListItem(sqlSession,chilerenlist));
+            }
+        }
+        return list;
+    }
 }
