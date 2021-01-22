@@ -18,7 +18,7 @@
 	</update>
 
 	<select id="getMaxId" resultType="java.lang.Integer">
-        SELECT (MAX(id) +1)as id from mqtt_task
+        SELECT (MAX(CONVERT(id,SIGNED) +1))as id from mqtt_task
     </select>
 
 	<select id="getMqttTaskById" parameterType="map" resultType="map">

@@ -134,7 +134,10 @@ public class MqttTaskService {
 									break;
 								}
 							} catch (MqttException e) {
+								client.close();
+								clinetList.remove(i);
 								e.printStackTrace();
+								break;
 							}
 						} else {
 							MqttClient client = clinetList.get(i).get(clientinid);
@@ -164,7 +167,6 @@ public class MqttTaskService {
 						mqttPushClient.subscribe(info.get("topic").toString());
 					}
 				}
-				/*mqttPushClient.disConnect(info.get("clientinid").toString());*/
 			}else{
 				if ("1".equalsIgnoreCase(map.get("state").toString())) {
 					MqttPushClient mqttPushClient = new MqttPushClient(clinetList,MqttTaskService.this);
@@ -190,6 +192,6 @@ public class MqttTaskService {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-
 	}
+
 }

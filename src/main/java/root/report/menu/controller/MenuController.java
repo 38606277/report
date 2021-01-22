@@ -61,7 +61,7 @@ public class MenuController extends RO {
             Map<String,String> map=new HashMap();
             map.put("startIndex",jsonFunc.getString("startIndex"));
             map.put("perPage",jsonFunc.getString("perPage"));
-            map.put("func_name",jsonFunc.get("searchKeyword")==null?"":jsonFunc.get("searchKeyword").toString());
+            map.put("func_name",jsonFunc.get("func_name")==null?"":jsonFunc.get("func_name").toString());
             Map<String,Object> map1 = menuService.getAllPage(map);
             return SuccessMsg("", map1);
         } catch (Exception ex){

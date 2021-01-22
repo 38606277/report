@@ -33,10 +33,16 @@ public class MqttPushClient {
             String topic = paramMap.get("topic").toString();
             client = new MqttClient(url, clientId, new MemoryPersistence());
             MqttConnectOptions options = getOptions(paramMap);
-            client.setCallback(new PushCallback(client,options, topic,0,paramMap,mqttTaskService));
+            client.setCallback(new PushCallback(client,options,0,paramMap,mqttTaskService,this));
             client.connect(options);
             Map<String,MqttClient> mapClient = new HashMap<String,MqttClient>();
             mapClient.put(clientId, client);
+            for (int i = 0; i < clinetList.size(); i++) {
+                if (null != clinetList.get(i).get(clientId) && !"".equalsIgnoreCase(clinetList.get(i).get(clientId).toString())) {
+                    clinetList.remove(i);
+                    break;
+                }
+            }
             clinetList.add(mapClient);
         } catch (MqttException e) {
             e.printStackTrace();
@@ -83,6 +89,7 @@ public class MqttPushClient {
      * @param pushMessage
      */
     public void publish(int qos, boolean retained, String topic, String pushMessage) {
+        log.info("进入消息");
         MqttMessage message = new MqttMessage();
         message.setQos(qos);
         message.setRetained(retained);
@@ -93,6 +100,7 @@ public class MqttPushClient {
         }
         MqttDeliveryToken token;
         try {
+            log.error("开始发送");
             token = mTopic.publish(message);
             token.waitForCompletion();
         } catch (MqttPersistenceException e) {
@@ -125,16 +133,4 @@ public class MqttPushClient {
         }
     }
 
-    public void disConnect(String clientinid) {
-        for(int i = 0;i<clinetList.size();i++) {
-            if (null != clinetList.get(i).get(clientinid) && !"".equalsIgnoreCase(clinetList.get(i).get(clientinid).toString())) {
-                MqttClient client=clinetList.get(i).get(clientinid);
-                try {
-                    client.close();
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }
