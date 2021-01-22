@@ -36,7 +36,7 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
 
     @Override
     public void connectionLost(Throwable cause) {
-        log.info("连接断开，重连");
+        log.info(clientinid+"连接断开，重连");
         this.stop();
         this.start();
         log.info("重新开始连接");
@@ -47,23 +47,21 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                 try {
                     //判断拦截状态，这里注意一下，如果没有这个判断，是非常坑的
                     if (!client.isConnected()) {
-                        System.out.println("***** client to connect *****");
+                        System.out.println("*****"+clientinid+" client to connect *****");
                         List<Map<String,MqttClient>> clinetList= mqttPushClient.start(paramMap);
                         for (int i = 0; i < clinetList.size(); i++) {
                             if (null != clinetList.get(i).get(clientinid) && !"".equalsIgnoreCase(clinetList.get(i).get(clientinid).toString())) {
                                 client=clinetList.get(i).get(clientinid);
-                                //订阅消息
-                                if (client.isConnected()) {
-                                    client.subscribe(topic, 1);
-                                    break;
-                                }
 
                             }
                         }
 
                     }
                     if (client.isConnected()) {//连接成功，跳出连接
-                        System.out.println("***** connect success *****");
+                        //订阅消息
+                        Thread.sleep(1000);
+                        System.out.println("***** "+clientinid+" connect success *****");
+                        client.subscribe(topic, 1);
                         break;
                     }
                 } catch (MqttException e1) {
