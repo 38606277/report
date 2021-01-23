@@ -38,12 +38,12 @@ public class MenuController extends RO {
      * 功能描述: 接收JSON格式参数，往func_dict跟func_dict_out 中插入相关数据
      */
     @RequestMapping(value = "/saveMenu", produces = "text/plain;charset=UTF-8")
-    public String createMenu(@RequestBody String pJson) throws Exception
+    public String createMenu(@RequestBody JSONObject jsonObject) throws Exception
     {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONObject jsonObject = JSON.parseObject(pJson);
+            //JSONObject jsonObject = JSON.parseObject(pJson);
             String id  = this.menuService.saveOrUpdateMenu(sqlSession,jsonObject);
             sqlSession.getConnection().commit();
             return SuccessMsg("保存成功",id);
@@ -55,9 +55,9 @@ public class MenuController extends RO {
     }
 
     @RequestMapping(value = "/getAllPage", produces = "text/plain;charset=UTF-8")
-    public String getAllQueryNamePage(@RequestBody String pJson) {
+    public String getAllQueryNamePage(@RequestBody JSONObject jsonFunc) {
         try {
-            JSONObject jsonFunc = JSONObject.parseObject(pJson);
+           // JSONObject jsonFunc = JSONObject.parseObject(pJson);
             Map<String,String> map=new HashMap();
             map.put("startIndex",jsonFunc.getString("startIndex"));
             map.put("perPage",jsonFunc.getString("perPage"));
@@ -85,11 +85,11 @@ public class MenuController extends RO {
 
      //返回数据
     @RequestMapping(value = "/getMenuByID", produces = "text/plain;charset=UTF-8")
-    public String getMenuByID(@RequestBody String pjson) {
-        JSONObject obj=JSON.parseObject(pjson);
+    public String getMenuByID(@RequestBody JSONObject pjson) {
+        //JSONObject pjson=JSON.parseObject(pjson);
         try{
             Map map = new HashMap();
-            map.put("func_id",obj.get("func_id"));
+            map.put("func_id",pjson.get("func_id"));
             Map jsonObject = this.menuService.getMenuByID(map);
             return SuccessMsg("查询成功",jsonObject);
         }catch (Exception ex){
@@ -123,12 +123,12 @@ public class MenuController extends RO {
         }
     }
     @RequestMapping(value = "/deleteMenuById", produces = "text/plain;charset=UTF-8")
-    public String deleteMenuById(@RequestBody String pJson) throws SQLException {
+    public String deleteMenuById(@RequestBody JSONObject pJson) throws SQLException {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONObject obj=JSON.parseObject(pJson);
-            String ids = obj.getString("func_id");
+            //JSONObject obj=JSON.parseObject(pJson);
+            String ids = pJson.getString("func_id");
             String[] arrId=ids.split(",");
             for(int i = 0; i < arrId.length; i++){
                 //删除
