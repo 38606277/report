@@ -100,15 +100,15 @@ public class MenuController extends RO {
 
 
     // 从json数据当中解析 ，批量删除
-    @RequestMapping(value = "/deleteMenuById", produces = "text/plain;charset=UTF-8")
-    public String deleteMenuById(@RequestBody String pJson) throws SQLException {
+    @RequestMapping(value = "/deleteMenuByArrId", produces = "text/plain;charset=UTF-8")
+    public String deleteMenuByArrId(@RequestBody String pJson) throws SQLException {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
             JSONArray jsonArray =  JSONObject.parseArray(pJson);
             for(int i = 0; i < jsonArray.size(); i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                int func_id=jsonObject.getInteger("func_id");
+                String func_id=jsonObject.getString("func_id");
                 //删除
                 this.menuService.deleteMenuById(sqlSession,func_id);
             }
@@ -122,6 +122,27 @@ public class MenuController extends RO {
             sqlSession.getConnection().setAutoCommit(true);
         }
     }
-
+    @RequestMapping(value = "/deleteMenuById", produces = "text/plain;charset=UTF-8")
+    public String deleteMenuById(@RequestBody String pJson) throws SQLException {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            JSONObject obj=JSON.parseObject(pJson);
+            String ids = obj.getString("func_id");
+            String[] arrId=ids.split(",");
+            for(int i = 0; i < arrId.length; i++){
+                //删除
+                this.menuService.deleteMenuById(sqlSession,arrId[0]);
+            }
+            sqlSession.getConnection().commit();
+            return SuccessMsg("删除成功",null);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }finally {
+            sqlSession.getConnection().setAutoCommit(true);
+        }
+    }
 
 }

@@ -107,9 +107,9 @@ public class MenuService {
 
 
     // 功能描述: 根据 dict_id 和 out_id 批量删除 func_dict的信息
-    public void deleteMenuById(SqlSession sqlSession,int func_id){
+    public void deleteMenuById(SqlSession sqlSession,String func_id){
             Map<String,Object> map=new HashMap();
-            map.put("func_pid",func_id);
+            map.put("func_id",func_id);
             sqlSession.delete("menu.deleteMenuByID",map);
     }
 
