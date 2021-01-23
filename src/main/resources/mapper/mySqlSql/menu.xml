@@ -5,24 +5,29 @@
 
 	<!--  创建func_dict信息  -->
 	<insert id="createMenu" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-		insert into fnd_func(func_id,func_name,func_type,func_pid,valid,func_desc,func_icon,func_url,order,target)
+		insert into fnd_func(func_id,func_name,func_type,func_pid,valid,func_desc,func_icon,func_url,`order`,target)
 		values ('${func_id}','${func_name}','${func_type}',
-		<if  test="func_pid == null">NULL</if>
-		<if  test="func_pid != null">'${func_pid}'</if>,
-		<if  test="valid == null">NULL</if>
-		<if  test="valid != null">'${valid}'</if>,
+		<if  test="func_pid == null or func_pid == ''">NULL</if>
+		<if  test="func_pid != null and func_pid != ''">#{func_pid}</if>,
+		<if  test="valid == null or valid == ''">1</if>
+		<if  test="valid != null and valid != ''">#{valid}</if>,
 		<if  test="func_desc == null">NULL</if>
 		<if  test="func_desc != null">'${func_desc}'</if>,
-		'${func_icon}','${func_url}','${order}','${target}'
+		'${func_icon}','${func_url}',
+		<if  test="order == null or order == ''">NULL</if>
+		<if  test="order != null and order != ''">#{order}</if>,
+		'${target}'
 		)
 	</insert>
 	<!-- 修改 func_dict 表的信息 -->
 	<update id="updateMenu" parameterType="Map">
 		update fnd_func set func_name='${func_name}',func_type='${func_type}',
-		func_pid='${func_pid}',
-		valid=
-		<if  test="valid == null">NULL</if>
-		<if  test="valid != null">'${valid}'</if>
+		func_pid=
+		<if  test="func_pid == null or func_pid ==''">NULL</if>
+		<if  test="func_pid != null and func_pid != ''">#{func_pid}</if>
+		,valid=
+		<if  test="valid == null or valid ==''">NULL</if>
+		<if  test="valid != null and valid != ''">#{valid}</if>
 		,func_desc=
 		<if  test="func_desc == null">NULL</if>
 		<if  test="func_desc != null">'${func_desc}'</if>
@@ -32,9 +37,9 @@
 		,func_url=
 		<if  test="func_url == null">NULL</if>
 		<if  test="func_url != null">'${func_url}'</if>
-		,order=
-		<if  test="order == null">NULL</if>
-		<if  test="order != null">'${order}'</if>,
+		,`order`=
+		<if  test="order == null or order == ''">NULL</if>
+		<if  test="order != null and order != ''">#{order}</if>,
 		target=
 		<if  test="target == null">NULL</if>
 		<if  test="target != null">'${target}'</if>
