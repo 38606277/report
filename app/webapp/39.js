@@ -1,1 +1,743 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[39],{1257:function(e,t,a){e.exports=a.p+"resource/logo.png"},1382:function(e,t,a){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var l=C(a(1183)),n=C(a(158)),r=C(a(1185)),i=C(a(1186)),u=C(a(121)),o=C(a(66)),s=C(a(1042)),d=C(a(120)),f=C(a(1049)),c=C(a(1053)),m=C(a(44)),p=C(a(213)),h=C(a(1043)),y=C(a(159)),g=C(a(138)),v=C(a(1045)),b=function(){function e(e,t){for(var a=0;a<t.length;a++){var l=t[a];l.enumerable=l.enumerable||!1,l.configurable=!0,"value"in l&&(l.writable=!0),Object.defineProperty(e,l.key,l)}}return function(t,a,l){return a&&e(t.prototype,a),l&&e(t,l),t}}();a(1182),a(290),a(1184),a(1187),a(453),a(446),a(1041),a(445),a(1050),a(1052),a(157),a(449),a(443),a(450),a(447),a(1044);var E=C(a(1));C(a(5));a(1051);var _=C(a(1188));a(1189),a(1190),a(1191);var q=C(a(1261)),S=C(a(1262)),x=C(a(1251)),k=C(a(1250)),w=C(a(1252));a(1256),a(1192);a(1209);function C(e){return e&&e.__esModule?e:{default:e}}var D=v.default.Item,P=g.default.Option,O=(y.default.Group,h.default.TextArea),F=p.default.TabPane,L=(m.default.ButtonGroup,new x.default),V=new w.default,R={lineNumbers:!0,mode:{name:"text/x-mysql"},extraKeys:{"Ctrl-Enter":"autocomplete"},theme:"default",hintOptions:{tables:{app:["name","score","birthDate"],version:["name","score","birthDate"],dbos:["name","population","size"]}}},I=window.getServerUrl(),N=function(e){function t(e){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t);var a=function(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e));return a.state={},a.func_data={},a.openImage=function(){a.setState({visible:!0,imgList:[],totald:0,selectedRowKeys:[]},function(){this.loadModelData()})},a.handleCancel=function(e){a.setState({visible:!1})},a.handleOk=function(e){a.setState({visible:!1})},a.state={action:a.props.match.params.action,qry_id:a.props.match.params.id,inData:[],outData:[],dbList:[],funcClassList:[],loading:!1,visible:!1,qry_file:null,pageNumd:1,perPaged:10,totald:0},a.handleSubmit=a.handleSubmit.bind(a),a}var y,x;return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}(t,E.default.Component),b(t,[{key:"componentDidMount",value:function(){var e=this;if("update"==this.state.action){k.default.post("reportServer/query/getQueryByID/"+this.state.qry_id,null).then(function(t){"1000"==t.resultCode?(e.setState({inData:t.data.in,outData:t.data.out,qry_file:t.data.qry_file}),e.props.form.setFieldsValue(t.data),e.inParam.setFormValue(e.state.inData),e.outParam.setFormValue(e.state.outData),e.refs.editorsql.codeMirror.setValue(t.data.qry_sql)):c.default.error(t.message)})}V.getDbList().then(function(t){e.setState({dbList:t})}),k.default.post("reportServer/query/getAllQueryClass","").then(function(t){console.log(JSON.stringify(t)),"1000"==t.resultCode?e.setState({funcClassList:t.data}):c.default.error(t.message)})}},{key:"handleSubmit",value:(y=regeneratorRuntime.mark(function e(t){var a,l,n=this;return regeneratorRuntime.wrap(function(e){for(;;)switch(e.prev=e.next){case 0:return a=null,l=null,e.prev=1,e.next=4,this.inParam.getFormValue().then(function(e){a=e});case 4:return e.next=6,this.outParam.getFormValue().then(function(e){l=e});case 6:e.next=11;break;case 8:e.prev=8,e.t0=e.catch(1),console.log(e.t0);case 11:if(null!=a&&null!=l){e.next=13;break}return e.abrupt("return",!1);case 13:t.preventDefault(),this.props.form.validateFieldsAndScroll(function(e,t){if(!e){var r=n.props.form.getFieldsValue();r.qry_type="sql",r.qry_sql=n.refs.editorsql.codeMirror.getValue(),r.in=a,r.out=l,r.qry_file=n.state.qry_file,console.log(r),"create"==n.state.action?k.default.post("reportServer/query/createQuery",JSON.stringify(r)).then(function(e){"1000"==e.resultCode?(c.default.success("创建成功！"),n.setState({action:"update"}),n.props.form.setFieldsValue({qry_id:e.data.qry_id})):c.default.error(e.message)}):"update"==n.state.action&&k.default.post("reportServer/query/updateQuery",JSON.stringify(r)).then(function(e){"1000"==e.resultCode?c.default.success("更新成功！"):c.default.error(e.message)})}}).bind(this);case 15:case"end":return e.stop()}},e,this,[[1,8]])}),x=function(){var e=y.apply(this,arguments);return new Promise(function(t,a){return function l(n,r){try{var i=e[n](r),u=i.value}catch(e){return void a(e)}if(!i.done)return Promise.resolve(u).then(function(e){l("next",e)},function(e){l("throw",e)});t(u)}("next")})},function(e){return x.apply(this,arguments)})},{key:"onGenerateClick",value:function(){var e=this;this.setState({loading:!0});var t=this.refs.editorsql.codeMirror.getValue();L.getSqlInOut(t).then(function(t){if(t.resultCode=1e3){e.setState({loading:!1}),c.default.success("生成成功!");var a=[],l=[],n=!0,r=!1,i=void 0;try{for(var u,o=t.data[Symbol.iterator]();!(n=(u=o.next()).done);n=!0){var s=u.value;if("in"==s.type){var d={qry_id:"",in_id:s.id,in_name:s.name,datatype:s.datatype,dict_id:void 0,dict_name:void 0,render:"Input",authtype_id:void 0,authtype_desc:void 0,validate:""};a.push(d)}else if("out"==s.type){var f={qry_id:"",out_id:s.id,out_name:s.name,datatype:s.datatype,render:"Input",width:100,link:{}};l.push(f)}}}catch(e){r=!0,i=e}finally{try{!n&&o.return&&o.return()}finally{if(r)throw i}}e.setState({inData:a}),e.setState({outData:l}),e.inParam.setFormValue(e.state.inData),e.outParam.setFormValue(e.state.outData)}else c.default.error(t.message),e.setState({loading:!1})})}},{key:"onAddRowClick",value:function(){var e={qry_id:"1",in_id:"2",in_name:void 0,datatype:void 0,dict_id:void 0,dict_name:void 0,authtype_id:void 0,authtype_desc:void 0,validate:""};[].push(e),this.state.inData.push(e),this.inParam.setFormValue(this.state.inData)}},{key:"onDelRowClick",value:function(){alert("del")}},{key:"sqlFormat",value:function(){var e=this,t=this.refs.editorsql.codeMirror.getValue();null!=t&&""!=t&&k.default.post("reportServer/query/sqlFormat",t).then(function(t){e.refs.editorsql.codeMirror.setValue(t.data)})}},{key:"loadModelData",value:function(){var e=this,t={};t.pageNum=this.state.pageNumd,t.perPage=this.state.perPaged,k.default.post("/reportServer/uploadFile/getAll",JSON.stringify(t)).then(function(t){e.setState({imgList:t.data.list,totald:t.data.total})},function(t){e.setState({imgList:[]})})}},{key:"onPageNumdChange",value:function(e){var t=this;this.setState({pageNumd:e},function(){t.loadModelData()})}},{key:"clickimg",value:function(e,t){this.props.form.setFieldsValue({qry_file:e}),this.setState({visible:!1,qry_file:e})}},{key:"render",value:function(){var e=this,t=this.props.form.getFieldDecorator;return E.default.createElement("div",{id:"page-wrapper",style:{background:"#ECECEC",padding:"0px"}},E.default.createElement(s.default,{title:"create"==this.state.action?"创建查询":"编辑查询",bordered:!1,bodyStyle:{padding:"5px"},headStyle:{height:"40px"},extra:E.default.createElement("span",null,"类型：SQL语句")},E.default.createElement(v.default,{layout:"inline",onSubmit:this.handleSubmit},E.default.createElement(d.default,{gutter:0},E.default.createElement(o.default,{span:10},E.default.createElement(s.default,{bodyStyle:{padding:"8px"}},E.default.createElement("div",null,E.default.createElement(m.default,{type:"primary",htmlType:"submit",style:{marginRight:"10px"}},"保存"),E.default.createElement(m.default,{icon:"list",onClick:function(){return window.location="#/query/QueryList"},style:{marginRight:"10px"}},"退出")),E.default.createElement(f.default,{style:{margin:"8px 0 8px 0"}}),E.default.createElement(D,{label:"选择数据库",style:{marginBottom:"5px"}},t("qry_db",{rules:[{required:"true",message:"必须选择数据库"}]})(E.default.createElement(g.default,{setValue:this.form,style:{minWidth:"300px"}},this.state.dbList.map(function(e){return E.default.createElement(P,{key:e.name,value:e.name},e.name)})))),E.default.createElement(d.default,{style:{marginBottom:"5px"}},E.default.createElement("span",{style:{color:"black",fontWeight:"400",position:"absolute",bottom:"2px"}},E.default.createElement("span",{class:"ant-form-item-required"}),"输入查询SQL"),E.default.createElement("span",{style:{float:"right"}},E.default.createElement(m.default,{icon:"tool",loading:this.state.loading,onClick:function(){return e.onGenerateClick()},style:{marginRight:"10px"}},"生成查询"),E.default.createElement(m.default,{icon:"bars",onClick:function(){return e.sqlFormat()},style:{marginRight:"10px"}}," 格式化"))),E.default.createElement(_.default,{ref:"editorsql",value:"",style:{height:"600px",width:"450px",border:"2px solid red"},options:R}))),E.default.createElement(o.default,{span:14},E.default.createElement(s.default,{bodyStyle:{padding:"5px"}},E.default.createElement(d.default,null,E.default.createElement(o.default,{span:16},E.default.createElement(D,{label:" 查询类别"},t("class_id",{rules:[{required:!0,message:"函数类别是必须的"}]})(E.default.createElement(g.default,{style:{minWidth:"300px"}},this.state.funcClassList.map(function(e){return E.default.createElement(P,{key:e.class_id,value:e.class_id},e.class_name)}))))),E.default.createElement(o.default,{span:8},E.default.createElement(D,{label:"查询ID"},t("qry_id",{})(E.default.createElement(h.default,{disabled:!0,style:{width:"80px"}}))))),E.default.createElement(d.default,null,E.default.createElement(o.default,{span:16},E.default.createElement(D,{label:" 查询名称"},t("qry_name",{rules:[{required:!0,message:"函数名称是必须的"}]})(E.default.createElement(h.default,{style:{minWidth:"300px"}})))),E.default.createElement(o.default,{span:8},E.default.createElement(D,{label:"使用缓存"},t("cached",{valuePropName:"checked"})(E.default.createElement(u.default,null))))),E.default.createElement(d.default,null,E.default.createElement(o.default,{span:24},E.default.createElement(D,{label:"查询说明",style:{marginLeft:"14px"}},t("qry_desc",{})(E.default.createElement(O,{placeholder:"此函数主要完成什么功能...",autosize:{minRows:1,maxRows:6},style:{width:"490px"}}))))),E.default.createElement(d.default,null,E.default.createElement(o.default,{span:24},E.default.createElement(D,{label:"关联图片",style:{marginLeft:"14px"}},E.default.createElement(h.default,{style:{minWidth:"300px",display:"none"},name:"qry_file",id:"qry_file",value:this.state.qry_file,onClick:this.openImage}),null==this.state.qry_file?E.default.createElement(i.default,{src:a(1257),onClick:this.openImage}):E.default.createElement(i.default,{src:I+"/report/"+this.state.qry_file,onClick:this.openImage})))),E.default.createElement(p.default,{type:"card",style:{marginTop:"15px"}},E.default.createElement(F,{tab:"输入参数",key:"1"},E.default.createElement(q.default,{onRef:function(t){return e.inParam=t}})),E.default.createElement(F,{tab:"输出参数",key:"2",forceRender:!0},E.default.createElement(S.default,{onRef:function(t){return e.outParam=t},action:this.state.action})))))))),E.default.createElement("div",null,E.default.createElement(l.default,{title:"图片选择",visible:this.state.visible,onOk:this.handleOk,onCancel:this.handleCancel},E.default.createElement(r.default,{itemLayout:"horizontal",dataSource:this.state.imgList,renderItem:function(t){return E.default.createElement(r.default.Item,null,E.default.createElement(r.default.Item.Meta,{avatar:E.default.createElement(i.default,{src:I+"/report/"+t.usefilepath}),description:E.default.createElement("a",{onClick:function(){return e.clickimg(t.usefilepath,t.filename)}},t.filename)}))}}),E.default.createElement(n.default,{current:this.state.pageNumd,total:this.state.totald,onChange:function(t){return e.onPageNumdChange(t)}}))))}}]),t}();t.default=N=v.default.create({})(N)}}]);
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[39],{
+
+/***/ "./node_modules/_css-loader@1.0.0@css-loader/index.js!./node_modules/_postcss-loader@3.0.0@postcss-loader/src/index.js!./node_modules/_sass-loader@7.1.0@sass-loader/lib/loader.js!./src/page/upload/upload.scss":
+/*!*****************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/_css-loader@1.0.0@css-loader!./node_modules/_postcss-loader@3.0.0@postcss-loader/src!./node_modules/_sass-loader@7.1.0@sass-loader/lib/loader.js!./src/page/upload/upload.scss ***!
+  \*****************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/_css-loader@1.0.0@css-loader/lib/css-base.js */ "./node_modules/_css-loader@1.0.0@css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "/* tile uploaded pictures */\n.upload-list-inline .ant-upload-list-item {\n  float: left;\n  width: 200px;\n  margin-right: 8px; }\n\n.upload-list-inline .ant-upload-animate-enter {\n  -webkit-animation-name: uploadAnimateInlineIn;\n          animation-name: uploadAnimateInlineIn; }\n\n.upload-list-inline .ant-upload-animate-leave {\n  -webkit-animation-name: uploadAnimateInlineOut;\n          animation-name: uploadAnimateInlineOut; }\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/_moment@2.29.1@moment/locale sync recursive ^\\.\\/.*$":
+/*!*****************************************************************!*\
+  !*** ./node_modules/_moment@2.29.1@moment/locale sync ^\.\/.*$ ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./af": "./node_modules/_moment@2.29.1@moment/locale/af.js",
+	"./af.js": "./node_modules/_moment@2.29.1@moment/locale/af.js",
+	"./ar": "./node_modules/_moment@2.29.1@moment/locale/ar.js",
+	"./ar-dz": "./node_modules/_moment@2.29.1@moment/locale/ar-dz.js",
+	"./ar-dz.js": "./node_modules/_moment@2.29.1@moment/locale/ar-dz.js",
+	"./ar-kw": "./node_modules/_moment@2.29.1@moment/locale/ar-kw.js",
+	"./ar-kw.js": "./node_modules/_moment@2.29.1@moment/locale/ar-kw.js",
+	"./ar-ly": "./node_modules/_moment@2.29.1@moment/locale/ar-ly.js",
+	"./ar-ly.js": "./node_modules/_moment@2.29.1@moment/locale/ar-ly.js",
+	"./ar-ma": "./node_modules/_moment@2.29.1@moment/locale/ar-ma.js",
+	"./ar-ma.js": "./node_modules/_moment@2.29.1@moment/locale/ar-ma.js",
+	"./ar-sa": "./node_modules/_moment@2.29.1@moment/locale/ar-sa.js",
+	"./ar-sa.js": "./node_modules/_moment@2.29.1@moment/locale/ar-sa.js",
+	"./ar-tn": "./node_modules/_moment@2.29.1@moment/locale/ar-tn.js",
+	"./ar-tn.js": "./node_modules/_moment@2.29.1@moment/locale/ar-tn.js",
+	"./ar.js": "./node_modules/_moment@2.29.1@moment/locale/ar.js",
+	"./az": "./node_modules/_moment@2.29.1@moment/locale/az.js",
+	"./az.js": "./node_modules/_moment@2.29.1@moment/locale/az.js",
+	"./be": "./node_modules/_moment@2.29.1@moment/locale/be.js",
+	"./be.js": "./node_modules/_moment@2.29.1@moment/locale/be.js",
+	"./bg": "./node_modules/_moment@2.29.1@moment/locale/bg.js",
+	"./bg.js": "./node_modules/_moment@2.29.1@moment/locale/bg.js",
+	"./bm": "./node_modules/_moment@2.29.1@moment/locale/bm.js",
+	"./bm.js": "./node_modules/_moment@2.29.1@moment/locale/bm.js",
+	"./bn": "./node_modules/_moment@2.29.1@moment/locale/bn.js",
+	"./bn-bd": "./node_modules/_moment@2.29.1@moment/locale/bn-bd.js",
+	"./bn-bd.js": "./node_modules/_moment@2.29.1@moment/locale/bn-bd.js",
+	"./bn.js": "./node_modules/_moment@2.29.1@moment/locale/bn.js",
+	"./bo": "./node_modules/_moment@2.29.1@moment/locale/bo.js",
+	"./bo.js": "./node_modules/_moment@2.29.1@moment/locale/bo.js",
+	"./br": "./node_modules/_moment@2.29.1@moment/locale/br.js",
+	"./br.js": "./node_modules/_moment@2.29.1@moment/locale/br.js",
+	"./bs": "./node_modules/_moment@2.29.1@moment/locale/bs.js",
+	"./bs.js": "./node_modules/_moment@2.29.1@moment/locale/bs.js",
+	"./ca": "./node_modules/_moment@2.29.1@moment/locale/ca.js",
+	"./ca.js": "./node_modules/_moment@2.29.1@moment/locale/ca.js",
+	"./cs": "./node_modules/_moment@2.29.1@moment/locale/cs.js",
+	"./cs.js": "./node_modules/_moment@2.29.1@moment/locale/cs.js",
+	"./cv": "./node_modules/_moment@2.29.1@moment/locale/cv.js",
+	"./cv.js": "./node_modules/_moment@2.29.1@moment/locale/cv.js",
+	"./cy": "./node_modules/_moment@2.29.1@moment/locale/cy.js",
+	"./cy.js": "./node_modules/_moment@2.29.1@moment/locale/cy.js",
+	"./da": "./node_modules/_moment@2.29.1@moment/locale/da.js",
+	"./da.js": "./node_modules/_moment@2.29.1@moment/locale/da.js",
+	"./de": "./node_modules/_moment@2.29.1@moment/locale/de.js",
+	"./de-at": "./node_modules/_moment@2.29.1@moment/locale/de-at.js",
+	"./de-at.js": "./node_modules/_moment@2.29.1@moment/locale/de-at.js",
+	"./de-ch": "./node_modules/_moment@2.29.1@moment/locale/de-ch.js",
+	"./de-ch.js": "./node_modules/_moment@2.29.1@moment/locale/de-ch.js",
+	"./de.js": "./node_modules/_moment@2.29.1@moment/locale/de.js",
+	"./dv": "./node_modules/_moment@2.29.1@moment/locale/dv.js",
+	"./dv.js": "./node_modules/_moment@2.29.1@moment/locale/dv.js",
+	"./el": "./node_modules/_moment@2.29.1@moment/locale/el.js",
+	"./el.js": "./node_modules/_moment@2.29.1@moment/locale/el.js",
+	"./en-au": "./node_modules/_moment@2.29.1@moment/locale/en-au.js",
+	"./en-au.js": "./node_modules/_moment@2.29.1@moment/locale/en-au.js",
+	"./en-ca": "./node_modules/_moment@2.29.1@moment/locale/en-ca.js",
+	"./en-ca.js": "./node_modules/_moment@2.29.1@moment/locale/en-ca.js",
+	"./en-gb": "./node_modules/_moment@2.29.1@moment/locale/en-gb.js",
+	"./en-gb.js": "./node_modules/_moment@2.29.1@moment/locale/en-gb.js",
+	"./en-ie": "./node_modules/_moment@2.29.1@moment/locale/en-ie.js",
+	"./en-ie.js": "./node_modules/_moment@2.29.1@moment/locale/en-ie.js",
+	"./en-il": "./node_modules/_moment@2.29.1@moment/locale/en-il.js",
+	"./en-il.js": "./node_modules/_moment@2.29.1@moment/locale/en-il.js",
+	"./en-in": "./node_modules/_moment@2.29.1@moment/locale/en-in.js",
+	"./en-in.js": "./node_modules/_moment@2.29.1@moment/locale/en-in.js",
+	"./en-nz": "./node_modules/_moment@2.29.1@moment/locale/en-nz.js",
+	"./en-nz.js": "./node_modules/_moment@2.29.1@moment/locale/en-nz.js",
+	"./en-sg": "./node_modules/_moment@2.29.1@moment/locale/en-sg.js",
+	"./en-sg.js": "./node_modules/_moment@2.29.1@moment/locale/en-sg.js",
+	"./eo": "./node_modules/_moment@2.29.1@moment/locale/eo.js",
+	"./eo.js": "./node_modules/_moment@2.29.1@moment/locale/eo.js",
+	"./es": "./node_modules/_moment@2.29.1@moment/locale/es.js",
+	"./es-do": "./node_modules/_moment@2.29.1@moment/locale/es-do.js",
+	"./es-do.js": "./node_modules/_moment@2.29.1@moment/locale/es-do.js",
+	"./es-mx": "./node_modules/_moment@2.29.1@moment/locale/es-mx.js",
+	"./es-mx.js": "./node_modules/_moment@2.29.1@moment/locale/es-mx.js",
+	"./es-us": "./node_modules/_moment@2.29.1@moment/locale/es-us.js",
+	"./es-us.js": "./node_modules/_moment@2.29.1@moment/locale/es-us.js",
+	"./es.js": "./node_modules/_moment@2.29.1@moment/locale/es.js",
+	"./et": "./node_modules/_moment@2.29.1@moment/locale/et.js",
+	"./et.js": "./node_modules/_moment@2.29.1@moment/locale/et.js",
+	"./eu": "./node_modules/_moment@2.29.1@moment/locale/eu.js",
+	"./eu.js": "./node_modules/_moment@2.29.1@moment/locale/eu.js",
+	"./fa": "./node_modules/_moment@2.29.1@moment/locale/fa.js",
+	"./fa.js": "./node_modules/_moment@2.29.1@moment/locale/fa.js",
+	"./fi": "./node_modules/_moment@2.29.1@moment/locale/fi.js",
+	"./fi.js": "./node_modules/_moment@2.29.1@moment/locale/fi.js",
+	"./fil": "./node_modules/_moment@2.29.1@moment/locale/fil.js",
+	"./fil.js": "./node_modules/_moment@2.29.1@moment/locale/fil.js",
+	"./fo": "./node_modules/_moment@2.29.1@moment/locale/fo.js",
+	"./fo.js": "./node_modules/_moment@2.29.1@moment/locale/fo.js",
+	"./fr": "./node_modules/_moment@2.29.1@moment/locale/fr.js",
+	"./fr-ca": "./node_modules/_moment@2.29.1@moment/locale/fr-ca.js",
+	"./fr-ca.js": "./node_modules/_moment@2.29.1@moment/locale/fr-ca.js",
+	"./fr-ch": "./node_modules/_moment@2.29.1@moment/locale/fr-ch.js",
+	"./fr-ch.js": "./node_modules/_moment@2.29.1@moment/locale/fr-ch.js",
+	"./fr.js": "./node_modules/_moment@2.29.1@moment/locale/fr.js",
+	"./fy": "./node_modules/_moment@2.29.1@moment/locale/fy.js",
+	"./fy.js": "./node_modules/_moment@2.29.1@moment/locale/fy.js",
+	"./ga": "./node_modules/_moment@2.29.1@moment/locale/ga.js",
+	"./ga.js": "./node_modules/_moment@2.29.1@moment/locale/ga.js",
+	"./gd": "./node_modules/_moment@2.29.1@moment/locale/gd.js",
+	"./gd.js": "./node_modules/_moment@2.29.1@moment/locale/gd.js",
+	"./gl": "./node_modules/_moment@2.29.1@moment/locale/gl.js",
+	"./gl.js": "./node_modules/_moment@2.29.1@moment/locale/gl.js",
+	"./gom-deva": "./node_modules/_moment@2.29.1@moment/locale/gom-deva.js",
+	"./gom-deva.js": "./node_modules/_moment@2.29.1@moment/locale/gom-deva.js",
+	"./gom-latn": "./node_modules/_moment@2.29.1@moment/locale/gom-latn.js",
+	"./gom-latn.js": "./node_modules/_moment@2.29.1@moment/locale/gom-latn.js",
+	"./gu": "./node_modules/_moment@2.29.1@moment/locale/gu.js",
+	"./gu.js": "./node_modules/_moment@2.29.1@moment/locale/gu.js",
+	"./he": "./node_modules/_moment@2.29.1@moment/locale/he.js",
+	"./he.js": "./node_modules/_moment@2.29.1@moment/locale/he.js",
+	"./hi": "./node_modules/_moment@2.29.1@moment/locale/hi.js",
+	"./hi.js": "./node_modules/_moment@2.29.1@moment/locale/hi.js",
+	"./hr": "./node_modules/_moment@2.29.1@moment/locale/hr.js",
+	"./hr.js": "./node_modules/_moment@2.29.1@moment/locale/hr.js",
+	"./hu": "./node_modules/_moment@2.29.1@moment/locale/hu.js",
+	"./hu.js": "./node_modules/_moment@2.29.1@moment/locale/hu.js",
+	"./hy-am": "./node_modules/_moment@2.29.1@moment/locale/hy-am.js",
+	"./hy-am.js": "./node_modules/_moment@2.29.1@moment/locale/hy-am.js",
+	"./id": "./node_modules/_moment@2.29.1@moment/locale/id.js",
+	"./id.js": "./node_modules/_moment@2.29.1@moment/locale/id.js",
+	"./is": "./node_modules/_moment@2.29.1@moment/locale/is.js",
+	"./is.js": "./node_modules/_moment@2.29.1@moment/locale/is.js",
+	"./it": "./node_modules/_moment@2.29.1@moment/locale/it.js",
+	"./it-ch": "./node_modules/_moment@2.29.1@moment/locale/it-ch.js",
+	"./it-ch.js": "./node_modules/_moment@2.29.1@moment/locale/it-ch.js",
+	"./it.js": "./node_modules/_moment@2.29.1@moment/locale/it.js",
+	"./ja": "./node_modules/_moment@2.29.1@moment/locale/ja.js",
+	"./ja.js": "./node_modules/_moment@2.29.1@moment/locale/ja.js",
+	"./jv": "./node_modules/_moment@2.29.1@moment/locale/jv.js",
+	"./jv.js": "./node_modules/_moment@2.29.1@moment/locale/jv.js",
+	"./ka": "./node_modules/_moment@2.29.1@moment/locale/ka.js",
+	"./ka.js": "./node_modules/_moment@2.29.1@moment/locale/ka.js",
+	"./kk": "./node_modules/_moment@2.29.1@moment/locale/kk.js",
+	"./kk.js": "./node_modules/_moment@2.29.1@moment/locale/kk.js",
+	"./km": "./node_modules/_moment@2.29.1@moment/locale/km.js",
+	"./km.js": "./node_modules/_moment@2.29.1@moment/locale/km.js",
+	"./kn": "./node_modules/_moment@2.29.1@moment/locale/kn.js",
+	"./kn.js": "./node_modules/_moment@2.29.1@moment/locale/kn.js",
+	"./ko": "./node_modules/_moment@2.29.1@moment/locale/ko.js",
+	"./ko.js": "./node_modules/_moment@2.29.1@moment/locale/ko.js",
+	"./ku": "./node_modules/_moment@2.29.1@moment/locale/ku.js",
+	"./ku.js": "./node_modules/_moment@2.29.1@moment/locale/ku.js",
+	"./ky": "./node_modules/_moment@2.29.1@moment/locale/ky.js",
+	"./ky.js": "./node_modules/_moment@2.29.1@moment/locale/ky.js",
+	"./lb": "./node_modules/_moment@2.29.1@moment/locale/lb.js",
+	"./lb.js": "./node_modules/_moment@2.29.1@moment/locale/lb.js",
+	"./lo": "./node_modules/_moment@2.29.1@moment/locale/lo.js",
+	"./lo.js": "./node_modules/_moment@2.29.1@moment/locale/lo.js",
+	"./lt": "./node_modules/_moment@2.29.1@moment/locale/lt.js",
+	"./lt.js": "./node_modules/_moment@2.29.1@moment/locale/lt.js",
+	"./lv": "./node_modules/_moment@2.29.1@moment/locale/lv.js",
+	"./lv.js": "./node_modules/_moment@2.29.1@moment/locale/lv.js",
+	"./me": "./node_modules/_moment@2.29.1@moment/locale/me.js",
+	"./me.js": "./node_modules/_moment@2.29.1@moment/locale/me.js",
+	"./mi": "./node_modules/_moment@2.29.1@moment/locale/mi.js",
+	"./mi.js": "./node_modules/_moment@2.29.1@moment/locale/mi.js",
+	"./mk": "./node_modules/_moment@2.29.1@moment/locale/mk.js",
+	"./mk.js": "./node_modules/_moment@2.29.1@moment/locale/mk.js",
+	"./ml": "./node_modules/_moment@2.29.1@moment/locale/ml.js",
+	"./ml.js": "./node_modules/_moment@2.29.1@moment/locale/ml.js",
+	"./mn": "./node_modules/_moment@2.29.1@moment/locale/mn.js",
+	"./mn.js": "./node_modules/_moment@2.29.1@moment/locale/mn.js",
+	"./mr": "./node_modules/_moment@2.29.1@moment/locale/mr.js",
+	"./mr.js": "./node_modules/_moment@2.29.1@moment/locale/mr.js",
+	"./ms": "./node_modules/_moment@2.29.1@moment/locale/ms.js",
+	"./ms-my": "./node_modules/_moment@2.29.1@moment/locale/ms-my.js",
+	"./ms-my.js": "./node_modules/_moment@2.29.1@moment/locale/ms-my.js",
+	"./ms.js": "./node_modules/_moment@2.29.1@moment/locale/ms.js",
+	"./mt": "./node_modules/_moment@2.29.1@moment/locale/mt.js",
+	"./mt.js": "./node_modules/_moment@2.29.1@moment/locale/mt.js",
+	"./my": "./node_modules/_moment@2.29.1@moment/locale/my.js",
+	"./my.js": "./node_modules/_moment@2.29.1@moment/locale/my.js",
+	"./nb": "./node_modules/_moment@2.29.1@moment/locale/nb.js",
+	"./nb.js": "./node_modules/_moment@2.29.1@moment/locale/nb.js",
+	"./ne": "./node_modules/_moment@2.29.1@moment/locale/ne.js",
+	"./ne.js": "./node_modules/_moment@2.29.1@moment/locale/ne.js",
+	"./nl": "./node_modules/_moment@2.29.1@moment/locale/nl.js",
+	"./nl-be": "./node_modules/_moment@2.29.1@moment/locale/nl-be.js",
+	"./nl-be.js": "./node_modules/_moment@2.29.1@moment/locale/nl-be.js",
+	"./nl.js": "./node_modules/_moment@2.29.1@moment/locale/nl.js",
+	"./nn": "./node_modules/_moment@2.29.1@moment/locale/nn.js",
+	"./nn.js": "./node_modules/_moment@2.29.1@moment/locale/nn.js",
+	"./oc-lnc": "./node_modules/_moment@2.29.1@moment/locale/oc-lnc.js",
+	"./oc-lnc.js": "./node_modules/_moment@2.29.1@moment/locale/oc-lnc.js",
+	"./pa-in": "./node_modules/_moment@2.29.1@moment/locale/pa-in.js",
+	"./pa-in.js": "./node_modules/_moment@2.29.1@moment/locale/pa-in.js",
+	"./pl": "./node_modules/_moment@2.29.1@moment/locale/pl.js",
+	"./pl.js": "./node_modules/_moment@2.29.1@moment/locale/pl.js",
+	"./pt": "./node_modules/_moment@2.29.1@moment/locale/pt.js",
+	"./pt-br": "./node_modules/_moment@2.29.1@moment/locale/pt-br.js",
+	"./pt-br.js": "./node_modules/_moment@2.29.1@moment/locale/pt-br.js",
+	"./pt.js": "./node_modules/_moment@2.29.1@moment/locale/pt.js",
+	"./ro": "./node_modules/_moment@2.29.1@moment/locale/ro.js",
+	"./ro.js": "./node_modules/_moment@2.29.1@moment/locale/ro.js",
+	"./ru": "./node_modules/_moment@2.29.1@moment/locale/ru.js",
+	"./ru.js": "./node_modules/_moment@2.29.1@moment/locale/ru.js",
+	"./sd": "./node_modules/_moment@2.29.1@moment/locale/sd.js",
+	"./sd.js": "./node_modules/_moment@2.29.1@moment/locale/sd.js",
+	"./se": "./node_modules/_moment@2.29.1@moment/locale/se.js",
+	"./se.js": "./node_modules/_moment@2.29.1@moment/locale/se.js",
+	"./si": "./node_modules/_moment@2.29.1@moment/locale/si.js",
+	"./si.js": "./node_modules/_moment@2.29.1@moment/locale/si.js",
+	"./sk": "./node_modules/_moment@2.29.1@moment/locale/sk.js",
+	"./sk.js": "./node_modules/_moment@2.29.1@moment/locale/sk.js",
+	"./sl": "./node_modules/_moment@2.29.1@moment/locale/sl.js",
+	"./sl.js": "./node_modules/_moment@2.29.1@moment/locale/sl.js",
+	"./sq": "./node_modules/_moment@2.29.1@moment/locale/sq.js",
+	"./sq.js": "./node_modules/_moment@2.29.1@moment/locale/sq.js",
+	"./sr": "./node_modules/_moment@2.29.1@moment/locale/sr.js",
+	"./sr-cyrl": "./node_modules/_moment@2.29.1@moment/locale/sr-cyrl.js",
+	"./sr-cyrl.js": "./node_modules/_moment@2.29.1@moment/locale/sr-cyrl.js",
+	"./sr.js": "./node_modules/_moment@2.29.1@moment/locale/sr.js",
+	"./ss": "./node_modules/_moment@2.29.1@moment/locale/ss.js",
+	"./ss.js": "./node_modules/_moment@2.29.1@moment/locale/ss.js",
+	"./sv": "./node_modules/_moment@2.29.1@moment/locale/sv.js",
+	"./sv.js": "./node_modules/_moment@2.29.1@moment/locale/sv.js",
+	"./sw": "./node_modules/_moment@2.29.1@moment/locale/sw.js",
+	"./sw.js": "./node_modules/_moment@2.29.1@moment/locale/sw.js",
+	"./ta": "./node_modules/_moment@2.29.1@moment/locale/ta.js",
+	"./ta.js": "./node_modules/_moment@2.29.1@moment/locale/ta.js",
+	"./te": "./node_modules/_moment@2.29.1@moment/locale/te.js",
+	"./te.js": "./node_modules/_moment@2.29.1@moment/locale/te.js",
+	"./tet": "./node_modules/_moment@2.29.1@moment/locale/tet.js",
+	"./tet.js": "./node_modules/_moment@2.29.1@moment/locale/tet.js",
+	"./tg": "./node_modules/_moment@2.29.1@moment/locale/tg.js",
+	"./tg.js": "./node_modules/_moment@2.29.1@moment/locale/tg.js",
+	"./th": "./node_modules/_moment@2.29.1@moment/locale/th.js",
+	"./th.js": "./node_modules/_moment@2.29.1@moment/locale/th.js",
+	"./tk": "./node_modules/_moment@2.29.1@moment/locale/tk.js",
+	"./tk.js": "./node_modules/_moment@2.29.1@moment/locale/tk.js",
+	"./tl-ph": "./node_modules/_moment@2.29.1@moment/locale/tl-ph.js",
+	"./tl-ph.js": "./node_modules/_moment@2.29.1@moment/locale/tl-ph.js",
+	"./tlh": "./node_modules/_moment@2.29.1@moment/locale/tlh.js",
+	"./tlh.js": "./node_modules/_moment@2.29.1@moment/locale/tlh.js",
+	"./tr": "./node_modules/_moment@2.29.1@moment/locale/tr.js",
+	"./tr.js": "./node_modules/_moment@2.29.1@moment/locale/tr.js",
+	"./tzl": "./node_modules/_moment@2.29.1@moment/locale/tzl.js",
+	"./tzl.js": "./node_modules/_moment@2.29.1@moment/locale/tzl.js",
+	"./tzm": "./node_modules/_moment@2.29.1@moment/locale/tzm.js",
+	"./tzm-latn": "./node_modules/_moment@2.29.1@moment/locale/tzm-latn.js",
+	"./tzm-latn.js": "./node_modules/_moment@2.29.1@moment/locale/tzm-latn.js",
+	"./tzm.js": "./node_modules/_moment@2.29.1@moment/locale/tzm.js",
+	"./ug-cn": "./node_modules/_moment@2.29.1@moment/locale/ug-cn.js",
+	"./ug-cn.js": "./node_modules/_moment@2.29.1@moment/locale/ug-cn.js",
+	"./uk": "./node_modules/_moment@2.29.1@moment/locale/uk.js",
+	"./uk.js": "./node_modules/_moment@2.29.1@moment/locale/uk.js",
+	"./ur": "./node_modules/_moment@2.29.1@moment/locale/ur.js",
+	"./ur.js": "./node_modules/_moment@2.29.1@moment/locale/ur.js",
+	"./uz": "./node_modules/_moment@2.29.1@moment/locale/uz.js",
+	"./uz-latn": "./node_modules/_moment@2.29.1@moment/locale/uz-latn.js",
+	"./uz-latn.js": "./node_modules/_moment@2.29.1@moment/locale/uz-latn.js",
+	"./uz.js": "./node_modules/_moment@2.29.1@moment/locale/uz.js",
+	"./vi": "./node_modules/_moment@2.29.1@moment/locale/vi.js",
+	"./vi.js": "./node_modules/_moment@2.29.1@moment/locale/vi.js",
+	"./x-pseudo": "./node_modules/_moment@2.29.1@moment/locale/x-pseudo.js",
+	"./x-pseudo.js": "./node_modules/_moment@2.29.1@moment/locale/x-pseudo.js",
+	"./yo": "./node_modules/_moment@2.29.1@moment/locale/yo.js",
+	"./yo.js": "./node_modules/_moment@2.29.1@moment/locale/yo.js",
+	"./zh-cn": "./node_modules/_moment@2.29.1@moment/locale/zh-cn.js",
+	"./zh-cn.js": "./node_modules/_moment@2.29.1@moment/locale/zh-cn.js",
+	"./zh-hk": "./node_modules/_moment@2.29.1@moment/locale/zh-hk.js",
+	"./zh-hk.js": "./node_modules/_moment@2.29.1@moment/locale/zh-hk.js",
+	"./zh-mo": "./node_modules/_moment@2.29.1@moment/locale/zh-mo.js",
+	"./zh-mo.js": "./node_modules/_moment@2.29.1@moment/locale/zh-mo.js",
+	"./zh-tw": "./node_modules/_moment@2.29.1@moment/locale/zh-tw.js",
+	"./zh-tw.js": "./node_modules/_moment@2.29.1@moment/locale/zh-tw.js"
+};
+
+
+function webpackContext(req) {
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) { // check for number or string
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
+	return id;
+}
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = "./node_modules/_moment@2.29.1@moment/locale sync recursive ^\\.\\/.*$";
+
+/***/ }),
+
+/***/ "./src/page/upload/UploadInfo.jsx":
+/*!****************************************!*\
+  !*** ./src/page/upload/UploadInfo.jsx ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _upload = __webpack_require__(/*! antd/es/upload */ "./node_modules/_antd@4.9.1@antd/es/upload/index.js");
+
+var _upload2 = _interopRequireDefault(_upload);
+
+var _button = __webpack_require__(/*! antd/es/button */ "./node_modules/_antd@4.9.1@antd/es/button/index.js");
+
+var _button2 = _interopRequireDefault(_button);
+
+var _row = __webpack_require__(/*! antd/es/row */ "./node_modules/_antd@4.9.1@antd/es/row/index.js");
+
+var _row2 = _interopRequireDefault(_row);
+
+var _col = __webpack_require__(/*! antd/es/col */ "./node_modules/_antd@4.9.1@antd/es/col/index.js");
+
+var _col2 = _interopRequireDefault(_col);
+
+var _message2 = __webpack_require__(/*! antd/es/message */ "./node_modules/_antd@4.9.1@antd/es/message/index.js");
+
+var _message3 = _interopRequireDefault(_message2);
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+__webpack_require__(/*! antd/es/upload/style/css */ "./node_modules/_antd@4.9.1@antd/es/upload/style/css.js");
+
+__webpack_require__(/*! antd/es/button/style/css */ "./node_modules/_antd@4.9.1@antd/es/button/style/css.js");
+
+__webpack_require__(/*! antd/es/row/style/css */ "./node_modules/_antd@4.9.1@antd/es/row/style/css.js");
+
+__webpack_require__(/*! antd/es/col/style/css */ "./node_modules/_antd@4.9.1@antd/es/col/style/css.js");
+
+__webpack_require__(/*! antd/es/message/style/css */ "./node_modules/_antd@4.9.1@antd/es/message/style/css.js");
+
+var _react = __webpack_require__(/*! react */ "./node_modules/_react@16.12.0@react/index.js");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouterDom = __webpack_require__(/*! react-router-dom */ "./node_modules/_react-router-dom@4.2.2@react-router-dom/es/index.js");
+
+var _DictService = __webpack_require__(/*! ../../service/DictService.jsx */ "./src/service/DictService.jsx");
+
+var _DictService2 = _interopRequireDefault(_DictService);
+
+var _icons = __webpack_require__(/*! @ant-design/icons */ "./node_modules/_@ant-design_icons@4.3.0@@ant-design/icons/es/index.js");
+
+var _compatible = __webpack_require__(/*! @ant-design/compatible */ "./node_modules/_@ant-design_compatible@1.0.8@@ant-design/compatible/es/index.js");
+
+__webpack_require__(/*! @ant-design/compatible/assets/index.css */ "./node_modules/_@ant-design_compatible@1.0.8@@ant-design/compatible/assets/index.css");
+
+var _LogcalStorge = __webpack_require__(/*! ../../util/LogcalStorge.jsx */ "./src/util/LogcalStorge.jsx");
+
+var _LogcalStorge2 = _interopRequireDefault(_LogcalStorge);
+
+__webpack_require__(/*! ./upload.scss */ "./src/page/upload/upload.scss");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var localStorge = new _LogcalStorge2.default();
+var FormItem = _compatible.Form.Item;
+var _dict = new _DictService2.default();
+
+function getBase64(img, callback) {
+  var reader = new FileReader();
+  reader.addEventListener('load', function () {
+    return callback(reader.result);
+  });
+  reader.readAsDataURL(img);
+}
+
+var url = window.getServerUrl() + "/reportServer/uploadFile/uploadFile";
+//const fileList = [];
+
+// const props = {
+//   action: url,
+//   listType: 'picture',
+//   headers:{
+//     credentials: JSON.stringify(localStorge.getStorage('userInfo') || '')
+//   },
+//   defaultFileList: [...fileList],
+// };
+function beforeUpload(file) {
+  var isJPG = false;
+  // const isJPG = file.type === 'image/jpeg';
+  if (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif') {
+    isJPG = true;
+  }
+  if (!isJPG) {
+    _message3.default.error('You can only upload JPG file!');
+  }
+  var isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    _message3.default.error('Image must smaller than 2MB!');
+  }
+  return isJPG && isLt2M;
+}
+
+var UploadInfo = function (_React$Component) {
+  _inherits(UploadInfo, _React$Component);
+
+  function UploadInfo() {
+    var _ref;
+
+    var _temp, _this, _ret;
+
+    _classCallCheck(this, UploadInfo);
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = UploadInfo.__proto__ || Object.getPrototypeOf(UploadInfo)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+      loading: false,
+      fileList: []
+    }, _this.handleChange = function (info) {
+      console.log(info);
+      if (info.file.status === 'uploading') {
+        _this.setState({ loading: true });
+        return;
+      }
+      if (info.file.status === 'done') {
+        // Get this url from response in real world.
+        // getBase64(info.file.originFileObj, imageUrl => this.setState({
+        //   imageUrl,
+        //   loading: false,
+        // }));
+      }
+    }, _temp), _possibleConstructorReturn(_this, _ret);
+  }
+
+  _createClass(UploadInfo, [{
+    key: 'componentDidMount',
+
+
+    //初始化加载调用方法
+    value: function componentDidMount() {}
+  }, {
+    key: 'render',
+    value: function render() {
+      var fileList = this.state.fileList;
+      var formItemLayout = {
+        labelCol: {
+          xs: { span: 24 },
+          sm: { span: 8 }
+        },
+        wrapperCol: {
+          xs: { span: 24 },
+          sm: { span: 16 }
+        }
+      };
+      return _react2.default.createElement(
+        'div',
+        { id: 'page-wrapper' },
+        _react2.default.createElement(
+          _row2.default,
+          null,
+          _react2.default.createElement(
+            _col2.default,
+            { xs: 24, sm: 24 },
+            _react2.default.createElement(
+              _reactRouterDom.Link,
+              { to: '/upload' },
+              '\u8FD4\u56DE'
+            )
+          )
+        ),
+        _react2.default.createElement(
+          _row2.default,
+          null,
+          _react2.default.createElement(
+            _col2.default,
+            { xs: 24, sm: 24 },
+            _react2.default.createElement(
+              _upload2.default,
+              {
+                accept: "image/*",
+                listType: 'picture',
+                beforeUpload: beforeUpload,
+                action: url,
+                headers: {
+                  credentials: JSON.stringify(localStorge.getStorage("userInfo") || "") },
+                defaultFileList: [].concat(_toConsumableArray(fileList)),
+                onChange: this.handleChange
+              },
+              _react2.default.createElement(
+                _button2.default,
+                null,
+                _react2.default.createElement(_icons.UploadOutlined, null),
+                ' Upload'
+              )
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return UploadInfo;
+}(_react2.default.Component);
+
+exports.default = UploadInfo;
+
+/***/ }),
+
+/***/ "./src/page/upload/upload.scss":
+/*!*************************************!*\
+  !*** ./src/page/upload/upload.scss ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(/*! !../../../node_modules/_css-loader@1.0.0@css-loader!../../../node_modules/_postcss-loader@3.0.0@postcss-loader/src!../../../node_modules/_sass-loader@7.1.0@sass-loader/lib/loader.js!./upload.scss */ "./node_modules/_css-loader@1.0.0@css-loader/index.js!./node_modules/_postcss-loader@3.0.0@postcss-loader/src/index.js!./node_modules/_sass-loader@7.1.0@sass-loader/lib/loader.js!./src/page/upload/upload.scss");
+if(typeof content === 'string') content = [[module.i, content, '']];
+// Prepare cssTransformation
+var transform;
+
+var options = {"hmr":true}
+options.transform = transform
+// add the styles to the DOM
+var update = __webpack_require__(/*! ../../../node_modules/_style-loader@0.19.1@style-loader/lib/addStyles.js */ "./node_modules/_style-loader@0.19.1@style-loader/lib/addStyles.js")(content, options);
+if(content.locals) module.exports = content.locals;
+// Hot Module Replacement
+if(false) {}
+
+/***/ }),
+
+/***/ "./src/service/DictService.jsx":
+/*!*************************************!*\
+  !*** ./src/service/DictService.jsx ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _HttpService = __webpack_require__(/*! ../util/HttpService.jsx */ "./src/util/HttpService.jsx");
+
+var _HttpService2 = _interopRequireDefault(_HttpService);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DictService = function () {
+    function DictService() {
+        _classCallCheck(this, DictService);
+    }
+
+    _createClass(DictService, [{
+        key: "getDictList",
+
+        // 获取函数列表
+        value: function getDictList(listParam) {
+            var url = "reportServer/dict/getDictList";
+            return _HttpService2.default.post(url, JSON.stringify(listParam));
+        }
+    }, {
+        key: "getDictValue",
+        value: function getDictValue(id, vode) {
+            var url = "reportServer/dict/getDictValueByDictID";
+
+            return _HttpService2.default.post(url, JSON.stringify({ "dict_id": id, "value_code": vode }));
+        }
+    }, {
+        key: "saveDict",
+        value: function saveDict(info) {
+            if (info.oldvalue_code == 'null' || info.oldvalue_code == null) {
+                var url = "reportServer/dict/createFuncDictValue";
+                return _HttpService2.default.post(url, JSON.stringify(info));
+            } else {
+                var _url = "reportServer/dict/updateDictValue";
+                return _HttpService2.default.post(_url, JSON.stringify(info));
+            }
+        }
+    }, {
+        key: "deleteDict",
+        value: function deleteDict(param) {
+            var url = "reportServer/dict/deleteDictValueByIDCode";
+            return _HttpService2.default.post(url, JSON.stringify(param));
+        }
+    }]);
+
+    return DictService;
+}();
+
+exports.default = DictService;
+
+/***/ }),
+
+/***/ "./src/util/HttpService.jsx":
+/*!**********************************!*\
+  !*** ./src/util/HttpService.jsx ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+__webpack_require__(/*! whatwg-fetch */ "./node_modules/_whatwg-fetch@2.0.4@whatwg-fetch/fetch.js");
+
+var _LogcalStorge = __webpack_require__(/*! ./LogcalStorge.jsx */ "./src/util/LogcalStorge.jsx");
+
+var _LogcalStorge2 = _interopRequireDefault(_LogcalStorge);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var localStorge = new _LogcalStorge2.default();
+
+var HttpService = function () {
+    function HttpService() {
+        _classCallCheck(this, HttpService);
+    }
+
+    _createClass(HttpService, null, [{
+        key: 'getBaseUrl',
+        value: function getBaseUrl() {
+
+            var url = window.getServerUrl(); //"http://localhost:8080/";
+            return url;
+        }
+
+        //
+
+    }, {
+        key: 'post',
+        value: function post(url, param) {
+            // console.log(url,param)
+            if (undefined == localStorge.getStorage('userInfo') && url != '/reportServer/user/encodePwd' && url != '/reportServer/user/Reactlogin' || '' == localStorge.getStorage('userInfo') && url != '/reportServer/user/encodePwd' && url != '/reportServer/user/Reactlogin') {
+                window.location.href = '#login';
+                return new Promise(function (resolve, reject) {});
+            } else {
+                var fullUrl = HttpService.getBaseUrl() + url;
+                var opts = {
+                    method: 'POST',
+                    headers: {
+                        credentials: JSON.stringify(localStorge.getStorage('userInfo') || '')
+                    },
+                    body: param
+                };
+
+                return fetch(fullUrl, opts).then(function (response) {
+                    // console.log(response.json())
+                    return response.json();
+                }).catch(function (error) {
+                    // console.log(error)
+                    return error.json();
+                });
+            }
+        }
+    }, {
+        key: 'getFile',
+        value: function getFile(url) {
+            if (undefined == localStorge.getStorage('userInfo') && url != '/reportServer/user/encodePwd' && url != '/reportServer/user/Reactlogin' || '' == localStorge.getStorage('userInfo') && url != '/reportServer/user/encodePwd' && url != '/reportServer/user/Reactlogin') {
+                window.location.href = '#login';
+                return new Promise(function (resolve, reject) {});
+            } else {
+                var fullUrl = HttpService.getBaseUrl() + url;
+                var opts = {
+                    method: 'GET',
+                    headers: {
+                        credentials: JSON.stringify(localStorge.getStorage('userInfo') || '')
+                    }
+                };
+
+                return fetch(fullUrl, opts);
+            }
+        }
+    }]);
+
+    return HttpService;
+}();
+
+exports.default = HttpService;
+
+/***/ })
+
+}]);
+//# sourceMappingURL=39.js.map

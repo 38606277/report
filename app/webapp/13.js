@@ -1,1 +1,356 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[13],{1211:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),a=c(n(1)),o=n(444),u=c(n(1287)),i=c(n(1288)),l=c(n(1289)),s=c(n(1290));function c(e){return e&&e.__esModule?e:{default:e}}var f=function(e){function t(){return function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t),function(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}(this,(t.__proto__||Object.getPrototypeOf(t)).apply(this,arguments))}return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}(t,a.default.Component),r(t,[{key:"render",value:function(){return a.default.createElement(o.Switch,null,a.default.createElement(o.Route,{path:"/task/AgencyTaskList",component:u.default}),a.default.createElement(o.Route,{path:"/task/taskList",component:s.default}),a.default.createElement(o.Route,{path:"/task/taskInfo/:taskId",component:i.default}),a.default.createElement(o.Route,{path:"/task/taskInfoView/:taskId",component:l.default}),a.default.createElement(o.Redirect,{exact:!0,from:"/task",to:"/task/AgencyTaskList"}))}}]),t}();t.default=f},1250:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.default=void 0;var r=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();n(1048);var a,o=n(442);var u=new((a=o)&&a.__esModule?a:{default:a}).default,i=function(){function e(){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e)}return r(e,[{key:"get",value:function(){}}],[{key:"getBaseUrl",value:function(){return window.getServerUrl()}},{key:"post",value:function(t,n){if(null==u.getStorage("userInfo")&&"/reportServer/user/encodePwd"!=t&&"/reportServer/user/Reactlogin"!=t||""==u.getStorage("userInfo")&&"/reportServer/user/encodePwd"!=t&&"/reportServer/user/Reactlogin"!=t)return window.location.href="#login",new Promise(function(e,t){});var r=e.getBaseUrl()+t,a={method:"POST",headers:{credentials:JSON.stringify(u.getStorage("userInfo")||"")},body:n};return fetch(r,a).then(function(e){return e.json()}).catch(function(e){return e.json()})}}]),e}();t.default=i},1264:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r,a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),o=n(1250),u=(r=o)&&r.__esModule?r:{default:r};var i=function(){function e(){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,e)}return a(e,[{key:"getAgencyList",value:function(e){return u.default.post("/reportServer/dataCollect/getMyTaskByUserId",JSON.stringify(e))}},{key:"getTaskList",value:function(e){return u.default.post("/reportServer/dataCollect/getMyTaskListByUserId",JSON.stringify(e))}},{key:"getTaskInfo",value:function(e){return u.default.post("/reportServer/dataCollect/getTaskAndUsersByid",JSON.stringify({taskId:e}))}},{key:"getTaskTemplate",value:function(e){return u.default.post("/reportServer/dataCollect/createHtmlForReact/"+e,null)}},{key:"viewTaskTemplate",value:function(e){return u.default.post("/reportServer/dataCollect/viewHtmlForReact/"+e,null)}}]),e}();t.default=i},1287:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=d(n(1042)),a=d(n(158)),o=d(n(1047)),u=d(n(90)),i=d(n(1043)),l=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();n(1041),n(290),n(1046),n(289),n(443);var s=d(n(1)),c=n(444),f=d(n(1264));function d(e){return e&&e.__esModule?e:{default:e}}var p=new(d(n(442)).default),h=new f.default,y=i.default.Search,v=function(e){function t(e){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t);var n=function(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e));return n.state={list:[],currentPage:1,perPage:10,listType:"list"},n}return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}(t,s.default.Component),l(t,[{key:"componentDidMount",value:function(){this.loadProductList()}},{key:"loadProductList",value:function(){var e=this,t={};t.userId=p.getStorage("userInfo").userId,t.currentPage=this.state.currentPage,t.perPage=this.state.perPage,"search"===this.state.listType&&(t.keyword=this.state.searchKeyword),h.getAgencyList(t).then(function(t){e.setState(t.data)},function(t){e.setState({list:[]}),p.errorTips(t)})}},{key:"onSearch",value:function(e){var t=this,n=""===e?"list":"search";this.setState({listType:n,currentPage:1,searchKeyword:e},function(){t.loadProductList()})}},{key:"onPageNumChange",value:function(e){var t=this;this.setState({currentPage:e},function(){t.loadProductList()})}},{key:"render",value:function(){var e=this;this.state.list.map(function(e,t){e.key=t});var t=this.state.list,n=[{title:"填报名称",dataIndex:"taskname",key:"taskname",render:function(e,t,n){return s.default.createElement(c.Link,{to:"/task/taskInfo/"+t.taskid},e)}},{title:"填报开始时间",dataIndex:"startdate",key:"startdate"},{title:"填报结束时间",dataIndex:"enddate",key:"enddate"}];return s.default.createElement("div",{id:"page-wrapper"},s.default.createElement(r.default,{title:"代办任务列表"},s.default.createElement(u.default,null,s.default.createElement(y,{style:{width:300,marginBottom:"10px"},placeholder:"请输入...",enterButton:"查询",onSearch:function(t){return e.onSearch(t)}})),s.default.createElement(o.default,{dataSource:t,columns:n,pagination:!1}),s.default.createElement(a.default,{current:this.state.currentPage,total:this.state.total,onChange:function(t){return e.onPageNumChange(t)}})))}}]),t}();t.default=v},1288:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=s(n(1042)),a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();n(1041);var o=s(n(1)),u=s(n(1264)),i=s(n(442)),l=s(n(1208));function s(e){return e&&e.__esModule?e:{default:e}}n(1192);var c=new i.default,f=new u.default,d=function(e){function t(e){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t);var n=function(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e));return n.state={taskId:n.props.match.params.taskId,taskInfo:"",userId:c.getStorage("userInfo").userId},n}return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}(t,o.default.Component),a(t,[{key:"componentDidMount",value:function(){this.loadtaksInfo()}},{key:"loadtaksInfo",value:function(){var e=this;f.getTaskTemplate(this.state.taskId).then(function(t){e.setState(t.data)},function(e){console.log(e)}).catch(function(e){console.log(e)})}},{key:"onSubmit",value:function(){console.log(this.state.项目经理)}},{key:"render",value:function(){return o.default.createElement("div",{id:"page-wrapper"},o.default.createElement(l.default,{url:"../../src/js/common.js"}),o.default.createElement(l.default,{url:"../../src/js/jquery.min.js"}),o.default.createElement(r.default,{title:"报表"},o.default.createElement("div",{className:"form-horizontal"},o.default.createElement("form",{id:"addtable"},o.default.createElement("input",{type:"hidden",id:"delId"}),o.default.createElement("input",{type:"hidden",value:this.state.taskId,id:"taskId"}),o.default.createElement("input",{type:"hidden",value:this.state.userId,id:"userId"}),o.default.createElement("div",{dangerouslySetInnerHTML:{__html:this.state.taskInfo}})))))}}]),t}();t.default=d},1289:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=s(n(1042)),a=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();n(1041);var o=s(n(1)),u=s(n(1264));n(456);var i=s(n(442)),l=s(n(1208));function s(e){return e&&e.__esModule?e:{default:e}}var c=new i.default,f=new u.default,d=function(e){function t(e){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t);var n=function(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e));return n.state={taskId:n.props.match.params.taskId,taskInfo:"",dataList:[],fieldList:[],showHeader:!0,userId:c.getStorage("userInfo").userId},n}return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}(t,o.default.Component),a(t,[{key:"componentDidMount",value:function(){this.loadtaksInfo()}},{key:"loadtaksInfo",value:function(){var e=this;f.viewTaskTemplate(this.state.taskId).then(function(t){e.setState(t.data)},function(t){e.setState({}),c.errorTips(t)})}},{key:"render",value:function(){return o.default.createElement("div",{id:"page-wrapper"},o.default.createElement(l.default,{url:"../../src/js/common.js"}),o.default.createElement(l.default,{url:"../../src/js/jquery.min.js"}),o.default.createElement(r.default,{title:"报表"},o.default.createElement("div",{className:"form-horizontal"},o.default.createElement("div",{dangerouslySetInnerHTML:{__html:this.state.taskInfo}}))))}}]),t}();t.default=d},1290:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var r=d(n(1042)),a=d(n(158)),o=d(n(1047)),u=d(n(90)),i=d(n(1043)),l=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}();n(1041),n(290),n(1046),n(289),n(443);var s=d(n(1)),c=n(444),f=d(n(1264));function d(e){return e&&e.__esModule?e:{default:e}}var p=new(d(n(442)).default),h=new f.default,y=i.default.Search,v=function(e){function t(e){!function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}(this,t);var n=function(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e));return n.state={list:[],currentPage:1,perPage:10,listType:"list"},n}return function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}(t,s.default.Component),l(t,[{key:"componentDidMount",value:function(){this.loadProductList()}},{key:"loadProductList",value:function(){var e=this,t={};t.userId=p.getStorage("userInfo").userId,t.currentPage=this.state.currentPage,t.perPage=this.state.perPage,"search"===this.state.listType&&(t.keyword=this.state.searchKeyword),h.getTaskList(t).then(function(t){e.setState(t.data)},function(t){e.setState({list:[]}),p.errorTips(t)})}},{key:"onSearch",value:function(e){var t=this;this.setState({currentPage:1,searchKeyword:e},function(){t.loadProductList()})}},{key:"onPageNumChange",value:function(e){var t=this;this.setState({currentPage:e},function(){t.loadProductList()})}},{key:"render",value:function(){var e=this;this.state.list.map(function(e,t){e.key=t});var t=this.state.list,n=[{title:"填报名称",dataIndex:"taskname",key:"taskname",render:function(e,t,n){return s.default.createElement(c.Link,{to:"/task/taskInfoView/"+t.taskid},e)}},{title:"填报开始时间",dataIndex:"startdate",key:"startdate"},{title:"填报结束时间",dataIndex:"enddate",key:"enddate"}];return s.default.createElement("div",{id:"page-wrapper"},s.default.createElement(r.default,{title:"已办任务列表"},s.default.createElement(u.default,null,s.default.createElement(y,{style:{width:300,marginBottom:"10px"},placeholder:"请输入...",enterButton:"查询",onSearch:function(t){return e.onSearch(t)}})),s.default.createElement(o.default,{dataSource:t,columns:n,pagination:!1}),s.default.createElement(a.default,{current:this.state.currentPage,total:this.state.total,onChange:function(t){return e.onPageNumChange(t)}})))}}]),t}();t.default=v}}]);
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([[13],{
+
+/***/ "./node_modules/_rc-util@5.5.1@rc-util/es/PortalWrapper.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/_rc-util@5.5.1@rc-util/es/PortalWrapper.js ***!
+  \*****************************************************************/
+/*! exports provided: getOpenCount, default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getOpenCount", function() { return getOpenCount; });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/_react@16.12.0@react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _raf__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./raf */ "./node_modules/_rc-util@5.5.1@rc-util/es/raf.js");
+/* harmony import */ var _Portal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Portal */ "./node_modules/_rc-util@5.5.1@rc-util/es/Portal.js");
+/* harmony import */ var _switchScrollingEffect__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./switchScrollingEffect */ "./node_modules/_rc-util@5.5.1@rc-util/es/switchScrollingEffect.js");
+/* harmony import */ var _setStyle__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./setStyle */ "./node_modules/_rc-util@5.5.1@rc-util/es/setStyle.js");
+/* harmony import */ var _Dom_canUseDom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Dom/canUseDom */ "./node_modules/_rc-util@5.5.1@rc-util/es/Dom/canUseDom.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+/* eslint-disable no-underscore-dangle,react/require-default-props */
+
+
+
+
+
+
+var openCount = 0;
+var supportDom = Object(_Dom_canUseDom__WEBPACK_IMPORTED_MODULE_5__["default"])();
+/** @private Test usage only */
+
+function getOpenCount() {
+  return  false ? undefined : 0;
+} // https://github.com/ant-design/ant-design/issues/19340
+// https://github.com/ant-design/ant-design/issues/19332
+
+var cacheOverflow = {};
+
+var getParent = function getParent(getContainer) {
+  if (!supportDom) {
+    return null;
+  }
+
+  if (getContainer) {
+    if (typeof getContainer === 'string') {
+      return document.querySelectorAll(getContainer)[0];
+    }
+
+    if (typeof getContainer === 'function') {
+      return getContainer();
+    }
+
+    if (_typeof(getContainer) === 'object' && getContainer instanceof window.HTMLElement) {
+      return getContainer;
+    }
+  }
+
+  return document.body;
+};
+
+var PortalWrapper = /*#__PURE__*/function (_React$Component) {
+  _inherits(PortalWrapper, _React$Component);
+
+  var _super = _createSuper(PortalWrapper);
+
+  function PortalWrapper() {
+    var _this;
+
+    _classCallCheck(this, PortalWrapper);
+
+    _this = _super.apply(this, arguments);
+    _this.componentRef = react__WEBPACK_IMPORTED_MODULE_0__["createRef"]();
+
+    _this.updateOpenCount = function (prevProps) {
+      var _ref = prevProps || {},
+          prevVisible = _ref.visible,
+          prevGetContainer = _ref.getContainer;
+
+      var _this$props = _this.props,
+          visible = _this$props.visible,
+          getContainer = _this$props.getContainer; // Update count
+
+      if (visible !== prevVisible && supportDom && getParent(getContainer) === document.body) {
+        if (visible && !prevVisible) {
+          openCount += 1;
+        } else if (prevProps) {
+          openCount -= 1;
+        }
+      } // Clean up container if needed
+
+
+      var getContainerIsFunc = typeof getContainer === 'function' && typeof prevGetContainer === 'function';
+
+      if (getContainerIsFunc ? getContainer.toString() !== prevGetContainer.toString() : getContainer !== prevGetContainer) {
+        _this.removeCurrentContainer();
+      }
+    };
+
+    _this.attachToParent = function () {
+      var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (force || _this.container && !_this.container.parentNode) {
+        var parent = getParent(_this.props.getContainer);
+
+        if (parent) {
+          parent.appendChild(_this.container);
+          return true;
+        }
+
+        return false;
+      }
+
+      return true;
+    };
+
+    _this.getContainer = function () {
+      if (!supportDom) {
+        return null;
+      }
+
+      if (!_this.container) {
+        _this.container = document.createElement('div');
+
+        _this.attachToParent(true);
+      }
+
+      _this.setWrapperClassName();
+
+      return _this.container;
+    };
+
+    _this.setWrapperClassName = function () {
+      var wrapperClassName = _this.props.wrapperClassName;
+
+      if (_this.container && wrapperClassName && wrapperClassName !== _this.container.className) {
+        _this.container.className = wrapperClassName;
+      }
+    };
+
+    _this.removeCurrentContainer = function () {
+      var _this$container, _this$container$paren;
+
+      // Portal will remove from `parentNode`.
+      // Let's handle this again to avoid refactor issue.
+      (_this$container = _this.container) === null || _this$container === void 0 ? void 0 : (_this$container$paren = _this$container.parentNode) === null || _this$container$paren === void 0 ? void 0 : _this$container$paren.removeChild(_this.container);
+    };
+    /**
+     * Enhance ./switchScrollingEffect
+     * 1. Simulate document body scroll bar with
+     * 2. Record body has overflow style and recover when all of PortalWrapper invisible
+     * 3. Disable body scroll when PortalWrapper has open
+     *
+     * @memberof PortalWrapper
+     */
+
+
+    _this.switchScrollingEffect = function () {
+      if (openCount === 1 && !Object.keys(cacheOverflow).length) {
+        Object(_switchScrollingEffect__WEBPACK_IMPORTED_MODULE_3__["default"])(); // Must be set after switchScrollingEffect
+
+        cacheOverflow = Object(_setStyle__WEBPACK_IMPORTED_MODULE_4__["default"])({
+          overflow: 'hidden',
+          overflowX: 'hidden',
+          overflowY: 'hidden'
+        });
+      } else if (!openCount) {
+        Object(_setStyle__WEBPACK_IMPORTED_MODULE_4__["default"])(cacheOverflow);
+        cacheOverflow = {};
+        Object(_switchScrollingEffect__WEBPACK_IMPORTED_MODULE_3__["default"])(true);
+      }
+    };
+
+    return _this;
+  }
+
+  _createClass(PortalWrapper, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      this.updateOpenCount();
+
+      if (!this.attachToParent()) {
+        this.rafId = Object(_raf__WEBPACK_IMPORTED_MODULE_1__["default"])(function () {
+          _this2.forceUpdate();
+        });
+      }
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      this.updateOpenCount(prevProps);
+      this.setWrapperClassName();
+      this.attachToParent();
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      var _this$props2 = this.props,
+          visible = _this$props2.visible,
+          getContainer = _this$props2.getContainer;
+
+      if (supportDom && getParent(getContainer) === document.body) {
+        // 离开时不会 render， 导到离开时数值不变，改用 func 。。
+        openCount = visible && openCount ? openCount - 1 : openCount;
+      }
+
+      this.removeCurrentContainer();
+      _raf__WEBPACK_IMPORTED_MODULE_1__["default"].cancel(this.rafId);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this$props3 = this.props,
+          children = _this$props3.children,
+          forceRender = _this$props3.forceRender,
+          visible = _this$props3.visible;
+      var portal = null;
+      var childProps = {
+        getOpenCount: function getOpenCount() {
+          return openCount;
+        },
+        getContainer: this.getContainer,
+        switchScrollingEffect: this.switchScrollingEffect
+      };
+
+      if (forceRender || visible || this.componentRef.current) {
+        portal = react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_Portal__WEBPACK_IMPORTED_MODULE_2__["default"], {
+          getContainer: this.getContainer,
+          ref: this.componentRef
+        }, children(childProps));
+      }
+
+      return portal;
+    }
+  }]);
+
+  return PortalWrapper;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (PortalWrapper);
+
+/***/ }),
+
+/***/ "./node_modules/_rc-util@5.5.1@rc-util/es/setStyle.js":
+/*!************************************************************!*\
+  !*** ./node_modules/_rc-util@5.5.1@rc-util/es/setStyle.js ***!
+  \************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/**
+ * Easy to set element style, return previous style
+ * IE browser compatible(IE browser doesn't merge overflow style, need to set it separately)
+ * https://github.com/ant-design/ant-design/issues/19393
+ *
+ */
+function setStyle(style) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var _options$element = options.element,
+      element = _options$element === void 0 ? document.body : _options$element;
+  var oldStyle = {};
+  var styleKeys = Object.keys(style); // IE browser compatible
+
+  styleKeys.forEach(function (key) {
+    oldStyle[key] = element.style[key];
+  });
+  styleKeys.forEach(function (key) {
+    element.style[key] = style[key];
+  });
+  return oldStyle;
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (setStyle);
+
+/***/ }),
+
+/***/ "./node_modules/_rc-util@5.5.1@rc-util/es/switchScrollingEffect.js":
+/*!*************************************************************************!*\
+  !*** ./node_modules/_rc-util@5.5.1@rc-util/es/switchScrollingEffect.js ***!
+  \*************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _getScrollBarSize__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./getScrollBarSize */ "./node_modules/_rc-util@5.5.1@rc-util/es/getScrollBarSize.js");
+/* harmony import */ var _setStyle__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./setStyle */ "./node_modules/_rc-util@5.5.1@rc-util/es/setStyle.js");
+
+
+
+function isBodyOverflowing() {
+  return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight) && window.innerWidth > document.body.offsetWidth;
+}
+
+var cacheStyle = {};
+/* harmony default export */ __webpack_exports__["default"] = (function (close) {
+  if (!isBodyOverflowing() && !close) {
+    return;
+  } // https://github.com/ant-design/ant-design/issues/19729
+
+
+  var scrollingEffectClassName = 'ant-scrolling-effect';
+  var scrollingEffectClassNameReg = new RegExp("".concat(scrollingEffectClassName), 'g');
+  var bodyClassName = document.body.className;
+
+  if (close) {
+    if (!scrollingEffectClassNameReg.test(bodyClassName)) return;
+    Object(_setStyle__WEBPACK_IMPORTED_MODULE_1__["default"])(cacheStyle);
+    cacheStyle = {};
+    document.body.className = bodyClassName.replace(scrollingEffectClassNameReg, '').trim();
+    return;
+  }
+
+  var scrollBarSize = Object(_getScrollBarSize__WEBPACK_IMPORTED_MODULE_0__["default"])();
+
+  if (scrollBarSize) {
+    cacheStyle = Object(_setStyle__WEBPACK_IMPORTED_MODULE_1__["default"])({
+      position: 'relative',
+      width: "calc(100% - ".concat(scrollBarSize, "px)")
+    });
+
+    if (!scrollingEffectClassNameReg.test(bodyClassName)) {
+      var addClassName = "".concat(bodyClassName, " ").concat(scrollingEffectClassName);
+      document.body.className = addClassName.trim();
+    }
+  }
+});
+
+/***/ })
+
+}]);
+//# sourceMappingURL=13.js.map
