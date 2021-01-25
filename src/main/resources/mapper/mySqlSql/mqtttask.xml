@@ -72,4 +72,8 @@
 	<update id="insertSql" parameterType="string">
         ${_parameter}
     </update>
+
+	<select id="tempSql" parameterType="String">
+		${_parameter}
+	</select>
 </mapper>
