@@ -194,4 +194,15 @@ public class MqttTaskService {
 		}
 	}
 
+    public List<Map> findMqttTaskByIdAndNum(JSONObject pJson) {
+		Map info = this.findMqttTaskById(pJson.getString("id"));
+		List<Map> list=null;
+		if(null!=info) {
+			String targetDB = info.get("targetDB").toString();
+			String targetTable = info.get("targetTable").toString();
+			String tempSql = " select * from `" + targetDB + "`.`" + targetTable + "` limit 0, " + pJson.getInteger("pageSize");
+			list =  DbFactory.Open(DbFactory.FORM).selectList("mqtttask.tempSql", tempSql);
+		}
+		return list;
+    }
 }

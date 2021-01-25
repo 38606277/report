@@ -112,4 +112,17 @@ public class MqttTaskController extends RO {
 		}
 		return "";
 	}
+
+	@RequestMapping(value = "/findMqttTaskByIdAndNum", produces = "text/plain;charset=UTF-8")
+	public String findMqttTaskByIdAndNum(@RequestBody JSONObject pJson) throws SQLException {
+		try{
+			return SuccessMsg("",this.mqttTaskService.findMqttTaskByIdAndNum(pJson));
+		}catch (Exception ex){
+			ex.printStackTrace();
+			return ExceptionMsg(ex.getMessage());
+		}
+
+	}
+
+
 }
