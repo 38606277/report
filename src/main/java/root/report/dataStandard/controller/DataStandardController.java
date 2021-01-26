@@ -32,7 +32,6 @@ public class DataStandardController extends RO {
             map.put("perPage",pJson.getString("perPage"));
             map.put("standard_name",pJson.get("standard_name")==null?"":pJson.get("standard_name").toString());
             map.put("standard_code",pJson.get("standard_code")==null?"":pJson.get("standard_code").toString());
-            map.put("standard_type",pJson.get("standard_type")==null?"":pJson.get("standard_type").toString());
             map.put("catalog_id",pJson.get("catalog_id")==null?"":pJson.get("catalog_id").toString());
             Map<String,Object> resultMap = dataStandardService.getListPage(map);
             return SuccessMsg("", resultMap);

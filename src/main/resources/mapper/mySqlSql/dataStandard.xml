@@ -56,7 +56,10 @@
 			and  u.standard_name like '%${standard_name}%'
 		</if>
 		<if  test="catalog_id != null and catalog_id!='' ">
-			and  u.catalog_id ='${standard_name}'
+			and  u.catalog_id ='${catalog_id}'
+		</if>
+		<if  test="standard_code != null and standard_code!='' ">
+			and  u.standard_code  like '%${standard_code}%'
 		</if>
     </select>
 
