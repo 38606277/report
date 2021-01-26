@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="electronTable">
+
+	<!--  创建func_dict信息  -->
+	<insert id="createElectronTable" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into bd_electron_table(id,`name`,obj,create_date,create_by)
+		values ('${id}','${name}',#{obj},sysdate(),
+		<if  test="create_by == null or create_by == ''">NULL</if>
+		<if  test="create_by != null and create_by != ''">#{create_by}</if>
+		)
+	</insert>
+	<!-- 修改 func_dict 表的信息 -->
+	<update id="updateElectronTable" parameterType="Map">
+		update bd_electron_table set name='${name}',
+		obj=#{obj},update_date=sysdate(),update_by=#{update_by}
+		where id=#{id}
+	</update>
+
+	<select id="getObjById" parameterType="java.lang.String" resultType="map">
+        SELECT u.* FROM bd_electron_table u where u.id = #{id}
+    </select>
+
+    <select id="getListPage" resultType="Map" parameterType="Map">
+        SELECT u.*  FROM bd_electron_table u  where  1=1
+		<if  test="name != null and name!='' ">
+			and  u.name like '%${name}%'
+		</if>
+    </select>
+
+	<select id="getMaxId" resultType="java.lang.Integer">
+        SELECT (MAX(CONVERT(id,SIGNED) +1)) as id from bd_electron_table
+    </select>
+
+	<!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
+	<delete id="deleteObjByID" parameterType="Map">
+        delete from bd_electron_table where id=#{id}
+    </delete>
+
+	<select id="count" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from bd_electron_table where `name` ='${name}'
+		<if  test="id != null and id !=''">
+			and id!='${id}'
+		</if>
+	</select>
+
+</mapper>
