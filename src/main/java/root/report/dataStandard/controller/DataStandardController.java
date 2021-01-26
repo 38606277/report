@@ -30,25 +30,21 @@ public class DataStandardController extends RO {
             Map<String,String> map=new HashMap();
             map.put("startIndex",pJson.getString("startIndex"));
             map.put("perPage",pJson.getString("perPage"));
-            map.put("model_name",pJson.get("model_name")==null?"":pJson.get("model_name").toString());
-            map.put("db_source",pJson.get("db_source")==null?"":pJson.get("db_source").toString());
-            map.put("db_type",pJson.get("db_type")==null?"":pJson.get("db_type").toString());
+            map.put("standard_name",pJson.get("standard_name")==null?"":pJson.get("standard_name").toString());
+            map.put("standard_code",pJson.get("standard_code")==null?"":pJson.get("standard_code").toString());
+            map.put("standard_type",pJson.get("standard_type")==null?"":pJson.get("standard_type").toString());
+            map.put("catalog_id",pJson.get("catalog_id")==null?"":pJson.get("catalog_id").toString());
             Map<String,Object> resultMap = dataStandardService.getListPage(map);
             return SuccessMsg("", resultMap);
         } catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
     }
-    @RequestMapping(value = "/getAllList", produces = "text/plain;charset=UTF-8")
-    public String getAllList()  {
-        List<Map> list=dataStandardService.getAllList();
-        return SuccessMsg("", list);
-    }
 
     @RequestMapping(value = "/getDataStandardById", produces = "text/plain;charset=UTF-8")
     public String getDataStandardById(@RequestBody JSONObject pJson)  {
         try{
-            Map resultObject =dataStandardService.getBdmodelByID(pJson);
+            Map resultObject =dataStandardService.getDataStandardByID(pJson);
             return SuccessMsg("",resultObject);
         }catch (Exception ex){
             ex.printStackTrace();
@@ -99,14 +95,13 @@ public class DataStandardController extends RO {
 
 
     @RequestMapping(value = "/deleteDataStandardById", produces = "text/plain;charset=UTF-8")
-    public String deleteDataStandardById(@RequestBody String pJson) throws SQLException {
+    public String deleteDataStandardById(@RequestBody JSONObject jsonObject) throws SQLException {
         SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
         try{
             sqlSession.getConnection().setAutoCommit(false);
-            JSONObject jsonObject = JSONObject.parseObject(pJson);
-            int model_id=jsonObject.getInteger("model_id");
+            String standard_id=jsonObject.getString("standard_id");
             //删除
-            this.dataStandardService.deleteBdmodelById(sqlSession,model_id);
+            this.dataStandardService.deleteBdDataStandardById(sqlSession,standard_id);
             sqlSession.getConnection().commit();
             return SuccessMsg("删除成功",null);
         }catch (Exception ex){
@@ -136,6 +131,26 @@ public class DataStandardController extends RO {
         } catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/deleteCatalogById", produces = "text/plain;charset=UTF-8")
+    public String deleteCatalogById(@RequestBody JSONObject jsonObject) throws SQLException {
+        SqlSession sqlSession =  DbFactory.Open(DbFactory.FORM);
+        try{
+            sqlSession.getConnection().setAutoCommit(false);
+            String catalog_id=jsonObject.getString("catalog_id");
+            //删除
+            Map maps= this.dataStandardService.deleteCatalogById(sqlSession,catalog_id);
+            sqlSession.getConnection().commit();
+            return SuccessMsg("删除成功",maps);
+        }catch (Exception ex){
+            sqlSession.getConnection().rollback();
+            ex.printStackTrace();
+            return ExceptionMsg(ex.getMessage());
+        }finally {
+            sqlSession.getConnection().setAutoCommit(true);
+        }
+
     }
 
 }

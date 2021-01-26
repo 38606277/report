@@ -4,66 +4,70 @@
 <mapper namespace="dataStandard">
 
 	<!--  创建func_dict信息  -->
-	<insert id="createMenu" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-		insert into fnd_func(func_id,func_name,func_type,func_pid,valid,func_desc,func_icon,func_url,`order`,target)
-		values ('${func_id}','${func_name}','${func_type}',
-		<if  test="func_pid == null or func_pid == ''">NULL</if>
-		<if  test="func_pid != null and func_pid != ''">#{func_pid}</if>,
-		<if  test="valid == null or valid == ''">1</if>
-		<if  test="valid != null and valid != ''">#{valid}</if>,
-		<if  test="func_desc == null">NULL</if>
-		<if  test="func_desc != null">'${func_desc}'</if>,
-		'${func_icon}','${func_url}',
-		<if  test="order == null or order == ''">NULL</if>
-		<if  test="order != null and order != ''">#{order}</if>,
-		'${target}'
+	<insert id="createStandard" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into bd_data_standard(standard_id,standard_name,standard_code,standard_type,status,catalog_id,description,create_date,create_by)
+		values ('${standard_id}','${standard_name}','${standard_code}',
+		<if  test="standard_type == null or standard_type == ''">NULL</if>
+		<if  test="standard_type != null and standard_type != ''">#{standard_type}</if>,
+		<if  test="status == null or status == ''">0</if>
+		<if  test="status != null and status != ''">#{status}</if>,
+		<if  test="catalog_id == null">NULL</if>
+		<if  test="catalog_id != null">'${catalog_id}'</if>,
+		'${description}',sysdate(),
+		<if  test="create_by == null or create_by == ''">NULL</if>
+		<if  test="create_by != null and create_by != ''">#{create_by}</if>
 		)
 	</insert>
 	<!-- 修改 func_dict 表的信息 -->
-	<update id="updateMenu" parameterType="Map">
-		update fnd_func set func_name='${func_name}',func_type='${func_type}',
-		func_pid=
-		<if  test="func_pid == null or func_pid ==''">NULL</if>
-		<if  test="func_pid != null and func_pid != ''">#{func_pid}</if>
-		,valid=
-		<if  test="valid == null or valid ==''">NULL</if>
-		<if  test="valid != null and valid != ''">#{valid}</if>
-		,func_desc=
-		<if  test="func_desc == null">NULL</if>
-		<if  test="func_desc != null">'${func_desc}'</if>
-		,func_icon=
-		<if  test="func_icon == null">NULL</if>
-		<if  test="func_icon != null">'${func_icon}'</if>
-		,func_url=
-		<if  test="func_url == null">NULL</if>
-		<if  test="func_url != null">'${func_url}'</if>
-		,`order`=
-		<if  test="order == null or order == ''">NULL</if>
-		<if  test="order != null and order != ''">#{order}</if>,
-		target=
-		<if  test="target == null">NULL</if>
-		<if  test="target != null">'${target}'</if>
-		where func_id=#{func_id,jdbcType=INTEGER}
+	<update id="updateStandard" parameterType="Map">
+		update bd_data_standard set standard_name='${standard_name}',
+		standard_type=
+		<if  test="standard_type == null or standard_type ==''">NULL</if>
+		<if  test="standard_type != null and standard_type != ''">#{standard_type}</if>
+		,status=
+		<if  test="status == null or status ==''">NULL</if>
+		<if  test="status != null and status != ''">#{status}</if>
+		,description=
+		<if  test="description == null">NULL</if>
+		<if  test="description != null">'${description}'</if>
+		where standard_id=#{standard_id}
 	</update>
 
-	<select id="getMenuById" parameterType="java.lang.String" resultType="map">
-        SELECT u.* FROM fnd_func u where u.func_id = #{func_id}
+	<select id="getDataStandardById" parameterType="java.lang.String" resultType="map">
+        SELECT u.* FROM bd_data_standard u where u.standard_id = #{standard_id}
     </select>
 
-	<select id="getMenuByPId" parameterType="java.lang.String" resultType="map">
-        SELECT u.*,u.func_id as 'key' FROM fnd_func u where u.func_pid = #{func_pid}
+	<select id="countStandardByCatalogId" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from bd_data_standard where catalog_id=#{catalog_id};
+	</select>
+
+
+	<select id="getStandardByPId" parameterType="java.lang.String" resultType="map">
+        SELECT u.* FROM bd_data_standard u where u.catalog_id = #{catalog_id}
     </select>
 
-    <select id="getAllPage" resultType="Map" parameterType="Map">
-        SELECT u.*  FROM fnd_func u  where  1=1
-		<if  test="func_name != null and func_name!='' ">
-			and  u.func_name like '%${func_name}%'
+	<select id="lastOne" resultType="java.lang.String">
+		select standard_code from bd_data_standard order by CONVERT(standard_id,SIGNED) desc limit 0,1
+	</select>
+
+    <select id="getListPage" resultType="Map" parameterType="Map">
+        SELECT u.*  FROM bd_data_standard u  where  1=1
+		<if  test="standard_name != null and standard_name!='' ">
+			and  u.standard_name like '%${standard_name}%'
+		</if>
+		<if  test="catalog_id != null and catalog_id!='' ">
+			and  u.catalog_id ='${standard_name}'
 		</if>
     </select>
 
 	<select id="getMaxId" resultType="java.lang.Integer">
-        SELECT (MAX(CONVERT(func_id,SIGNED) +1)) as func_id from fnd_func
+        SELECT (MAX(CONVERT(standard_id,SIGNED) +1)) as standard_id from bd_data_standard
     </select>
+
+	<!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
+	<delete id="deleteDataStandardByID" parameterType="Map">
+        delete from bd_data_standard where standard_id=#{standard_id}
+    </delete>
 
 
 	<!--  创建func_dict信息  -->
@@ -93,10 +97,10 @@
 			and catalog_id!='${catalog_id}'
 		</if>
 	</select>
-	<!-- 根据dict_id 跟 dict_out_id 删除func_dict_out 表相关信息  -->
-	<delete id="deleteMenuByID" parameterType="Map">
-        delete from fnd_func where func_id=#{func_id}
-    </delete>
+
+	<select id="countCatalogByPid" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select count(1) from bd_data_standard_catalog where catalog_pid=#{catalog_id};
+	</select>
 
 	<select id="getCatalogByPid" parameterType="map" resultType="map">
 		select catalog_id,catalog_id as 'key',catalog_name as 'title', catalog_pid from bd_data_standard_catalog where catalog_pid=#{catalog_pid};
