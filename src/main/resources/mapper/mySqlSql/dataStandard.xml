@@ -73,6 +73,8 @@
     </delete>
 
 
+
+
 	<!--  创建func_dict信息  -->
 	<insert id="createCatalog" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
 		insert into bd_data_standard_catalog(catalog_id,catalog_name,catalog_pid,status)
@@ -108,4 +110,8 @@
 	<select id="getCatalogByPid" parameterType="map" resultType="map">
 		select catalog_id,catalog_id as 'key',catalog_name as 'title', catalog_pid from bd_data_standard_catalog where catalog_pid=#{catalog_pid};
 	</select>
+
+	<delete id="deleteCatalogById" parameterType="java.lang.String">
+		delete from bd_data_standard_catalog where catalog_id=#{catalog_id}
+	</delete>
 </mapper>
