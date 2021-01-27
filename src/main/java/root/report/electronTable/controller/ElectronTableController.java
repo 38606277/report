@@ -39,7 +39,7 @@ public class ElectronTableController extends RO {
     @RequestMapping(value = "/getObjById", produces = "text/plain;charset=UTF-8")
     public String getObjById(@RequestBody JSONObject pJson)  {
         try{
-            Map resultObject =electronTableService.getObjById(pJson);
+            Map<String,Object> resultObject =electronTableService.getObjById(pJson);
             return SuccessMsg("",resultObject);
         }catch (Exception ex){
             ex.printStackTrace();
