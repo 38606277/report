@@ -73,7 +73,7 @@
         ${_parameter}
     </update>
 
-	<select id="tempSql" parameterType="String">
+	<select id="tempSql" parameterType="String" resultType="map">
 		${_parameter}
 	</select>
 </mapper>
