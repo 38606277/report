@@ -102,7 +102,8 @@ public class SelectSqlController extends RO {
     public String excueSelectSql(@RequestBody JSONObject jsonFunc) {
         try {
             String selectsql = jsonFunc.getString("selectsql");
-            List<Map<String,Object>> map1 = selectSqlService.excueSelectSql(selectsql);
+            String fromdb = jsonFunc.getString("fromdb");
+            Map<String,Object> map1 = selectSqlService.excueSelectSql(selectsql,fromdb);
             return SuccessMsg("", map1);
         } catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
