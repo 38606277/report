@@ -110,4 +110,14 @@ public class SelectSqlController extends RO {
         }
     }
 
+    @RequestMapping(value = "/getTableAndColumnList", produces = "text/plain;charset=UTF-8")
+    public String getTableAndColumnList(@RequestBody JSONObject jsonFunc) {
+        try {
+            String fromdb = jsonFunc.getString("fromdb");
+            Map<String,Object> map1 = selectSqlService.getTableAndColumnList(fromdb);
+            return SuccessMsg("", map1);
+        } catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
 }

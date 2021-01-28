@@ -11,6 +11,7 @@ import root.report.db.DbFactory;
 
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +121,25 @@ public class SelectSqlService {
             resmap.put("result",false);
             resmap.put("info","查询失败，请检查数据库是否连接正确");
         }
+        return resmap;
+    }
+
+    public Map<String, Object> getTableAndColumnList(String fromdb) {
+        Map<String, Object> resmap=new HashMap<>();
+        SqlSession sqlSession=DbFactory.Open(fromdb);
+        Map m=new HashMap();
+        m.put("fromdb",fromdb);
+        List<String> tableList = sqlSession.selectList("selectSql.tableList",m);
+        Map<String,List<String>> colmap=new HashMap<>();
+        if(tableList.size()>0){
+            for (String  o :tableList ) {
+                Map colpar=new HashMap();
+                colpar.put("tablename",o);
+                List<String> columnlist = sqlSession.selectList("selectSql.columnList",colpar);
+                colmap.put(o,columnlist);
+            }
+        }
+        resmap.put("tables",colmap);
         return resmap;
     }
 }

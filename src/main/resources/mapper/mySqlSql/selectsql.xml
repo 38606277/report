@@ -45,4 +45,12 @@
 	<select id="tempSql" parameterType="String" resultType="map">
 		${_parameter}
 	</select>
+
+	<select id="tableList" parameterType="map" resultType="java.lang.String">
+		select table_name from information_schema.TABLES where TABLE_SCHEMA='${fromdb}' and TABLE_TYPE = 'base table';
+	</select>
+
+	<select id="columnList" parameterType="map" resultType="java.lang.String">
+		select COLUMN_NAME from information_schema.COLUMNS where table_name = '${tablename}';
+	</select>
 </mapper>
