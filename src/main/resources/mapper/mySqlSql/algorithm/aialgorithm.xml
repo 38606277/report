@@ -28,8 +28,8 @@
 		<if  test="algorithm_name != null and algorithm_name!='' ">
 			and  bd.algorithm_name like '%${algorithm_name}%'
 		</if>
-		<if  test="comment != null and comment!='' ">
-			and  bd.comment = '${comment}'
+		<if  test="algorithm_class_id != null and algorithm_class_id!='' ">
+			and  bd.algorithm_class_id = '${algorithm_class_id}'
 		</if>
     </select>
 
