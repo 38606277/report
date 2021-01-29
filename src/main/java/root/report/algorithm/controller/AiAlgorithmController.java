@@ -28,8 +28,8 @@ public class AiAlgorithmController extends RO {
             Map<String,String> map=new HashMap();
             map.put("startIndex",pJson.getString("startIndex"));
             map.put("perPage",pJson.getString("perPage"));
-            map.put("algorithm_name",pJson.get("algorithm_name")==null?"":pJson.getString("algorithm_name"));
-            map.put("algorithm_class_id",pJson.get("algorithm_class_id")==null?"":pJson.getString("algorithm_class_id"));
+            map.put("algorithm_name",pJson.getString("algorithm_name")==null?"":pJson.getString("algorithm_name"));
+            map.put("algorithm_class_id",pJson.getString("algorithm_class_id")==null?"":pJson.getString("algorithm_class_id"));
             Map<String,Object> resultMap = aiAlgorithmService.getListPage(map);
             return SuccessMsg("", resultMap);
         } catch (Exception ex){
