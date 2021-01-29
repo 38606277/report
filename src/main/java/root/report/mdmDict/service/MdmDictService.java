@@ -318,4 +318,8 @@ public class MdmDictService {
     public Map getDictByCode(Map map) {
         return DbFactory.Open(DbFactory.FORM).selectOne("mdmDict.getDictByCode",map);
     }
+
+    public List<Map> getDictValueListByDictCode(Map map) {
+        return DbFactory.Open(DbFactory.FORM).selectList("mdmDict.getDictValueListByDictCode",map);
+    }
 }

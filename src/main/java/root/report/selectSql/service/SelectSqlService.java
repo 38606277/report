@@ -71,6 +71,7 @@ public class SelectSqlService {
         if(count==0) {
             map.put("fromdb", jsonObject.getString("fromdb"));
             map.put("selectsql", jsonObject.getString("selectsql"));
+            map.put("dbtype", jsonObject.getString("dbtype"));
             if (null == jsonObject.getString("id") || "".equals(jsonObject.getString("id"))) {
                 Integer newId = sqlSession.selectOne("selectSql.getMaxId");
                 newId = newId == null ? 1 : newId;

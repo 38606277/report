@@ -5,12 +5,12 @@
 
 	<!--  创建func_dict信息  -->
 	<insert id="createSelectSql" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-		insert into bd_select_sql(id,name,selectsql,fromdb)
-		values ('${id}','${name}','${selectsql}','${fromdb}')
+		insert into bd_select_sql(id,name,selectsql,fromdb,dbtype)
+		values ('${id}','${name}','${selectsql}','${fromdb}','${dbtype}')
 	</insert>
 	<!-- 修改 func_dict 表的信息 -->
 	<update id="updateSelectSql" parameterType="Map">
-		update bd_select_sql set name='${name}',selectsql='${selectsql}',fromdb='${fromdb}'
+		update bd_select_sql set name='${name}',selectsql='${selectsql}',fromdb='${fromdb}',dbtype='${dbtype}'
 		where id=#{id}
 	</update>
 
