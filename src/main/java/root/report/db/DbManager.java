@@ -418,7 +418,7 @@ public class DbManager
 		String driver = obj.getString("driver");
 		String url = obj.getString("url");
 		if(driver.indexOf("mysql")!=-1){
-			url+="?serverTimezone=UTC&useSSL=true&useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&rewriteBatchedStatements=true";
+			url+="?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&useUnicode=true&autoReconnect=true";
 		}
 		String username = obj.getString("username");
 		String password = erpUtil.decode(obj.getString("password"));

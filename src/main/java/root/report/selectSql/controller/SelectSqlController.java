@@ -1,6 +1,7 @@
 package root.report.selectSql.controller;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.log4j.Logger;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import root.report.common.RO;
 import root.report.db.DbFactory;
+import root.report.db.DbManager;
 import root.report.selectSql.service.SelectSqlService;
 
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +28,8 @@ public class SelectSqlController extends RO {
 
     @Autowired
     public SelectSqlService selectSqlService;
+
+    DbManager dbManager=new DbManager();
 
     /**
      * 功能描述: 接收JSON格式参数，
@@ -132,4 +137,66 @@ public class SelectSqlController extends RO {
         }
     }
 
+    @RequestMapping(value = "/getTable", produces = "text/plain;charset=UTF-8")
+    public String getTable(@RequestBody String dbname) throws SQLException,Exception {
+        try {
+            JSONObject obj = JSON.parseObject(dbManager.getDBConnectionByName(dbname));
+            String dbtype = obj.getString("dbtype");
+            List<String> tableList = new ArrayList<String>();
+            Connection conn = null;
+            if (dbtype.equals("Oracle")) {
+                try {
+                    conn = dbManager.getConnection(dbname);
+                    tableList = this.getTableNameList(conn, dbname);
+                } catch (SQLException e) {
+                    if (null != conn) {
+                        conn.close();
+                    }
+                    e.printStackTrace();
+                } finally {
+                    if (null != conn) {
+                        conn.close();
+                    }
+                }
+            } else if (dbtype.equals("Mysql")) {
+                try {
+                    conn = dbManager.getConnection(dbname);
+                    Statement stmt = conn.createStatement();
+                    stmt.executeQuery("use " + dbname);
+                    ResultSet rs = stmt.executeQuery("SHOW TABLES ");
+                    if (null != rs) {
+                        while (rs.next()) {
+                            tableList.add(rs.getString(1));
+                        }
+                    }
+                    if (null != conn) {
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                    if (null != conn) {
+                        conn.close();
+                    }
+                    e.printStackTrace();
+                } finally {
+                    if (null != conn) {
+                        conn.close();
+                    }
+                }
+            }
+            return SuccessMsg("表数据获取成功", tableList);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ErrorMsg("3000","查询失败");
+        }
+    }
+    public List getTableNameList(Connection conn,String dbName) throws SQLException {
+        DatabaseMetaData dbmd = conn.getMetaData();
+        //访问当前用户ANDATABASE下的所有表
+        ResultSet rs = dbmd.getTables("null", dbName.toUpperCase(), "%", new String[] { "TABLE" });
+        List tableNameList = new ArrayList();
+        while (rs.next()) {
+            tableNameList.add(rs.getString("TABLE_NAME"));
+        }
+        return tableNameList;
+    }
 }
