@@ -24,7 +24,9 @@
     </select>
 
     <select id="getListPage" resultType="Map" parameterType="Map">
-        SELECT bd.*  FROM ai_algorithm bd  where  1=1
+		SELECT bd.*,dict.value_name as typename  FROM ai_algorithm bd
+		left join (select mdv.* from mdm_dict md INNER JOIN mdm_dict_value mdv on md.dict_id=mdv.dict_id where md.dict_code='algorithm_type') dict on dict.value_code=bd.algorithm_class_id
+         where  1=1
 		<if  test="algorithm_name != null and algorithm_name!='' ">
 			and  bd.algorithm_name like '%${algorithm_name}%'
 		</if>
