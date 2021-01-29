@@ -71,37 +71,41 @@ public class CodetableService {
             map.put("dict_id",newId);
             sqlSession.insert("mdmCodetable.createMdnCodetable",map);
             id=String.valueOf(map.get("id"));
-            for(int i = 0; i < addLine.size(); i++){
-                Map<String,Object> mapVal  = new HashMap<>();
-                JSONObject jsonObjectVal = addLine.getJSONObject(i);
-                Integer newVId= sqlSession.selectOne("mdmCodetable.getMaxValueId");
-                mapVal.put("dict_id",newId);
-                mapVal.put("value_id",newVId==null?1:newVId);
-                mapVal.put("value_name",jsonObjectVal.getString("value_name"));
-                mapVal.put("value_code",jsonObjectVal.getString("value_code"));
-                mapVal.put("value_pid",jsonObjectVal.getString("value_pid").equals("")?null:jsonObjectVal.getString("value_pid"));
-                sqlSession.insert("mdmCodetable.createMdnCodetableValue",mapVal);
+            if(addLine.size()>0) {
+                for (int i = 0; i < addLine.size(); i++) {
+                    Map<String, Object> mapVal = new HashMap<>();
+                    JSONObject jsonObjectVal = addLine.getJSONObject(i);
+                    Integer newVId = sqlSession.selectOne("mdmCodetable.getMaxValueId");
+                    mapVal.put("dict_id", newId);
+                    mapVal.put("value_id", newVId == null ? 1 : newVId);
+                    mapVal.put("value_name", jsonObjectVal.getString("value_name"));
+                    mapVal.put("value_code", jsonObjectVal.getString("value_code"));
+                    mapVal.put("value_pid", jsonObjectVal.getString("value_pid").equals("") ? null : jsonObjectVal.getString("value_pid"));
+                    sqlSession.insert("mdmCodetable.createMdnCodetableValue", mapVal);
+                }
             }
         }else{
             map.put("dict_id",jsonObject.getString("dict_id"));
             sqlSession.update("mdmCodetable.updateMdmCodetable",map);
             id=jsonObject.getString("dict_id");
-            for(int i = 0; i < addLine.size(); i++){
-                Map<String,Object> mapVal  = new HashMap<>();
-                JSONObject jsonObjectVal = addLine.getJSONObject(i);
-                if(jsonObjectVal.getString("value_id").contains("NEW")) {
-                    Integer newVId = sqlSession.selectOne("mdmCodetable.getMaxValueId");
-                    mapVal.put("dict_id", id);
-                    mapVal.put("value_id", newVId==null?1:newVId);
-                    mapVal.put("value_name", jsonObjectVal.getString("value_name"));
-                    mapVal.put("value_code", jsonObjectVal.getString("value_code"));
-                    mapVal.put("value_pid", jsonObjectVal.getString("value_pid").equals("") ? null : jsonObjectVal.getString("value_pid"));
-                    sqlSession.insert("mdmCodetable.createMdnCodetableValue", mapVal);
-                }else{
-                    Map m= sqlSession.selectOne("mdmCodetable.getCodetableValueById",jsonObjectVal.getString("value_id"));
-                    m.put("value_name", jsonObjectVal.getString("value_name"));
-                    m.put("value_code", jsonObjectVal.getString("value_code"));
-                    sqlSession.update("mdmCodetable.updateMdmCodetableValue",m);
+            if(addLine.size()>0) {
+                for (int i = 0; i < addLine.size(); i++) {
+                    Map<String, Object> mapVal = new HashMap<>();
+                    JSONObject jsonObjectVal = addLine.getJSONObject(i);
+                    if (jsonObjectVal.getString("value_id").contains("NEW")) {
+                        Integer newVId = sqlSession.selectOne("mdmCodetable.getMaxValueId");
+                        mapVal.put("dict_id", id);
+                        mapVal.put("value_id", newVId == null ? 1 : newVId);
+                        mapVal.put("value_name", jsonObjectVal.getString("value_name"));
+                        mapVal.put("value_code", jsonObjectVal.getString("value_code"));
+                        mapVal.put("value_pid", jsonObjectVal.getString("value_pid").equals("") ? null : jsonObjectVal.getString("value_pid"));
+                        sqlSession.insert("mdmCodetable.createMdnCodetableValue", mapVal);
+                    } else {
+                        Map m = sqlSession.selectOne("mdmCodetable.getCodetableValueById", jsonObjectVal.getString("value_id"));
+                        m.put("value_name", jsonObjectVal.getString("value_name"));
+                        m.put("value_code", jsonObjectVal.getString("value_code"));
+                        sqlSession.update("mdmCodetable.updateMdmCodetableValue", m);
+                    }
                 }
             }
         }
@@ -134,58 +138,62 @@ public class CodetableService {
             map.put("dict_id",dictId);
             sqlSession.insert("mdmCodetable.createMdnCodetable",map);
           //  dict_id=String.valueOf(map.get("dict_id"));
-            Integer newVId=null;
-            newVId= sqlSession.selectOne("mdmCodetable.getMaxValueId");
-            newVId = newVId==null?0:newVId;
-            for(int i = 0; i < addLine.size(); i++){
-                Map<String,Object> mapVal  = new HashMap<>();
-                JSONObject jsonObjectVal = addLine.getJSONObject(i);
-                newVId++;
-                mapVal.put("dict_id",dictId);
-                mapVal.put("value_id",newVId==null?1:newVId);
-                mapKeyId.put(jsonObjectVal.getString("value_id"),newVId);
-                mapVal.put("value_name",jsonObjectVal.getString("value_name"));
-                mapVal.put("value_code",jsonObjectVal.getString("value_code"));
-                mapVal.put("value_pid",jsonObjectVal.getString("value_pid").equals("")?null:jsonObjectVal.getString("value_pid"));
-                sqlSession.insert("mdmCodetable.createMdnCodetableValue",mapVal);
-                if(null!=jsonObjectVal.getJSONArray("children")) {
-                    JSONArray objChildren = jsonObjectVal.getJSONArray("children");
-                    newVId = insertCodetableValueListItem(sqlSession,objChildren,mapKeyId,newVId,dictId);
+            if(addLine.size()>0) {
+                Integer newVId = null;
+                newVId = sqlSession.selectOne("mdmCodetable.getMaxValueId");
+                newVId = newVId == null ? 0 : newVId;
+                for (int i = 0; i < addLine.size(); i++) {
+                    Map<String, Object> mapVal = new HashMap<>();
+                    JSONObject jsonObjectVal = addLine.getJSONObject(i);
+                    newVId++;
+                    mapVal.put("dict_id", dictId);
+                    mapVal.put("value_id", newVId == null ? 1 : newVId);
+                    mapKeyId.put(jsonObjectVal.getString("value_id"), newVId);
+                    mapVal.put("value_name", jsonObjectVal.getString("value_name"));
+                    mapVal.put("value_code", jsonObjectVal.getString("value_code"));
+                    mapVal.put("value_pid", jsonObjectVal.getString("value_pid").equals("") ? null : jsonObjectVal.getString("value_pid"));
+                    sqlSession.insert("mdmCodetable.createMdnCodetableValue", mapVal);
+                    if (null != jsonObjectVal.getJSONArray("children")) {
+                        JSONArray objChildren = jsonObjectVal.getJSONArray("children");
+                        newVId = insertCodetableValueListItem(sqlSession, objChildren, mapKeyId, newVId, dictId);
+                    }
                 }
             }
         }else{
             map.put("dict_id",jsonObject.getString("dict_id"));
             sqlSession.update("mdmCodetable.updateMdmCodetable",map);
             dictId=Integer.parseInt(jsonObject.getString("dict_id"));
-            for(int i = 0; i < addLine.size(); i++){
-                Map<String,Object> mapVal  = new HashMap<>();
-                JSONObject jsonObjectVal = addLine.getJSONObject(i);
-                if(jsonObjectVal.getString("value_id").contains("NEW")) {
-                    Integer newVId = sqlSession.selectOne("mdmCodetable.getMaxValueId");
-                    newVId = newVId==null?0:newVId;
-                    newVId++;
-                    mapVal.put("dict_id", dictId);
-                    mapVal.put("value_id", newVId);
-                    mapKeyId.put(jsonObjectVal.getString("value_id"),newVId);
-                    mapVal.put("value_name", jsonObjectVal.getString("value_name"));
-                    mapVal.put("value_code", jsonObjectVal.getString("value_code"));
-                    mapVal.put("value_pid", jsonObjectVal.getString("value_pid").equals("") ? null : jsonObjectVal.getString("value_pid"));
-                    mapKeyId.put(jsonObjectVal.getString("value_id"),newVId);
-                    sqlSession.insert("mdmCodetable.createMdnCodetableValue", mapVal);
-                    if(null!=jsonObjectVal.getJSONArray("children")) {
-                        JSONArray objChildren = jsonObjectVal.getJSONArray("children");
-                         insertCodetableValueListItem(sqlSession,objChildren,mapKeyId,newVId,dictId);
-                    }
+            if(addLine.size()>0) {
+                for (int i = 0; i < addLine.size(); i++) {
+                    Map<String, Object> mapVal = new HashMap<>();
+                    JSONObject jsonObjectVal = addLine.getJSONObject(i);
+                    if (jsonObjectVal.getString("value_id").contains("NEW")) {
+                        Integer newVId = sqlSession.selectOne("mdmCodetable.getMaxValueId");
+                        newVId = newVId == null ? 0 : newVId;
+                        newVId++;
+                        mapVal.put("dict_id", dictId);
+                        mapVal.put("value_id", newVId);
+                        mapKeyId.put(jsonObjectVal.getString("value_id"), newVId);
+                        mapVal.put("value_name", jsonObjectVal.getString("value_name"));
+                        mapVal.put("value_code", jsonObjectVal.getString("value_code"));
+                        mapVal.put("value_pid", jsonObjectVal.getString("value_pid").equals("") ? null : jsonObjectVal.getString("value_pid"));
+                        mapKeyId.put(jsonObjectVal.getString("value_id"), newVId);
+                        sqlSession.insert("mdmCodetable.createMdnCodetableValue", mapVal);
+                        if (null != jsonObjectVal.getJSONArray("children")) {
+                            JSONArray objChildren = jsonObjectVal.getJSONArray("children");
+                            insertCodetableValueListItem(sqlSession, objChildren, mapKeyId, newVId, dictId);
+                        }
 
-                }else{
-                    Map m= sqlSession.selectOne("mdmCodetable.getCodetableValueById",jsonObjectVal.getString("value_id"));
-                    m.put("value_name", jsonObjectVal.getString("value_name"));
-                    m.put("value_code", jsonObjectVal.getString("value_code"));
-                    sqlSession.update("mdmCodetable.updateMdmCodetableValue",m);
-                    mapKeyId.put(jsonObjectVal.getString("value_id"),jsonObjectVal.getString("value_id"));
-                    if(null!=jsonObjectVal.getJSONArray("children")) {
-                        JSONArray objChildren = jsonObjectVal.getJSONArray("children");
-                        updateCodetableValueListItem(sqlSession,objChildren,mapKeyId,Integer.parseInt(m.get("value_id").toString()),dictId);
+                    } else {
+                        Map m = sqlSession.selectOne("mdmCodetable.getCodetableValueById", jsonObjectVal.getString("value_id"));
+                        m.put("value_name", jsonObjectVal.getString("value_name"));
+                        m.put("value_code", jsonObjectVal.getString("value_code"));
+                        sqlSession.update("mdmCodetable.updateMdmCodetableValue", m);
+                        mapKeyId.put(jsonObjectVal.getString("value_id"), jsonObjectVal.getString("value_id"));
+                        if (null != jsonObjectVal.getJSONArray("children")) {
+                            JSONArray objChildren = jsonObjectVal.getJSONArray("children");
+                            updateCodetableValueListItem(sqlSession, objChildren, mapKeyId, Integer.parseInt(m.get("value_id").toString()), dictId);
+                        }
                     }
                 }
             }

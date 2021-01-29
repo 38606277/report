@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aialgorithm">
+
+	<!--  创建ai_algorithm信息  -->
+	<insert id="createAiAlgorithm" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into ai_algorithm(algorithm_id,algorithm_name,algorithm_class_id,comment,create_date,create_by,url)
+		values (#{algorithm_id},'${algorithm_name}','${algorithm_class_id}','${comment}',SYSDATE(),'${create_by}','${url}')
+	</insert>
+	<!-- 修改 ai_algorithm表的信息 -->
+	<update id="updateAiAlgorithm" parameterType="Map">
+		update ai_algorithm set algorithm_name='${algorithm_name}',algorithm_class_id='${algorithm_class_id}',comment='${comment}',
+		url='${url}'
+		where algorithm_id=#{algorithm_id}
+	</update>
+
+	<select id="getMaxId" resultType="java.lang.Integer">
+        SELECT (MAX(algorithm_id) +1)as algorithm_id from ai_algorithm
+    </select>
+
+	<select id="getAiAlgorithmById" parameterType="map" resultType="map">
+        SELECT bd.* FROM ai_algorithm bd where bd.algorithm_id = #{algorithm_id}
+    </select>
+
+    <select id="getListPage" resultType="Map" parameterType="Map">
+        SELECT bd.*  FROM ai_algorithm bd  where  1=1
+		<if  test="algorithm_name != null and algorithm_name!='' ">
+			and  bd.algorithm_name like '%${algorithm_name}%'
+		</if>
+		<if  test="comment != null and comment!='' ">
+			and  bd.comment = '${comment}'
+		</if>
+    </select>
+
+	<!-- 根据algorithm_id 删除表相关信息  -->
+	<delete id="deleteAiAlgorithmByID" parameterType="Map">
+        delete from ai_algorithm where algorithm_id=#{algorithm_id}
+    </delete>
+
+
+	<select id="getAllList" resultType="Map" >
+		select * from ai_algorithm order by create_date desc
+	</select>
+
+	<select id="count" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from ai_algorithm where  algorithm_name = '${algorithm_name}'
+		<if  test="algorithm_id != null and algorithm_id!='' ">
+			and  algorithm_id !='${algorithm_id}'
+		</if>
+	</select>
+</mapper>

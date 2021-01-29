@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aimodel">
+
+	<!--  创建ai_model信息  -->
+	<insert id="createAiModel" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+		insert into ai_model(model_id,model_name,comment,dataset_id,algorithm_id,model_file_url,create_date,statues)
+		values (#{model_id},'${model_name}','${comment}','${dataset_id}','${algorithm_id}','${model_file_url}',SYSDATE(),'${statues}')
+	</insert>
+	<!-- 修改 ai_model表的信息 -->
+	<update id="updateAiModel" parameterType="Map">
+		update ai_model set model_name='${model_name}',comment='${comment}',dataset_id='${dataset_id}',algorithm_id='${algorithm_id}',
+		model_file_url='${model_file_url}',statues='${statues}'
+		where model_id=#{model_id,jdbcType=INTEGER}
+	</update>
+
+	<select id="getMaxId" resultType="java.lang.Integer">
+        SELECT (MAX(model_id) +1)as model_id from ai_model
+    </select>
+
+	<select id="getAiModelById" parameterType="map" resultType="map">
+        SELECT bd.* FROM ai_model bd where bd.model_id = #{model_id}
+    </select>
+
+    <select id="getListPage" resultType="Map" parameterType="Map">
+        SELECT bd.*  FROM ai_model bd  where  1=1
+		<if  test="model_name != null and model_name!='' ">
+			and  bd.model_name like '%${model_name}%'
+		</if>
+    </select>
+
+	<!-- 根据model_id 删除表相关信息  -->
+	<delete id="deleteAiModelByID" parameterType="Map">
+        delete from ai_model where model_id=#{model_id}
+    </delete>
+
+
+	<select id="getAllList" resultType="Map" >
+		select * from ai_model order by create_date desc
+	</select>
+
+	<select id="count" parameterType="map" resultType="java.lang.Integer">
+		select count(1) from ai_model where  model_name = '${model_name}'
+		<if  test="model_id != null and model_id!='' ">
+			and  model_id !='${model_id}'
+		</if>
+	</select>
+</mapper>
