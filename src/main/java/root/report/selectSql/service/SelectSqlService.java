@@ -143,4 +143,14 @@ public class SelectSqlService {
         resmap.put("tables",colmap);
         return resmap;
     }
+
+    public Map<String, Object> getTableList(String fromdb) {
+        Map<String, Object> resmap=new HashMap<>();
+        SqlSession sqlSession=DbFactory.Open(fromdb);
+        Map m=new HashMap();
+        m.put("fromdb",fromdb);
+        List<String> tableList = sqlSession.selectList("selectSql.tableList",m);
+        resmap.put("tables",tableList);
+        return resmap;
+    }
 }
