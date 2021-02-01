@@ -70,6 +70,7 @@ public class AiModelService {
             map.put("algorithm_id", jsonObject.getString("algorithm_id"));
             map.put("model_file_url", jsonObject.getString("model_file_url"));
             map.put("statues", jsonObject.getString("statues"));
+            map.put("datasource_id", jsonObject.getString("datasource_id"));
             if (null == jsonObject.getString("model_id") || "".equals(jsonObject.getString("model_id"))) {
                 Integer newId = sqlSession.selectOne("aimodel.getMaxId");
                 newId = newId == null ? 1 : newId;

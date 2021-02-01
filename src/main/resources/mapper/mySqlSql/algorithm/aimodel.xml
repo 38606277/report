@@ -5,13 +5,13 @@
 
 	<!--  创建ai_model信息  -->
 	<insert id="createAiModel" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-		insert into ai_model(model_id,model_name,comment,dataset_id,algorithm_id,model_file_url,create_date,statues)
-		values (#{model_id},'${model_name}','${comment}','${dataset_id}','${algorithm_id}','${model_file_url}',SYSDATE(),'${statues}')
+		insert into ai_model(model_id,model_name,comment,dataset_id,algorithm_id,model_file_url,create_date,statues,datasource_id)
+		values (#{model_id},'${model_name}','${comment}','${dataset_id}','${algorithm_id}','${model_file_url}',SYSDATE(),'${statues}','${datasource_id}')
 	</insert>
 	<!-- 修改 ai_model表的信息 -->
 	<update id="updateAiModel" parameterType="Map">
 		update ai_model set model_name='${model_name}',comment='${comment}',dataset_id='${dataset_id}',algorithm_id='${algorithm_id}',
-		model_file_url='${model_file_url}',statues='${statues}'
+		model_file_url='${model_file_url}',statues='${statues}',datasource_id='${datasource_id}'
 		where model_id=#{model_id,jdbcType=INTEGER}
 	</update>
 
