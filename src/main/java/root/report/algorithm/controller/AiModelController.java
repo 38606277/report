@@ -29,9 +29,9 @@ public class AiModelController extends RO {
             Map<String,Object> map=new HashMap();
             map.put("startIndex",pJson.getString("startIndex"));
             map.put("perPage",pJson.getString("perPage"));
-            map.put("algorithm_name",pJson.getString("algorithm_name")==null?"":pJson.getString("algorithm_name"));
-            String aiclassid=pJson.getString("algorithm_class_id")==null?"":pJson.getString("algorithm_class_id");
-            map.put("algorithm_class_id",aiclassid);
+            map.put("model_name",pJson.getString("model_name")==null?"":pJson.getString("model_name"));
+            String aiclassid=pJson.getString("algorithm_id")==null?"":pJson.getString("algorithm_id");
+            map.put("algorithm_id",aiclassid);
             Map<String,Object> resultMap = aiModelService.getListPage(map);
             return SuccessMsg("", resultMap);
         } catch (Exception ex){

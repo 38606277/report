@@ -28,6 +28,9 @@
 		<if  test="model_name != null and model_name!='' ">
 			and  bd.model_name like '%${model_name}%'
 		</if>
+		<if  test="algorithm_id != null and algorithm_id!='' ">
+			and  bd.algorithm_id ='${algorithm_id}'
+		</if>
     </select>
 
 	<!-- 根据model_id 删除表相关信息  -->
