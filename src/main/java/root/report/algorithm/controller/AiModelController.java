@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/reportServer/algorithm")
+@RequestMapping("/reportServer/aimodel")
 public class AiModelController extends RO {
     @Autowired
     public AiModelService aiModelService;

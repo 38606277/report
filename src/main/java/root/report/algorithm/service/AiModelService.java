@@ -77,8 +77,11 @@ public class AiModelService {
                 map.put("model_id", newId);
                 sqlSession.insert("aimodel.createAiModel", map);
                 id = String.valueOf(map.get("id"));
-            } else {
+                /**
+                 * 调用  建中 训练模型方法
+                 * */
 
+            } else {
                 sqlSession.update("aimodel.updateAiModel", map);
                 id = jsonObject.getString("model_id");
             }
