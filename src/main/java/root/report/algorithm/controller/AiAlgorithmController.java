@@ -25,11 +25,22 @@ public class AiAlgorithmController extends RO {
     @RequestMapping(value = "/getAlgorithmList", produces = "text/plain;charset=UTF-8")
     public String getAlgorithmList(@RequestBody JSONObject pJson)  {
         try {
-            Map<String,String> map=new HashMap();
+            Map<String,Object> map=new HashMap();
             map.put("startIndex",pJson.getString("startIndex"));
             map.put("perPage",pJson.getString("perPage"));
             map.put("algorithm_name",pJson.getString("algorithm_name")==null?"":pJson.getString("algorithm_name"));
-            map.put("algorithm_class_id",pJson.getString("algorithm_class_id")==null?"":pJson.getString("algorithm_class_id"));
+            String aiclassid=pJson.getString("algorithm_class_id")==null?"":pJson.getString("algorithm_class_id");
+            String newid = "";
+            if(null!=aiclassid && !"".equals(aiclassid)) {
+                String[] arr = aiclassid.split(",");
+                for (String id : arr) {
+                    newid = newid + ",'" + id +"'";
+                }
+                if (null != newid && !"".equals(newid)) {
+                    newid = newid.substring(1, newid.length());
+                }
+            }
+            map.put("algorithm_class_id",newid);
             Map<String,Object> resultMap = aiAlgorithmService.getListPage(map);
             return SuccessMsg("", resultMap);
         } catch (Exception ex){
