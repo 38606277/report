@@ -20,7 +20,7 @@ public class AiAlgorithmService {
 
     private static Logger log = Logger.getLogger(AiAlgorithmService.class);
 
-       public Map<String,Object> getListPage(Map<String,String> map) {
+       public Map<String,Object> getListPage(Map<String,Object> map) {
         Map<String,Object> map1=new HashMap<>();
         try {
             SqlSession sqlSession = DbFactory.Open(DbFactory.FORM);
@@ -29,7 +29,7 @@ public class AiAlgorithmService {
                 bounds = RowBounds.DEFAULT;
             } else {
                 Integer startIndex = Integer.parseInt(map.get("startIndex").toString());
-                Integer perPage = Integer.parseInt(map.get("perPage"));
+                Integer perPage = Integer.parseInt(map.get("perPage").toString());
                 if (startIndex == 1 || startIndex == 0) {
                     startIndex = 0;
                 } else {
