@@ -477,4 +477,24 @@
         </if>
     </select>
 
+    <!--查我函数名称-->
+    <select id="getAllQueryNameforAuth" parameterType="Map" resultType="Map">
+        SELECT
+        qry.qry_id as `key`,
+        qry.qry_name as title,
+        qry.qry_desc,
+        qc.class_id,
+        qc.class_name,
+        qry.qry_type,
+        qry.qry_file,
+        qry.qry_db,
+        qry.qry_sql,qry.qry_cursor_name,qry.qry_http_url,
+        qry.qry_http_header,qry.qry_http_req_body,qry.qry_http_res_body,qry.qry_http_res_body_arrayname
+        FROM
+        qry_name qry,
+        qry_class qc
+        WHERE
+        qc.class_id = qry.class_id
+    </select>
+
 </mapper>

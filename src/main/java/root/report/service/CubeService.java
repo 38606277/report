@@ -36,7 +36,7 @@ public class CubeService {
         map.put("qry_id",jsonObject.getIntValue("qry_id"));
         map.put("icon",jsonObject.getString("icon"));
         map.put("class_name",jsonObject.getString("class_name"));
-
+        map.put("class_id",jsonObject.getString("class_id"));
         // 2. 对 sql 进行编译
         String sql = jsonObject.getString("cube_sql");
         if(null!=sql && !"".equals(sql)){
@@ -69,7 +69,7 @@ public class CubeService {
         map.put("qry_id",jsonObject.getIntValue("qry_id"));
         map.put("icon",jsonObject.getString("icon"));
         map.put("class_name",jsonObject.getString("class_name"));
-
+        map.put("class_id",jsonObject.getString("class_id"));
         // 2. 对 sql 进行编译
         String sql = jsonObject.getString("cube_sql");
         if(null!=sql && !"".equals(sql)){

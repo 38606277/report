@@ -549,6 +549,17 @@ public class AuthController extends RO {
             return ExceptionMsg(e.getMessage());
         }
     }
+
+    @RequestMapping(value = "/getAllQryName", produces = "text/plain;charset=UTF-8")
+    public String getAllQry(@RequestBody String pJson) {
+        try {
+            List<Map> mapList = DbFactory.Open(DbFactory.FORM).selectList("query.getAllQueryNameforAuth");
+            return SuccessMsg("", mapList);
+        }catch (Exception e){
+            return ExceptionMsg(e.getMessage());
+        }
+    }
+
     //查询所有的cube 记录
     @RequestMapping(value = "/getAllDashBoard", produces = "text/plain;charset=UTF-8")
     public String getAllDashBoard(@RequestBody String pJson) {

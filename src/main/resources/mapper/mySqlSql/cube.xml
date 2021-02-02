@@ -5,7 +5,7 @@
 
     <!-- 增加 da_cube 中的记录，让此SQL能返回自增长主键 -->
     <insert id="createCube" parameterType="Map"  useGeneratedKeys="true" keyProperty="id">
-        insert into da_cube(cube_name,cube_desc,cube_sql,qry_id,icon,class_name)
+        insert into da_cube(cube_name,cube_desc,cube_sql,qry_id,icon,class_name,class_id)
         values ('${cube_name}',
         <if test="cube_desc == null">NULL</if>
         <if test="cube_desc != null">'${cube_desc}'</if>,
@@ -16,7 +16,9 @@
         <if test="icon == null">NULL</if>
         <if test="icon != null">'${icon}'</if>,
         <if test="class_name == null">NULL</if>
-        <if test="class_name != null">'${class_name}'</if>
+        <if test="class_name != null">'${class_name}'</if>,
+        <if test="class_id == null">NULL</if>
+        <if test="class_id != null">'${class_id}'</if>
         )
     </insert>
 
@@ -38,7 +40,10 @@
         <if test="icon != null">'${icon}'</if>,
         class_name=
         <if test="class_name == null">NULL</if>
-        <if test="class_name != null">'${class_name}'</if>
+        <if test="class_name != null">'${class_name}'</if>,
+        class_id=
+        <if test="class_id == null">NULL</if>
+        <if test="class_id != null">'${class_id}'</if>
         where cube_id=#{cube_id,jdbcType=INTEGER}
     </update>
 
@@ -65,11 +70,11 @@
 
     </select>
     <select id="getCubeInById"  resultType="Map" parameterType="Map">
-        select * from cube_in where 1=1
+        select * from qry_in where 1=1
         <if test="qry_id != null and qry_id!=''">  and qry_id=#{qry_id,jdbcType=INTEGER} </if>
     </select>
     <select id="getCubeOutById"  resultType="Map" parameterType="Map">
-        select * from cube_out where 1=1
+        select * from qry_out where 1=1
         <if test="qry_id != null and qry_id!=''">  and qry_id=#{qry_id,jdbcType=INTEGER} </if>
     </select>
 </mapper>
