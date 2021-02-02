@@ -104,6 +104,16 @@
             on a.role_id=role.role_id
         </if>
     </select>
+
+    <select id="getQryNameListInAuth" resultType="Map" parameterType="map">
+        select DISTINCT  f.qry_id,f.qry_name,qn.class_id,a.auth_type from fnd_auth a
+        INNER  JOIN qry_name qn on f.qry_id=a.func_id and a.auth_type='cube'
+        <if  test="user_id != null and user_id!=1">
+            INNER join (select r.role_id from fnd_user_role r where r.user_id=#{user_id,jdbcType=INTEGER}) as role
+            on a.role_id=role.role_id
+        </if>
+    </select>
+
     <select id="getDashboardListInAuth" resultType="Map" parameterType="map">
         select DISTINCT f.dashboard_id, f.dashboard_name,f.class_id,a.auth_type from fnd_auth a
         INNER JOIN dashboard f on a.func_id=f.dashboard_id and a.auth_type='dashboard'
