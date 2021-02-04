@@ -388,7 +388,7 @@ public class ModelTableService {
                     if (columnMap.get("column_name").toString().equalsIgnoreCase(obj.getString("column_name"))) {
                         sql = sql + " MODIFY `" + obj.getString("column_name") + "` "+obj.getString("column_type");
                     } else {
-                        sql = sql + " MODIFY `" + columnMap.get("column_name") + "` " + obj.getString("column_name") + " "+obj.getString("column_type");
+                        sql = sql + " CHANGE `" + columnMap.get("column_name") + "` " + obj.getString("column_name") + " "+obj.getString("column_type");
                     }
                     String  columnLength = "", columnType = "", columnTitle = "", columnDecimal = "", columnIsnull = "";
                     columnType = obj.getString("column_type");

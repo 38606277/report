@@ -132,6 +132,8 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                         sv.append("'" + entry.getValue() + "',");
                     }
                 }
+                sb.append("`messagetext`,`message_create_date`,");
+                sv.append("'" + message + "',current_timestamp(6),");
                 String targetTable=paramMap.get("targetTable").toString().trim();
 
                 insertSql = "insert into `"+targetTable+"` (" + sb.deleteCharAt(sb.length() - 1) + ")values(" + sv.deleteCharAt(sv.length() - 1) + ")";
