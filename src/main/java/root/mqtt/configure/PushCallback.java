@@ -128,7 +128,7 @@ public class PushCallback implements MqttCallback,MqttCallbackExtended {
                         Integer newId = sqlSession.selectOne("mqtttask.getMaxId");
                         newId = newId == null ? 1 : newId;
                         sv.append("'" + newId + "',");
-                    }else{
+                    }else if(!entry.getKey().equals("messagetext") && !entry.getKey().equals("message_create_date")){
                         sv.append("'" + entry.getValue() + "',");
                     }
                 }
