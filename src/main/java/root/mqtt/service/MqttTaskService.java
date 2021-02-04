@@ -200,7 +200,7 @@ public class MqttTaskService {
 		if(null!=info) {
 			String targetDB = info.get("targetDB").toString();
 			String targetTable = info.get("targetTable").toString();
-			String tempSql = " select * from `" + targetDB + "`.`" + targetTable + "` order by id desc limit 0, " + pJson.getInteger("pageSize");
+			String tempSql = " select * from `" + targetDB + "`.`" + targetTable + "` order by message_create_date desc limit 0, " + pJson.getInteger("pageSize");
 			list =  DbFactory.Open(DbFactory.FORM).selectList("mqtttask.tempSql", tempSql);
 		}
 		return list;
