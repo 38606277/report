@@ -7,9 +7,12 @@
       <dbtype>Mysql</dbtype>
       <driver>com.mysql.cj.jdbc.Driver</driver>
       <url>jdbc:mysql://192.168.206.49:3306/form</url>
-<!--      <url>jdbc:mysql://127.0.0.49:3306/form</url>-->
       <username>root</username>
       <password>v600KuCLNBc=</password>
+<!--      <url>jdbc:mysql://127.0.0.49:3306/form</url>-->
+      <!--<url>jdbc:mysql://101.37.204.75:3306/form</url>
+      <username>apper</username>
+      <password>qecjSWH8UIt4w/3W4Ahc6Q==</password>-->
       <maxPoolSize>50</maxPoolSize>
       <minPoolSize>3</minPoolSize>
    </DB>
@@ -58,7 +61,8 @@
       <password>v600KuCLNBc=</password>  
       <maxPoolSize>50</maxPoolSize>  
       <minPoolSize>3</minPoolSize> 
-   </DB>  
+   </DB>
+
    <!--<DB>-->  
    <!--<name>form</name>-->  
    <!--<dbtype>Mysql</dbtype>-->  
@@ -118,5 +122,15 @@
       <password>dLf1GlaLvJQ=</password>  
       <maxPoolSize>50</maxPoolSize>  
       <minPoolSize>3</minPoolSize> 
-   </DB> 
+   </DB>
+    <DB>
+        <name>dpass_data</name>
+        <driver>com.taosdata.jdbc.TSDBDriver</driver>
+        <dbtype>TAOS</dbtype>
+        <url>jdbc:TAOS://47.97.65.233:6030/dpass_data</url>
+        <username>root</username>
+        <password>qmE6cBaysODulh7pCCWmjg==</password>
+        <maxPoolSize>65480</maxPoolSize>
+        <minPoolSize>3</minPoolSize>
+    </DB>
 </DBConnection>

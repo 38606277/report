@@ -103,6 +103,31 @@ public class SelectSqlService {
         return DbFactory.Open(DbFactory.FORM).selectOne("selectSql.getSelectSqlById",m);
     }
 
+    public Map<String, Object> excueBatchSql(String sql,String fromdb) {
+        List<Map<String, Object>> list=null;
+        Map<String,Object> resmap  = new HashMap<>();
+        resmap.put("result",true);
+        resmap.put("info","查询成功");
+        resmap.put("data",list);
+        try {
+            if(fromdb.equalsIgnoreCase("dpass_data")){
+                DbFactory.Open(fromdb).getConnection().createStatement().execute(sql);
+            }else {
+                list = DbFactory.Open(fromdb).selectList("selectSql.tempSql", sql);
+            }
+            resmap.put("data",list);
+        }catch (PersistenceException e){
+            e.printStackTrace();
+            resmap.put("result",false);
+            resmap.put("info","查询失败，请检查SQL语句");
+        }catch (Exception e){
+            e.printStackTrace();
+            resmap.put("result",false);
+            resmap.put("info","查询失败，请检查数据库是否连接正确");
+        }
+        return resmap;
+    }
+
     public Map<String, Object> excueSelectSql(String selectsql,String fromdb) {
         List<Map<String, Object>> list=null;
         Map<String,Object> resmap  = new HashMap<>();

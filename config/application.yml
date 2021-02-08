@@ -26,6 +26,8 @@ mqtt:
   timeout: 10000
   keepalibe: 20
 
+  # host: tcp://47.97.65.233:18083
+
 
 mqttTest:
   username: eam
