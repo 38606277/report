@@ -129,7 +129,7 @@
 	<select id="getValueByHostAndTable" parameterType="Map" resultType="Map">
 		SELECT
 		  *
-		FROM ${table_name}
+		FROM `${table_name}`
 	</select>
 
 

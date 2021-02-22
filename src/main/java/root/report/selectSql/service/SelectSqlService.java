@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import root.report.db.DbFactory;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
@@ -112,6 +114,8 @@ public class SelectSqlService {
         try {
             if(fromdb.equalsIgnoreCase("dpass_data")){
                 DbFactory.Open(fromdb).getConnection().createStatement().execute(sql);
+//                ResultSet resultSet =  DbFactory.Open(fromdb).getConnection().createStatement().executeQuery(sql);
+//                list = convertList(resultSet);
             }else {
                 list = DbFactory.Open(fromdb).selectList("selectSql.tempSql", sql);
             }
@@ -126,6 +130,23 @@ public class SelectSqlService {
             resmap.put("info","查询失败，请检查数据库是否连接正确");
         }
         return resmap;
+    }
+
+    /**
+     * ResultSet转List
+     * */
+    public List convertList(ResultSet rs) throws SQLException {
+        List list = new ArrayList();
+        ResultSetMetaData md = rs.getMetaData();
+        int columnCount = md.getColumnCount();
+        while (rs.next()) {
+            Map rowData = new HashMap();
+            for (int ij = 1; ij <= columnCount; ij++) {
+                rowData.put(md.getColumnName(ij), rs.getObject(ij));
+            }
+            list.add(rowData);
+        }
+        return list;
     }
 
     public Map<String, Object> excueSelectSql(String selectsql,String fromdb) {
