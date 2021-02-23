@@ -115,9 +115,8 @@ public class TaosService {
             System.out.println(tableSet.getString(0));
         }
         tableSet.close();*/
-        SqlSession sqlSession=DbFactory.Open(fromdb);
 
-        Statement stmt=sqlSession.getConnection().createStatement();
+        Statement stmt=DbFactory.Open(fromdb).getConnection().createStatement();
         String sql="show tables";
         ResultSet  res = stmt.executeQuery(sql);
 
@@ -128,7 +127,7 @@ public class TaosService {
             map.put("dbtype_id",dbType.toLowerCase());
             map.put("host_id",fromdb);
             map.put("table_name",res.getString(1));
-            Map mapss= sqlSession.selectOne("bdmodelTable.findTableByDbAndTablename",map);
+            Map mapss= DbFactory.Open(DbFactory.FORM).selectOne("bdmodelTable.findTableByDbAndTablename",map);
             if(null!=mapss){
                 tableNameList.add(mapss);
             }else {

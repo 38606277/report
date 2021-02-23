@@ -70,27 +70,11 @@ public class DataAsset extends RO {
             pam.put("dbtype_id",pJson.getString("dbtype_id"));
             pam.put("host_id",pJson.getString("host_id"));
             pam.put("table_name",pJson.getString("table_name"));
-            SqlSession sqlSession = DbFactory.Open(pJson.getString("host_id"));
-            RowBounds bounds = null;
-            if (pJson == null) {
-                bounds = RowBounds.DEFAULT;
-            } else {
-                Integer startIndex = Integer.parseInt(pJson.getString("startIndex"));
-                Integer perPage = Integer.parseInt(pJson.getString("perPage"));
-                if (startIndex == 1 || startIndex == 0) {
-                    startIndex = 0;
-                } else {
-                    startIndex = (startIndex - 1) * perPage;
-                }
-                bounds = new PageRowBounds(startIndex, perPage);
-            }
-            List<Map<String, Object>> resultList = sqlSession.selectList("dataAsset.getValueByHostAndTable", pam, bounds);
             Long totalSize = 0L;
-            if (pJson != null && pJson.size() != 0) {
-                totalSize = ((PageRowBounds) bounds).getTotal();
-            } else {
-                totalSize = Long.valueOf(resultList.size());
-            }
+            SqlSession sqlSession = DbFactory.Open(pJson.getString("host_id"));
+            List<Map<String, Object>> resultList =new ArrayList<>();
+            resultList = sqlSession.selectList("dataAsset.getValueByHostAndTable", pam);
+
             if (pJson.getString("dbtype_id").equals("hive")) {
                 List<Map> hivelist = new ArrayList<Map>();
                 for (Map aRow : resultList) {
@@ -100,6 +84,26 @@ public class DataAsset extends RO {
                 }
                 map1.put("list", hivelist);
             } else {
+                RowBounds bounds = null;
+                if (pJson == null) {
+                    bounds = RowBounds.DEFAULT;
+                } else {
+                    Integer startIndex = Integer.parseInt(pJson.getString("startIndex"));
+                    Integer perPage = Integer.parseInt(pJson.getString("perPage"));
+                    if (startIndex == 1 || startIndex == 0) {
+                        startIndex = 0;
+                    } else {
+                        startIndex = (startIndex - 1) * perPage;
+                    }
+                    bounds = new PageRowBounds(startIndex, perPage);
+                }
+                resultList = sqlSession.selectList("dataAsset.getValueByHostAndTable", pam, bounds);
+
+                if (pJson != null && pJson.size() != 0) {
+                    totalSize = ((PageRowBounds) bounds).getTotal();
+                } else {
+                    totalSize = Long.valueOf(resultList.size());
+                }
                 map1.put("list", resultList);
             }
             map1.put("total", totalSize);
