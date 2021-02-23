@@ -1,56 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <DBConnection> 
-
-  <DB>
-      <name>form</name>
-      <dbtype>Mysql</dbtype>
-      <driver>com.mysql.cj.jdbc.Driver</driver>
-      <url>jdbc:mysql://192.168.206.49:3306/form</url>
-      <username>root</username>
-      <password>v600KuCLNBc=</password>
-<!--      <url>jdbc:mysql://127.0.0.49:3306/form</url>-->
+   <DB> 
+      <name>form</name>  
+      <desc>数据库描述</desc>  
+      <icon>/upload/ssss.png</icon>  
+      <dbclass>ODS</dbclass>  
+      <dbtype>Mysql</dbtype>  
+      <driver>com.mysql.cj.jdbc.Driver</driver>  
+      <url>jdbc:mysql://192.168.206.49:3306/form</url>  
+      <username>root</username>  
+      <password>v600KuCLNBc=</password>  
+      <!--      <url>jdbc:mysql://127.0.0.49:3306/form</url>-->  
       <!--<url>jdbc:mysql://101.37.204.75:3306/form</url>
       <username>apper</username>
-      <password>qecjSWH8UIt4w/3W4Ahc6Q==</password>-->
-      <maxPoolSize>50</maxPoolSize>
-      <minPoolSize>3</minPoolSize>
-   </DB>
-   <DB>
-      <name>bb</name>
-      <driver>com.mysql.cj.jdbc.Driver</driver>
-      <dbtype>Mysql</dbtype>
-      <url>jdbc:mysql://127.0.0.1:3306/bb</url>
-      <username>root</username>
-      <password>v600KuCLNBc=</password>
-      <maxPoolSize>50</maxPoolSize>
-      <minPoolSize>3</minPoolSize>
-   </DB>
-    <DB>
-        <name>hive</name>
-        <dbtype>hive</dbtype>
-        <driver>org.apache.hive.jdbc.HiveDriver</driver>
-        <url>jdbc:hive2://172.17.5.132:10000/default</url>
-        <username>root</username>
-        <password>dLf1GlaLvJQ=</password>
-        <maxPoolSize>50</maxPoolSize>
-        <minPoolSize>3</minPoolSize>
-    </DB>
-
-   <DB>
-      <name>hbase</name>
-      <dbtype>hbase</dbtype>
-      <driver>org.apache.phoenix.jdbc.PhoenixDriver</driver>
-      <url>jdbc:phoenix:172.17.5.132,172.17.5.133,172.17.5.166:2181</url>
-      <username>admin</username>
-      <password>nMHdQlZWoxY=</password>
-      <maxPoolSize>50</maxPoolSize>
-      <minPoolSize>3</minPoolSize>
-   </DB>
-
-
+      <password>qecjSWH8UIt4w/3W4Ahc6Q==</password>-->  
+      <maxPoolSize>50</maxPoolSize>  
+      <minPoolSize>3</minPoolSize> 
+   </DB>  
+   <DB> 
+      <name>bb</name>  
+      <desc>DB数据库描述</desc>  
+      <icon>/upload/ssss.png</icon>  
+      <dbclass>BB</dbclass>  
+      <driver>com.mysql.cj.jdbc.Driver</driver>  
+      <dbtype>Mysql</dbtype>  
+      <url>jdbc:mysql://127.0.0.1:3306/bb</url>  
+      <username>root</username>  
+      <password>v600KuCLNBc=</password>  
+      <maxPoolSize>50</maxPoolSize>  
+      <minPoolSize>3</minPoolSize> 
+   </DB>  
+   <DB> 
+      <name>hive</name>  
+      <desc>数据库描述</desc>  
+      <icon>/upload/ssss.png</icon>  
+      <dbclass>ODS</dbclass>  
+      <dbtype>hive</dbtype>  
+      <driver>org.apache.hive.jdbc.HiveDriver</driver>  
+      <url>jdbc:hive2://172.17.5.132:10000/default</url>  
+      <username>root</username>  
+      <password>dLf1GlaLvJQ=</password>  
+      <maxPoolSize>50</maxPoolSize>  
+      <minPoolSize>3</minPoolSize> 
+   </DB>  
+   <DB> 
+      <name>hbase</name>  
+      <desc>数据库描述</desc>  
+      <icon>/upload/ssss.png</icon>  
+      <dbclass>ODS</dbclass>  
+      <dbtype>hbase</dbtype>  
+      <driver>org.apache.phoenix.jdbc.PhoenixDriver</driver>  
+      <url>jdbc:phoenix:172.17.5.132,172.17.5.133,172.17.5.166:2181</url>  
+      <username>admin</username>  
+      <password>nMHdQlZWoxY=</password>  
+      <maxPoolSize>50</maxPoolSize>  
+      <minPoolSize>3</minPoolSize> 
+   </DB>  
    <DB> 
       <name>jlerp</name>  
+      <desc>数据库描述</desc>  
+      <icon>/upload/ssss.png</icon>  
+      <dbclass>ODS</dbclass>  
       <dbtype>Mysql</dbtype>  
       <driver>com.mysql.cj.jdbc.Driver</driver>  
       <!-- <url>jdbc:mysql://114.251.247.113:3306/report</url> -->  
@@ -61,50 +72,12 @@
       <password>v600KuCLNBc=</password>  
       <maxPoolSize>50</maxPoolSize>  
       <minPoolSize>3</minPoolSize> 
-   </DB>
-
-   <!--<DB>-->  
-   <!--<name>form</name>-->  
-   <!--<dbtype>Mysql</dbtype>-->  
-   <!--<driver>org.h2.Driver</driver>-->  
-   <!--<url>jdbc:h2:file:~/.h2/DBName;AUTO_SERVER=TRUE</url>-->  
-   <!--<username>sa</username>-->  
-   <!--<password>sa=</password>-->  
-   <!--<maxPoolSize>50</maxPoolSize>-->  
-   <!--<minPoolSize>3</minPoolSize>-->  
-   <!--</DB>-->  
-   <!--<DB>-->  
-   <!--<name>form</name>-->  
-   <!--<dbtype>Mysql</dbtype>-->  
-   <!--<driver>org.sqlite.JDBC</driver>-->  
-   <!--<url>jdbc:sqlite:/Users/wangjian/Documents/iReport/file/db/test.sqlite;Version=3;</url>-->  
-   <!--<username></username>-->  
-   <!--<password></password>-->  
-   <!--<maxPoolSize>50</maxPoolSize>-->  
-   <!--<minPoolSize>3</minPoolSize>-->  
-   <!--</DB>-->  
-   <!-- <DB>
-       <dbtype>mongoDB</dbtype>
-       <name>rcmDB</name>
-       <url>114.251.247.113:27017</url>
-       <driver></driver>
-       <username></username>
-       <password></password>
-       <maxPoolSize></maxPoolSize>
-       <minPoolSize></minPoolSize>
-   </DB> -->  
-   <!--   <DB> -->  
-   <!--      <name>bkeam</name>  -->  
-   <!--      <driver>oracle.jdbc.OracleDriver</driver>  -->  
-   <!--      <dbtype>Oracle</dbtype>  -->  
-   <!--      <url>jjdbc:oracle:thin:@114.251.247.114:1521:xe</url>  -->  
-   <!--      <username>bkeam</username>  -->  
-   <!--      <password>dynd0xW9N5w=</password>  -->  
-   <!--      <maxPoolSize>50</maxPoolSize>  -->  
-   <!--      <minPoolSize>3</minPoolSize> -->  
-   <!--   </DB> -->  
+   </DB>  
    <DB> 
       <name>saaa</name>  
+      <desc>数据库描述</desc>  
+      <icon>/upload/ssss.png</icon>  
+      <dbclass>ODS</dbclass>  
       <driver>com.mysql.cj.jdbc.Driver</driver>  
       <dbtype>Mysql</dbtype>  
       <url>jdbc:mysql://127.0.0.1:3306/jlerp</url>  
@@ -115,6 +88,9 @@
    </DB>  
    <DB> 
       <name>lee</name>  
+      <desc>数据库描述</desc>  
+      <icon>/upload/ssss.png</icon>  
+      <dbclass>ODS</dbclass>  
       <driver>com.mysql.cj.jdbc.Driver</driver>  
       <dbtype>Mysql</dbtype>  
       <url>jdbc:mysql://192.168.206.49:3306/aaljz</url>  
@@ -122,15 +98,18 @@
       <password>dLf1GlaLvJQ=</password>  
       <maxPoolSize>50</maxPoolSize>  
       <minPoolSize>3</minPoolSize> 
-   </DB>
-    <DB>
-        <name>dpass_data</name>
-        <driver>com.taosdata.jdbc.TSDBDriver</driver>
-        <dbtype>TAOS</dbtype>
-        <url>jdbc:TAOS://47.97.65.233:6030/dpass_data</url>
-        <username>root</username>
-        <password>qmE6cBaysODulh7pCCWmjg==</password>
-        <maxPoolSize>65480</maxPoolSize>
-        <minPoolSize>3</minPoolSize>
-    </DB>
+   </DB>  
+   <DB> 
+      <name>dpass_data</name>  
+      <desc>数据库描述</desc>  
+      <icon>/upload/ssss.png</icon>  
+      <dbclass>ODS</dbclass>  
+      <driver>com.taosdata.jdbc.TSDBDriver</driver>  
+      <dbtype>TAOS</dbtype>  
+      <url>jdbc:TAOS://47.97.65.233:6030/dpass_data</url>  
+      <username>root</username>  
+      <password>qmE6cBaysODulh7pCCWmjg==</password>  
+      <maxPoolSize>65480</maxPoolSize>  
+      <minPoolSize>3</minPoolSize> 
+   </DB> 
 </DBConnection>

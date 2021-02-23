@@ -50,6 +50,9 @@ public class DbManager
         for (Element element:dbs){
            obj = new JSONObject(true);
            obj.put("name", element.selectSingleNode("name").getText());
+           obj.put("desc", element.selectSingleNode("desc").getText());
+           obj.put("icon", element.selectSingleNode("icon").getText());
+           obj.put("dbclass", element.selectSingleNode("dbclass").getText());
            obj.put("driver", element.selectSingleNode("driver").getText());
            obj.put("dbtype", element.selectSingleNode("dbtype").getText());
            obj.put("url", element.selectSingleNode("url").getText());
@@ -57,6 +60,7 @@ public class DbManager
            obj.put("password", element.selectSingleNode("password").getText());
            obj.put("maxPoolSize", element.selectSingleNode("maxPoolSize").getText());
            obj.put("minPoolSize", element.selectSingleNode("minPoolSize").getText());
+
            array.add(obj);
         }
         
@@ -86,6 +90,9 @@ public class DbManager
             
             Element db = root.addElement("DB");
             Element name = db.addElement("name");
+            Element desc = db.addElement("desc");
+            Element icon = db.addElement("icon");
+            Element dbclass = db.addElement("dbclass");
             Element driver = db.addElement("driver");
             Element dbtype = db.addElement("dbtype");
             Element url = db.addElement("url");
@@ -95,6 +102,10 @@ public class DbManager
             Element minPoolSize = db.addElement("minPoolSize");
             
             name.setText(obj.getString("name"));
+            desc.setText(obj.getString("desc"));
+            icon.setText(obj.getString("icon"));
+            dbclass.setText(obj.getString("dbclass"));
+
             driver.setText(obj.getString("driver"));
             dbtype.setText(obj.getString("dbtype"));
             url.setText(obj.getString("url"));
@@ -173,6 +184,9 @@ public class DbManager
             Element root = dom.getRootElement();
             
             Node name = node.selectSingleNode("name");
+            Node desc = node.selectSingleNode("desc");
+            Node icon = node.selectSingleNode("icon");
+            Node dbclass = node.selectSingleNode("dbclass");
             Node driver = node.selectSingleNode("driver");
             Node dbtype = node.selectSingleNode("dbtype");
             Node url = node.selectSingleNode("url");
@@ -180,6 +194,9 @@ public class DbManager
             Node password = node.selectSingleNode("password");
             
             name.setText(obj.getString("name"));
+            desc.setText(obj.getString("desc"));
+            icon.setText(obj.getString("icon"));
+            dbclass.setText(obj.getString("dbclass"));
             driver.setText(obj.getString("driver"));
             dbtype.setText(obj.getString("dbtype"));
             url.setText(obj.getString("url"));
@@ -258,6 +275,9 @@ public class DbManager
         if(node!=null)
         {
             obj.put("name", node.selectSingleNode("name").getText());
+            obj.put("desc", node.selectSingleNode("desc").getText());
+            obj.put("icon", node.selectSingleNode("icon").getText());
+            obj.put("dbclass", node.selectSingleNode("dbclass").getText());
             obj.put("driver", node.selectSingleNode("driver").getText());
             obj.put("dbtype", node.selectSingleNode("dbtype").getText());
             obj.put("url", node.selectSingleNode("url").getText());
