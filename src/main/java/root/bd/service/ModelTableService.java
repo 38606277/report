@@ -74,6 +74,12 @@ public class ModelTableService {
         Integer count = Integer.parseInt(sqlSession.selectOne("bdmodelTable.countTable",map));
         if(count==0) {
             map.put("table_title",jsonObject.getString("table_title"));//注释
+
+            map.put("dbtype_id",jsonObject.getString("dbtype_id"));//注释
+            map.put("source_id",jsonObject.getString("source_id"));//注释
+            map.put("host_id",jsonObject.getString("host_id"));//注释
+            map.put("url",jsonObject.getString("url"));//注释
+
             map.put("update_by",user.getId());
             String tableName = jsonObject.getString("table_name");
             String dbType=model.get("db_type").toString();
