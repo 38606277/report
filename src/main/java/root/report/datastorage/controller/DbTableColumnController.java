@@ -28,14 +28,24 @@ public class DbTableColumnController extends RO {
     public String getAiModelList(@RequestBody JSONObject pJson)  {
         try {
             Map<String,Object> map=new HashMap();
-            String tablename=pJson.getString("host_id");
+            String fromdb=pJson.getString("host_id");
             String dbType=pJson.getString("dbType");
-            List resultMap = taosService.getTableList(tablename,dbType);
+            List resultMap = taosService.getTableList(fromdb,dbType);
             return SuccessMsg("", resultMap);
         } catch (Exception ex){
             return ExceptionMsg(ex.getMessage());
         }
     }
 
+    @RequestMapping(value = "/getTableCloumnList", produces = "text/plain;charset=UTF-8")
+    public String getTableCloumnList(@RequestBody JSONObject pJson)  {
+        try {
+            Map<String,Object> map=new HashMap();
+            Map resultMap = taosService.getTableCloumnList(pJson);
+            return SuccessMsg("", resultMap);
+        } catch (Exception ex){
+            return ExceptionMsg(ex.getMessage());
+        }
+    }
 
 }
