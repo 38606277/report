@@ -115,21 +115,25 @@ public class TaosService {
             System.out.println(tableSet.getString(0));
         }
         tableSet.close();*/
+        SqlSession sqlSession=DbFactory.Open(fromdb);
 
-
-        Statement stmt=DbFactory.Open(fromdb).getConnection().createStatement();
+        Statement stmt=sqlSession.getConnection().createStatement();
         String sql="show tables";
-        System.out.println("Running:"+sql);
         ResultSet  res = stmt.executeQuery(sql);
 
         List<Map> tableNameList= new ArrayList<>();
         while (res.next()){
             System.out.println(res.getString(1));
             Map map= new HashMap();
-            map.put("dbtype_id",dbType);
+            map.put("dbtype_id",dbType.toLowerCase());
             map.put("host_id",fromdb);
             map.put("table_name",res.getString(1));
-            tableNameList.add(map);
+            Map mapss= sqlSession.selectOne("bdmodelTable.findTableByDbAndTablename",map);
+            if(null!=mapss){
+                tableNameList.add(mapss);
+            }else {
+                tableNameList.add(map);
+            }
         }
         stmt.close();
         return tableNameList;

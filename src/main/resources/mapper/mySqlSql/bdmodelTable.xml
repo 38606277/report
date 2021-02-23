@@ -5,15 +5,15 @@
 	<!-- db_table增删改查********************************************************************** -->
 	<!--  创建bd_model信息  -->
 	<insert id="createBdTable" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
-		insert into bd_table(table_id,table_name,table_title,table_ddl,create_date,create_by,update_date,update_by,dbtype_id,source_id,host_id,url)
+		insert into bd_table(table_id,table_name,table_title,table_ddl,create_date,create_by,update_date,update_by,dbtype_id,source_id,host_id,url,catalog_id)
 		values ('${table_id}','${table_name}','${table_title}','${table_ddl}',SYSDATE(),'${create_by}',SYSDATE(),'${update_by}',
-		'${dbtype_id}','${source_id}','${host_id}','${url}')
+		'${dbtype_id}','${source_id}','${host_id}','${url}','${catalog_id}')
 	</insert>
 	<!-- 修改 bd_model表的信息 -->
 	<update id="updateBdTable" parameterType="Map">
 		update bd_table set table_name='${table_name}',table_title='${table_title}',
 		table_ddl='${table_ddl}',update_date=SYSDATE(),	update_by='${update_by}',
-		dbtype_id='${dbtype_id}',source_id='${source_id}',host_id='${host_id}',url='${url}'
+		dbtype_id='${dbtype_id}',source_id='${source_id}',host_id='${host_id}',url='${url}',catalog_id='${catalog_id}'
 		where table_id='${table_id}'
 	</update>
 
@@ -75,13 +75,18 @@
 		</if>
 	</select>
 
-	<select id="findTableByDbAndTablename" resultType="java.lang.String" parameterType="map">
-		SELECT * from bd_table where 1=1
-		<if  test="db != null and table_id!='' ">
-			and table_id != '${table_id}'
+	<select id="findTableByDbAndTablename" resultType="map" parameterType="map">
+		SELECT bt.*,ffv.FLEX_VALUE catalog_value from bd_table bt
+		INNER JOIN fnd_flex_values ffv ON bt.catalog_id = ffv.FLEX_VALUE_ID	AND ffv.FLEX_VALUE_SET_ID = 4
+		where 1=1
+		<if  test="host_id != null and host_id!='' ">
+			and bt.host_id = '${host_id}'
 		</if>
 		<if  test="table_name != null and table_name!='' ">
-			and table_name = '${table_name}'
+			and bt.table_name = '${table_name}'
+		</if>
+		<if  test="dbtype_id != null and dbtype_id!='' ">
+			and bt.dbtype_id = '${dbtype_id}'
 		</if>
 	</select>
 

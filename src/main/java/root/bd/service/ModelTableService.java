@@ -79,7 +79,7 @@ public class ModelTableService {
             map.put("source_id",jsonObject.getString("source_id"));//注释
             map.put("host_id",jsonObject.getString("host_id"));//注释
             map.put("url",jsonObject.getString("url"));//注释
-
+            map.put("catalog_id",jsonObject.getString("catalog_id"));
             map.put("update_by",user.getId());
             String tableName = jsonObject.getString("table_name");
             String dbType=model.get("db_type").toString();
